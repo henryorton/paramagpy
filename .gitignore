@@ -1,0 +1,11 @@
+__pycache__
+.dropbox.attr
+*.pyc
+*.pyo
+*.aux
+*.fdb_latexmk
+*.fls
+*.tex
+*.log
+*.synctex.gz
+*.sublime-workspace
