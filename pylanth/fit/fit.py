@@ -1,5 +1,5 @@
 import numpy as np
-from metal import Metal
+# from metal import Metal
 from scipy.optimize import fmin_bfgs
 from matplotlib import pyplot as plt
 from pprint import pprint
@@ -76,6 +76,8 @@ def nlr_fit_metal_from_pcs(metals, pcss):
 		posarray, pcsarray = extract_coords(pcs)
 		posarrays.append(posarray*1E-10)
 		pcsarrays.append(pcsarray)
+
+	Metal = metals[0].__class__
 
 	def cost(params):
 		pos, tensor_params = Metal.unpack_tensor_params(params)
@@ -185,34 +187,34 @@ def ccr(metal, atom):
 
 
 
-from protein import load_pdb
-from dataparse import read_pcs
+# from protein import load_pdb
+# from dataparse import read_pcs
 
-x, y, z, = (25.786,9.515,6.558)
-ax, rh = (-8.155,-4.913)
-a, b, g = (125.842,142.287,41.759)
+# x, y, z, = (25.786,9.515,6.558)
+# ax, rh = (-8.155,-4.913)
+# a, b, g = (125.842,142.287,41.759)
 
-m = Metal.make_tensor(x,y,z,ax,rh,a,b,g,'Er')
-m.taur = 4.25E-9
-m.B0 = 18.8
-# m0 = Metal.make_tensor(0,0,0,0,0,0,0,0)
+# m = Metal.make_tensor(x,y,z,ax,rh,a,b,g,'Er')
+# m.taur = 4.25E-9
+# m.B0 = 18.8
+# # m0 = Metal.make_tensor(0,0,0,0,0,0,0,0)
 
-fileName = 'ho4icb43G.pdb'
-npcName1 = 'ershifts.npc'
-npcName2 = 'ybshifts.npc'
+# fileName = 'ho4icb43G.pdb'
+# npcName1 = 'ershifts.npc'
+# npcName2 = 'ybshifts.npc'
 
-prot = load_pdb(fileName)
-# prot = load_pdb('2bcb.pdb')
+# prot = load_pdb(fileName)
+# # prot = load_pdb('2bcb.pdb')
 
-pcs1 = read_pcs(npcName1)
-pcs2 = read_pcs(npcName2)
+# pcs1 = read_pcs(npcName1)
+# pcs2 = read_pcs(npcName2)
 
-dat1 = prot.parse(pcs2)
+# dat1 = prot.parse(pcs2)
 
-diag = m.tensor_saupe[(0,1,2),(0,1,2)]
+# diag = m.tensor_saupe[(0,1,2),(0,1,2)]
 
 
-atoms, pcss = zip(*dat1)
+# atoms, pcss = zip(*dat1)
 
 # for atom1, atom2 in zip(atoms[::2], atoms[1::2]):
 # 	pos = atom1.coord*1E-10

@@ -662,30 +662,30 @@ class Metal(object):
 
 
 
-x = 0.0E-10
-y = 0.0E-10
-z = 1.0E-10
-vec = np.array([x,y,z])
+# x = 0.0E-10
+# y = 0.0E-10
+# z = 1.0E-10
+# vec = np.array([x,y,z])
 
-gamma = 2*np.pi*42.576E6
+# gamma = 2*np.pi*42.576E6
 
-eulers = np.random.random(size=3)
-# eulers = np.array([0,0,0.])
-rot = euler_to_matrix(eulers)
+# eulers = np.random.random(size=3)
+# # eulers = np.array([0,0,0.])
+# rot = euler_to_matrix(eulers)
 
-ax = -5.385
-rh = -2.365
-a, b, g = eulers*(180./np.pi)
+# ax = -5.385
+# rh = -2.365
+# a, b, g = eulers*(180./np.pi)
 
-t = Metal.make_tensor(0,0,0,ax,rh,a,b,g,'Er')
-t.B0 = 14.1
+# t = Metal.make_tensor(0,0,0,ax,rh,a,b,g,'Er')
+# t.B0 = 14.1
 
 
-print(t.rdc(vec, gamma, gamma))
-print(t.rdc2(vec, gamma, gamma))
-ax, rh = t.axrh
-vecr = rot.T.dot(vec)
-print(simple_rdc(vecr, gamma, gamma, t.B0, ax, rh, t.K, t.temperature, t.HBAR))
+# print(t.rdc(vec, gamma, gamma))
+# print(t.rdc2(vec, gamma, gamma))
+# ax, rh = t.axrh
+# vecr = rot.T.dot(vec)
+# print(simple_rdc(vecr, gamma, gamma, t.B0, ax, rh, t.K, t.temperature, t.HBAR))
 
 
 
