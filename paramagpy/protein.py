@@ -2,7 +2,9 @@ from Bio.PDB import PDBParser
 from Bio.PDB.Structure import Structure
 from Bio.PDB.Atom import Atom, DisorderedAtom
 from Bio.PDB.StructureBuilder import StructureBuilder
+from Bio.PDB.Polypeptide import standard_aa_names
 import numpy as np
+
 
 
 def rotation_matrix(axis, theta):
@@ -46,11 +48,16 @@ class CustomAtom(Atom):
 	def __init__(self, *arg, **kwargs):
 		super().__init__(*arg, **kwargs)
 		self.coord = np.asarray(self.coord, dtype=np.float64)
-		self.gamma = self.gyro_lib.get(self.element)
+		self.gamma = self.gyro_lib.get(self.element, 0.0)
+		self._csa = None
+
+	def __repr__(self):
+		return "<Atom {0:3d}-{1:}>".format(self.parent.id[1], self.name)
 
 	def top(self):
 		return self.parent.parent.parent.parent
 
+	@property
 	def csa(self):
 		"""
 		Get the CSA tensor at the nuclear position
@@ -64,6 +71,9 @@ class CustomAtom(Atom):
 			if appropriate nuclear positions are not
 			available <None> is returned.
 		"""
+
+		if self._csa is not None:
+			return self._csa
 
 		def norm(x):
 			return x/np.linalg.norm(x)
@@ -112,11 +122,22 @@ class CustomAtom(Atom):
 			y = norm(np.cross(z, x))
 
 		else:
-			return None
+			return np.zeros(9).reshape(3,3)
 		transform = np.vstack([x, y, z]).T
 		tensor = transform.dot(np.diag(pas)).dot(transform.T)
 		return tensor
 
+	@csa.setter
+	def csa(self, newTensor):
+		if newTensor is None:
+			self._csa = None
+			return
+		try:
+			assert newTensor.shape == (3,3)
+		except (AttributeError, AssertionError):
+			print("The specified CSA tensor does not have the correct format")
+			raise
+		self._csa = newTensor
 
 
 
@@ -137,15 +158,20 @@ class CustomStructure(Structure):
 	# 			new.detach_child(i)
 	# 	return new
 
-	def parse(self, dataValues, model=None):
+	def parse(self, dataValues, models=None):
 		used = set([])
 		data = []
 
-		if dataValues.dtype in ('pcs', 'pre'):
-			if model:
-				chains = self[model].get_chains()
-			else:
-				chains = self.get_chains()
+		if type(models)==int:
+			chains = self[models].get_chains()
+		elif type(models) in (list, tuple):
+			chains = []
+			for m in models:
+				chains += self[m].get_chains()
+		else:
+			chains = self.get_chains()
+
+		if dataValues.dtype in ('PCS', 'PRE'):
 			for chain in chains:
 				for key in dataValues:
 					seq, name = key
@@ -153,19 +179,29 @@ class CustomStructure(Structure):
 						resi = chain[seq]
 						if name in resi:
 							atom = resi[name]
-							data.append([atom, dataValues[key]])
+							data.append([atom, *dataValues[key]])
 							used.add(key)
 
-			unused = set(dataValues) - used
-			if unused:
-				message = "WARNING: Some values were not parsed to {}:"
-				print(message.format(self.id))
-				print(list(unused))
+		elif dataValues.dtype == 'RDC':
+			for chain in chains:
+				for key in dataValues:
+					(seq1, name1), (seq2, name2) = key
+					if seq1 in chain and seq2 in chain:
+						resi1 = chain[seq1]
+						resi2 = chain[seq2]
+						if name1 in resi1 and name2 in resi2:
+							atom1 = resi1[name1]
+							atom2 = resi2[name2]
+							data.append([atom1, atom2, *dataValues[key]])
+							used.add(key)
 
-			return data
-
-		elif dataValues.dtype == 'rdc':
-			return None
+		unused = set(dataValues) - used
+		if unused:
+			message = "WARNING: Some values were not parsed to {}:"
+			print(message.format(self.id))
+			print(list(unused))
+		return data
+			
 
 
 class CustomStructureBuilder(StructureBuilder):
@@ -261,35 +297,6 @@ def load_pdb(fileName, ident=None):
 
 
 
-# p.read_npc('shift.npc')
-
-# def parse_npc(fileName, protein):
-# 	npc_values = {}
-# 	with open(fileName) as o:
-# 		for line in o:
-# 			seq, name, value, error = line.split()
-# 			key = int(seq), name
-# 			npc_values[key] = float(value)
-
-# 	used = set([])
-# 	data = {}
-# 	for chain in self.struct.get_chains():
-# 		for key in npc_values:
-# 			seq, name = key
-# 			if seq in chain:
-# 				resi = chain[seq]
-# 				if name in resi:
-# 					atom = resi[name]
-# 					data[atom.get_full_id()[1:]] = npc_values[key]
-# 					used.add(key)
-
-# 	unused = set(npc_values) - used
-# 	if unused:
-# 		message = "WARNING: Some values from '{}' were not found in '{}':"
-# 		print(message.format(fileName, self.struct.id))
-# 		print(list(unused))
-
-# 	return data	
 
 
 
@@ -298,74 +305,6 @@ def load_pdb(fileName, ident=None):
 
 
 
-
-
-
-
-
-
-# class Protein(object):
-# 	"""docstring for Protein"""
-# 	def __init__(self, structure):
-# 		self.struct = structure
-# 		self.struct.wrapper = self
-
-# 	@classmethod
-# 	def parse_pdb(cls, fileName, **kwargs):
-# 		parser = PDBParser(**kwargs)
-# 		return cls(parser.get_structure(fileName, fileName))
-
-# 	def __getitem__(self, key):
-# 		model, chain, resi, atom = key
-# 		return self.struct[model][chain][resi][atom[0]]
-
-# 	def get_atoms(self):
-# 		return self.struct.get_atoms()
-
-# 	def parse_npc(self, fileName):
-# 		npc_values = {}
-# 		with open(fileName) as o:
-# 			for line in o:
-# 				seq, name, value, error = line.split()
-# 				key = int(seq), name
-# 				npc_values[key] = float(value)
-
-# 		used = set([])
-# 		data = {}
-# 		for chain in self.struct.get_chains():
-# 			for key in npc_values:
-# 				seq, name = key
-# 				if seq in chain:
-# 					resi = chain[seq]
-# 					if name in resi:
-# 						atom = resi[name]
-# 						data[atom.get_full_id()[1:]] = npc_values[key]
-# 						used.add(key)
-
-# 		unused = set(npc_values) - used
-# 		if unused:
-# 			message = "WARNING: Some values from '{}' were not found in '{}':"
-# 			print(message.format(fileName, self.struct.id))
-# 			print(list(unused))
-
-# 		return data
-
-# 	def get_atoms_by_name(self, name):
-# 		for atom in self.struct.get_atoms():
-# 			if atom.id==name:
-# 				yield atom
-
-# 	def get_atoms_by_id(self, idents):
-# 		for ident in idents:
-# 			atom = self[ident]
-# 			yield atom
-
-# 	def get_coords_by_id(self, idents):
-# 		out = []
-# 		for ident in idents:
-# 			atom = self[ident]
-# 			out.append(atom.coord)
-# 		return np.array(out, dtype=float)
 
 
 

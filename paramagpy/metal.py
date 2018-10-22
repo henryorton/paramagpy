@@ -1,5 +1,7 @@
 import numpy as np
 import struct
+from collections import OrderedDict
+import ntpath
 
 
 
@@ -64,6 +66,24 @@ def matrix_to_euler(M):
 	return np.array([alpha,beta,gamma])
 
 
+def unique_eulers(a, b, g):
+	if a < 0.0 and g < 0.0:
+		alpha = a + np.pi
+		beta  = np.pi - b
+		gamma = -g
+	elif a < 0.0:
+		alpha = a + np.pi
+		beta  = np.pi - b
+		gamma = np.pi - g
+	elif g < 0.0:
+		alpha = a
+		beta  = b
+		gamma = g + np.pi
+	else:
+		alpha = a
+		beta  = b
+		gamma = g
+	return np.array([alpha, beta, gamma])
 
 
 class Metal(object):
@@ -80,25 +100,54 @@ class Metal(object):
 	HBAR = 1.0546E-34
 	GAMMA = 1.760859644E11
 
-	# J, g, T1e values for lanthanide series
-	lanth_lib = {
-		'Ce': ( 5./2., 6./7. , 0.133E-12),
-		'Pr': ( 4./1., 4./5. , 0.054E-12),
-		'Nd': ( 9./2., 8./11., 0.210E-12),
-		'Pm': ( 4./1., 3./5. , None    ),
-		'Sm': ( 5./2., 2./7. , 0.074E-12),
-		'Eu': ( 2./1., 3./2. , 0.015E-12),
-		'Gd': ( 7./2., 2./1. , None    ),
-		'Tb': ( 6./1., 3./2. , 0.251E-12),
-		'Dy': (15./2., 4./3. , 0.240E-12),
-		'Ho': ( 8./1., 5./4. , 0.209E-12),
-		'Er': (15./2., 6./5. , 0.189E-12),
-		'Tm': ( 6./1., 7./6. , 0.268E-12),
-		'Yb': ( 7./2., 8./7. , 0.157E-12)
+	# Stored values get scaled by this amount for the fitting algorithm
+	fit_scaling = {
+		'x': 1E10,
+		'y': 1E10,
+		'z': 1E10,
+		'ax': 1E32,
+		'rh': 1E32,
+		'iso': 1E32,
+		't1e': 1E12,
+		'taur': 1E9,
 	}
 
-	upper_coords = [(0,1,0,0,1),(0,1,1,2,2)]
-	lower_coords = [(0,1,1,2,2),(0,1,0,0,1)]
+	# J, g, T1e values for lanthanide series
+	lanth_lib = OrderedDict([('Zero',(0., 0. , 0.)),
+		('Ce', ( 5./2., 6./7. , 0.133E-12)),
+		('Pr', ( 4./1., 4./5. , 0.054E-12)),
+		('Nd', ( 9./2., 8./11., 0.210E-12)),
+		('Pm', ( 4./1., 3./5. , np.nan   )),
+		('Sm', ( 5./2., 2./7. , 0.074E-12)),
+		('Eu', ( 2./1., 3./2. , 0.015E-12)),
+		('Gd', ( 7./2., 2./1. , np.nan   )),
+		('Tb', ( 6./1., 3./2. , 0.251E-12)),
+		('Dy', (15./2., 4./3. , 0.240E-12)),
+		('Ho', ( 8./1., 5./4. , 0.209E-12)),
+		('Er', (15./2., 6./5. , 0.189E-12)),
+		('Tm', ( 6./1., 7./6. , 0.268E-12)),
+		('Yb', ( 7./2., 8./7. , 0.157E-12))]
+	)
+
+	# Template anisotropies [axial, rhombic]
+	lanth_axrh = OrderedDict([('Zero',(0. , 0.)),
+		('Ce', (  2.1,  0.7)),
+		('Pr', (  3.4,  2.1)),
+		('Nd', (  1.7,  0.4)),
+		('Pm', (  0.0,  0.0)),
+		('Sm', (  0.2,  0.1)),
+		('Eu', (  2.4,  1.5)),
+		('Gd', (  0.0,  0.0)),
+		('Tb', ( 42.1, 11.2)),
+		('Dy', ( 34.7, 20.3)),
+		('Ho', ( 18.5,  5.8)),
+		('Er', (-11.6, -8.6)),
+		('Tm', (-21.9,-20.1)),
+		('Yb', ( -8.3, -5.8))]
+	)
+
+	upper_coords = ((0,1,0,0,1),(0,1,1,2,2))
+	lower_coords = ((0,1,1,2,2),(0,1,0,0,1))
 
 	@staticmethod
 	def pack_tensor_params(metals):
@@ -111,7 +160,8 @@ class Metal(object):
 	def unpack_tensor_params(params):
 		num = (len(params)-3)//5
 		pos = np.array(params[:3])*1E-10
-		tensor_params = [np.array(params[3+5*i:3+5+5*i])*1E-32 for i in range(num)]
+		tensor_params = [np.array(params[3+5*i:3+5+5*i])*1E-32 
+			for i in range(num)]
 		return pos, tensor_params
 
 	@classmethod
@@ -138,8 +188,7 @@ class Metal(object):
 		dx =  rhombic/2. - axial/3.
 		dy = -rhombic/2. - axial/3.
 		dz = (axial*2.)/3.
-		sortedEigs = cls.unique_eigenvalues(dx, dy, dz)
-		return np.array(sortedEigs)
+		return np.array([dx,dy,dz])
 	
 	@classmethod
 	def eigenvalues_to_anisotropy(cls, dx, dy, dz):
@@ -158,23 +207,9 @@ class Metal(object):
 		axial, rhombic : tuple of floats
 			the tensor anisotropies
 		"""
-		dx, dy, dz = cls.unique_eigenvalues(dx, dy, dz)
 		axial = dz - (dx + dy) / 2.
 		rhombic = dx - dy
 		return np.array([axial, rhombic])
-
-	@classmethod
-	def unique_anisotropy(cls, ax, rh):
-		unsorteigs = cls.anisotropy_to_eigenvalues(ax, rh)
-		eigenvalues = sorted(unsorteigs, key = lambda x: abs(x))
-		return cls.eigenvalues_to_anisotropy(*eigenvalues)
-
-	@classmethod
-	def unique_eigenvalues(cls, dx, dy, dz):
-		eigs = np.array([dx,dy,dz], dtype=float)
-		iso = np.sum(eigs)/3.
-		eigenvalues = sorted(eigs, key = lambda x: abs(x-iso))
-		return eigenvalues
 
 	@classmethod
 	def make_tensor(cls, x, y, z, axial, rhombic, 
@@ -200,22 +235,18 @@ class Metal(object):
 			a tensor object for calulating paramagnetic effects on 
 			nuclear spins in the pdb coordinate
 		"""
-		if lanthanide:
-			J, g, t1e = cls.lanth_lib[lanthanide]
-			mueff = g * cls.MUB * (J*(J+1))**0.5
-		else:
-			mueff = 0.0
-			t1e = None
 
-		position = np.array([x, y, z])*1E-10
-		axrh = cls.unique_anisotropy(axial, rhombic)*1E-32
-		eulers = np.array([alpha, beta, gamma])*(np.pi/180.)
-		return cls(position, eulers, axrh, mueff, temperature, t1e)
-		
+		t = cls()
+		if lanthanide:
+			t.set_lanthanide(lanthanide)
+		t.position = np.array([x, y, z])*1E-10
+		t.axrh = np.array([axial, rhombic])*1E-32
+		t.eulers = np.array([alpha, beta, gamma])*(np.pi/180.)
+		return t
 
 	def __init__(self, position=(0,0,0), eulers=(0,0,0), 
-		axrh=(0,0), mueff=0.0, temperature=298.15, t1e=None,
-		B0=None, taur=None):
+		axrh=(0,0), mueff=0.0, shift=0.0, temperature=298.15, t1e=0.0,
+		B0=18.79, taur=0.0):
 		"""
 		Instantiate ChiTensor object
 
@@ -241,6 +272,7 @@ class Metal(object):
 		self.eulers = np.array(eulers, dtype=float)
 		self.axrh = np.array(axrh, dtype=float)
 		self.mueff = mueff
+		self.shift = shift
 		self.temperature = temperature
 		self.t1e = t1e
 		self.B0 = B0
@@ -257,8 +289,27 @@ class Metal(object):
 		return 1./(1./self.taur + 1./self.t1e)
 
 	def copy(self):
-		return self.__class__(tuple(self.position), tuple(self.eulers), 
-			tuple(self.axrh), self.mueff, self.temperature, self.t1e)
+		return self.__class__(
+			position=tuple(self.position), 
+			eulers=tuple(self.eulers),
+			axrh=tuple(self.axrh), 
+			mueff=self.mueff, 
+			shift=self.shift, 
+			temperature=self.temperature, 
+			t1e=self.t1e,
+			B0=self.B0, 
+			taur=self.taur)
+
+	def set_lanthanide(self, lanthanide, set_dchi=True):
+		J, g, t1e = self.lanth_lib[lanthanide]
+		self.t1e = t1e
+		self.set_Jg(J, g)
+		if set_dchi:
+			ax, rh = self.lanth_axrh[lanthanide]
+			self.axrh = np.array([ax,rh])*1E-32
+
+	def set_Jg(self, J, g):
+		self.mueff = g * self.MUB * (J*(J+1))**0.5
 
 	def info(self, comment=True):
 		l = "{0:<6}| {1:>9} : {2:9.3f}\n"
@@ -273,12 +324,87 @@ class Metal(object):
 		i += l.format('b','deg',self.eulers[1]*(180.0/np.pi))
 		i += l.format('g','deg',self.eulers[2]*(180.0/np.pi))
 		i += l.format('mueff','Bm',self.mueff/self.MUB)
+		i += l.format('shift','ppm',self.shift)
+		i += l.format('B0','T',self.B0)
 		i += l.format('temp','K',self.temperature)
 		if self.t1e:
 			i += l.format('t1e','ps',self.t1e*1E12)
 		else:
-			i += l.format('t1e','ps',np.nan)
+			i += l.format('t1e','ps',0.0)
 		return i
+
+	def get_params(self, params):
+		pars = []
+		for param in params:
+			scale = self.fit_scaling.get(param, 1.0)
+			pars.append(scale * getattr(self, param))
+		return pars
+
+	def set_params(self, paramValues):
+		for param, value in paramValues:
+			scale = self.fit_scaling.get(param, 1.0)
+			setattr(self, param, value/scale)
+
+	@property
+	def x(self):
+		return self.position[0]
+	@x.setter
+	def x(self, value):
+		self.position[0] = value
+	@property
+	def y(self):
+		return self.position[1]
+	@y.setter
+	def y(self, value):
+		self.position[1] = value
+	@property
+	def z(self):
+		return self.position[2]
+	@z.setter
+	def z(self, value):
+		self.position[2] = value
+	@property
+	def a(self):
+		return self.eulers[0]
+	@a.setter
+	def a(self, value):
+		self.eulers[0] = value
+	@property
+	def b(self):
+		return self.eulers[1]
+	@b.setter
+	def b(self, value):
+		self.eulers[1] = value
+	@property
+	def g(self):
+		return self.eulers[2]
+	@g.setter
+	def g(self, value):
+		self.eulers[2] = value
+	@property
+	def ax(self):
+		return self.axrh[0]
+	@ax.setter
+	def ax(self, value):
+		self.axrh[0] = value
+	@property
+	def rh(self):
+		return self.axrh[1]
+	@rh.setter
+	def rh(self, value):
+		self.axrh[1] = value
+	@property
+	def iso(self):
+		return self.isotropy
+	@iso.setter
+	def iso(self, value):
+		self.isotropy = value
+	@property
+	def B0_MHz(self):
+		return self.B0 * 42.57747892
+	@B0_MHz.setter
+	def B0_MHz(self, value):
+		self.B0 = value / 42.57747892
 
 	@property
 	def eigenvalues(self):
@@ -286,9 +412,8 @@ class Metal(object):
 
 	@eigenvalues.setter
 	def eigenvalues(self, newEigenvalues):
-		isotropy = np.sum(newEigenvalues)/3.
-		self.isotropy = isotropy
 		self.axrh = self.eigenvalues_to_anisotropy(*newEigenvalues)
+		self.isotropy = np.round(np.sum(newEigenvalues)/3., 40)
 
 	@property
 	def isotropy(self):
@@ -296,7 +421,8 @@ class Metal(object):
 
 	@isotropy.setter
 	def isotropy(self, newIsotropy):
-		newIsotropy = 1E-32*np.round(newIsotropy*1E32, 10)
+		if newIsotropy<0:
+			raise ValueError("A tensor with negative isotropy is not allowed")
 		self.mueff = ((newIsotropy*3*self.K*self.temperature) / self.MU0)**0.5
 
 	@property
@@ -305,7 +431,7 @@ class Metal(object):
 
 	@rotationMatrix.setter
 	def rotationMatrix(self, newMatrix):
-		self.eulers = matrix_to_eulers(newMatrix)
+		self.eulers = unique_eulers(*matrix_to_eulers(newMatrix))
 
 	@property
 	def tensor(self):
@@ -314,12 +440,13 @@ class Metal(object):
 
 	@tensor.setter
 	def tensor(self, newTensor):
-		eigenvals, eigenvecs = np.linalg.eig(newTensor)
+		eigenvals, eigenvecs = np.linalg.eigh(newTensor)
 		eigs = zip(eigenvals, np.array(eigenvecs).T)
 		iso = np.sum(eigenvals)/3.
-		eigenvals, eigenvecs = zip(*sorted(eigs, key=lambda x: abs(x[0]-iso)))
+		eigenvals, (x, y, z) = zip(*sorted(eigs, key=lambda x: abs(x[0]-iso)))
+		eigenvecs = x * z.dot(np.cross(x,y)), y, z
 		rotationMatrix = np.vstack(eigenvecs).T
-		eulers = matrix_to_euler(rotationMatrix)
+		eulers = unique_eulers(*matrix_to_euler(rotationMatrix))
 		self.eulers = np.array(eulers, dtype=float)
 		self.eigenvalues = eigenvals
 
@@ -328,14 +455,18 @@ class Metal(object):
 		return self.tensor - np.identity(3)*self.isotropy
 
 	@property
+	def saupe_factor(self):
+		return (self.B0**2) / (5 * self.MU0 * self.K * self.temperature)
+
+	@property
 	def tensor_saupe(self):
-		pf = (self.B0**2) / (15*self.MU0 * self.K * self.temperature)
-		return pf * self.tensor_traceless
+		return self.saupe_factor * self.tensor_traceless
 
 	@tensor_saupe.setter
 	def tensor_saupe(self, new_saupe_tensor):
-		pf =  (15*self.MU0 * self.K * self.temperature) / (self.B0**2)
-		self.tensor = pf * new_saupe_tensor
+		old_mueff = self.mueff
+		self.tensor = new_saupe_tensor / self.saupe_factor
+		self.mueff = old_mueff
 
 	@property
 	def upper_triang(self):
@@ -351,6 +482,20 @@ class Metal(object):
 		self.tensor = newTensor
 		self.mueff = old_mueff
 
+	@property
+	def upper_triang_saupe(self):
+		return self.tensor_saupe[self.upper_coords]
+
+	@upper_triang.setter
+	def upper_triang_saupe(self, elements):
+		newTensor = np.zeros(9).reshape(3,3)
+		newTensor[self.upper_coords] = elements
+		newTensor[self.lower_coords] = elements
+		newTensor[2,2] = - elements[0] - elements[1]
+		self.tensor_saupe = newTensor
+
+	def set_utr(self):
+		self.tensor = self.tensor
 
 	def dipole_shift_tensor(self, position):
 		"""
@@ -374,6 +519,15 @@ class Metal(object):
 		p2 = (1./distance**3)*np.identity(3)
 		return (preFactor * (3.*p1 - p2)).dot(self.tensor)
 
+	def fast_dipole_shift_tensor(self, posarray):
+		pos = posarray - self.position
+		distance = np.linalg.norm(pos, axis=1)[:,None,None]
+		preFactor = 1./(4.*np.pi)
+		p1 = (1./distance**5)*np.einsum('ij,ik->ijk', pos, pos)
+		p2 = (1./distance**3)*np.identity(3)
+		ds = preFactor*(3.*p1 - p2).dot(self.tensor)
+		return ds
+
 	def pcs(self, position):
 		"""
 		Calculate the psuedo-contact shift at the given postition
@@ -386,23 +540,148 @@ class Metal(object):
 		Returns
 		-------
 		pcs : float
-			the peudo-contact shift in parts-per-million (ppm)
+			the pseudo-contact shift in parts-per-million (ppm)
 		"""
-		return 1E6*self.dipole_shift_tensor(position).trace()/3.
-
-	def pcs2(self, position):
-		ds = self.dipole_shift_tensor(position)
-		align = (2./3.)*self.tensor_saupe.dot(ds).trace()
-		iso = ds.trace()/3.
-		return 1E6*(align+iso)
+		val = self.dipole_shift_tensor(position).trace()/3.
+		return 1E6*val + self.shift
 
 	def fast_pcs(self, posarray):
+		"""
+		Rapidly calculatew the psuedo-contact shift at `n' positions.
+		This efficient algorithm calculates the PCSs for an array of 
+		positions and is best used where speed is required for fitting.
+
+		Parameters
+		----------
+		posarray : array of positions with shape (n,3)
+			the position (x, y, z) in meters
+
+		Returns
+		-------
+		pcs : array of floats with shape (n,1)
+			the peudo-contact shift in parts-per-million (ppm)
+		"""
 		pos = posarray - self.position
 		dist = np.linalg.norm(pos, axis=1)
 		dot1 = np.einsum('ij,jk->ik', pos, self.tensor_traceless)
 		dot2 = np.einsum('ij,ij->i', pos, dot1)
-		return 1E6*(1./(4.*np.pi))*(dot2/dist**5)
+		return 1E6*(1./(4.*np.pi))*(dot2/dist**5) + self.shift
 
+
+	def rads(self, position):
+		"""
+		Calculate the residual anisotropic dipolar shift at the 
+		given postition. The partial alignment induced by an anisotropic 
+		magnetic susecptiblity causes the dipole shift tensor at a nuclear
+		position to average to a value different to the PCS.
+
+		Parameters
+		----------
+		position : array floats
+			the position (x, y, z) in meters
+
+		Returns
+		-------
+		rads : float
+			the residual anisotropic dipole shift in parts-per-million (ppm)
+		"""
+		ds = self.dipole_shift_tensor(position)
+		rads = self.tensor_saupe.dot(ds).trace()/3.
+		return 1E6*rads
+
+	def fast_rads(self, posarray):
+		ds = self.fast_dipole_shift_tensor(posarray)
+		rads = np.einsum('jk,ikl->ijl',self.tensor_saupe,ds)
+		return 1E6*rads.trace(axis1=1,axis2=2)/3.
+
+	def racs(self, csa):
+		"""
+		Calculate the residual anisotropic chemical shift at the 
+		given postition. The partial alignment induced by an anisotropic 
+		magnetic susecptiblity causes the chemical shift tensor at a nuclear
+		position to average to a value different to the isotropic value.
+
+		Parameters
+		----------
+		csa : 3 x 3 array
+			the chemical shift anisotropy tensor
+
+		Returns
+		-------
+		racs : float
+			the residual anisotropic chemical shift in parts-per-million (ppm)
+		"""
+		racs = self.tensor_saupe.dot(csa).trace()/3.
+		return 1E6*racs
+
+	def fast_racs(self, csaarray):
+		racs = np.einsum('jk,ikl->ijl',self.tensor_saupe,csaarray)
+		return 1E6*racs.trace(axis1=1,axis2=2)/3.
+
+	def fast_dsa_r1(self, posarray, gammaarray, csaarray=0.0):
+		ds = self.fast_dipole_shift_tensor(posarray)
+		sis_para = self.fast_second_invariant_squared(ds + csaarray)
+		if isinstance(csaarray, np.ndarray):
+			sis_dia = self.fast_second_invariant_squared(csaarray)
+		else:
+			sis_dia = 0.0
+		sis_eff = sis_para - sis_dia
+		omegas = self.B0 * gammaarray
+		pf = (2./15.)*sis_eff*omegas**2
+		rate = pf * self.spec_dens(self.taur, omegas)
+		return rate
+
+	def fast_dsa_r2(self, posarray, gammaarray, csaarray=0.0):
+		ds = self.fast_dipole_shift_tensor(posarray)
+		xx, yy, zz = np.linalg.eigvals(ds+csaarray).T
+		sis_para = self.fast_second_invariant_squared(ds + csaarray)
+		if isinstance(csaarray, np.ndarray):
+			sis_dia = self.fast_second_invariant_squared(csaarray)
+		else:
+			sis_dia = 0.0
+		sis_eff = sis_para - sis_dia
+		omegas = self.B0 * gammaarray
+		pf = (1./45.)*sis_eff*omegas**2
+		rate = pf * (4*self.spec_dens(self.taur, 0.    ) +
+			         3*self.spec_dens(self.taur, omegas))
+		return rate
+
+	def fast_sbm_r1(self, posarray, gammaarray):
+		distance = np.linalg.norm(posarray-self.position, axis=1)
+		p1 = self.MU0/(4.*np.pi)
+		p2 = (gammaarray * self.mueff)/distance**3
+		rate = (2./15.)*(p1*p2)**2 * (
+			3*self.spec_dens(self.tauc, self.B0*gammaarray) + 
+			7*self.spec_dens(self.tauc, self.B0*self.GAMMA))
+		return rate
+
+	def fast_sbm_r2(self, posarray, gammaarray):
+		distance = np.linalg.norm(posarray-self.position, axis=1)
+		p1 = self.MU0/(4.*np.pi)
+		p2 = (gammaarray * self.mueff)/distance**3
+		rate = (1./15.)*(p1*p2)**2 * (
+			 4*self.spec_dens(self.tauc, 0.) +
+			 3*self.spec_dens(self.tauc, self.B0*gammaarray) + 
+			13*self.spec_dens(self.tauc, self.B0*self.GAMMA))
+		return rate
+
+	def fast_pre(self, posarray, gammaarray, rtype, 
+		dsa=True, sbm=True, csaarray=0.0):
+		rates = 0.0
+		if rtype=='r1':
+			if dsa:
+				rates += self.fast_dsa_r1(posarray, gammaarray, csaarray)
+			if sbm:
+				rates += self.fast_sbm_r1(posarray, gammaarray)
+		elif rtype=='r2':
+			if dsa:
+				rates += self.fast_dsa_r2(posarray, gammaarray, csaarray)
+			if sbm:
+				rates += self.fast_sbm_r2(posarray, gammaarray)
+		return rates
+			
+
+		
 	@staticmethod
 	def spec_dens(tau, omega):
 		"""
@@ -419,7 +698,6 @@ class Metal(object):
 			the value of the spectral denstiy at <omega>
 		"""
 		return tau/(1+(omega*tau)**2)
-
 
 	@staticmethod
 	def second_invariant_squared(tensor):
@@ -445,10 +723,26 @@ class Metal(object):
 			raise ValueError("Imaginary second invariant")
 		return secondInvariantSquared.real
 
+	@staticmethod
+	def fast_second_invariant_squared(tensorarray):
+		"""
+		Calculate the second invariant at some position
+		due to the magnetic susceptibility
 
+		Parameters
+		----------
+		position : array floats
+			the position (x, y, z) in meters
 
+		Returns
+		-------
+		secondInvariant : float
+			the second invariant of the shift tensor
+		"""
+		xx, yy, zz = np.linalg.eigvals(tensorarray).real.T
+		return xx*xx + yy*yy + zz*zz - xx*yy - xx*zz - yy*zz
 
-	def curie_r1(self, position, gamma, csa=0.0, ignorePara=False):
+	def dsa_r1(self, position, gamma, csa=0.0, ignorePara=False):
 		"""
 		Calculate R1 relaxation due to Curie Spin
 
@@ -475,7 +769,7 @@ class Metal(object):
 		rate = pf * self.spec_dens(self.taur, omega)
 		return rate
 
-	def curie_r2(self, position, gamma, csa=0.0, ignorePara=False):
+	def dsa_r2(self, position, gamma, csa=0.0, ignorePara=False):
 		"""
 		Calculate R2 relaxation due to Curie Spin
 
@@ -533,43 +827,25 @@ class Metal(object):
 
 		Parameters
 		----------
-		things
+		vector : [x,y,z] array of float
+			internuclear vector in meters
+		gam1 : float
+			gyromagnetic ratio of spin 1 in rad/s/T
+		gam2 :
+			gyromagnetic ratio of spin 2 in rad/s/T
 		tensor : ChiTensor object
 			a paramagnetic tensor object from which
 			<delta_tensor> 3x3 traceless matrix attribute must be present
 
 		Returns
 		-------
-		value : float
+		rdc : float
 			the RDC in Hz
 		"""
-		distance = np.linalg.norm(vector)
-		numer = -self.HBAR * self.B0**2 * gam1 * gam2
-		denom = 120. * self.K * self.temperature * np.pi**2
-		preFactor = numer/denom
-		p1 = (1./distance**5)*np.kron(vector,vector).reshape(3,3)
-		p2 = (1./distance**3)*np.identity(3)
-		return preFactor * ((3.*p1 - p2).dot(self.tensor_traceless)).trace()
-
-	def rdc2(self, vector, gam1, gam2):
 		dist = np.linalg.norm(vector)
 		pf = -(self.MU0 * gam1 * gam2 * self.HBAR) / (4 * np.pi * dist**5)
-		dd = 3*np.kron(vector,vector).reshape(3,3) - np.identity(3)*dist**2
-		return pf * (dd.dot(self.tensor_saupe)).trace() / (2*np.pi)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		rdc_radians = 3*pf * vector.dot(self.tensor_saupe).dot(vector) 
+		return rdc_radians / (2*np.pi)
 
 
 	def make_mesh(self, density=2, size=40.0):
@@ -583,29 +859,36 @@ class Metal(object):
 
 	def pcs_mesh(self, mesh):
 		og_shape = mesh.shape[:3]
-		pcs_mesh = self.fast_pcs(mesh.reshape(np.prod(og_shape),3)).reshape(*og_shape)
-		return pcs_mesh
+		pcs_mesh = self.fast_pcs(mesh.reshape(np.prod(og_shape),3))
+		return pcs_mesh.reshape(*og_shape)
 
-	def write_pymol_script(self, protein=None, isoval=1.0, fileName='isomap.pml'):
-		s = "# PyMOL macro for loading tensor isosurface from pyrelax\n"
+	def write_pymol_script(self, protein=None, isoval=1.0, 
+		surfaceName='isomap', scriptName='isomap.pml', meshName='./isomap.pml.ccp4'):
+		posname = "pos_{}".format(surfaceName)
+		negname = "neg_{}".format(surfaceName)
+		oriname = "ori_{}".format(surfaceName)
+		s = "# PyMOL macro for loading tensor isosurface from paramagpy\n"
 		s += self.info()+'\n'
 		s += "set normalize_ccp4_maps, off\n"
-		s += "load ./isomap.pml.ccp4, isomap, 1, ccp4\n"
-		s += "isosurface isoPos, isomap, {}\n".format(isoval)
-		s += "isosurface isoNeg, isomap, -{}\n".format(isoval)
-		s += "set transparency, 0.5, isoPos\n"
-		s += "set transparency, 0.5, isoNeg\n"
-		s += "set surface_color, blue, isoPos\n"
-		s += "set surface_color, red, isoNeg\n"
-		s += "pseudoatom isoOrig, pos=[{},{},{}]\n".format(*self.position*1E10)
-		s += "show spheres, isoOrig\n"
-		s += "color pink, isoOrig\n"
+		s += "load {}, isomap, 1, ccp4\n".format(meshName)
+		s += "isosurface {}, isomap, {}\n".format(posname,isoval)
+		s += "isosurface {}, isomap, {}\n".format(negname,-isoval)
+		s += "set transparency, 0.5, {}\n".format(posname)
+		s += "set transparency, 0.5, {}\n".format(negname)
+		s += "set surface_color, blue, {}\n #<<<<Change colour here".format(
+			posname)
+		s += "set surface_color, red, {}\n  #<<<<Change colour here".format(
+			negname)
+		s += "pseudoatom {}, pos={}\n".format(oriname,list(self.position*1E10))
+		s += "show spheres, {}\n".format(oriname)
+		s += "color pink, {}\n".format(oriname)
 		if protein:
-			s += "load {}\n".format(protein.name)
-			s += "show_as cartoon, {}".format("".join(protein.name.split('.')[:-1]))
-		with open(fileName, 'w') as o:
+			s += "load {}\n".format(protein.id)
+			s += "show_as cartoon, {}".format(
+				ntpath.basename(protein.id).replace('.pdb',''))
+		with open(scriptName, 'w') as o:
 			o.write(s)
-
+			print("{} script written".format(scriptName))
 
 	def write_isomap(self, mesh, bounds, fileName='isomap.pml.ccp4'):
 		mesh = np.asarray(mesh, np.float32)
@@ -613,127 +896,32 @@ class Metal(object):
 		with open(fileName, 'wb') as o:
 			for dim in points:
 				o.write(struct.pack('i', dim)) # number points / dim
-
 			o.write(struct.pack('i',2)) # mode 2: 32bit float
-
 			for start in origin:
 				o.write(struct.pack('i', start)) # start point of map
-
 			for dim in points:
 				intervals = dim - 1
 				o.write(struct.pack('i', intervals)) # number intervals / dim
-
 			for scale in (high - low):
 				o.write(struct.pack('f', scale)) # cell dim scales
-
 			for i in range(3):
 				o.write(struct.pack('f', 90.0)) # lattice angles
-
 			for i in (1,2,3):
 				o.write(struct.pack('i', i)) # axis mappings (fast x->y->z slow)
-
 			for value in (np.min(mesh), np.max(mesh), np.mean(mesh)):
 				o.write(struct.pack('f', value)) # map min/avg/max values
-
 			o.write(struct.pack('i',1)) # space group
 			for x in range(24,257):
 				o.write(struct.pack('i',0))  # fill other fields with zero
-
 			o.write(mesh.tobytes()) # write data
 
-		return None
-
+			print("{} mesh written".format(fileName))
 
 	def isomap(self, protein=None, isoval=1.0, **kwargs):
 		mesh, bounds = self.make_mesh(**kwargs)
 		pcs_mesh = self.pcs_mesh(mesh)
 		self.write_isomap(pcs_mesh, bounds)
 		self.write_pymol_script(protein, isoval)
-
-
-
-
-# def simple_rdc(vector, gamma1, gamma2, B0, ax, rh, k, T, hbar):
-# 	dist = np.linalg.norm(vector)
-# 	x, y, z = vector
-# 	pf = -(1./(4*np.pi)) * ((B0**2)/(15*k*T)) * ((gamma1*gamma2*hbar)/(2*np.pi*dist**3))
-# 	val = ax * ((2*z**2-x**2-y**2)/(dist**2)) + (3./2.)*rh * ((x**2-y**2)/(dist**2))
-# 	return pf*val
-
-
-
-# x = 0.0E-10
-# y = 0.0E-10
-# z = 1.0E-10
-# vec = np.array([x,y,z])
-
-# gamma = 2*np.pi*42.576E6
-
-# eulers = np.random.random(size=3)
-# # eulers = np.array([0,0,0.])
-# rot = euler_to_matrix(eulers)
-
-# ax = -5.385
-# rh = -2.365
-# a, b, g = eulers*(180./np.pi)
-
-# t = Metal.make_tensor(0,0,0,ax,rh,a,b,g,'Er')
-# t.B0 = 14.1
-
-
-# print(t.rdc(vec, gamma, gamma))
-# print(t.rdc2(vec, gamma, gamma))
-# ax, rh = t.axrh
-# vecr = rot.T.dot(vec)
-# print(simple_rdc(vecr, gamma, gamma, t.B0, ax, rh, t.K, t.temperature, t.HBAR))
-
-
-
-
-
-	# # def second_invariant(self, position, add=0.0):
-	# # 	"""
-	# # 	Calculate the second invariant at some position
-	# # 	due to the magnetic susceptibility
-
-	# # 	Parameters
-	# # 	----------
-	# # 	position : array floats
-	# # 		the position (x, y, z) in meters
-
-	# # 	Returns
-	# # 	-------
-	# # 	secondInvariant : float
-	# # 		the second invariant of the shift tensor
-	# # 	"""
-	# # 	ds = self.dipole_shift_tensor(position) + add
-	# # 	dsa = ds - ds.trace()*np.identity(3)/3.
-	# # 	eigenvals, eigenvecs = np.linalg.eig(dsa)
-	# # 	x, y, z = eigenvals
-	# # 	secondInvariantSquared = x*x + y*y + z*z - x*y - x*z - y*z
-	# # 	return abs(secondInvariantSquared)**0.5
-
-
-	# def isotropic_second_invariant(self, distance):
-	# 	"""
-	# 	Calculate the second invariant at some position
-	# 	due to an isotropic magnetic susceptibility
-
-	# 	Parameters
-	# 	----------
-	# 	distance : float
-	# 		the distance in meters from the paramagnetic centre
-
-	# 	Returns
-	# 	-------
-	# 	value : float
-	# 		the isotropic second invariant
-	# 	"""
-	# 	return (3. * sum(self.eigenvalues)/3.) / (4. * np.pi * distance**3)
-
-
-
-
 
 
 
