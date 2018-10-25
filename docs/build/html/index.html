@@ -1,0 +1,879 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Welcome to paramagpy’s documentation! &#8212; paramagpy 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">paramagpy 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-paramagpy-s-documentation">
+<h1>Welcome to paramagpy’s documentation!<a class="headerlink" href="#welcome-to-paramagpy-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="paramagpy-main">
+<h1>paramagpy main<a class="headerlink" href="#paramagpy-main" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="module-paramagpy.metal">
+<span id="paramagpy-metal"></span><h1>paramagpy metal<a class="headerlink" href="#module-paramagpy.metal" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="paramagpy.metal.Metal">
+<em class="property">class </em><code class="descclassname">paramagpy.metal.</code><code class="descname">Metal</code><span class="sig-paren">(</span><em>position=(0</em>, <em>0</em>, <em>0)</em>, <em>eulers=(0</em>, <em>0</em>, <em>0)</em>, <em>axrh=(0</em>, <em>0)</em>, <em>mueff=0.0</em>, <em>shift=0.0</em>, <em>temperature=298.15</em>, <em>t1e=0.0</em>, <em>B0=18.79</em>, <em>taur=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal" title="Permalink to this definition">¶</a></dt>
+<dd><p>An object for paramagnetic chi tensors and delta-chi tensors.
+This must be created by specifying position, euler angles and
+eigenvalues only.</p>
+<dl class="classmethod">
+<dt id="paramagpy.metal.Metal.anisotropy_to_eigenvalues">
+<em class="property">classmethod </em><code class="descname">anisotropy_to_eigenvalues</code><span class="sig-paren">(</span><em>axial</em>, <em>rhombic</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.anisotropy_to_eigenvalues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.anisotropy_to_eigenvalues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate [dx,dy,dz] eigenvalues from axial and rhombic
+tensor anisotropies (axial and rhombic parameters).
+Calculations assume traceless tensor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>axial</strong> (<em>float</em>) – the axial anisotropy of the tensor</li>
+<li><strong>rhombic</strong> (<em>float</em>) – the rhombic anisotropy of the tensor</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>euler_angles</strong> – the euler angles [alpha,beta,gamma] in radians
+by ZYZ convention</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array of floats</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="paramagpy.metal.Metal.dipole_shift_tensor">
+<code class="descname">dipole_shift_tensor</code><span class="sig-paren">(</span><em>position</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.dipole_shift_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.dipole_shift_tensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the chemical shift tensor at the given postition due to the
+paramagnetic dipole tensor field</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> (<em>array floats</em>) – the position (x, y, z) in meters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>dipole_shift_tensor</strong> – the tensor describing chemical shift at the nuclear position</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">3x3 array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="paramagpy.metal.Metal.dsa_r1">
+<code class="descname">dsa_r1</code><span class="sig-paren">(</span><em>position</em>, <em>gamma</em>, <em>csa=0.0</em>, <em>ignorePara=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.dsa_r1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.dsa_r1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate R1 relaxation due to Curie Spin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atom</strong> – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> – The R1 relaxation rate in /s</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="paramagpy.metal.Metal.dsa_r2">
+<code class="descname">dsa_r2</code><span class="sig-paren">(</span><em>position</em>, <em>gamma</em>, <em>csa=0.0</em>, <em>ignorePara=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.dsa_r2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.dsa_r2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate R2 relaxation due to Curie Spin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atom</strong> – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> – The R2 relaxation rate in /s</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="paramagpy.metal.Metal.eigenvalues_to_anisotropy">
+<em class="property">classmethod </em><code class="descname">eigenvalues_to_anisotropy</code><span class="sig-paren">(</span><em>dx</em>, <em>dy</em>, <em>dz</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.eigenvalues_to_anisotropy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.eigenvalues_to_anisotropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate axial and rhombic tensor anisotropies from
+eigenvalues dx,dy,dz</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dy</strong><strong>, </strong><strong>dz</strong> (<em>dx</em><em>,</em>) – the eigenvalues of the tensor.
+These are the principle axis magnitudes</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>axial, rhombic</strong> – the tensor anisotropies</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple of floats</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="paramagpy.metal.Metal.fast_pcs">
+<code class="descname">fast_pcs</code><span class="sig-paren">(</span><em>posarray</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.fast_pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.fast_pcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rapidly calculatew the psuedo-contact shift at <a href="#id1"><span class="problematic" id="id2">`</span></a>n’ positions.
+This efficient algorithm calculates the PCSs for an array of
+positions and is best used where speed is required for fitting.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>posarray</strong> (<em>array of positions with shape</em><em> (</em><em>n</em><em>,</em><em>3</em><em>)</em>) – the position (x, y, z) in meters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>pcs</strong> – the peudo-contact shift in parts-per-million (ppm)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array of floats with shape (n,1)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="paramagpy.metal.Metal.fast_second_invariant_squared">
+<em class="property">static </em><code class="descname">fast_second_invariant_squared</code><span class="sig-paren">(</span><em>tensorarray</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.fast_second_invariant_squared"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.fast_second_invariant_squared" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the second invariant at some position
+due to the magnetic susceptibility</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> (<em>array floats</em>) – the position (x, y, z) in meters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>secondInvariant</strong> – the second invariant of the shift tensor</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="paramagpy.metal.Metal.make_tensor">
+<em class="property">classmethod </em><code class="descname">make_tensor</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z</em>, <em>axial</em>, <em>rhombic</em>, <em>alpha</em>, <em>beta</em>, <em>gamma</em>, <em>lanthanide=None</em>, <em>temperature=298.15</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.make_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.make_tensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a ChiTensor isntance from given parameters.
+This is designed to use pdb coordinates (x, y, z) and euler angles
+from an output like Numbat.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong><strong>, </strong><strong>z</strong> (<em>x</em><em>,</em>) – tensor position in pdb coordiante in Angstroms</li>
+<li><strong>rhombic</strong> (<em>axial</em><em>,</em>) – the tensor anisotropies in units 10^-32</li>
+<li><strong>beta</strong><strong>, </strong><strong>gamma</strong> (<em>alpha</em><em>,</em>) – the euler angles in degrees that maps the tensor
+to the pdb (I think?)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ChiTensor</strong> – a tensor object for calulating paramagnetic effects on
+nuclear spins in the pdb coordinate</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="paramagpy.metal.Metal.pcs">
+<code class="descname">pcs</code><span class="sig-paren">(</span><em>position</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.pcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the psuedo-contact shift at the given postition</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> (<em>array floats</em>) – the position (x, y, z) in meters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>pcs</strong> – the pseudo-contact shift in parts-per-million (ppm)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="paramagpy.metal.Metal.racs">
+<code class="descname">racs</code><span class="sig-paren">(</span><em>csa</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.racs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.racs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the residual anisotropic chemical shift at the
+given postition. The partial alignment induced by an anisotropic
+magnetic susecptiblity causes the chemical shift tensor at a nuclear
+position to average to a value different to the isotropic value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>csa</strong> (<em>3 x 3 array</em>) – the chemical shift anisotropy tensor</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>racs</strong> – the residual anisotropic chemical shift in parts-per-million (ppm)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="paramagpy.metal.Metal.rads">
+<code class="descname">rads</code><span class="sig-paren">(</span><em>position</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.rads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.rads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the residual anisotropic dipolar shift at the
+given postition. The partial alignment induced by an anisotropic
+magnetic susecptiblity causes the dipole shift tensor at a nuclear
+position to average to a value different to the PCS.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> (<em>array floats</em>) – the position (x, y, z) in meters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>rads</strong> – the residual anisotropic dipole shift in parts-per-million (ppm)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="paramagpy.metal.Metal.rdc">
+<code class="descname">rdc</code><span class="sig-paren">(</span><em>vector</em>, <em>gam1</em>, <em>gam2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.rdc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.rdc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Residual Dipolar Coupling (RDC)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>vector</strong> (<em>[</em><em>x</em><em>,</em><em>y</em><em>,</em><em>z</em><em>] </em><em>array of float</em>) – internuclear vector in meters</li>
+<li><strong>gam1</strong> (<em>float</em>) – gyromagnetic ratio of spin 1 in rad/s/T</li>
+<li><strong>gam2</strong> – gyromagnetic ratio of spin 2 in rad/s/T</li>
+<li><strong>tensor</strong> (<em>ChiTensor object</em>) – a paramagnetic tensor object from which
+&lt;delta_tensor&gt; 3x3 traceless matrix attribute must be present</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>rdc</strong> – the RDC in Hz</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="paramagpy.metal.Metal.second_invariant_squared">
+<em class="property">static </em><code class="descname">second_invariant_squared</code><span class="sig-paren">(</span><em>tensor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.second_invariant_squared"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.second_invariant_squared" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the second invariant at some position
+due to the magnetic susceptibility</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> (<em>array floats</em>) – the position (x, y, z) in meters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>secondInvariant</strong> – the second invariant of the shift tensor</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="paramagpy.metal.Metal.spec_dens">
+<em class="property">static </em><code class="descname">spec_dens</code><span class="sig-paren">(</span><em>tau</em>, <em>omega</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#Metal.spec_dens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.spec_dens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate spectral density at omega</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>omega</strong> (<em>float</em>) – the spectral density argument</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> – the value of the spectral denstiy at &lt;omega&gt;</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.metal.euler_to_matrix">
+<code class="descclassname">paramagpy.metal.</code><code class="descname">euler_to_matrix</code><span class="sig-paren">(</span><em>eulers</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#euler_to_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.euler_to_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a rotation matrix from euler angles using ZYZ convention</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>eulers</strong> (<em>array of floats</em>) – the euler angles [alpha,beta,gamma] in radians
+by ZYZ convention.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>matrix</strong> – the rotation matrix</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy 3x3 matrix object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.metal.matrix_to_euler">
+<code class="descclassname">paramagpy.metal.</code><code class="descname">matrix_to_euler</code><span class="sig-paren">(</span><em>M</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/metal.html#matrix_to_euler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.matrix_to_euler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Euler angles from a rotation matrix using ZYZ convention</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>M</strong> (<em>3x3 array</em>) – a rotation matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>eulers</strong> – the euler angles [alpha,beta,gamma] in radians
+by ZYZ convention</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array of floats</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-paramagpy.fit">
+<span id="paramagpy-fit"></span><h1>paramagpy fit<a class="headerlink" href="#module-paramagpy.fit" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="paramagpy.fit.clean_indices">
+<code class="descclassname">paramagpy.fit.</code><code class="descname">clean_indices</code><span class="sig-paren">(</span><em>indices</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/fit.html#clean_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.clean_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniquely map a list of integers to their smallest size.
+For example: [7,4,7,9,9,10,1] -&gt; [4 2 4 0 0 1 3]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>indices</strong> (<em>array-like integers</em>) – a list of integers</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>new_indices</strong> – the mapped integers with smallest size</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array-like integers</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.fit.extract_csa">
+<code class="descclassname">paramagpy.fit.</code><code class="descname">extract_csa</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/fit.html#extract_csa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.extract_csa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract CSA tensors from atoms</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>list of lists</em>) – A list with elements [Atom, value, error], where Atom is
+an Atom object, value is the PCS/RDC/PRE value,
+and error is the uncertainty</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>csas</strong> – an array of each CSA tensor</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array of 3x3 arrays</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.fit.extract_pcs">
+<code class="descclassname">paramagpy.fit.</code><code class="descname">extract_pcs</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/fit.html#extract_pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.extract_pcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract values required for PCS calculations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>list of lists</em>) – A list with elements [Atom, value, error], where Atom is
+an Atom object, value is the PCS value, and error is the uncertainty</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>tuple</strong> – all information required for PCS calculations</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(atom coordinates, PCS values, PCS errors, atom indices)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.fit.extract_pre">
+<code class="descclassname">paramagpy.fit.</code><code class="descname">extract_pre</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/fit.html#extract_pre"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.extract_pre" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract values required for PRE calculations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>list of lists</em>) – A list with elements [Atom, value, error], where Atom is
+an Atom object, value is the PRE value, and error is the uncertainty</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>tuple</strong> – all information required for PRE calculations</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(atom coordinates, PRE values, PRE errors, atom indices)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.fit.extract_rdc">
+<code class="descclassname">paramagpy.fit.</code><code class="descname">extract_rdc</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/fit.html#extract_rdc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.extract_rdc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract values required for RDC calculations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>list of lists</em>) – A list with elements [Atom, value, error], where Atom is
+an Atom object, value is the RDC value, and error is the uncertainty</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>tuple</strong> –         RDC errors, atom indices)
+all information required for RDC calculations</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(inter-atomic vector, gamma values, RDC values,</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.fit.nlr_fit_metal_from_pcs">
+<code class="descclassname">paramagpy.fit.</code><code class="descname">nlr_fit_metal_from_pcs</code><span class="sig-paren">(</span><em>initMetals</em>, <em>pcss</em>, <em>params</em>, <em>sumIndices=None</em>, <em>userads=False</em>, <em>useracs=False</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/fit.html#nlr_fit_metal_from_pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.nlr_fit_metal_from_pcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit deltaChi tensor to PCS values using non-linear regression.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>initMetals</strong> (<em>list of Metal objects</em>) – a list of metals used as starting points for fitting.
+a list must always be provided, but may also contain
+only one element. If multiple metals are provided, each metal
+is fitted to their respective PCS dataset by index, but all are
+fitted to a common position.</li>
+<li><strong>pcss</strong> (<em>list of PCS datasets</em>) – each PCS dataset must correspond to an associated metal for fitting.
+each PCS dataset has structure [Atom, value, error], where Atom is
+an Atom object, value is the PCS/RDC/PRE value
+and error is the uncertainty</li>
+<li><strong>params</strong> (<em>list of str</em>) – the parameters to be fit.
+For example [‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’,’shift’]</li>
+<li><strong>sumIndices</strong> (<em>list of arrays of ints</em><em>, </em><em>optional</em>) – each index list must correspond to an associated pcs dataset.
+each index list contains an index assigned to each atom.
+Common indices determine summation between models
+for ensemble averaging.
+If None, defaults to atom serial number to determine summation
+between models.</li>
+<li><strong>userads</strong> (<em>bool</em><em>, </em><em>optional</em>) – include residual anisotropic dipolar shielding (RADS) during fitting</li>
+<li><strong>useracs</strong> (<em>bool</em><em>, </em><em>optional</em>) – include residual anisotropic chemical shielding (RACS) during fitting.
+CSA tensors are taken using the &lt;csa&gt; method of atoms.</li>
+<li><strong>progress</strong> (<em>object</em><em>, </em><em>optional</em>) – to keep track of the calculation, progress.set(x) is called each
+iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>metals</strong> – the metals fitted by NLR to the PCS data provided</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of metals</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.fit.nlr_fit_metal_from_pre">
+<code class="descclassname">paramagpy.fit.</code><code class="descname">nlr_fit_metal_from_pre</code><span class="sig-paren">(</span><em>initMetals</em>, <em>pres</em>, <em>params</em>, <em>sumIndices=None</em>, <em>rtypes=None</em>, <em>usesbm=True</em>, <em>usedsa=True</em>, <em>usecsa=False</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/fit.html#nlr_fit_metal_from_pre"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.nlr_fit_metal_from_pre" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit deltaChi tensor to PCS values using non-linear regression.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>initMetals</strong> (<em>list of Metal objects</em>) – a list of metals used as starting points for fitting.
+a list must always be provided, but may also contain
+only one element. If multiple metals are provided, each metal
+is fitted to their respective PCS dataset by index, but all are
+fitted to a common position.</li>
+<li><strong>pcss</strong> (<em>list of PCS datasets</em>) – each PCS dataset must correspond to an associated metal for fitting.
+each PCS dataset has structure [Atom, value, error], where Atom is
+an Atom object, value is the PCS/RDC/PRE value
+and error is the uncertainty</li>
+<li><strong>params</strong> (<em>list of str</em>) – the parameters to be fit.
+For example [‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’,’shift’]</li>
+<li><strong>sumIndices</strong> (<em>list of arrays of ints</em><em>, </em><em>optional</em>) – each index list must correspond to an associated pcs dataset.
+each index list contains an index assigned to each atom.
+Common indices determine summation between models
+for ensemble averaging.
+If None, defaults to atom serial number to determine summation
+between models.</li>
+<li><strong>userads</strong> (<em>bool</em><em>, </em><em>optional</em>) – include residual anisotropic dipolar shielding (RADS) during fitting</li>
+<li><strong>useracs</strong> (<em>bool</em><em>, </em><em>optional</em>) – include residual anisotropic chemical shielding (RACS) during fitting.
+CSA tensors are taken using the &lt;csa&gt; method of atoms.</li>
+<li><strong>progress</strong> (<em>object</em><em>, </em><em>optional</em>) – to keep track of the calculation, progress.set(x) is called each
+iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>metals</strong> – the metals fitted by NLR to the PCS data provided</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of metals</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.fit.sphere_grid">
+<code class="descclassname">paramagpy.fit.</code><code class="descname">sphere_grid</code><span class="sig-paren">(</span><em>origin</em>, <em>radius</em>, <em>points</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/fit.html#sphere_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.sphere_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a grid of cartesian points within a sphere</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>origin</strong> (<em>float</em>) – the centre of the sphere</li>
+<li><strong>radius</strong> (<em>float</em>) – the radius of the sphere</li>
+<li><strong>points</strong> (<em>int</em>) – the number of points per radius</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>array</strong> – the points within the sphere</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array of [x,y,z] coordinates</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.fit.svd_calc_metal_from_pcs">
+<code class="descclassname">paramagpy.fit.</code><code class="descname">svd_calc_metal_from_pcs</code><span class="sig-paren">(</span><em>pos</em>, <em>pcs</em>, <em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/fit.html#svd_calc_metal_from_pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.svd_calc_metal_from_pcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve PCS equation by single value decomposition.
+This function is generally called by higher methods like
+&lt;svd_gridsearch_fit_metal_from_pcs&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pos</strong> (<em>array of</em><em> [</em><em>x</em><em>,</em><em>y</em><em>,</em><em>z</em><em>] </em><em>floats</em>) – the atomic positions in meters</li>
+<li><strong>pcs</strong> (<em>array of floats</em>) – the PCS values in ppm</li>
+<li><strong>idx</strong> (<em>array of ints</em>) – an index assigned to each atom. Common indices determine summation
+between models for ensemble averaging.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>tuple</strong> – calc are the calculated PCS values from the fitted tensor
+sol is the solution to the linearised PCS equation and
+consists of the tensor matrix elements</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(calc, sol)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.fit.svd_calc_metal_from_pcs_offset">
+<code class="descclassname">paramagpy.fit.</code><code class="descname">svd_calc_metal_from_pcs_offset</code><span class="sig-paren">(</span><em>pos</em>, <em>pcs</em>, <em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/fit.html#svd_calc_metal_from_pcs_offset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.svd_calc_metal_from_pcs_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve PCS equation by single value decomposition with offset.
+An offset arising from referencing errors between diamagnetic
+and paramagnetic datasets can be accounted for using this method.
+This function is generally called by higher methods like
+&lt;svd_gridsearch_fit_metal_from_pcs&gt;</p>
+<p>NOTE: the factor of 1E26 is required for floating point error mitigation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pos</strong> (<em>array of</em><em> [</em><em>x</em><em>,</em><em>y</em><em>,</em><em>z</em><em>] </em><em>floats</em>) – the atomic positions in meters</li>
+<li><strong>pcs</strong> (<em>array of floats</em>) – the PCS values in ppm</li>
+<li><strong>idx</strong> (<em>array of ints</em>) – an index assigned to each atom. Common indices determine summation
+between models for ensemble averaging.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>tuple</strong> – calc are the calculated PCS values from the fitted tensor
+sol is the solution to the linearised PCS equation and
+consists of the tensor matrix elements and offset</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(calc, sol)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs">
+<code class="descclassname">paramagpy.fit.</code><code class="descname">svd_gridsearch_fit_metal_from_pcs</code><span class="sig-paren">(</span><em>metals</em>, <em>pcss</em>, <em>sumIndices=None</em>, <em>origin=None</em>, <em>radius=20.0</em>, <em>points=16</em>, <em>offsetShift=False</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/fit.html#svd_gridsearch_fit_metal_from_pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.svd_gridsearch_fit_metal_from_pcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit deltaChi tensor to PCS values using Single Value Decomposition over
+a grid of points in a sphere.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>metals</strong> (<em>list of Metal objects</em>) – a list of metals used as starting points for fitting.
+a list must always be provided, but may also contain
+only one element. If multiple metals are provided, each metal
+is fitted to their respective PCS dataset by index, but all are
+fitted to a common position.</li>
+<li><strong>pcss</strong> (<em>list of PCS datasets</em>) – each PCS dataset must correspond to an associated metal for fitting.
+each PCS dataset has structure [Atom, value, error], where Atom is
+an Atom object, value is the PCS/RDC/PRE value
+and error is the uncertainty</li>
+<li><strong>sumIndices</strong> (<em>list of arrays of ints</em><em>, </em><em>optional</em>) – each index list must correspond to an associated pcs dataset.
+each index list contains an index assigned to each atom.
+Common indices determine summation between models
+for ensemble averaging.
+If None, defaults to atom serial number to determine summation
+between models.</li>
+<li><strong>origin</strong> (<em>float</em><em>, </em><em>optional</em>) – the centre of the gridsearch of positions in Angstroms.
+If None, the position of the first metal is used</li>
+<li><strong>radius</strong> (<em>float</em><em>, </em><em>optional</em>) – the radius of the gridsearch in Angstroms.</li>
+<li><strong>points</strong> (<em>int</em><em>, </em><em>optional</em>) – the number of points per radius in the gridsearch</li>
+<li><strong>offsetShift</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, an offset value added to all PCS values is included in
+the SVD fitting. This may arise due to a referencing error between
+diamagnetic and paramagnetic PCS datasets and may be used when
+many data points are available.
+Default False, no offset is included in the fitting.</li>
+<li><strong>progress</strong> (<em>object</em><em>, </em><em>optional</em>) – to keep track of the calculation, progress.set(x) is called each
+iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>minmetals</strong> – the metals fitted by SVD to the PCS data provided</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of metals</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.fit.unique_pairing">
+<code class="descclassname">paramagpy.fit.</code><code class="descname">unique_pairing</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/fit.html#unique_pairing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.unique_pairing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniquely map two integers to a single integer.
+The mapped space is minimum size.
+The input is symmetric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>int</em>) – </li>
+<li><strong>b</strong> (<em>int</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>c</strong> – unique symmetric mapping (a, b) -&gt; c</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-paramagpy.protein">
+<span id="paramagpy-protein"></span><h1>paramagpy protein<a class="headerlink" href="#module-paramagpy.protein" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="paramagpy.protein.CustomStructure">
+<em class="property">class </em><code class="descclassname">paramagpy.protein.</code><code class="descname">CustomStructure</code><span class="sig-paren">(</span><em>*arg</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/protein.html#CustomStructure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.protein.CustomStructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>docstring for CustomStructure</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="paramagpy.protein.CustomStructureBuilder">
+<em class="property">class </em><code class="descclassname">paramagpy.protein.</code><code class="descname">CustomStructureBuilder</code><span class="sig-paren">(</span><em>*arg</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/protein.html#CustomStructureBuilder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.protein.CustomStructureBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>docstring for CustomStructureBuilder</p>
+<dl class="method">
+<dt id="paramagpy.protein.CustomStructureBuilder.init_atom">
+<code class="descname">init_atom</code><span class="sig-paren">(</span><em>name</em>, <em>coord</em>, <em>b_factor</em>, <em>occupancy</em>, <em>altloc</em>, <em>fullname</em>, <em>serial_number=None</em>, <em>element=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/protein.html#CustomStructureBuilder.init_atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.protein.CustomStructureBuilder.init_atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new Atom object.
+:param - name - string, atom name, e.g. CA, spaces should be stripped:
+:param - coord - Numeric array:
+:type - coord - Numeric array: Float0, size 3
+:param - b_factor - float, B factor:
+:param - occupancy - float:
+:param - altloc - string, alternative location specifier:
+:param - fullname - string, atom name including spaces, e.g. ” CA “:
+:param - element - string, upper case, e.g. “HG” for mercury:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="paramagpy.protein.CustomStructureBuilder.init_structure">
+<code class="descname">init_structure</code><span class="sig-paren">(</span><em>structure_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/protein.html#CustomStructureBuilder.init_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.protein.CustomStructureBuilder.init_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a new Structure object with given id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id - string</strong> (<em>-</em>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="paramagpy.protein.rotation_matrix">
+<code class="descclassname">paramagpy.protein.</code><code class="descname">rotation_matrix</code><span class="sig-paren">(</span><em>axis</em>, <em>theta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/protein.html#rotation_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.protein.rotation_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the rotation matrix associated with counterclockwise
+rotation about the given axis by theta radians.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>axis</strong> (<em>array of floats</em>) – the [x,y,z] axis for rotation.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>matrix</strong> – the rotation matrix</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy 3x3 matrix object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-paramagpy.dataparse">
+<span id="paramagpy-dataparse"></span><h1>paramagpy dataparse<a class="headerlink" href="#module-paramagpy.dataparse" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="paramagpy.dataparse.DataContainer">
+<em class="property">class </em><code class="descclassname">paramagpy.dataparse.</code><code class="descname">DataContainer</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paramagpy/dataparse.html#DataContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.dataparse.DataContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>docstring for DataContainer</p>
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to paramagpy’s documentation!</a></li>
+<li><a class="reference internal" href="#paramagpy-main">paramagpy main</a></li>
+<li><a class="reference internal" href="#module-paramagpy.metal">paramagpy metal</a></li>
+<li><a class="reference internal" href="#module-paramagpy.fit">paramagpy fit</a></li>
+<li><a class="reference internal" href="#module-paramagpy.protein">paramagpy protein</a></li>
+<li><a class="reference internal" href="#module-paramagpy.dataparse">paramagpy dataparse</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">paramagpy 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Henry Orton.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

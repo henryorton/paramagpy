@@ -3,8 +3,6 @@ import struct
 from collections import OrderedDict
 import ntpath
 
-
-
 def euler_to_matrix(eulers):
 	"""
 	Calculate a rotation matrix from euler angles using ZYZ convention
