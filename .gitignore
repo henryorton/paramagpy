@@ -9,4 +9,5 @@ __pycache__
 *.log
 *.synctex.gz
 *.sublime-workspace
-**/gui_executables
+*/gui_executables/*
+gui_executables/*
