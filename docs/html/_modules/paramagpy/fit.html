@@ -1,0 +1,831 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>paramagpy.fit &#8212; paramagpy 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for paramagpy.fit</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="c1"># from .metal import Metal</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">fmin_bfgs</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
+
+<div class="viewcode-block" id="unique_pairing"><a class="viewcode-back" href="../../index.html#paramagpy.fit.unique_pairing">[docs]</a><span class="k">def</span> <span class="nf">unique_pairing</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Uniquely map two integers to a single integer.</span>
+<span class="sd">	The mapped space is minimum size.</span>
+<span class="sd">	The input is symmetric.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	a : int</span>
+<span class="sd">	b : int</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	c : int</span>
+<span class="sd">		unique symmetric mapping (a, b) -&gt; c</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">+</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">//</span> <span class="mi">4</span>
+	<span class="k">return</span> <span class="n">c</span></div>
+
+<div class="viewcode-block" id="clean_indices"><a class="viewcode-back" href="../../index.html#paramagpy.fit.clean_indices">[docs]</a><span class="k">def</span> <span class="nf">clean_indices</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Uniquely map a list of integers to their smallest size.</span>
+<span class="sd">	For example: [7,4,7,9,9,10,1] -&gt; [4 2 4 0 0 1 3]</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	indices : array-like integers</span>
+<span class="sd">		a list of integers</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	new_indices : array-like integers</span>
+<span class="sd">		the mapped integers with smallest size</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">translation</span> <span class="o">=</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">indices</span><span class="p">))}</span>
+	<span class="n">new_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">translation</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_indices</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="extract_pcs"><a class="viewcode-back" href="../../index.html#paramagpy.fit.extract_pcs">[docs]</a><span class="k">def</span> <span class="nf">extract_pcs</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Extract values required for PCS calculations</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	data : list of lists</span>
+<span class="sd">		A list with elements [Atom, value, error], where Atom is </span>
+<span class="sd">		an Atom object, value is the PCS value, and error is the uncertainty</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	tuple : (atom coordinates, PCS values, PCS errors, atom indices)</span>
+<span class="sd">		all information required for PCS calculations</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">atoms</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+	<span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">position</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
+	<span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+	<span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
+	<span class="k">if</span> <span class="mf">0.0</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+		<span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">))</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: 0.0 value uncertainty. All values weighted evenly&quot;</span><span class="p">)</span>
+	<span class="n">idxs</span> <span class="o">=</span> <span class="n">clean_indices</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">serial_number</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
+	<span class="k">return</span> <span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="n">idxs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="extract_pre"><a class="viewcode-back" href="../../index.html#paramagpy.fit.extract_pre">[docs]</a><span class="k">def</span> <span class="nf">extract_pre</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Extract values required for PRE calculations</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	data : list of lists</span>
+<span class="sd">		A list with elements [Atom, value, error], where Atom is </span>
+<span class="sd">		an Atom object, value is the PRE value, and error is the uncertainty</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	tuple : (atom coordinates, PRE values, PRE errors, atom indices)</span>
+<span class="sd">		all information required for PRE calculations</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">atoms</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+	<span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">position</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
+	<span class="n">gammas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">gamma</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
+	<span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+	<span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
+	<span class="k">if</span> <span class="mf">0.0</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+		<span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">))</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: 0.0 value uncertainty. All values weighted evenly&quot;</span><span class="p">)</span>
+	<span class="n">idxs</span> <span class="o">=</span> <span class="n">clean_indices</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">serial_number</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
+	<span class="k">return</span> <span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">gammas</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="n">idxs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="extract_csa"><a class="viewcode-back" href="../../index.html#paramagpy.fit.extract_csa">[docs]</a><span class="k">def</span> <span class="nf">extract_csa</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Extract CSA tensors from atoms</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	data : list of lists</span>
+<span class="sd">		A list with elements [Atom, value, error], where Atom is </span>
+<span class="sd">		an Atom object, value is the PCS/RDC/PRE value, </span>
+<span class="sd">		and error is the uncertainty</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	csas : array of 3x3 arrays</span>
+<span class="sd">		an array of each CSA tensor</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">atoms</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">csa</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="extract_rdc"><a class="viewcode-back" href="../../index.html#paramagpy.fit.extract_rdc">[docs]</a><span class="k">def</span> <span class="nf">extract_rdc</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Extract values required for RDC calculations</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	data : list of lists</span>
+<span class="sd">		A list with elements [Atom, value, error], where Atom is </span>
+<span class="sd">		an Atom object, value is the RDC value, and error is the uncertainty</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	tuple : (inter-atomic vector, gamma values, RDC values, </span>
+<span class="sd">			RDC errors, atom indices)</span>
+<span class="sd">		all information required for RDC calculations</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">atoms1</span><span class="p">,</span> <span class="n">atoms2</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+	<span class="n">vectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span><span class="o">.</span><span class="n">position</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">position</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atoms1</span><span class="p">,</span> <span class="n">atoms2</span><span class="p">)]</span>
+	<span class="n">gammas</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">j</span><span class="o">.</span><span class="n">gamma</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atoms1</span><span class="p">,</span> <span class="n">atoms2</span><span class="p">)]</span>
+	<span class="n">idxs</span> <span class="o">=</span> <span class="n">clean_indices</span><span class="p">([</span><span class="n">unique_pairing</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">serial_number</span><span class="p">,</span> 
+		<span class="n">j</span><span class="o">.</span><span class="n">serial_number</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atoms1</span><span class="p">,</span> <span class="n">atoms2</span><span class="p">)])</span>
+	<span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="n">vectors</span><span class="p">,</span> <span class="n">gammas</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="n">idxs</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="sphere_grid"><a class="viewcode-back" href="../../index.html#paramagpy.fit.sphere_grid">[docs]</a><span class="k">def</span> <span class="nf">sphere_grid</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Make a grid of cartesian points within a sphere</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	origin : float</span>
+<span class="sd">		the centre of the sphere</span>
+<span class="sd">	radius : float</span>
+<span class="sd">		the radius of the sphere</span>
+<span class="sd">	points : int</span>
+<span class="sd">		the number of points per radius</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	array : array of [x,y,z] coordinates</span>
+<span class="sd">		the points within the sphere</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">radius</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">points</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">mgrid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+	<span class="n">norms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mgrid</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">sphere_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">norms</span><span class="o">&lt;=</span><span class="n">radius</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">mgrid</span><span class="p">[</span><span class="n">sphere_idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">origin</span></div>
+
+
+<div class="viewcode-block" id="svd_calc_metal_from_pcs"><a class="viewcode-back" href="../../index.html#paramagpy.fit.svd_calc_metal_from_pcs">[docs]</a><span class="k">def</span> <span class="nf">svd_calc_metal_from_pcs</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">pcs</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Solve PCS equation by single value decomposition.</span>
+<span class="sd">	This function is generally called by higher methods like </span>
+<span class="sd">	&lt;svd_gridsearch_fit_metal_from_pcs&gt;</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	pos : array of [x,y,z] floats</span>
+<span class="sd">		the atomic positions in meters</span>
+<span class="sd">	pcs : array of floats</span>
+<span class="sd">		the PCS values in ppm</span>
+<span class="sd">	idx : array of ints</span>
+<span class="sd">		an index assigned to each atom. Common indices determine summation</span>
+<span class="sd">		between models for ensemble averaging.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	tuple : (calc, sol)</span>
+<span class="sd">		calc are the calculated PCS values from the fitted tensor</span>
+<span class="sd">		sol is the solution to the linearised PCS equation and </span>
+<span class="sd">		consists of the tensor matrix elements</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">floatscale</span> <span class="o">=</span> <span class="mf">1E-24</span>
+	<span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">T</span>
+	<span class="n">a</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span>
+	<span class="n">b</span> <span class="o">=</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span>
+	<span class="n">c</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+	<span class="n">d</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">z</span>
+	<span class="n">e</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">z</span>
+	<span class="n">mat</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">dist</span><span class="o">**</span><span class="mi">5</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">e</span><span class="p">])</span>
+	<span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">mat</span><span class="p">])</span><span class="o">*</span><span class="mf">1E-24</span>
+	<span class="n">matinv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
+	<span class="n">sol</span> <span class="o">=</span> <span class="n">matinv</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pcs</span><span class="o">*</span><span class="mf">1E-6</span><span class="p">)</span><span class="o">*</span><span class="mf">1E-24</span>
+	<span class="n">calc</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">calc</span><span class="p">,</span> <span class="n">sol</span></div>
+
+
+<div class="viewcode-block" id="svd_calc_metal_from_pcs_offset"><a class="viewcode-back" href="../../index.html#paramagpy.fit.svd_calc_metal_from_pcs_offset">[docs]</a><span class="k">def</span> <span class="nf">svd_calc_metal_from_pcs_offset</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">pcs</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Solve PCS equation by single value decomposition with offset.</span>
+<span class="sd">	An offset arising from referencing errors between diamagnetic</span>
+<span class="sd">	and paramagnetic datasets can be accounted for using this method.</span>
+<span class="sd">	This function is generally called by higher methods like </span>
+<span class="sd">	&lt;svd_gridsearch_fit_metal_from_pcs&gt;</span>
+
+<span class="sd">	NOTE: the factor of 1E26 is required for floating point error mitigation</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	pos : array of [x,y,z] floats</span>
+<span class="sd">		the atomic positions in meters</span>
+<span class="sd">	pcs : array of floats</span>
+<span class="sd">		the PCS values in ppm</span>
+<span class="sd">	idx : array of ints</span>
+<span class="sd">		an index assigned to each atom. Common indices determine summation</span>
+<span class="sd">		between models for ensemble averaging.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	tuple : (calc, sol)</span>
+<span class="sd">		calc are the calculated PCS values from the fitted tensor</span>
+<span class="sd">		sol is the solution to the linearised PCS equation and </span>
+<span class="sd">		consists of the tensor matrix elements and offset</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">T</span>
+	<span class="n">a</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span>
+	<span class="n">b</span> <span class="o">=</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span>
+	<span class="n">c</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+	<span class="n">d</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">z</span>
+	<span class="n">e</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">z</span>
+	<span class="n">scale</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">dist</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span>
+	<span class="n">mat</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="mf">1E26</span><span class="o">/</span><span class="n">scale</span><span class="p">])</span>
+	<span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">mat</span><span class="p">])</span><span class="o">*</span><span class="mf">1E-24</span>
+	<span class="n">matinv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
+	<span class="n">sol</span> <span class="o">=</span> <span class="n">matinv</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pcs</span><span class="o">*</span><span class="mf">1E-6</span><span class="p">)</span><span class="o">*</span><span class="mf">1E-24</span>
+	<span class="n">sol</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">1E26</span>
+	<span class="n">calc</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">calc</span><span class="p">,</span> <span class="n">sol</span></div>
+
+
+<div class="viewcode-block" id="svd_gridsearch_fit_metal_from_pcs"><a class="viewcode-back" href="../../index.html#paramagpy.fit.svd_gridsearch_fit_metal_from_pcs">[docs]</a><span class="k">def</span> <span class="nf">svd_gridsearch_fit_metal_from_pcs</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">pcss</span><span class="p">,</span> <span class="n">sumIndices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+	<span class="n">origin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">offsetShift</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Fit deltaChi tensor to PCS values using Single Value Decomposition over</span>
+<span class="sd">	a grid of points in a sphere.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	metals : list of Metal objects</span>
+<span class="sd">		a list of metals used as starting points for fitting. </span>
+<span class="sd">		a list must always be provided, but may also contain </span>
+<span class="sd">		only one element. If multiple metals are provided, each metal</span>
+<span class="sd">		is fitted to their respective PCS dataset by index, but all are </span>
+<span class="sd">		fitted to a common position.</span>
+<span class="sd">	pcss : list of PCS datasets</span>
+<span class="sd">		each PCS dataset must correspond to an associated metal for fitting.</span>
+<span class="sd">		each PCS dataset has structure [Atom, value, error], where Atom is </span>
+<span class="sd">		an Atom object, value is the PCS/RDC/PRE value</span>
+<span class="sd">		and error is the uncertainty</span>
+<span class="sd">	sumIndices : list of arrays of ints, optional</span>
+<span class="sd">		each index list must correspond to an associated pcs dataset.</span>
+<span class="sd">		each index list contains an index assigned to each atom. </span>
+<span class="sd">		Common indices determine summation between models </span>
+<span class="sd">		for ensemble averaging.</span>
+<span class="sd">		If None, defaults to atom serial number to determine summation </span>
+<span class="sd">		between models.</span>
+<span class="sd">	origin : float, optional</span>
+<span class="sd">		the centre of the gridsearch of positions in Angstroms.</span>
+<span class="sd">		If None, the position of the first metal is used</span>
+<span class="sd">	radius : float, optional</span>
+<span class="sd">		the radius of the gridsearch in Angstroms.</span>
+<span class="sd">	points : int, optional</span>
+<span class="sd">		the number of points per radius in the gridsearch</span>
+<span class="sd">	offsetShift : bool, optional</span>
+<span class="sd">		if True, an offset value added to all PCS values is included in</span>
+<span class="sd">		the SVD fitting. This may arise due to a referencing error between</span>
+<span class="sd">		diamagnetic and paramagnetic PCS datasets and may be used when</span>
+<span class="sd">		many data points are available.</span>
+<span class="sd">		Default False, no offset is included in the fitting.</span>
+<span class="sd">	progress : object, optional</span>
+<span class="sd">		to keep track of the calculation, progress.set(x) is called each</span>
+<span class="sd">		iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	minmetals : list of metals</span>
+<span class="sd">		the metals fitted by SVD to the PCS data provided</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">metals</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">pcss</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">origin</span> <span class="o">=</span> <span class="n">metals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">*</span><span class="mf">1E10</span>
+
+	<span class="k">if</span> <span class="n">offsetShift</span><span class="p">:</span>
+		<span class="n">svd_func</span> <span class="o">=</span> <span class="n">svd_calc_metal_from_pcs_offset</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">svd_func</span> <span class="o">=</span> <span class="n">svd_calc_metal_from_pcs</span>
+
+	<span class="n">posarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">pcsarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">idxarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">pcs</span> <span class="ow">in</span> <span class="n">pcss</span><span class="p">:</span>
+		<span class="n">posarray</span><span class="p">,</span> <span class="n">pcsarray</span><span class="p">,</span> <span class="n">errarray</span><span class="p">,</span> <span class="n">idxarray</span> <span class="o">=</span> <span class="n">extract_pcs</span><span class="p">(</span><span class="n">pcs</span><span class="p">)</span>
+		<span class="n">posarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posarray</span><span class="p">)</span>
+		<span class="n">pcsarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pcsarray</span><span class="p">)</span>
+		<span class="n">idxarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idxarray</span><span class="p">)</span>
+	<span class="n">sphere</span> <span class="o">=</span> <span class="n">sphere_grid</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span><span class="o">*</span><span class="mf">1E-10</span>
+
+	<span class="k">if</span> <span class="n">sumIndices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">idxarrays</span> <span class="o">=</span> <span class="n">sumIndices</span>
+
+	<span class="n">tmp</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">pcsarray</span><span class="p">,</span> <span class="n">idxarray</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pcsarrays</span><span class="p">,</span> <span class="n">idxarrays</span><span class="p">):</span>
+		<span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">idxarray</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">pcsarray</span><span class="p">))</span>
+	<span class="n">pcsarrays</span> <span class="o">=</span> <span class="n">tmp</span>
+
+	<span class="n">minscore</span> <span class="o">=</span> <span class="mf">1E50</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SVD search started in </span><span class="si">{}</span><span class="s2"> points&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sphere</span><span class="p">)))</span>
+	<span class="n">tot</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sphere</span><span class="p">)</span>
+	<span class="n">prog</span> <span class="o">=</span> <span class="mf">0.0</span>
+	<span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">sphere</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">progress</span><span class="p">:</span>
+			<span class="n">prog</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="n">progress</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">prog</span><span class="o">/</span><span class="n">tot</span><span class="p">)</span>
+		<span class="n">score</span> <span class="o">=</span> <span class="mf">0.0</span>
+		<span class="k">for</span> <span class="n">pcsarray</span><span class="p">,</span> <span class="n">posarray</span><span class="p">,</span> <span class="n">idxarray</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pcsarrays</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> <span class="n">idxarrays</span><span class="p">):</span>
+			<span class="n">coords</span> <span class="o">=</span> <span class="n">posarray</span> <span class="o">-</span> <span class="n">pos</span>
+			<span class="n">calculated</span><span class="p">,</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">svd_func</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">pcsarray</span><span class="p">,</span> <span class="n">idxarray</span><span class="p">)</span>
+			<span class="n">score</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">calculated</span> <span class="o">-</span> <span class="n">pcsarray</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">score</span><span class="o">&lt;</span><span class="n">minscore</span><span class="p">:</span>
+			<span class="n">minscore</span> <span class="o">=</span> <span class="n">score</span>
+			<span class="n">minpos</span> <span class="o">=</span> <span class="n">pos</span>
+
+	<span class="n">minmetals</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">metals</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">pcsarray</span><span class="p">,</span> <span class="n">posarray</span><span class="p">,</span> <span class="n">idxarray</span><span class="p">,</span> <span class="n">metal</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pcsarrays</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> 
+		<span class="n">idxarrays</span><span class="p">,</span> <span class="n">minmetals</span><span class="p">):</span>
+		<span class="n">coords</span> <span class="o">=</span> <span class="n">posarray</span> <span class="o">-</span> <span class="n">minpos</span>
+		<span class="n">_</span><span class="p">,</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">svd_func</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">pcsarray</span><span class="p">,</span> <span class="n">idxarray</span><span class="p">)</span>
+		<span class="n">metal</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">minpos</span>
+		<span class="k">if</span> <span class="n">offsetShift</span><span class="p">:</span>
+			<span class="n">metal</span><span class="o">.</span><span class="n">upper_triang</span> <span class="o">=</span> <span class="n">solution</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">metal</span><span class="o">.</span><span class="n">shift</span> <span class="o">=</span> <span class="n">solution</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mf">1E6</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">metal</span><span class="o">.</span><span class="n">upper_triang</span> <span class="o">=</span> <span class="n">solution</span>
+	<span class="k">return</span> <span class="n">minmetals</span></div>
+
+
+
+<div class="viewcode-block" id="nlr_fit_metal_from_pcs"><a class="viewcode-back" href="../../index.html#paramagpy.fit.nlr_fit_metal_from_pcs">[docs]</a><span class="k">def</span> <span class="nf">nlr_fit_metal_from_pcs</span><span class="p">(</span><span class="n">initMetals</span><span class="p">,</span> <span class="n">pcss</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> 
+	<span class="n">sumIndices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">userads</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">useracs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Fit deltaChi tensor to PCS values using non-linear regression.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	initMetals : list of Metal objects</span>
+<span class="sd">		a list of metals used as starting points for fitting. </span>
+<span class="sd">		a list must always be provided, but may also contain </span>
+<span class="sd">		only one element. If multiple metals are provided, each metal</span>
+<span class="sd">		is fitted to their respective PCS dataset by index, but all are </span>
+<span class="sd">		fitted to a common position.</span>
+<span class="sd">	pcss : list of PCS datasets</span>
+<span class="sd">		each PCS dataset must correspond to an associated metal for fitting.</span>
+<span class="sd">		each PCS dataset has structure [Atom, value, error], where Atom is </span>
+<span class="sd">		an Atom object, value is the PCS/RDC/PRE value</span>
+<span class="sd">		and error is the uncertainty</span>
+<span class="sd">	params : list of str</span>
+<span class="sd">		the parameters to be fit. </span>
+<span class="sd">		For example [&#39;x&#39;,&#39;y&#39;,&#39;z&#39;,&#39;ax&#39;,&#39;rh&#39;,&#39;a&#39;,&#39;b&#39;,&#39;g&#39;,&#39;shift&#39;]</span>
+<span class="sd">	sumIndices : list of arrays of ints, optional</span>
+<span class="sd">		each index list must correspond to an associated pcs dataset.</span>
+<span class="sd">		each index list contains an index assigned to each atom. </span>
+<span class="sd">		Common indices determine summation between models </span>
+<span class="sd">		for ensemble averaging.</span>
+<span class="sd">		If None, defaults to atom serial number to determine summation </span>
+<span class="sd">		between models.</span>
+<span class="sd">	userads : bool, optional</span>
+<span class="sd">		include residual anisotropic dipolar shielding (RADS) during fitting</span>
+<span class="sd">	useracs : bool, optional</span>
+<span class="sd">		include residual anisotropic chemical shielding (RACS) during fitting.</span>
+<span class="sd">		CSA tensors are taken using the &lt;csa&gt; method of atoms.</span>
+<span class="sd">	progress : object, optional</span>
+<span class="sd">		to keep track of the calculation, progress.set(x) is called each</span>
+<span class="sd">		iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	metals : list of metals</span>
+<span class="sd">		the metals fitted by NLR to the PCS data provided</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">posarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">csaarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">pcsarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">errarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">idxarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">pcs</span> <span class="ow">in</span> <span class="n">pcss</span><span class="p">:</span>
+		<span class="n">posarray</span><span class="p">,</span> <span class="n">pcsarray</span><span class="p">,</span> <span class="n">errarray</span><span class="p">,</span> <span class="n">idxarray</span> <span class="o">=</span> <span class="n">extract_pcs</span><span class="p">(</span><span class="n">pcs</span><span class="p">)</span>
+		<span class="n">posarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posarray</span><span class="p">)</span>
+		<span class="n">pcsarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pcsarray</span><span class="p">)</span>
+		<span class="n">errarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">errarray</span><span class="p">)</span>
+		<span class="n">idxarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idxarray</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">useracs</span><span class="p">:</span>
+			<span class="n">csas</span> <span class="o">=</span> <span class="n">extract_csa</span><span class="p">(</span><span class="n">pcs</span><span class="p">)</span>
+			<span class="n">csaarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">csas</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">csaarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+	<span class="n">metals</span> <span class="o">=</span> <span class="p">[</span><span class="n">metal</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">metal</span> <span class="ow">in</span> <span class="n">initMetals</span><span class="p">]</span>
+	<span class="n">pospars</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span> <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">]]</span>
+	<span class="n">otherpars</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span> <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">]]</span>
+
+	<span class="k">if</span> <span class="n">sumIndices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">idxarrays</span> <span class="o">=</span> <span class="n">sumIndices</span>
+
+	<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+		<span class="n">pos</span> <span class="o">=</span> <span class="n">args</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">pospars</span><span class="p">)]</span>
+		<span class="n">allother</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">pospars</span><span class="p">):]</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">metal</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metals</span><span class="p">):</span>
+			<span class="n">other</span> <span class="o">=</span> <span class="n">allother</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">otherpars</span><span class="p">)</span><span class="o">*</span><span class="n">i</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">otherpars</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+			<span class="n">metal</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">pospars</span><span class="p">,</span> <span class="n">pos</span><span class="p">))</span>
+			<span class="n">metal</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">otherpars</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
+		<span class="n">score</span> <span class="o">=</span> <span class="mf">0.0</span>
+		<span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> <span class="n">csaarrays</span><span class="p">,</span> <span class="n">pcsarrays</span><span class="p">,</span> <span class="n">idxarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">posarray</span><span class="p">,</span> <span class="n">csaarray</span><span class="p">,</span> <span class="n">pcsarray</span><span class="p">,</span> <span class="n">idxarray</span><span class="p">,</span> <span class="n">errarray</span> <span class="ow">in</span> <span class="n">zipped</span><span class="p">:</span>
+			<span class="n">calcpcs</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">fast_pcs</span><span class="p">(</span><span class="n">posarray</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">userads</span><span class="p">:</span>
+				<span class="n">calcpcs</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">fast_rads</span><span class="p">(</span><span class="n">posarray</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">useracs</span><span class="p">:</span>
+				<span class="n">calcpcs</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">fast_racs</span><span class="p">(</span><span class="n">csaarray</span><span class="p">)</span>
+			<span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">calcpcs</span> <span class="o">-</span> <span class="n">pcsarray</span><span class="p">)</span> <span class="o">/</span> <span class="n">errarray</span>
+			<span class="n">selectiveSum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">idxarray</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">diff</span><span class="p">)</span>
+			<span class="n">score</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">selectiveSum</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">score</span>
+
+	<span class="n">startpars</span> <span class="o">=</span> <span class="n">metals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">pospars</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">metal</span> <span class="ow">in</span> <span class="n">metals</span><span class="p">:</span>
+		<span class="n">pars</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">otherpars</span><span class="p">)</span>
+		<span class="n">startpars</span> <span class="o">+=</span> <span class="n">pars</span>
+	<span class="n">fmin_bfgs</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">startpars</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">progress</span><span class="p">:</span>
+		<span class="n">progress</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">metals</span></div>
+
+
+<span class="k">def</span> <span class="nf">pcs_fit_error_monte_carlo</span><span class="p">(</span><span class="n">initMetals</span><span class="p">,</span> <span class="n">pcss</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">iterations</span><span class="p">,</span>
+	<span class="n">sumIndices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">userads</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">useracs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="n">stds</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">metal</span> <span class="ow">in</span> <span class="n">initMetals</span><span class="p">]</span>
+	<span class="n">atmarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">pcsarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">errarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">pcss</span><span class="p">:</span>
+		<span class="n">atmarray</span><span class="p">,</span> <span class="n">pcsarray</span><span class="p">,</span> <span class="n">errarray</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+		<span class="n">atmarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atmarray</span><span class="p">)</span>
+		<span class="n">pcsarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pcsarray</span><span class="p">)</span>
+		<span class="n">errarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">errarray</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">atm</span><span class="p">,</span> <span class="n">pcs</span><span class="p">,</span> <span class="n">err</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atmarrays</span><span class="p">,</span> <span class="n">pcsarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">):</span>
+			<span class="n">noisey</span> <span class="o">=</span> <span class="n">pcs</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
+			<span class="n">tmp</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atm</span><span class="p">,</span> <span class="n">noisey</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+			<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">tmp</span><span class="p">))</span>
+		<span class="n">metals</span> <span class="o">=</span> <span class="n">nlr_fit_metal_from_pcs</span><span class="p">(</span><span class="n">initMetals</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> 
+			<span class="n">sumIndices</span><span class="p">,</span> <span class="n">userads</span><span class="p">,</span> <span class="n">useracs</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">std</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">stds</span><span class="p">):</span>
+			<span class="n">std</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metal</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
+		<span class="k">if</span> <span class="n">progress</span><span class="p">:</span>
+			<span class="n">progress</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">iterations</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">std</span><span class="p">)))</span> <span class="k">for</span> <span class="n">std</span> <span class="ow">in</span> <span class="n">stds</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">pcs_fit_error_bootstrap</span><span class="p">(</span><span class="n">initMetals</span><span class="p">,</span> <span class="n">pcss</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">iterations</span><span class="p">,</span> 
+	<span class="n">fraction_removed</span><span class="p">,</span> <span class="n">sumIndices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">userads</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">useracs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+	<span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="k">assert</span> <span class="mf">0.0</span><span class="o">&lt;</span><span class="n">fraction_removed</span><span class="o">&lt;</span><span class="mf">1.0</span>
+	<span class="n">stds</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">metal</span> <span class="ow">in</span> <span class="n">initMetals</span><span class="p">]</span>
+	<span class="n">atmarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">pcsarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">errarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">sumarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">pcss</span><span class="p">:</span>
+		<span class="n">atmarray</span><span class="p">,</span> <span class="n">pcsarray</span><span class="p">,</span> <span class="n">errarray</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+		<span class="n">atmarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atmarray</span><span class="p">)</span>
+		<span class="n">pcsarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pcsarray</span><span class="p">)</span>
+		<span class="n">errarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">errarray</span><span class="p">)</span>
+		<span class="n">sumarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clean_indices</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">serial_number</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atmarray</span><span class="p">]))</span>
+
+	<span class="k">if</span> <span class="n">sumIndices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">sumIndices</span> <span class="o">=</span> <span class="n">sumarrays</span>
+
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
+		<span class="n">datas_trunc</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">sumIndices_trunc</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">atm</span><span class="p">,</span> <span class="n">pcs</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atmarrays</span><span class="p">,</span> <span class="n">pcsarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">,</span> <span class="n">sumarrays</span><span class="p">):</span>
+			<span class="n">unique_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+			<span class="n">chosen_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">unique_idx</span><span class="p">,</span> 
+				<span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_idx</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">fraction_removed</span><span class="p">)),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+			<span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">chosen_idx</span><span class="p">)</span>
+			<span class="n">idxs_trunc</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+			<span class="n">sumIndices_trunc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idxs_trunc</span><span class="p">)</span>
+			<span class="n">data_trunc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">atm</span><span class="p">,</span> <span class="n">pcs</span><span class="p">,</span> <span class="n">err</span><span class="p">)))[</span><span class="n">mask</span><span class="p">]</span>
+			<span class="n">datas_trunc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_trunc</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+		<span class="n">metals</span> <span class="o">=</span> <span class="n">nlr_fit_metal_from_pcs</span><span class="p">(</span><span class="n">initMetals</span><span class="p">,</span> <span class="n">datas_trunc</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> 
+			<span class="n">sumIndices_trunc</span><span class="p">,</span> <span class="n">userads</span><span class="p">,</span> <span class="n">useracs</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">std</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">stds</span><span class="p">):</span>
+			<span class="n">std</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metal</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
+		<span class="k">if</span> <span class="n">progress</span><span class="p">:</span>
+			<span class="n">progress</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">iterations</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">std</span><span class="p">)))</span> <span class="k">for</span> <span class="n">std</span> <span class="ow">in</span> <span class="n">stds</span><span class="p">]</span>
+
+
+
+<span class="k">def</span> <span class="nf">fit_metal_from_pcs</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">pcss</span><span class="p">):</span>
+	<span class="n">fitmetals</span> <span class="o">=</span> <span class="n">svd_gridsearch_calc_metal_from_pcs</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">pcss</span><span class="p">)</span>
+	<span class="n">fitmetals</span> <span class="o">=</span> <span class="n">nlr_fit_metal_from_pcs</span><span class="p">(</span><span class="n">fitmetals</span><span class="p">,</span> <span class="n">pcss</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">fitmetals</span>
+
+
+<span class="k">def</span> <span class="nf">plot_pcs_fit</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">pcss</span><span class="p">):</span>
+	<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+	<span class="n">posarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">pcsarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">pcs</span> <span class="ow">in</span> <span class="n">pcss</span><span class="p">:</span>
+		<span class="n">posarray</span><span class="p">,</span> <span class="n">pcsarray</span><span class="p">,</span> <span class="n">errarray</span> <span class="o">=</span> <span class="n">extract_pcs</span><span class="p">(</span><span class="n">pcs</span><span class="p">)</span>
+		<span class="n">posarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posarray</span><span class="p">)</span>
+		<span class="n">pcsarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pcsarray</span><span class="p">)</span>
+	<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+	<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Experiment&quot;</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Calculated&quot;</span><span class="p">)</span>
+	<span class="n">mini</span><span class="p">,</span> <span class="n">maxi</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pcsarrays</span><span class="p">]),</span> <span class="nb">max</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pcsarrays</span><span class="p">])</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">mini</span><span class="p">,</span><span class="n">maxi</span><span class="p">],</span> <span class="p">[</span><span class="n">mini</span><span class="p">,</span><span class="n">maxi</span><span class="p">],</span> <span class="s1">&#39;-k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">pcs</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> <span class="n">pcsarrays</span><span class="p">):</span>
+		<span class="n">calc_pcs</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">fast_pcs</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pcs</span><span class="p">,</span> <span class="n">calc_pcs</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+
+<span class="k">def</span> <span class="nf">qfactor</span><span class="p">(</span><span class="n">experiment</span><span class="p">,</span> <span class="n">calculated</span><span class="p">,</span> <span class="n">sumIndices</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="n">experiment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">experiment</span><span class="p">)</span>
+	<span class="n">calculated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">calculated</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">sumIndices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">sumIndices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">experiment</span><span class="p">))</span>
+	<span class="n">diff</span> <span class="o">=</span> <span class="n">experiment</span> <span class="o">-</span> <span class="n">calculated</span>
+	<span class="n">numer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">sumIndices</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">diff</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+	<span class="n">denom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">sumIndices</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">experiment</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+	<span class="k">return</span> <span class="p">(</span><span class="n">numer</span><span class="o">/</span><span class="n">denom</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+
+
+<span class="k">def</span> <span class="nf">pcs</span><span class="p">(</span><span class="n">metal</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
+	<span class="k">return</span> <span class="n">metal</span><span class="o">.</span><span class="n">pcs</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+
+
+
+<div class="viewcode-block" id="nlr_fit_metal_from_pre"><a class="viewcode-back" href="../../index.html#paramagpy.fit.nlr_fit_metal_from_pre">[docs]</a><span class="k">def</span> <span class="nf">nlr_fit_metal_from_pre</span><span class="p">(</span><span class="n">initMetals</span><span class="p">,</span> <span class="n">pres</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">sumIndices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+	<span class="n">rtypes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">usesbm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">usedsa</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">usecsa</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Fit deltaChi tensor to PCS values using non-linear regression.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	initMetals : list of Metal objects</span>
+<span class="sd">		a list of metals used as starting points for fitting. </span>
+<span class="sd">		a list must always be provided, but may also contain </span>
+<span class="sd">		only one element. If multiple metals are provided, each metal</span>
+<span class="sd">		is fitted to their respective PCS dataset by index, but all are </span>
+<span class="sd">		fitted to a common position.</span>
+<span class="sd">	pcss : list of PCS datasets</span>
+<span class="sd">		each PCS dataset must correspond to an associated metal for fitting.</span>
+<span class="sd">		each PCS dataset has structure [Atom, value, error], where Atom is </span>
+<span class="sd">		an Atom object, value is the PCS/RDC/PRE value</span>
+<span class="sd">		and error is the uncertainty</span>
+<span class="sd">	params : list of str</span>
+<span class="sd">		the parameters to be fit. </span>
+<span class="sd">		For example [&#39;x&#39;,&#39;y&#39;,&#39;z&#39;,&#39;ax&#39;,&#39;rh&#39;,&#39;a&#39;,&#39;b&#39;,&#39;g&#39;,&#39;shift&#39;]</span>
+<span class="sd">	sumIndices : list of arrays of ints, optional</span>
+<span class="sd">		each index list must correspond to an associated pcs dataset.</span>
+<span class="sd">		each index list contains an index assigned to each atom. </span>
+<span class="sd">		Common indices determine summation between models </span>
+<span class="sd">		for ensemble averaging.</span>
+<span class="sd">		If None, defaults to atom serial number to determine summation </span>
+<span class="sd">		between models.</span>
+<span class="sd">	userads : bool, optional</span>
+<span class="sd">		include residual anisotropic dipolar shielding (RADS) during fitting</span>
+<span class="sd">	useracs : bool, optional</span>
+<span class="sd">		include residual anisotropic chemical shielding (RACS) during fitting.</span>
+<span class="sd">		CSA tensors are taken using the &lt;csa&gt; method of atoms.</span>
+<span class="sd">	progress : object, optional</span>
+<span class="sd">		to keep track of the calculation, progress.set(x) is called each</span>
+<span class="sd">		iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	metals : list of metals</span>
+<span class="sd">		the metals fitted by NLR to the PCS data provided</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">rtypes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">rtypes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;r2&#39;</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">initMetals</span><span class="p">)</span>
+
+	<span class="n">posarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">csaarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">prearrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">gamarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">idxarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">errarrays</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">pre</span> <span class="ow">in</span> <span class="n">pres</span><span class="p">:</span>
+		<span class="n">posarray</span><span class="p">,</span> <span class="n">gamarray</span><span class="p">,</span> <span class="n">prearray</span><span class="p">,</span> <span class="n">errarray</span><span class="p">,</span> <span class="n">idxarray</span> <span class="o">=</span> <span class="n">extract_pre</span><span class="p">(</span><span class="n">pre</span><span class="p">)</span>
+		<span class="n">posarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posarray</span><span class="p">)</span>
+		<span class="n">gamarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gamarray</span><span class="p">)</span>
+		<span class="n">prearrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prearray</span><span class="p">)</span>
+		<span class="n">idxarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idxarray</span><span class="p">)</span>
+		<span class="n">errarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">errarray</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">usecsa</span><span class="p">:</span>
+			<span class="n">csas</span> <span class="o">=</span> <span class="n">extract_csa</span><span class="p">(</span><span class="n">pre</span><span class="p">)</span>
+			<span class="n">csaarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">csas</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">csaarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+	<span class="n">metals</span> <span class="o">=</span> <span class="p">[</span><span class="n">metal</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">metal</span> <span class="ow">in</span> <span class="n">initMetals</span><span class="p">]</span>
+	<span class="n">pospars</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span> <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">]]</span>
+	<span class="n">otherpars</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span> <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">]]</span>
+
+	<span class="k">if</span> <span class="n">sumIndices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">idxarrays</span> <span class="o">=</span> <span class="n">sumIndices</span>
+
+	<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+		<span class="n">pos</span> <span class="o">=</span> <span class="n">args</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">pospars</span><span class="p">)]</span>
+		<span class="n">allother</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">pospars</span><span class="p">):]</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">metal</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metals</span><span class="p">):</span>
+			<span class="n">other</span> <span class="o">=</span> <span class="n">allother</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">otherpars</span><span class="p">)</span><span class="o">*</span><span class="n">i</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">otherpars</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+			<span class="n">metal</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">pospars</span><span class="p">,</span> <span class="n">pos</span><span class="p">))</span>
+			<span class="n">metal</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">otherpars</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
+		<span class="n">score</span> <span class="o">=</span> <span class="mf">0.0</span>
+		<span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> <span class="n">gamarrays</span><span class="p">,</span> <span class="n">csaarrays</span><span class="p">,</span> 
+						<span class="n">prearrays</span><span class="p">,</span> <span class="n">idxarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">,</span> <span class="n">rtypes</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">csaarr</span><span class="p">,</span> <span class="n">prearr</span><span class="p">,</span> <span class="n">idxarr</span><span class="p">,</span> <span class="n">errarr</span><span class="p">,</span> <span class="n">rtype</span> <span class="ow">in</span> <span class="n">zipped</span><span class="p">:</span>
+			<span class="n">calcpre</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">fast_pre</span><span class="p">(</span><span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">rtype</span><span class="p">,</span> 
+				<span class="n">dsa</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sbm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="n">csaarr</span><span class="p">)</span>
+			<span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">calcpre</span> <span class="o">-</span> <span class="n">prearr</span><span class="p">)</span> <span class="o">/</span> <span class="n">errarr</span>
+			<span class="n">selectiveSum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">idxarr</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">diff</span><span class="p">)</span>
+			<span class="n">score</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">selectiveSum</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">score</span>
+
+	<span class="n">startpars</span> <span class="o">=</span> <span class="n">metals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">pospars</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">metal</span> <span class="ow">in</span> <span class="n">metals</span><span class="p">:</span>
+		<span class="n">pars</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">otherpars</span><span class="p">)</span>
+		<span class="n">startpars</span> <span class="o">+=</span> <span class="n">pars</span>
+	<span class="n">fmin_bfgs</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">startpars</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">progress</span><span class="p">:</span>
+		<span class="n">progress</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">metals</span></div>
+
+
+<span class="k">def</span> <span class="nf">pre</span><span class="p">(</span><span class="n">metal</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;sbm+dsa+csaxdsa&#39;</span><span class="p">,</span> <span class="n">rtype</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span><span class="p">):</span>
+	<span class="n">pos</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span>
+	<span class="n">gam</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">gamma</span>
+	<span class="n">csa</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">csa</span><span class="p">()</span>
+	<span class="n">rate</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+	<span class="n">methods</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="s1">&#39;sbm&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r1&#39;</span><span class="p">:</span>
+		<span class="n">rate</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">sbm_r1</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="s1">&#39;sbm&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r2&#39;</span><span class="p">:</span>
+		<span class="n">rate</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">sbm_r2</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="s1">&#39;dsa&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r1&#39;</span><span class="p">:</span>
+		<span class="n">rate</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r1</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="s1">&#39;dsa&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r2&#39;</span><span class="p">:</span>
+		<span class="n">rate</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r2</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="s1">&#39;csa&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r1&#39;</span><span class="p">:</span>
+		<span class="n">rate</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r1</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="n">csa</span><span class="p">,</span> <span class="n">ignorePara</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="s1">&#39;csa&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r2&#39;</span><span class="p">:</span>
+		<span class="n">rate</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r2</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="n">csa</span><span class="p">,</span> <span class="n">ignorePara</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="s1">&#39;csaxdsa&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">or</span> <span class="s1">&#39;dsaxcsa&#39;</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r1&#39;</span><span class="p">:</span>
+		<span class="n">pre_dsa</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r1</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">)</span>
+		<span class="n">pre_csa</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r1</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="n">csa</span><span class="p">,</span> <span class="n">ignorePara</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="n">pre_cross</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r1</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="n">csa</span><span class="p">)</span>
+		<span class="n">rate</span> <span class="o">+=</span> <span class="n">pre_cross</span> <span class="o">-</span> <span class="n">pre_dsa</span> <span class="o">-</span> <span class="n">pre_csa</span>
+	<span class="k">elif</span> <span class="p">(</span><span class="s1">&#39;csaxdsa&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">or</span> <span class="s1">&#39;dsaxcsa&#39;</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r2&#39;</span><span class="p">:</span>
+		<span class="n">pre_dsa</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r2</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">)</span>
+		<span class="n">pre_csa</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r2</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="n">csa</span><span class="p">,</span> <span class="n">ignorePara</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="n">pre_cross</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r2</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="n">csa</span><span class="p">)</span>
+		<span class="n">rate</span> <span class="o">+=</span> <span class="n">pre_cross</span> <span class="o">-</span> <span class="n">pre_dsa</span> <span class="o">-</span> <span class="n">pre_csa</span>
+
+	<span class="k">return</span> <span class="n">rate</span>
+
+<span class="k">def</span> <span class="nf">rdc</span><span class="p">(</span><span class="n">metal</span><span class="p">,</span> <span class="n">atom1</span><span class="p">,</span> <span class="n">atom2</span><span class="p">):</span>
+	<span class="n">vector</span> <span class="o">=</span> <span class="p">(</span><span class="n">atom1</span><span class="o">.</span><span class="n">position</span> <span class="o">-</span> <span class="n">atom2</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">metal</span><span class="o">.</span><span class="n">rdc</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">atom1</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span> <span class="n">atom2</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+	<span class="c1"># vec = (atom1.position - atom2.position)</span>
+	<span class="c1"># distance = np.linalg.norm(vec)</span>
+	<span class="c1"># numer = -metal.HBAR * metal.B0**2 * atom1.gamma * atom2.gamma</span>
+	<span class="c1"># denom = 120. * metal.K * metal.temperature * np.pi**2</span>
+	<span class="c1"># preFactor = numer/denom</span>
+	<span class="c1"># p1 = (1./distance**5)*np.kron(vec,vec).reshape(3,3)</span>
+	<span class="c1"># p2 = (1./distance**3)*np.identity(3)</span>
+	<span class="c1"># return preFactor * ((3.*p1 - p2).dot(metal.tensor)).trace()</span>
+
+<span class="k">def</span> <span class="nf">ccr</span><span class="p">(</span><span class="n">metal</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
+	<span class="k">pass</span>
+
+
+
+<span class="k">def</span> <span class="nf">svd_calc_metal_from_rdc</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">rdc_parameterised</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+	<span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">T</span>
+	<span class="n">a</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span>
+	<span class="n">b</span> <span class="o">=</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span>
+	<span class="n">c</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+	<span class="n">d</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">z</span>
+	<span class="n">e</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">z</span>
+	<span class="n">mat</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">dist</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">e</span><span class="p">])</span>
+	<span class="nb">print</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+	<span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">mat</span><span class="p">])</span>
+	<span class="n">matinv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
+	<span class="n">sol</span> <span class="o">=</span> <span class="n">matinv</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rdc_parameterised</span><span class="p">)</span>
+	<span class="n">calc</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">calc</span><span class="p">,</span> <span class="n">sol</span>
+
+
+<span class="k">def</span> <span class="nf">svd_fit_metal_from_rdc</span><span class="p">(</span><span class="n">metal</span><span class="p">,</span> <span class="n">rdc</span><span class="p">):</span>
+	<span class="n">vecarray</span><span class="p">,</span> <span class="n">gamarray</span><span class="p">,</span> <span class="n">rdcarray</span><span class="p">,</span> <span class="n">errarray</span><span class="p">,</span> <span class="n">idxarray</span> <span class="o">=</span> <span class="n">extract_rdc</span><span class="p">(</span><span class="n">rdc</span><span class="p">)</span>
+	<span class="n">pfarray</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">metal</span><span class="o">.</span><span class="n">MU0</span> <span class="o">*</span> <span class="n">gamarray</span> <span class="o">*</span> <span class="n">metal</span><span class="o">.</span><span class="n">HBAR</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+	<span class="n">rdc_param</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">idxarray</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">rdcarray</span> <span class="o">/</span> <span class="n">pfarray</span><span class="p">)</span>
+	<span class="n">fitMetal</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+	<span class="n">_</span><span class="p">,</span> <span class="n">sol</span> <span class="o">=</span> <span class="n">svd_calc_metal_from_rdc</span><span class="p">(</span><span class="n">vecarray</span><span class="p">,</span> <span class="n">rdc_param</span><span class="p">,</span> <span class="n">idxarray</span><span class="p">)</span>
+	<span class="n">fitMetal</span><span class="o">.</span><span class="n">upper_triang_saupe</span> <span class="o">=</span> <span class="n">sol</span>
+	<span class="k">return</span> <span class="n">fitMetal</span>
+
+
+
+
+
+
+
+
+
+
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Henry Orton.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

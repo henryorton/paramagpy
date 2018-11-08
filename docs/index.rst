@@ -11,10 +11,32 @@ Welcome to paramagpy's documentation!
    :caption: Contents:
 
 
+paramagpy main
+===================
+.. automodule:: paramagpy
+   :members:
 
-Indices and tables
-==================
+paramagpy metal
+===============
+.. automodule:: paramagpy.metal
+   :members:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+paramagpy protein
+=================
+.. automodule:: paramagpy.protein
+   :members:
+
+paramagpy dataparse
+===================
+.. automodule:: paramagpy.dataparse
+   :members:
+
+paramagpy fit
+=============
+.. automodule:: paramagpy.fit
+   :members:
+
+paramagpy gui
+=============
+.. automodule:: paramagpy.gui
+   :members:
