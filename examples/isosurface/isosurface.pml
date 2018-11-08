@@ -13,13 +13,11 @@
 # temp  |         K :   298.150
 # t1e   |        ps :     0.000
 
-
-import pymol
-import os
-script_dir = os.path.dirname(pymol.__script__)
-
+import os, pymol
+curdir = os.path.dirname(pymol.__script__)
 set normalize_ccp4_maps, off
-load ./isosurface.pml.ccp4, isomap, 1, ccp4
+meshfile = os.path.join(curdir, 'isosurface.pml.ccp4')
+cmd.load(meshfile, 'isomap', 1, 'ccp4')
 isosurface pos_isosurface, isomap, 1.0
 isosurface neg_isosurface, isomap, -1.0
 set transparency, 0.5, pos_isosurface
@@ -29,8 +27,5 @@ set surface_color, red, neg_isosurface
 pseudoatom ori_isosurface, pos=[25.517000000000003, 8.652, 6.3580000000000005]
 show spheres, ori_isosurface
 color pink, ori_isosurface
-load /home/u5376227/Dropbox/PhD/git/paramagpy/examples/ho4icb43G.pdb
+cmd.load(os.path.join(curdir, 'ho4icb43G.pdb'))
 show_as cartoon, ho4icb43G
-
-
-

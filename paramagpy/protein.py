@@ -58,6 +58,14 @@ class CustomAtom(Atom):
 		return self.parent.parent.parent.parent
 
 	@property
+	def position(self):
+		return self.coord*1E-10
+
+	@position.setter
+	def position(self, value):
+		self.coord = value*1E10
+
+	@property
 	def csa(self):
 		"""
 		Get the CSA tensor at the nuclear position

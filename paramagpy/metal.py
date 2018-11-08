@@ -543,6 +543,19 @@ class Metal(object):
 		val = self.dipole_shift_tensor(position).trace()/3.
 		return 1E6*val + self.shift
 
+
+	def atom_pcs(self, atom, racs=False, rads=False):
+		value = self.pcs(atom.position)
+		if racs:
+			value += self.racs(atom.csa)
+		if rads:
+			value += self.rads(atom.position)
+		return value
+
+
+	def atom_set_position(self, atom):
+		self.position = atom.position
+
 	def fast_pcs(self, posarray):
 		"""
 		Rapidly calculatew the psuedo-contact shift at `n' positions.
@@ -564,6 +577,8 @@ class Metal(object):
 		dot1 = np.einsum('ij,jk->ik', pos, self.tensor_traceless)
 		dot2 = np.einsum('ij,ij->i', pos, dot1)
 		return 1E6*(1./(4.*np.pi))*(dot2/dist**5) + self.shift
+
+
 
 
 	def rads(self, position):
@@ -860,30 +875,30 @@ class Metal(object):
 		pcs_mesh = self.fast_pcs(mesh.reshape(np.prod(og_shape),3))
 		return pcs_mesh.reshape(*og_shape)
 
-	def write_pymol_script(self, protein=None, isoval=1.0, 
-		surfaceName='isomap', scriptName='isomap.pml', meshName='./isomap.pml.ccp4'):
+	def write_pymol_script(self, isoval=1.0, surfaceName='isomap', 
+		scriptName='isomap.pml', meshName='./isomap.pml.ccp4', pdbFile=None):
 		posname = "pos_{}".format(surfaceName)
 		negname = "neg_{}".format(surfaceName)
 		oriname = "ori_{}".format(surfaceName)
 		s = "# PyMOL macro for loading tensor isosurface from paramagpy\n"
 		s += self.info()+'\n'
+		s += "import os, pymol\n"
+		s += "curdir = os.path.dirname(pymol.__script__)\n"
 		s += "set normalize_ccp4_maps, off\n"
-		s += "load {}, isomap, 1, ccp4\n".format(meshName)
+		s += "meshfile = os.path.join(curdir, '{}')\n".format(meshName)
+		s += "cmd.load(meshfile, 'isomap', 1, 'ccp4')\n"
 		s += "isosurface {}, isomap, {}\n".format(posname,isoval)
 		s += "isosurface {}, isomap, {}\n".format(negname,-isoval)
 		s += "set transparency, 0.5, {}\n".format(posname)
 		s += "set transparency, 0.5, {}\n".format(negname)
-		s += "set surface_color, blue, {}\n #<<<<Change colour here".format(
-			posname)
-		s += "set surface_color, red, {}\n  #<<<<Change colour here".format(
-			negname)
+		s += "set surface_color, blue, {}\n".format(posname)
+		s += "set surface_color, red, {}\n".format(negname)
 		s += "pseudoatom {}, pos={}\n".format(oriname,list(self.position*1E10))
 		s += "show spheres, {}\n".format(oriname)
 		s += "color pink, {}\n".format(oriname)
-		if protein:
-			s += "load {}\n".format(protein.id)
-			s += "show_as cartoon, {}".format(
-				ntpath.basename(protein.id).replace('.pdb',''))
+		if pdbFile:
+			s += "cmd.load(os.path.join(curdir, '{}'))\n".format(pdbFile)
+			s += "show_as cartoon, {}\n".format(pdbFile.replace('.pdb',''))
 		with open(scriptName, 'w') as o:
 			o.write(s)
 			print("{} script written".format(scriptName))

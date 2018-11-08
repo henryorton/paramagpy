@@ -57,7 +57,7 @@ def extract_pcs(data):
 		all information required for PCS calculations
 	"""
 	atoms, values, errors = zip(*data)
-	coords = np.array([i.coord for i in atoms])*1E-10
+	coords = np.array([i.position for i in atoms])
 	values = np.array(values)
 	errors = np.array(errors)
 	if 0.0 in errors:
@@ -82,7 +82,7 @@ def extract_pre(data):
 		all information required for PRE calculations
 	"""
 	atoms, values, errors = zip(*data)
-	coords = np.array([i.coord for i in atoms])*1E-10
+	coords = np.array([i.position for i in atoms])
 	gammas = np.array([i.gamma for i in atoms])
 	values = np.array(values)
 	errors = np.array(errors)
@@ -128,7 +128,7 @@ def extract_rdc(data):
 		all information required for RDC calculations
 	"""
 	atoms1, atoms2, values, errors = zip(*data)
-	vectors = [j.coord - i.coord for i, j in zip(atoms1, atoms2)]
+	vectors = [j.position - i.position for i, j in zip(atoms1, atoms2)]
 	gammas = [i.gamma * j.gamma for i, j in zip(atoms1, atoms2)]
 	idxs = clean_indices([unique_pairing(i.serial_number, 
 		j.serial_number) for i, j in zip(atoms1, atoms2)])
@@ -542,15 +542,19 @@ def plot_pcs_fit(metals, pcss):
 	return fig, ax
 
 
-def qfactor(metal, pcs):
-	posarray, pcsarray, errarray = extract_pcs(pcs)
-	pcs_calc = metal.fast_pcs(posarray)
-	numer = np.sum((pcsarray - pcs_calc)**2)
-	denom = np.sum(pcsarray**2)
+def qfactor(experiment, calculated, sumIndices=None):
+	experiment = np.array(experiment)
+	calculated = np.array(calculated)
+	if sumIndices is None:
+		sumIndices = np.arange(len(experiment))
+	diff = experiment - calculated
+	numer = np.sum(np.bincount(sumIndices, weights=diff)**2)
+	denom = np.sum(np.bincount(sumIndices, weights=experiment)**2)
 	return (numer/denom)**0.5
 
+
 def pcs(metal, atom):
-	return metal.pcs(atom.coord*1E-10)
+	return metal.pcs(atom.position)
 
 
 
@@ -654,7 +658,7 @@ def nlr_fit_metal_from_pre(initMetals, pres, params, sumIndices=None,
 
 
 def pre(metal, atom, method='sbm+dsa+csaxdsa', rtype='r2'):
-	pos = atom.coord*1E-10
+	pos = atom.position
 	gam = atom.gamma
 	csa = atom.csa()
 	rate = 0.0
@@ -689,9 +693,9 @@ def pre(metal, atom, method='sbm+dsa+csaxdsa', rtype='r2'):
 	return rate
 
 def rdc(metal, atom1, atom2):
-	vector = (atom1.coord - atom2.coord)*1E-10
+	vector = (atom1.position - atom2.position)
 	return metal.rdc(vector, atom1.gamma, atom2.gamma)
-	# vec = (atom1.coord - atom2.coord)*1E-10
+	# vec = (atom1.position - atom2.position)
 	# distance = np.linalg.norm(vec)
 	# numer = -metal.HBAR * metal.B0**2 * atom1.gamma * atom2.gamma
 	# denom = 120. * metal.K * metal.temperature * np.pi**2
@@ -724,123 +728,12 @@ def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx):
 
 def svd_fit_metal_from_rdc(metal, rdc):
 	vecarray, gamarray, rdcarray, errarray, idxarray = extract_rdc(rdc)
-	vecarray *= 1E-10
 	pfarray = -3*(metal.MU0 * gamarray * metal.HBAR) / (8 * np.pi**2)
 	rdc_param = np.bincount(idxarray, weights=rdcarray / pfarray)
 	fitMetal = metal.copy()
 	_, sol = svd_calc_metal_from_rdc(vecarray, rdc_param, idxarray)
 	fitMetal.upper_triang_saupe = sol
 	return fitMetal
-
-
-
-
-
-
-
-
-# from protein import load_pdb
-# from dataparse import read_pcs
-# from metal import Metal
-
-# x, y, z, = (25.786,9.515,6.558)
-# ax, rh = (-8.155,-4.913)
-# a, b, g = (125.842,142.287,41.759)
-
-# m = Metal.make_tensor(x,y,z,ax,rh,a,b,g,'Er')
-# m.taur = 4.25E-9
-# m.B0 = 18.8
-# m0 = Metal.make_tensor(0,0,0,0,0,0,0,0)
-
-# fileName = 'ho4icb43G.pdb'
-# npcName1 = 'ershifts_errors.npc'
-# # npcName2 = 'ybshifts.npc'
-
-# prot = load_pdb(fileName)
-# # prot = load_pdb('2bcb.pdb')
-
-# pcs1 = read_pcs(npcName1)
-# # pcs2 = read_pcs(npcName2)
-
-# dat1 = prot.parse(pcs2)
-
-# diag = m.tensor_saupe[(0,1,2),(0,1,2)]
-
-
-# atoms, pcss = zip(*dat1)
-
-# for atom1, atom2 in zip(atoms[::2], atoms[1::2]):
-# 	pos = atom1.coord*1E-10
-# 	print(atom1.parent.id)
-# 	print(m.pcs(pos)/ m.pcs2(pos))
-	
-
-# mfit = svd_gridsearch_calc_metal_from_pcs([m0], [dat1])
-# # mfit = nlr_fit_metal_from_pcs([m, m], [pcs1, pcs2])
-# # mfit = fit_metal_from_pcs([m, m], [pcs1, pcs2])
-# mfit = fit_metal_from_pcs([m0], [dat1])
-
-# plot_pcs_fit(mfit, [dat1])
-# print(mfit[0].info())
-
-# plt.show()
-# print(mfit[0].info())
-# print(qfactor(prot, mfit[0], pcs1))
-# print(mfit[0].info())
-
-# plot_pcs_fit(prot, [m], [pcs])
-
-
-
-# print(mfit[0].info())
-
-# a = data[0][0]
-
-# print(a.omega)
-
-# print(p[1], structureBuilder=Structure)
-
-# atom = p.struct[0]['A'][56]['H']
-
-# dat = p.parse_npc(npcName)
-
-
-# pos = p.struct[0]['A'][56]['H'].coord
-
-# m = Metal.make_tensor(x,y,z,ax,rh,a,b,g)
-# m0 = Metal(position=atom.coord*1E-10)
-
-
-# i = atom.get_full_id()
-
-# l = p[i]
-
-# print(l.coord)
-# p[i].set_coord([1,2,3])
-# print(l.coord)
-
-
-# posarray = p.get_coords_by_id(list(dat.keys())[:10])*1E-10
-# pcsarray = np.array(list(dat.values())[:10])*1E-6
-# m1, m2 = svd_calc_metal_from_pcs(posarray, pcsarray)
-
-# g = fit_metal_from_pcs(p, [m0], [dat])
-
-# print(g[0].info())
-
-# plot_pcs_fit(p, g, [dat])
-
-# plt.show()
-
-# for i in g:
-# 	print(i.position)
-# 	print(i.axrh)
-
-# print(g.position*1E10)
-# print(g.axrh*1E32)
-
-# pos = p.get_coords_by_id(dat.keys())*1E-10
-# pcs = np.array(list(dat.values()))*1E-6
 
 
 

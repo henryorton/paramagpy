@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk, font
 from tkinter.colorchooser import askcolor
 import numpy as np
-import os, sys
+import os, sys, subprocess, shutil
 from pprint import pprint
 from collections import OrderedDict
 
@@ -323,19 +323,19 @@ class PlotTensorPopup(Popup):
 		self.curdir = self.parent.parent.loadData.currentDir()
 		self.default_fileName = "isosurface"
 
-		tk.Label(self, text='Save Directory:').grid(row=0,column=0,sticky='E')
+		tk.Label(self, text='Location:').grid(row=0,column=0,sticky='E')
 		self.lbl_dir = tk.Label(self, 
 			text=format_path(self.curdir, self.pathWidth)+'/')
 		self.lbl_dir.grid(row=0,column=1)
 		tk.Button(self, text="...", 
 			command=self.change_dir).grid(row=0,column=2)
 
-		tk.Label(self, text='File Name:').grid(
+		tk.Label(self, text='Save Directory Name:').grid(
 			row=1,column=0,sticky='E')
-		self.fileNameVar = tk.StringVar(value='isosurface')
-		self.fileNameVar.trace('w',self.fileNameChange)
-		self.fileNameInput = ttk.Entry(self, textvariable=self.fileNameVar)
-		self.fileNameInput.grid(row=1,column=1,sticky='ew')
+		self.saveName = tk.StringVar(value='isosurface')
+		self.saveName.trace('w',self.saveNameChange)
+		ttk.Entry(self, textvariable=self.saveName).grid(
+			row=1,column=1,sticky='ew')
 
 		tk.Label(self, text='PyMol Script File:').grid(
 			row=2,column=0,sticky='E')
@@ -361,12 +361,14 @@ class PlotTensorPopup(Popup):
 
 		if self.parent.parent.frm_pdb.prot:
 			state = 'normal'
+			value = 1
 		else:
 			state = 'disabled'
+			value = 0
 
 		tk.Label(self, text="Include PDB structure:").grid(
 			row=6,column=0,sticky='E')
-		self.params['pdb'] = tk.IntVar(value=1)
+		self.params['pdb'] = tk.IntVar(value=value)
 		chk = ttk.Checkbutton(self, variable=self.params['pdb'], 
 			state=state).grid(row=6,column=1, sticky='W')
 
@@ -377,10 +379,11 @@ class PlotTensorPopup(Popup):
 		self.cont_input.grid(row=7,column=1, sticky='W')
 		self.params['cont'] = self.cont_input.floatVar
 
-		tk.Button(self, text='Cancel', command=self.death).grid(row=7,column=0)
-		tk.Button(self, text='Save', command=self.save).grid(row=7,column=1)
+		tk.Button(self, text='Save', command=self.save).grid(row=8,column=0)
+		tk.Button(self, text='Save + Pymol', 
+			command=self.save_and_call_pymol).grid(row=8,column=1)
 
-		self.fileNameChange()
+		self.saveNameChange()
 		self.update()
 
 	def change_dir(self):
@@ -389,43 +392,55 @@ class PlotTensorPopup(Popup):
 			self.curdir = d
 			self.lbl_dir.config(text=format_path(d, self.pathWidth))
 
-	def fileNameChange(self, *args):
-		self.pymol_file_label.config(text=self.get_pymol_file())
-		self.mesh_file_label.config(text=self.get_mesh_file())
+	def saveNameChange(self, *args):
+		pymolLabel = os.path.join(self.saveName.get(), self.get_pymol_file())
+		meshLabel = os.path.join(self.saveName.get(), self.get_mesh_file())
+		self.pymol_file_label.config(text=pymolLabel)
+		self.mesh_file_label.config(text=meshLabel)
 
 	def get_pymol_file(self):
-		return "{}.pml".format(self.fileNameVar.get())
+		return "{}.pml".format(self.saveName.get())
 
 	def get_mesh_file(self):
-		return "{}.pml.ccp4".format(self.fileNameVar.get())
+		return "{}.pml.ccp4".format(self.saveName.get())
 
-	def get_full_pymol_file(self):
-		return os.path.join(self.curdir, self.get_pymol_file())
+	def get_pymol_file_path(self):
+		return os.path.join(self.curdir, 
+			self.saveName.get(), self.get_pymol_file())
 
-	def get_full_mesh_file(self):
-		fwrite = os.path.join(self.curdir, self.get_mesh_file())
-		frel = os.path.join('.', self.get_mesh_file())
-		return fwrite, frel
-
+	def get_mesh_file_path(self):
+		return os.path.join(self.curdir, 
+			self.saveName.get(), self.get_mesh_file())
+		 
 	def save(self):
-		fileName = self.fileNameVar.get()
-		pymolFile = self.get_full_pymol_file()
-		meshFileWrite, meshFileRel = self.get_full_mesh_file()
+		saveDir = os.path.join(self.curdir, self.saveName.get())
+		if not os.path.exists(saveDir):
+			os.makedirs(saveDir)
+		pymolFile = self.get_pymol_file_path()
+		meshFile = self.get_mesh_file_path()
 		tensor = self.parent.tensor
+
 		if self.params['pdb'].get():
-			prot = self.parent.parent.frm_pdb.prot	
+			pdbPath = self.parent.parent.frm_pdb.prot.id
+			pdbFile = os.path.basename(pdbPath)
+			shutil.copyfile(pdbPath, os.path.join(saveDir, pdbFile))
 		else:
-			prot = None
+			pdbFile = None
 
 		mesh, bounds = tensor.make_mesh(
 			density=int(self.params['dens'].get()), 
-						size=self.params['size'].get())
+			size=self.params['size'].get())
 		pcs_mesh = tensor.pcs_mesh(mesh)
-		tensor.write_isomap(pcs_mesh, bounds, fileName=meshFileWrite)
-		tensor.write_pymol_script(protein=prot, 
-			isoval=self.params['cont'].get(), surfaceName=fileName,
-			scriptName=pymolFile, meshName=meshFileRel)
+		tensor.write_isomap(pcs_mesh, bounds, fileName=meshFile)
+		tensor.write_pymol_script(isoval=self.params['cont'].get(), 
+			surfaceName=self.saveName.get(),scriptName=pymolFile, 
+			meshName=os.path.basename(meshFile), 
+			pdbFile=pdbFile)
 		self.death()
+
+	def save_and_call_pymol(self):
+		self.save()
+		subprocess.call(["pymol", "{}".format(self.get_pymol_file_path())])
 
 
 class PlotCorrelationPopup(Popup):
@@ -1027,7 +1042,7 @@ class DataView(tk.LabelFrame):
 		# 	height=25, font=("Courier", settings['listboxFontSize']))
 		self.listBox.grid(row=1,column=0,columnspan=4,pady=10,padx=5)
 		self.listBox.bind("<Double-Button-1>", self.set_position)
-		self.listBox.bind("a", self.toggle_use)
+		self.listBox.bind("x", self.toggle_use)
 		self.scrollBar = ttk.Scrollbar(self, orient=tk.VERTICAL)
 		self.scrollBar.grid(row=1,column=3,sticky='NSE')
 		self.scrollBar.config(command=self.listBox.yview)
@@ -2469,6 +2484,19 @@ def run():
 	settings = platform_settings()
 	root = tk.Tk()
 	root.title('ParaMagPy GUI')
+
+	if hasattr(sys, '_MEIPASS'):
+		dataDir = sys._MEIPASS
+	else:
+		dataDir = os.path.dirname(__file__)
+
+	try:
+		icon_path = os.path.join(dataDir, "icon.gif")
+		icon = tk.PhotoImage(file=icon_path)
+		root.tk.call('wm', 'iconphoto', root._w, icon)
+	except tk.TclError:
+		print("Note: icon not found")
+
 	main = MainGui(root)
 	main.pack(expand=True, fill='both')
 	while True:
