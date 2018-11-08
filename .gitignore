@@ -10,3 +10,4 @@ __pycache__
 *.synctex.gz
 *.sublime-workspace
 /gui_executables/**
+/icon/**
