@@ -1,5 +1,5 @@
 .. paramagpy documentation master file, created by
-   sphinx-quickstart on Wed Oct 24 11:25:59 2018.
+   sphinx-quickstart on Thu Nov  8 17:04:40 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
@@ -11,30 +11,6 @@ Welcome to paramagpy's documentation!
    :caption: Contents:
 
 
-paramagpy main
-==============
-.. automodule:: paramagpy
-   :members:
-
-paramagpy metal
-===============
-.. automodule:: paramagpy.metal
-   :members:
-
-paramagpy fit
-=============
-.. automodule:: paramagpy.fit
-   :members:
-
-paramagpy protein
-=================
-.. automodule:: paramagpy.protein
-   :members:
-
-paramagpy dataparse
-===================
-.. automodule:: paramagpy.dataparse
-   :members:
 
 Indices and tables
 ==================

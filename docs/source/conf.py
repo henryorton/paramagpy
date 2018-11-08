@@ -12,10 +12,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
-import sys
-sys.path.insert(0, os.path.abspath('../..'))
-sys.setrecursionlimit(1500)
+# import os
+# import sys
+# sys.path.insert(0, os.path.abspath('.'))
+
 
 # -- Project information -----------------------------------------------------
 
@@ -40,10 +40,9 @@ release = '0.1'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.imgmath',
+    'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'rinoh.frontend.sphinx',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -79,7 +78,7 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'classic'
+html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -113,20 +112,20 @@ htmlhelp_basename = 'paramagpydoc'
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
-    
-    'papersize': 'a4paper',
+    #
+    # 'papersize': 'letterpaper',
 
     # The font size ('10pt', '11pt' or '12pt').
-    
-    'pointsize': '11pt',
+    #
+    # 'pointsize': '10pt',
 
     # Additional stuff for the LaTeX preamble.
-    
-    'preamble': '',
+    #
+    # 'preamble': '',
 
     # Latex figure (float) alignment
-    
-    'figure_align': 'htbp',
+    #
+    # 'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
