@@ -1,5 +1,7 @@
 __pycache__
 .dropbox.attr
+doctrees/
+.buildinfo
 *.pyc
 *.pyo
 *.aux

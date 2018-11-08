@@ -24,7 +24,7 @@ Features
 Documentation
 -------------
 
-* include github pages link here
+* https://henryorton.github.io/paramagpy/
 
 
 Citing paramagpy
