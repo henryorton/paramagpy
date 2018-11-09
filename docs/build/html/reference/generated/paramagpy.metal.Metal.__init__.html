@@ -1,0 +1,143 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>paramagpy.metal.Metal.__init__ &#8212; paramagpy 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="paramagpy.metal.Metal.anisotropy_to_eigenvalues" href="paramagpy.metal.Metal.anisotropy_to_eigenvalues.html" />
+    <link rel="prev" title="paramagpy.metal.Metal" href="paramagpy.metal.Metal.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="paramagpy.metal.Metal.anisotropy_to_eigenvalues.html" title="paramagpy.metal.Metal.anisotropy_to_eigenvalues"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="paramagpy.metal.Metal.html" title="paramagpy.metal.Metal"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../metal.html" >paramagpy.metal</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="paramagpy.metal.Metal.html" accesskey="U">paramagpy.metal.Metal</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="paramagpy-metal-metal-init">
+<h1>paramagpy.metal.Metal.__init__<a class="headerlink" href="#paramagpy-metal-metal-init" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="paramagpy.metal.Metal.__init__">
+<code class="descclassname">Metal.</code><code class="descname">__init__</code><span class="sig-paren">(</span><em>position=(0</em>, <em>0</em>, <em>0)</em>, <em>eulers=(0</em>, <em>0</em>, <em>0)</em>, <em>axrh=(0</em>, <em>0)</em>, <em>mueff=0.0</em>, <em>shift=0.0</em>, <em>temperature=298.15</em>, <em>t1e=0.0</em>, <em>B0=18.79</em>, <em>taur=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate ChiTensor object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>lanthanide</strong> (<em>str</em><em>, </em><em>optional</em>) – the lanthanide name e.g. ‘Tb’
+if not given, default is None and the object may only
+be used for calculating PCS</li>
+<li><strong>position</strong> (<em>array</em><em>, </em><em>optional</em>) – the (x,y,z) position in meters. Default is (0,0,0)
+stored as a np.matrix object.</li>
+<li><strong>eulers</strong> (<em>array</em><em>, </em><em>optional</em>) – the euler angles [alpha,beta,gamma] in radians
+by ZYZ convention. Defualt is (0,0,0)</li>
+<li><strong>eigenvalues</strong> (<em>array</em><em>, </em><em>optional</em>) – the principal axes magnitudes [x,y,z]. Decaulf is (0,0,0).
+If traceless &lt;eigenvalues&gt; and the argument &lt;lanthanide&gt; are
+provided, isotropic component is calculated and added
+automatically.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="paramagpy.metal.Metal.html"
+                        title="previous chapter">paramagpy.metal.Metal</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="paramagpy.metal.Metal.anisotropy_to_eigenvalues.html"
+                        title="next chapter">paramagpy.metal.Metal.anisotropy_to_eigenvalues</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/reference/generated/paramagpy.metal.Metal.__init__.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="paramagpy.metal.Metal.anisotropy_to_eigenvalues.html" title="paramagpy.metal.Metal.anisotropy_to_eigenvalues"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="paramagpy.metal.Metal.html" title="paramagpy.metal.Metal"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../metal.html" >paramagpy.metal</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="paramagpy.metal.Metal.html" >paramagpy.metal.Metal</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Henry Orton.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

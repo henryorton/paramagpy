@@ -5,6 +5,7 @@ paramagpy.metal
 
 .. automodule:: paramagpy.metal
 
+.. currentmodule:: paramagpy.metal
 
 Functions
 ---------
@@ -17,11 +18,11 @@ Functions
     unique_eulers
     make_tensor
 
-
 Classes
 -------
 
 .. autosummary::
     :toctree: generated
-    
+    :template: custom_class_template.rst
+
     Metal

@@ -1,5 +1,4 @@
 import numpy as np
-# from .metal import Metal
 from scipy.optimize import fmin_bfgs
 from pprint import pprint
 

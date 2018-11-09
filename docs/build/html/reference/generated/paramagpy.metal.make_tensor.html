@@ -55,20 +55,27 @@
 <dd><p>Make a ChiTensor isntance from given parameters.
 This is designed to use pdb coordinates (x, y, z) and euler angles
 from an output like Numbat.</p>
-<dl class="docutils">
-<dt>x, y, z <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
-<dd>tensor position in pdb coordiante in Angstroms</dd>
-<dt>axial, rhombic <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
-<dd>the tensor anisotropies in units 10^-32</dd>
-<dt>alpha, beta, gamma <span class="classifier-delimiter">:</span> <span class="classifier">floats</span></dt>
-<dd>the euler angles in degrees that maps the tensor
-to the pdb (I think?)</dd>
-</dl>
-<dl class="docutils">
-<dt>ChiTensor <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
-<dd>a tensor object for calulating paramagnetic effects on 
-nuclear spins in the pdb coordinate</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong><strong>, </strong><strong>z</strong> (<em>x</em><em>,</em>) – tensor position in pdb coordiante in Angstroms</li>
+<li><strong>rhombic</strong> (<em>axial</em><em>,</em>) – the tensor anisotropies in units 10^-32</li>
+<li><strong>beta</strong><strong>, </strong><strong>gamma</strong> (<em>alpha</em><em>,</em>) – the euler angles in degrees that maps the tensor
+to the pdb (I think?)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ChiTensor</strong> – a tensor object for calulating paramagnetic effects on
+nuclear spins in the pdb coordinate</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">object</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

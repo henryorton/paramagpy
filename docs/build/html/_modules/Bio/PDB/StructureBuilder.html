@@ -1,0 +1,350 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Bio.PDB.StructureBuilder &#8212; paramagpy 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Bio.PDB.StructureBuilder</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (C) 2002, Thomas Hamelryck (thamelry@binf.ku.dk)</span>
+<span class="c1"># This code is part of the Biopython distribution and governed by its</span>
+<span class="c1"># license.  Please see the LICENSE file that should have been included</span>
+<span class="c1"># as part of this package.</span>
+
+<span class="sd">&quot;&quot;&quot;Consumer class that builds a Structure object.</span>
+
+<span class="sd">This is used by the PDBParser and MMCIFparser classes.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="c1"># SMCRA hierarchy</span>
+<span class="kn">from</span> <span class="nn">Bio.PDB.Structure</span> <span class="k">import</span> <span class="n">Structure</span>
+<span class="kn">from</span> <span class="nn">Bio.PDB.Model</span> <span class="k">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">Bio.PDB.Chain</span> <span class="k">import</span> <span class="n">Chain</span>
+<span class="kn">from</span> <span class="nn">Bio.PDB.Residue</span> <span class="k">import</span> <span class="n">Residue</span><span class="p">,</span> <span class="n">DisorderedResidue</span>
+<span class="kn">from</span> <span class="nn">Bio.PDB.Atom</span> <span class="k">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">DisorderedAtom</span>
+
+<span class="kn">from</span> <span class="nn">Bio.PDB.PDBExceptions</span> <span class="k">import</span> <span class="n">PDBConstructionException</span>
+<span class="kn">from</span> <span class="nn">Bio.PDB.PDBExceptions</span> <span class="k">import</span> <span class="n">PDBConstructionWarning</span>
+
+
+<span class="k">class</span> <span class="nc">StructureBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Deals with contructing the Structure object.</span>
+
+<span class="sd">    The StructureBuilder class is used by the PDBParser classes to</span>
+<span class="sd">    translate a file to a Structure object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the class.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_is_completely_disordered</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">residue</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return 1 if all atoms in the residue have a non blank altloc (PRIVATE).&quot;&quot;&quot;</span>
+        <span class="n">atom_list</span> <span class="o">=</span> <span class="n">residue</span><span class="o">.</span><span class="n">get_unpacked_list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atom_list</span><span class="p">:</span>
+            <span class="n">altloc</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">get_altloc</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">altloc</span> <span class="o">==</span> <span class="s2">&quot; &quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="c1"># Public methods called by the Parser classes</span>
+
+    <span class="k">def</span> <span class="nf">set_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">header</span>
+
+    <span class="k">def</span> <span class="nf">set_line_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line_counter</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Tracks line in the PDB file that is being parsed.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">         - line_counter - int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_counter</span> <span class="o">=</span> <span class="n">line_counter</span>
+
+    <span class="k">def</span> <span class="nf">init_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a new Structure object with given id.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">         - id - string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="o">=</span> <span class="n">Structure</span><span class="p">(</span><span class="n">structure_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">init_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">serial_num</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a new Model object with given id.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">         - id - int</span>
+<span class="sd">         - serial_num - int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">serial_num</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">init_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chain_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a new Chain object with given id.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">         - chain_id - string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">has_id</span><span class="p">(</span><span class="n">chain_id</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="n">chain_id</span><span class="p">]</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;WARNING: Chain </span><span class="si">%s</span><span class="s2"> is discontinuous at line </span><span class="si">%i</span><span class="s2">.&quot;</span>
+                          <span class="o">%</span> <span class="p">(</span><span class="n">chain_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_counter</span><span class="p">),</span>
+                          <span class="n">PDBConstructionWarning</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chain</span> <span class="o">=</span> <span class="n">Chain</span><span class="p">(</span><span class="n">chain_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">init_seg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">segid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Flag a change in segid.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">         - segid - string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segid</span> <span class="o">=</span> <span class="n">segid</span>
+
+    <span class="k">def</span> <span class="nf">init_residue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resname</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">resseq</span><span class="p">,</span> <span class="n">icode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a new Residue object.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">         - resname - string, e.g. &quot;ASN&quot;</span>
+<span class="sd">         - field - hetero flag, &quot;W&quot; for waters, &quot;H&quot; for</span>
+<span class="sd">           hetero residues, otherwise blank.</span>
+<span class="sd">         - resseq - int, sequence identifier</span>
+<span class="sd">         - icode - string, insertion code</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">field</span> <span class="o">!=</span> <span class="s2">&quot; &quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">&quot;H&quot;</span><span class="p">:</span>
+                <span class="c1"># The hetero field consists of H_ + the residue name (e.g. H_FUC)</span>
+                <span class="n">field</span> <span class="o">=</span> <span class="s2">&quot;H_&quot;</span> <span class="o">+</span> <span class="n">resname</span>
+        <span class="n">res_id</span> <span class="o">=</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">resseq</span><span class="p">,</span> <span class="n">icode</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">&quot; &quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">has_id</span><span class="p">(</span><span class="n">res_id</span><span class="p">):</span>
+                <span class="c1"># There already is a residue with the id (field, resseq, icode).</span>
+                <span class="c1"># This only makes sense in the case of a point mutation.</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;WARNING: Residue (&#39;</span><span class="si">%s</span><span class="s2">&#39;, </span><span class="si">%i</span><span class="s2">, &#39;</span><span class="si">%s</span><span class="s2">&#39;) &quot;</span>
+                              <span class="s2">&quot;redefined at line </span><span class="si">%i</span><span class="s2">.&quot;</span>
+                              <span class="o">%</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">resseq</span><span class="p">,</span> <span class="n">icode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_counter</span><span class="p">),</span>
+                              <span class="n">PDBConstructionWarning</span><span class="p">)</span>
+                <span class="n">duplicate_residue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="p">[</span><span class="n">res_id</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">duplicate_residue</span><span class="o">.</span><span class="n">is_disordered</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="c1"># The residue in the chain is a DisorderedResidue object.</span>
+                    <span class="c1"># So just add the last Residue object.</span>
+                    <span class="k">if</span> <span class="n">duplicate_residue</span><span class="o">.</span><span class="n">disordered_has_id</span><span class="p">(</span><span class="n">resname</span><span class="p">):</span>
+                        <span class="c1"># The residue was already made</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">residue</span> <span class="o">=</span> <span class="n">duplicate_residue</span>
+                        <span class="n">duplicate_residue</span><span class="o">.</span><span class="n">disordered_select</span><span class="p">(</span><span class="n">resname</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Make a new residue and add it to the already</span>
+                        <span class="c1"># present DisorderedResidue</span>
+                        <span class="n">new_residue</span> <span class="o">=</span> <span class="n">Residue</span><span class="p">(</span><span class="n">res_id</span><span class="p">,</span> <span class="n">resname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">segid</span><span class="p">)</span>
+                        <span class="n">duplicate_residue</span><span class="o">.</span><span class="n">disordered_add</span><span class="p">(</span><span class="n">new_residue</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">residue</span> <span class="o">=</span> <span class="n">duplicate_residue</span>
+                        <span class="k">return</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">resname</span> <span class="o">==</span> <span class="n">duplicate_residue</span><span class="o">.</span><span class="n">resname</span><span class="p">:</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;WARNING: Residue (&#39;</span><span class="si">%s</span><span class="s2">&#39;, </span><span class="si">%i</span><span class="s2">, &#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;)&quot;</span>
+                                      <span class="s2">&quot; already defined with the same name at line  </span><span class="si">%i</span><span class="s2">.&quot;</span>
+                              <span class="o">%</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">resseq</span><span class="p">,</span> <span class="n">icode</span><span class="p">,</span> <span class="n">resname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_counter</span><span class="p">),</span>
+                              <span class="n">PDBConstructionWarning</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">residue</span> <span class="o">=</span> <span class="n">duplicate_residue</span>
+                        <span class="k">return</span>
+                    <span class="c1"># Make a new DisorderedResidue object and put all</span>
+                    <span class="c1"># the Residue objects with the id (field, resseq, icode) in it.</span>
+                    <span class="c1"># These residues each should have non-blank altlocs for all their atoms.</span>
+                    <span class="c1"># If not, the PDB file probably contains an error.</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_completely_disordered</span><span class="p">(</span><span class="n">duplicate_residue</span><span class="p">):</span>
+                        <span class="c1"># if this exception is ignored, a residue will be missing</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">residue</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="k">raise</span> <span class="n">PDBConstructionException</span><span class="p">(</span>
+                            <span class="s2">&quot;Blank altlocs in duplicate residue </span><span class="si">%s</span><span class="s2"> (&#39;</span><span class="si">%s</span><span class="s2">&#39;, </span><span class="si">%i</span><span class="s2">, &#39;</span><span class="si">%s</span><span class="s2">&#39;)&quot;</span>
+                            <span class="o">%</span> <span class="p">(</span><span class="n">resname</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">resseq</span><span class="p">,</span> <span class="n">icode</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">detach_child</span><span class="p">(</span><span class="n">res_id</span><span class="p">)</span>
+                    <span class="n">new_residue</span> <span class="o">=</span> <span class="n">Residue</span><span class="p">(</span><span class="n">res_id</span><span class="p">,</span> <span class="n">resname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">segid</span><span class="p">)</span>
+                    <span class="n">disordered_residue</span> <span class="o">=</span> <span class="n">DisorderedResidue</span><span class="p">(</span><span class="n">res_id</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">disordered_residue</span><span class="p">)</span>
+                    <span class="n">disordered_residue</span><span class="o">.</span><span class="n">disordered_add</span><span class="p">(</span><span class="n">duplicate_residue</span><span class="p">)</span>
+                    <span class="n">disordered_residue</span><span class="o">.</span><span class="n">disordered_add</span><span class="p">(</span><span class="n">new_residue</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">residue</span> <span class="o">=</span> <span class="n">disordered_residue</span>
+                    <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">residue</span> <span class="o">=</span> <span class="n">Residue</span><span class="p">(</span><span class="n">res_id</span><span class="p">,</span> <span class="n">resname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">segid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">residue</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">init_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">coord</span><span class="p">,</span> <span class="n">b_factor</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">altloc</span><span class="p">,</span> <span class="n">fullname</span><span class="p">,</span>
+                  <span class="n">serial_number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a new Atom object.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">         - name - string, atom name, e.g. CA, spaces should be stripped</span>
+<span class="sd">         - coord - Numeric array (Float0, size 3), atomic coordinates</span>
+<span class="sd">         - b_factor - float, B factor</span>
+<span class="sd">         - occupancy - float</span>
+<span class="sd">         - altloc - string, alternative location specifier</span>
+<span class="sd">         - fullname - string, atom name including spaces, e.g. &quot; CA &quot;</span>
+<span class="sd">         - element - string, upper case, e.g. &quot;HG&quot; for mercury</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">residue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residue</span>
+        <span class="c1"># if residue is None, an exception was generated during</span>
+        <span class="c1"># the construction of the residue</span>
+        <span class="k">if</span> <span class="n">residue</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="c1"># First check if this atom is already present in the residue.</span>
+        <span class="c1"># If it is, it might be due to the fact that the two atoms have atom</span>
+        <span class="c1"># names that differ only in spaces (e.g. &quot;CA..&quot; and &quot;.CA.&quot;,</span>
+        <span class="c1"># where the dots are spaces). If that is so, use all spaces</span>
+        <span class="c1"># in the atom name of the current atom.</span>
+        <span class="k">if</span> <span class="n">residue</span><span class="o">.</span><span class="n">has_id</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+            <span class="n">duplicate_atom</span> <span class="o">=</span> <span class="n">residue</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="c1"># atom name with spaces of duplicate atom</span>
+            <span class="n">duplicate_fullname</span> <span class="o">=</span> <span class="n">duplicate_atom</span><span class="o">.</span><span class="n">get_fullname</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">duplicate_fullname</span> <span class="o">!=</span> <span class="n">fullname</span><span class="p">:</span>
+                <span class="c1"># name of current atom now includes spaces</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">fullname</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Atom names </span><span class="si">%r</span><span class="s2"> and </span><span class="si">%r</span><span class="s2"> differ &quot;</span>
+                              <span class="s2">&quot;only in spaces at line </span><span class="si">%i</span><span class="s2">.&quot;</span>
+                              <span class="o">%</span> <span class="p">(</span><span class="n">duplicate_fullname</span><span class="p">,</span> <span class="n">fullname</span><span class="p">,</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">line_counter</span><span class="p">),</span>
+                              <span class="n">PDBConstructionWarning</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom</span> <span class="o">=</span> <span class="n">Atom</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">coord</span><span class="p">,</span> <span class="n">b_factor</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">altloc</span><span class="p">,</span>
+                         <span class="n">fullname</span><span class="p">,</span> <span class="n">serial_number</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">altloc</span> <span class="o">!=</span> <span class="s2">&quot; &quot;</span><span class="p">:</span>
+            <span class="c1"># The atom is disordered</span>
+            <span class="k">if</span> <span class="n">residue</span><span class="o">.</span><span class="n">has_id</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+                <span class="c1"># Residue already contains this atom</span>
+                <span class="n">duplicate_atom</span> <span class="o">=</span> <span class="n">residue</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">duplicate_atom</span><span class="o">.</span><span class="n">is_disordered</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">duplicate_atom</span><span class="o">.</span><span class="n">disordered_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># This is an error in the PDB file:</span>
+                    <span class="c1"># a disordered atom is found with a blank altloc</span>
+                    <span class="c1"># Detach the duplicate atom, and put it in a</span>
+                    <span class="c1"># DisorderedAtom object together with the current</span>
+                    <span class="c1"># atom.</span>
+                    <span class="n">residue</span><span class="o">.</span><span class="n">detach_child</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                    <span class="n">disordered_atom</span> <span class="o">=</span> <span class="n">DisorderedAtom</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                    <span class="n">residue</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">disordered_atom</span><span class="p">)</span>
+                    <span class="n">disordered_atom</span><span class="o">.</span><span class="n">disordered_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom</span><span class="p">)</span>
+                    <span class="n">disordered_atom</span><span class="o">.</span><span class="n">disordered_add</span><span class="p">(</span><span class="n">duplicate_atom</span><span class="p">)</span>
+                    <span class="n">residue</span><span class="o">.</span><span class="n">flag_disordered</span><span class="p">()</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;WARNING: disordered atom found &quot;</span>
+                                  <span class="s2">&quot;with blank altloc before line </span><span class="si">%i</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                  <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_counter</span><span class="p">,</span>
+                                  <span class="n">PDBConstructionWarning</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># The residue does not contain this disordered atom</span>
+                <span class="c1"># so we create a new one.</span>
+                <span class="n">disordered_atom</span> <span class="o">=</span> <span class="n">DisorderedAtom</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">residue</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">disordered_atom</span><span class="p">)</span>
+                <span class="c1"># Add the real atom to the disordered atom, and the</span>
+                <span class="c1"># disordered atom to the residue</span>
+                <span class="n">disordered_atom</span><span class="o">.</span><span class="n">disordered_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom</span><span class="p">)</span>
+                <span class="n">residue</span><span class="o">.</span><span class="n">flag_disordered</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># The atom is not disordered</span>
+            <span class="n">residue</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_anisou</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">anisou_array</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set anisotropic B factor of current Atom.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">set_anisou</span><span class="p">(</span><span class="n">anisou_array</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_siguij</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">siguij_array</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set standard deviation of anisotropic B factor of current Atom.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">set_siguij</span><span class="p">(</span><span class="n">siguij_array</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_sigatm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigatm_array</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set standard deviation of atom position of current Atom.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">set_sigatm</span><span class="p">(</span><span class="n">sigatm_array</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the structure.&quot;&quot;&quot;</span>
+        <span class="c1"># first sort everything</span>
+        <span class="c1"># self.structure.sort()</span>
+        <span class="c1"># Add the header dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span>
+
+    <span class="k">def</span> <span class="nf">set_symmetry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spacegroup</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Henry Orton.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
