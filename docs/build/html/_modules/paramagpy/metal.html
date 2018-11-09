@@ -1,0 +1,1027 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>paramagpy.metal &#8212; paramagpy 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for paramagpy.metal</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">ntpath</span>
+
+<div class="viewcode-block" id="euler_to_matrix"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.euler_to_matrix.html#paramagpy.metal.euler_to_matrix">[docs]</a><span class="k">def</span> <span class="nf">euler_to_matrix</span><span class="p">(</span><span class="n">eulers</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Calculate a rotation matrix from euler angles using ZYZ convention</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	eulers : array of floats</span>
+<span class="sd">		the euler angles [alpha,beta,gamma] in radians </span>
+<span class="sd">		by ZYZ convention.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	matrix : numpy 3x3 matrix object</span>
+<span class="sd">		the rotation matrix</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">eulers</span><span class="p">)</span>
+	<span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">s3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">eulers</span><span class="p">)</span>
+	<span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+	<span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">c1</span><span class="o">*</span><span class="n">c2</span><span class="o">*</span><span class="n">c3</span> <span class="o">-</span> <span class="n">s1</span><span class="o">*</span><span class="n">s3</span>
+	<span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">c3</span><span class="o">*</span><span class="n">s1</span> <span class="o">-</span><span class="n">c1</span><span class="o">*</span><span class="n">c2</span><span class="o">*</span><span class="n">s3</span>
+	<span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">c1</span><span class="o">*</span><span class="n">s2</span>
+	<span class="n">M</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">c1</span><span class="o">*</span><span class="n">s3</span> <span class="o">+</span> <span class="n">c2</span><span class="o">*</span><span class="n">c3</span><span class="o">*</span><span class="n">s1</span>
+	<span class="n">M</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">c1</span><span class="o">*</span><span class="n">c3</span> <span class="o">-</span> <span class="n">c2</span><span class="o">*</span><span class="n">s1</span><span class="o">*</span><span class="n">s3</span>
+	<span class="n">M</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">s1</span><span class="o">*</span><span class="n">s2</span>
+	<span class="n">M</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">c3</span><span class="o">*</span><span class="n">s2</span>
+	<span class="n">M</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">s2</span><span class="o">*</span><span class="n">s3</span>
+	<span class="n">M</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">c2</span>
+	<span class="k">return</span> <span class="n">M</span></div>
+
+
+<div class="viewcode-block" id="matrix_to_euler"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.matrix_to_euler.html#paramagpy.metal.matrix_to_euler">[docs]</a><span class="k">def</span> <span class="nf">matrix_to_euler</span><span class="p">(</span><span class="n">M</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Calculate Euler angles from a rotation matrix using ZYZ convention</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	M : 3x3 array</span>
+<span class="sd">		a rotation matrix</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	eulers : array of floats</span>
+<span class="sd">		the euler angles [alpha,beta,gamma] in radians</span>
+<span class="sd">		by ZYZ convention</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">M</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">&lt;</span><span class="mf">1.0</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">M</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">:</span>
+			<span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+			<span class="n">beta</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+			<span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="o">-</span><span class="n">M</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">alpha</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">M</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+			<span class="n">beta</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+			<span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.0</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">M</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">beta</span> <span class="o">=</span>  <span class="mf">0.0</span>
+		<span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.0</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">alpha</span><span class="p">,</span><span class="n">beta</span><span class="p">,</span><span class="n">gamma</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="unique_eulers"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.unique_eulers.html#paramagpy.metal.unique_eulers">[docs]</a><span class="k">def</span> <span class="nf">unique_eulers</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+	<span class="k">if</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">g</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+		<span class="n">alpha</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+		<span class="n">beta</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">b</span>
+		<span class="n">gamma</span> <span class="o">=</span> <span class="o">-</span><span class="n">g</span>
+	<span class="k">elif</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+		<span class="n">alpha</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+		<span class="n">beta</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">b</span>
+		<span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">g</span>
+	<span class="k">elif</span> <span class="n">g</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+		<span class="n">alpha</span> <span class="o">=</span> <span class="n">a</span>
+		<span class="n">beta</span>  <span class="o">=</span> <span class="n">b</span>
+		<span class="n">gamma</span> <span class="o">=</span> <span class="n">g</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">alpha</span> <span class="o">=</span> <span class="n">a</span>
+		<span class="n">beta</span>  <span class="o">=</span> <span class="n">b</span>
+		<span class="n">gamma</span> <span class="o">=</span> <span class="n">g</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="Metal"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.html#paramagpy.metal.Metal">[docs]</a><span class="k">class</span> <span class="nc">Metal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	An object for paramagnetic chi tensors and delta-chi tensors.</span>
+<span class="sd">	This must be created by specifying position, euler angles and </span>
+<span class="sd">	eigenvalues only.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1"># Gyromagnetic ratio of an electron</span>
+	<span class="n">MU0</span> <span class="o">=</span> <span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mf">1E-7</span>
+	<span class="n">MUB</span> <span class="o">=</span> <span class="mf">9.274E-24</span>
+	<span class="n">K</span> <span class="o">=</span> <span class="mf">1.381E-23</span>
+	<span class="n">HBAR</span> <span class="o">=</span> <span class="mf">1.0546E-34</span>
+	<span class="n">GAMMA</span> <span class="o">=</span> <span class="mf">1.760859644E11</span>
+
+	<span class="c1"># Stored values get scaled by this amount for the fitting algorithm</span>
+	<span class="n">fit_scaling</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mf">1E10</span><span class="p">,</span>
+		<span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mf">1E10</span><span class="p">,</span>
+		<span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mf">1E10</span><span class="p">,</span>
+		<span class="s1">&#39;ax&#39;</span><span class="p">:</span> <span class="mf">1E32</span><span class="p">,</span>
+		<span class="s1">&#39;rh&#39;</span><span class="p">:</span> <span class="mf">1E32</span><span class="p">,</span>
+		<span class="s1">&#39;iso&#39;</span><span class="p">:</span> <span class="mf">1E32</span><span class="p">,</span>
+		<span class="s1">&#39;t1e&#39;</span><span class="p">:</span> <span class="mf">1E12</span><span class="p">,</span>
+		<span class="s1">&#39;taur&#39;</span><span class="p">:</span> <span class="mf">1E9</span><span class="p">,</span>
+	<span class="p">}</span>
+
+	<span class="c1"># J, g, T1e values for lanthanide series</span>
+	<span class="n">lanth_lib</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s1">&#39;Zero&#39;</span><span class="p">,(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span> <span class="p">,</span> <span class="mf">0.</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Ce&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">5.</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">6.</span><span class="o">/</span><span class="mf">7.</span> <span class="p">,</span> <span class="mf">0.133E-12</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Pr&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">4.</span><span class="o">/</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">4.</span><span class="o">/</span><span class="mf">5.</span> <span class="p">,</span> <span class="mf">0.054E-12</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Nd&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">9.</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">8.</span><span class="o">/</span><span class="mf">11.</span><span class="p">,</span> <span class="mf">0.210E-12</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Pm&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">4.</span><span class="o">/</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">3.</span><span class="o">/</span><span class="mf">5.</span> <span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>   <span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Sm&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">5.</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="o">/</span><span class="mf">7.</span> <span class="p">,</span> <span class="mf">0.074E-12</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Eu&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">2.</span><span class="o">/</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">3.</span><span class="o">/</span><span class="mf">2.</span> <span class="p">,</span> <span class="mf">0.015E-12</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">7.</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="o">/</span><span class="mf">1.</span> <span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>   <span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Tb&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">6.</span><span class="o">/</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">3.</span><span class="o">/</span><span class="mf">2.</span> <span class="p">,</span> <span class="mf">0.251E-12</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Dy&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mf">15.</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">4.</span><span class="o">/</span><span class="mf">3.</span> <span class="p">,</span> <span class="mf">0.240E-12</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Ho&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">8.</span><span class="o">/</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">5.</span><span class="o">/</span><span class="mf">4.</span> <span class="p">,</span> <span class="mf">0.209E-12</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Er&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mf">15.</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">6.</span><span class="o">/</span><span class="mf">5.</span> <span class="p">,</span> <span class="mf">0.189E-12</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Tm&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">6.</span><span class="o">/</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">7.</span><span class="o">/</span><span class="mf">6.</span> <span class="p">,</span> <span class="mf">0.268E-12</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Yb&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">7.</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">8.</span><span class="o">/</span><span class="mf">7.</span> <span class="p">,</span> <span class="mf">0.157E-12</span><span class="p">))]</span>
+	<span class="p">)</span>
+
+	<span class="c1"># Template anisotropies [axial, rhombic]</span>
+	<span class="n">lanth_axrh</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s1">&#39;Zero&#39;</span><span class="p">,(</span><span class="mf">0.</span> <span class="p">,</span> <span class="mf">0.</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Ce&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">2.1</span><span class="p">,</span>  <span class="mf">0.7</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Pr&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">3.4</span><span class="p">,</span>  <span class="mf">2.1</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Nd&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">1.7</span><span class="p">,</span>  <span class="mf">0.4</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Pm&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">0.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Sm&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">0.2</span><span class="p">,</span>  <span class="mf">0.1</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Eu&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">2.4</span><span class="p">,</span>  <span class="mf">1.5</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">0.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Tb&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">42.1</span><span class="p">,</span> <span class="mf">11.2</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Dy&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">34.7</span><span class="p">,</span> <span class="mf">20.3</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Ho&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">18.5</span><span class="p">,</span>  <span class="mf">5.8</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Er&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">11.6</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.6</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Tm&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">21.9</span><span class="p">,</span><span class="o">-</span><span class="mf">20.1</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Yb&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="o">-</span><span class="mf">8.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.8</span><span class="p">))]</span>
+	<span class="p">)</span>
+
+	<span class="n">upper_coords</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+	<span class="n">lower_coords</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+	<span class="nd">@staticmethod</span>
+	<span class="k">def</span> <span class="nf">pack_tensor_params</span><span class="p">(</span><span class="n">metals</span><span class="p">):</span>
+		<span class="n">params</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">metals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="o">*</span><span class="mf">1E10</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">metals</span><span class="p">:</span>
+			<span class="n">params</span> <span class="o">+=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">upper_triang</span><span class="o">*</span><span class="mf">1E32</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">params</span>
+
+	<span class="nd">@staticmethod</span>
+	<span class="k">def</span> <span class="nf">unpack_tensor_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+		<span class="n">num</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span><span class="o">//</span><span class="mi">5</span>
+		<span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">params</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span><span class="o">*</span><span class="mf">1E-10</span>
+		<span class="n">tensor_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">+</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span><span class="p">:</span><span class="mi">3</span><span class="o">+</span><span class="mi">5</span><span class="o">+</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="mf">1E-32</span> 
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num</span><span class="p">)]</span>
+		<span class="k">return</span> <span class="n">pos</span><span class="p">,</span> <span class="n">tensor_params</span>
+
+	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">anisotropy_to_eigenvalues</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">axial</span><span class="p">,</span> <span class="n">rhombic</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate [dx,dy,dz] eigenvalues from axial and rhombic</span>
+<span class="sd">		tensor anisotropies (axial and rhombic parameters).</span>
+<span class="sd">		Calculations assume traceless tensor.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		axial : float</span>
+<span class="sd">			the axial anisotropy of the tensor</span>
+
+<span class="sd">		rhombic : float</span>
+<span class="sd">			the rhombic anisotropy of the tensor</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		euler_angles : array of floats</span>
+<span class="sd">			the euler angles [alpha,beta,gamma] in radians</span>
+<span class="sd">			by ZYZ convention</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">dx</span> <span class="o">=</span>  <span class="n">rhombic</span><span class="o">/</span><span class="mf">2.</span> <span class="o">-</span> <span class="n">axial</span><span class="o">/</span><span class="mf">3.</span>
+		<span class="n">dy</span> <span class="o">=</span> <span class="o">-</span><span class="n">rhombic</span><span class="o">/</span><span class="mf">2.</span> <span class="o">-</span> <span class="n">axial</span><span class="o">/</span><span class="mf">3.</span>
+		<span class="n">dz</span> <span class="o">=</span> <span class="p">(</span><span class="n">axial</span><span class="o">*</span><span class="mf">2.</span><span class="p">)</span><span class="o">/</span><span class="mf">3.</span>
+		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">dz</span><span class="p">])</span>
+	
+	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">eigenvalues_to_anisotropy</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">dz</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate axial and rhombic tensor anisotropies from </span>
+<span class="sd">		eigenvalues dx,dy,dz</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		dx, dy, dz : floats</span>
+<span class="sd">			the eigenvalues of the tensor.</span>
+<span class="sd">			These are the principle axis magnitudes</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		axial, rhombic : tuple of floats</span>
+<span class="sd">			the tensor anisotropies</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">axial</span> <span class="o">=</span> <span class="n">dz</span> <span class="o">-</span> <span class="p">(</span><span class="n">dx</span> <span class="o">+</span> <span class="n">dy</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.</span>
+		<span class="n">rhombic</span> <span class="o">=</span> <span class="n">dx</span> <span class="o">-</span> <span class="n">dy</span>
+		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">axial</span><span class="p">,</span> <span class="n">rhombic</span><span class="p">])</span>
+
+<div class="viewcode-block" id="Metal.__init__"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.html#paramagpy.metal.Metal.__init__">[docs]</a>	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">eulers</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> 
+		<span class="n">axrh</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">mueff</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">298.15</span><span class="p">,</span> <span class="n">t1e</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+		<span class="n">B0</span><span class="o">=</span><span class="mf">18.79</span><span class="p">,</span> <span class="n">taur</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Instantiate ChiTensor object</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		lanthanide : str, optional</span>
+<span class="sd">			the lanthanide name e.g. &#39;Tb&#39;</span>
+<span class="sd">			if not given, default is None and the object may only</span>
+<span class="sd">			be used for calculating PCS</span>
+<span class="sd">		position : array, optional</span>
+<span class="sd">			the (x,y,z) position in meters. Default is (0,0,0)</span>
+<span class="sd">			stored as a np.matrix object.</span>
+<span class="sd">		eulers : array, optional</span>
+<span class="sd">			the euler angles [alpha,beta,gamma] in radians </span>
+<span class="sd">			by ZYZ convention. Defualt is (0,0,0)</span>
+<span class="sd">		eigenvalues : array, optional</span>
+<span class="sd">			the principal axes magnitudes [x,y,z]. Decaulf is (0,0,0).</span>
+<span class="sd">			If traceless &lt;eigenvalues&gt; and the argument &lt;lanthanide&gt; are</span>
+<span class="sd">			provided, isotropic component is calculated and added </span>
+<span class="sd">			automatically. </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">eulers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">eulers</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">axrh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">axrh</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mueff</span> <span class="o">=</span> <span class="n">mueff</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">shift</span> <span class="o">=</span> <span class="n">shift</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t1e</span> <span class="o">=</span> <span class="n">t1e</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">=</span> <span class="n">B0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">taur</span> <span class="o">=</span> <span class="n">taur</span></div>
+
+	<span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">__abs__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eigenvalues</span><span class="p">)</span><span class="o">/</span><span class="mf">3.</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">tauc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span> <span class="o">+</span> <span class="mf">1.</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">t1e</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
+			<span class="n">position</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">),</span> 
+			<span class="n">eulers</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eulers</span><span class="p">),</span>
+			<span class="n">axrh</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axrh</span><span class="p">),</span> 
+			<span class="n">mueff</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mueff</span><span class="p">,</span> 
+			<span class="n">shift</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shift</span><span class="p">,</span> 
+			<span class="n">temperature</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> 
+			<span class="n">t1e</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">t1e</span><span class="p">,</span>
+			<span class="n">B0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="p">,</span> 
+			<span class="n">taur</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">set_lanthanide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lanthanide</span><span class="p">,</span> <span class="n">set_dchi</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+		<span class="n">J</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">t1e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lanth_lib</span><span class="p">[</span><span class="n">lanthanide</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t1e</span> <span class="o">=</span> <span class="n">t1e</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">set_Jg</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">set_dchi</span><span class="p">:</span>
+			<span class="n">ax</span><span class="p">,</span> <span class="n">rh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lanth_axrh</span><span class="p">[</span><span class="n">lanthanide</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">axrh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ax</span><span class="p">,</span><span class="n">rh</span><span class="p">])</span><span class="o">*</span><span class="mf">1E-32</span>
+
+	<span class="k">def</span> <span class="nf">set_Jg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mueff</span> <span class="o">=</span> <span class="n">g</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">MUB</span> <span class="o">*</span> <span class="p">(</span><span class="n">J</span><span class="o">*</span><span class="p">(</span><span class="n">J</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
+
+	<span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+		<span class="n">l</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0:&lt;6}</span><span class="s2">| </span><span class="si">{1:&gt;9}</span><span class="s2"> : </span><span class="si">{2:9.3f}</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="k">if</span> <span class="n">comment</span><span class="p">:</span>
+			<span class="n">l</span> <span class="o">=</span> <span class="s1">&#39;# &#39;</span> <span class="o">+</span> <span class="n">l</span> 
+		<span class="n">i</span>  <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;ax&#39;</span><span class="p">,</span><span class="s1">&#39;1E-32 m^3&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">axrh</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1E32</span><span class="p">)</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;rh&#39;</span><span class="p">,</span><span class="s1">&#39;1E-32 m^3&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">axrh</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mf">1E32</span><span class="p">)</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;1E-10 m&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1E10</span><span class="p">)</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;1E-10 m&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mf">1E10</span><span class="p">)</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">,</span><span class="s1">&#39;1E-10 m&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mf">1E10</span><span class="p">)</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;deg&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">eulers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mf">180.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;deg&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">eulers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mf">180.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;deg&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">eulers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mf">180.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;mueff&#39;</span><span class="p">,</span><span class="s1">&#39;Bm&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">mueff</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">MUB</span><span class="p">)</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;shift&#39;</span><span class="p">,</span><span class="s1">&#39;ppm&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shift</span><span class="p">)</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;B0&#39;</span><span class="p">,</span><span class="s1">&#39;T&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="p">)</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;temp&#39;</span><span class="p">,</span><span class="s1">&#39;K&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t1e</span><span class="p">:</span>
+			<span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;t1e&#39;</span><span class="p">,</span><span class="s1">&#39;ps&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">t1e</span><span class="o">*</span><span class="mf">1E12</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;t1e&#39;</span><span class="p">,</span><span class="s1">&#39;ps&#39;</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">i</span>
+
+	<span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+		<span class="n">pars</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+			<span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_scaling</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+			<span class="n">pars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">pars</span>
+
+	<span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramValues</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">paramValues</span><span class="p">:</span>
+			<span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_scaling</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+			<span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="o">/</span><span class="n">scale</span><span class="p">)</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="nd">@x</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="nd">@y</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+	<span class="nd">@z</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">z</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">eulers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="nd">@a</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">a</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">eulers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">eulers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="nd">@b</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">b</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">eulers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">eulers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+	<span class="nd">@g</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">eulers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">ax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">axrh</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="nd">@ax</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">ax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">axrh</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">rh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">axrh</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="nd">@rh</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">rh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">axrh</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">iso</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">isotropy</span>
+	<span class="nd">@iso</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">iso</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">isotropy</span> <span class="o">=</span> <span class="n">value</span>
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">B0_MHz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">*</span> <span class="mf">42.57747892</span>
+	<span class="nd">@B0_MHz</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">B0_MHz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">=</span> <span class="n">value</span> <span class="o">/</span> <span class="mf">42.57747892</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">eigenvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">anisotropy_to_eigenvalues</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">axrh</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">isotropy</span>
+
+	<span class="nd">@eigenvalues</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">eigenvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newEigenvalues</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">axrh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eigenvalues_to_anisotropy</span><span class="p">(</span><span class="o">*</span><span class="n">newEigenvalues</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">isotropy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">newEigenvalues</span><span class="p">)</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">isotropy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MU0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span>
+
+	<span class="nd">@isotropy</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">isotropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newIsotropy</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">newIsotropy</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A tensor with negative isotropy is not allowed&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mueff</span> <span class="o">=</span> <span class="p">((</span><span class="n">newIsotropy</span><span class="o">*</span><span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">MU0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">rotationMatrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">euler_to_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eulers</span><span class="p">)</span>
+
+	<span class="nd">@rotationMatrix</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">rotationMatrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newMatrix</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">eulers</span> <span class="o">=</span> <span class="n">unique_eulers</span><span class="p">(</span><span class="o">*</span><span class="n">matrix_to_eulers</span><span class="p">(</span><span class="n">newMatrix</span><span class="p">))</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">R</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotationMatrix</span>
+		<span class="k">return</span> <span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eigenvalues</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+	<span class="nd">@tensor</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newTensor</span><span class="p">):</span>
+		<span class="n">eigenvals</span><span class="p">,</span> <span class="n">eigenvecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">newTensor</span><span class="p">)</span>
+		<span class="n">eigs</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">eigenvals</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">eigenvecs</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+		<span class="n">iso</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">eigenvals</span><span class="p">)</span><span class="o">/</span><span class="mf">3.</span>
+		<span class="n">eigenvals</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="n">eigs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">iso</span><span class="p">)))</span>
+		<span class="n">eigenvecs</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">z</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)),</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
+		<span class="n">rotationMatrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">eigenvecs</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+		<span class="n">eulers</span> <span class="o">=</span> <span class="n">unique_eulers</span><span class="p">(</span><span class="o">*</span><span class="n">matrix_to_euler</span><span class="p">(</span><span class="n">rotationMatrix</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">eulers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">eulers</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">eigenvalues</span> <span class="o">=</span> <span class="n">eigenvals</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">tensor_traceless</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">isotropy</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">saupe_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">MU0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">tensor_saupe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">saupe_factor</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor_traceless</span>
+
+	<span class="nd">@tensor_saupe</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">tensor_saupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_saupe_tensor</span><span class="p">):</span>
+		<span class="n">old_mueff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tensor</span> <span class="o">=</span> <span class="n">new_saupe_tensor</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">saupe_factor</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mueff</span> <span class="o">=</span> <span class="n">old_mueff</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">upper_triang</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor_traceless</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">upper_coords</span><span class="p">]</span>
+
+	<span class="nd">@upper_triang</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">upper_triang</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
+		<span class="n">old_mueff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span>
+		<span class="n">newTensor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+		<span class="n">newTensor</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">upper_coords</span><span class="p">]</span> <span class="o">=</span> <span class="n">elements</span>
+		<span class="n">newTensor</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lower_coords</span><span class="p">]</span> <span class="o">=</span> <span class="n">elements</span>
+		<span class="n">newTensor</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">elements</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tensor</span> <span class="o">=</span> <span class="n">newTensor</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mueff</span> <span class="o">=</span> <span class="n">old_mueff</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">upper_triang_saupe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor_saupe</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">upper_coords</span><span class="p">]</span>
+
+	<span class="nd">@upper_triang</span><span class="o">.</span><span class="n">setter</span>
+	<span class="k">def</span> <span class="nf">upper_triang_saupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
+		<span class="n">newTensor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+		<span class="n">newTensor</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">upper_coords</span><span class="p">]</span> <span class="o">=</span> <span class="n">elements</span>
+		<span class="n">newTensor</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lower_coords</span><span class="p">]</span> <span class="o">=</span> <span class="n">elements</span>
+		<span class="n">newTensor</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">elements</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tensor_saupe</span> <span class="o">=</span> <span class="n">newTensor</span>
+
+	<span class="k">def</span> <span class="nf">set_utr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span>
+
+	<span class="k">def</span> <span class="nf">dipole_shift_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate the chemical shift tensor at the given postition due to the</span>
+<span class="sd">		paramagnetic dipole tensor field</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		position : array floats</span>
+<span class="sd">			the position (x, y, z) in meters</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		dipole_shift_tensor : 3x3 array</span>
+<span class="sd">			the tensor describing chemical shift at the nuclear position</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span>
+		<span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+		<span class="n">preFactor</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+		<span class="n">p1</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">distance</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+		<span class="n">p2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">distance</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+		<span class="k">return</span> <span class="p">(</span><span class="n">preFactor</span> <span class="o">*</span> <span class="p">(</span><span class="mf">3.</span><span class="o">*</span><span class="n">p1</span> <span class="o">-</span> <span class="n">p2</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">fast_dipole_shift_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">posarray</span><span class="p">):</span>
+		<span class="n">pos</span> <span class="o">=</span> <span class="n">posarray</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span>
+		<span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+		<span class="n">preFactor</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+		<span class="n">p1</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">distance</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,ik-&gt;ijk&#39;</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+		<span class="n">p2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">distance</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+		<span class="n">ds</span> <span class="o">=</span> <span class="n">preFactor</span><span class="o">*</span><span class="p">(</span><span class="mf">3.</span><span class="o">*</span><span class="n">p1</span> <span class="o">-</span> <span class="n">p2</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">ds</span>
+
+	<span class="k">def</span> <span class="nf">pcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate the psuedo-contact shift at the given postition</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		position : array floats</span>
+<span class="sd">			the position (x, y, z) in meters</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		pcs : float</span>
+<span class="sd">			the pseudo-contact shift in parts-per-million (ppm)</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_shift_tensor</span><span class="p">(</span><span class="n">position</span><span class="p">)</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span><span class="o">/</span><span class="mf">3.</span>
+		<span class="k">return</span> <span class="mf">1E6</span><span class="o">*</span><span class="n">val</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift</span>
+
+
+	<span class="k">def</span> <span class="nf">atom_pcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">racs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rads</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcs</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">racs</span><span class="p">:</span>
+			<span class="n">value</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">racs</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">csa</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">rads</span><span class="p">:</span>
+			<span class="n">value</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rads</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">value</span>
+
+
+	<span class="k">def</span> <span class="nf">atom_set_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span>
+
+	<span class="k">def</span> <span class="nf">fast_pcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">posarray</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Rapidly calculatew the psuedo-contact shift at `n&#39; positions.</span>
+<span class="sd">		This efficient algorithm calculates the PCSs for an array of </span>
+<span class="sd">		positions and is best used where speed is required for fitting.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		posarray : array of positions with shape (n,3)</span>
+<span class="sd">			the position (x, y, z) in meters</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		pcs : array of floats with shape (n,1)</span>
+<span class="sd">			the peudo-contact shift in parts-per-million (ppm)</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">pos</span> <span class="o">=</span> <span class="n">posarray</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span>
+		<span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+		<span class="n">dot1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,jk-&gt;ik&#39;</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor_traceless</span><span class="p">)</span>
+		<span class="n">dot2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,ij-&gt;i&#39;</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">dot1</span><span class="p">)</span>
+		<span class="k">return</span> <span class="mf">1E6</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">dot2</span><span class="o">/</span><span class="n">dist</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift</span>
+
+
+
+
+	<span class="k">def</span> <span class="nf">rads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate the residual anisotropic dipolar shift at the </span>
+<span class="sd">		given postition. The partial alignment induced by an anisotropic </span>
+<span class="sd">		magnetic susecptiblity causes the dipole shift tensor at a nuclear</span>
+<span class="sd">		position to average to a value different to the PCS.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		position : array floats</span>
+<span class="sd">			the position (x, y, z) in meters</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		rads : float</span>
+<span class="sd">			the residual anisotropic dipole shift in parts-per-million (ppm)</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_shift_tensor</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+		<span class="n">rads</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor_saupe</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span><span class="o">/</span><span class="mf">3.</span>
+		<span class="k">return</span> <span class="mf">1E6</span><span class="o">*</span><span class="n">rads</span>
+
+	<span class="k">def</span> <span class="nf">fast_rads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">posarray</span><span class="p">):</span>
+		<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_dipole_shift_tensor</span><span class="p">(</span><span class="n">posarray</span><span class="p">)</span>
+		<span class="n">rads</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;jk,ikl-&gt;ijl&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor_saupe</span><span class="p">,</span><span class="n">ds</span><span class="p">)</span>
+		<span class="k">return</span> <span class="mf">1E6</span><span class="o">*</span><span class="n">rads</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">axis1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">axis2</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">3.</span>
+
+	<span class="k">def</span> <span class="nf">racs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">csa</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate the residual anisotropic chemical shift at the </span>
+<span class="sd">		given postition. The partial alignment induced by an anisotropic </span>
+<span class="sd">		magnetic susecptiblity causes the chemical shift tensor at a nuclear</span>
+<span class="sd">		position to average to a value different to the isotropic value.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		csa : 3 x 3 array</span>
+<span class="sd">			the chemical shift anisotropy tensor</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		racs : float</span>
+<span class="sd">			the residual anisotropic chemical shift in parts-per-million (ppm)</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">racs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor_saupe</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">csa</span><span class="p">)</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span><span class="o">/</span><span class="mf">3.</span>
+		<span class="k">return</span> <span class="mf">1E6</span><span class="o">*</span><span class="n">racs</span>
+
+	<span class="k">def</span> <span class="nf">fast_racs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">csaarray</span><span class="p">):</span>
+		<span class="n">racs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;jk,ikl-&gt;ijl&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor_saupe</span><span class="p">,</span><span class="n">csaarray</span><span class="p">)</span>
+		<span class="k">return</span> <span class="mf">1E6</span><span class="o">*</span><span class="n">racs</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">axis1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">axis2</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">3.</span>
+
+	<span class="k">def</span> <span class="nf">fast_dsa_r1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">posarray</span><span class="p">,</span> <span class="n">gammaarray</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+		<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_dipole_shift_tensor</span><span class="p">(</span><span class="n">posarray</span><span class="p">)</span>
+		<span class="n">sis_para</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_second_invariant_squared</span><span class="p">(</span><span class="n">ds</span> <span class="o">+</span> <span class="n">csaarray</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">csaarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+			<span class="n">sis_dia</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_second_invariant_squared</span><span class="p">(</span><span class="n">csaarray</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">sis_dia</span> <span class="o">=</span> <span class="mf">0.0</span>
+		<span class="n">sis_eff</span> <span class="o">=</span> <span class="n">sis_para</span> <span class="o">-</span> <span class="n">sis_dia</span>
+		<span class="n">omegas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">*</span> <span class="n">gammaarray</span>
+		<span class="n">pf</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span><span class="o">/</span><span class="mf">15.</span><span class="p">)</span><span class="o">*</span><span class="n">sis_eff</span><span class="o">*</span><span class="n">omegas</span><span class="o">**</span><span class="mi">2</span>
+		<span class="n">rate</span> <span class="o">=</span> <span class="n">pf</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="n">omegas</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">rate</span>
+
+	<span class="k">def</span> <span class="nf">fast_dsa_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">posarray</span><span class="p">,</span> <span class="n">gammaarray</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+		<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_dipole_shift_tensor</span><span class="p">(</span><span class="n">posarray</span><span class="p">)</span>
+		<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">zz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">ds</span><span class="o">+</span><span class="n">csaarray</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+		<span class="n">sis_para</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_second_invariant_squared</span><span class="p">(</span><span class="n">ds</span> <span class="o">+</span> <span class="n">csaarray</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">csaarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+			<span class="n">sis_dia</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_second_invariant_squared</span><span class="p">(</span><span class="n">csaarray</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">sis_dia</span> <span class="o">=</span> <span class="mf">0.0</span>
+		<span class="n">sis_eff</span> <span class="o">=</span> <span class="n">sis_para</span> <span class="o">-</span> <span class="n">sis_dia</span>
+		<span class="n">omegas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">*</span> <span class="n">gammaarray</span>
+		<span class="n">pf</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">45.</span><span class="p">)</span><span class="o">*</span><span class="n">sis_eff</span><span class="o">*</span><span class="n">omegas</span><span class="o">**</span><span class="mi">2</span>
+		<span class="n">rate</span> <span class="o">=</span> <span class="n">pf</span> <span class="o">*</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="mf">0.</span>    <span class="p">)</span> <span class="o">+</span>
+			         <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="n">omegas</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">rate</span>
+
+	<span class="k">def</span> <span class="nf">fast_sbm_r1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">posarray</span><span class="p">,</span> <span class="n">gammaarray</span><span class="p">):</span>
+		<span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">posarray</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+		<span class="n">p1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MU0</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+		<span class="n">p2</span> <span class="o">=</span> <span class="p">(</span><span class="n">gammaarray</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span><span class="p">)</span><span class="o">/</span><span class="n">distance</span><span class="o">**</span><span class="mi">3</span>
+		<span class="n">rate</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span><span class="o">/</span><span class="mf">15.</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">p1</span><span class="o">*</span><span class="n">p2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span>
+			<span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tauc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="o">*</span><span class="n">gammaarray</span><span class="p">)</span> <span class="o">+</span> 
+			<span class="mi">7</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tauc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">GAMMA</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">rate</span>
+
+	<span class="k">def</span> <span class="nf">fast_sbm_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">posarray</span><span class="p">,</span> <span class="n">gammaarray</span><span class="p">):</span>
+		<span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">posarray</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+		<span class="n">p1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MU0</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+		<span class="n">p2</span> <span class="o">=</span> <span class="p">(</span><span class="n">gammaarray</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span><span class="p">)</span><span class="o">/</span><span class="n">distance</span><span class="o">**</span><span class="mi">3</span>
+		<span class="n">rate</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">15.</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">p1</span><span class="o">*</span><span class="n">p2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span>
+			 <span class="mi">4</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tauc</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span> <span class="o">+</span>
+			 <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tauc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="o">*</span><span class="n">gammaarray</span><span class="p">)</span> <span class="o">+</span> 
+			<span class="mi">13</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tauc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">GAMMA</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">rate</span>
+
+	<span class="k">def</span> <span class="nf">fast_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">posarray</span><span class="p">,</span> <span class="n">gammaarray</span><span class="p">,</span> <span class="n">rtype</span><span class="p">,</span> 
+		<span class="n">dsa</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sbm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+		<span class="n">rates</span> <span class="o">=</span> <span class="mf">0.0</span>
+		<span class="k">if</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r1&#39;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">dsa</span><span class="p">:</span>
+				<span class="n">rates</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_dsa_r1</span><span class="p">(</span><span class="n">posarray</span><span class="p">,</span> <span class="n">gammaarray</span><span class="p">,</span> <span class="n">csaarray</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">sbm</span><span class="p">:</span>
+				<span class="n">rates</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_sbm_r1</span><span class="p">(</span><span class="n">posarray</span><span class="p">,</span> <span class="n">gammaarray</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r2&#39;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">dsa</span><span class="p">:</span>
+				<span class="n">rates</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_dsa_r2</span><span class="p">(</span><span class="n">posarray</span><span class="p">,</span> <span class="n">gammaarray</span><span class="p">,</span> <span class="n">csaarray</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">sbm</span><span class="p">:</span>
+				<span class="n">rates</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_sbm_r2</span><span class="p">(</span><span class="n">posarray</span><span class="p">,</span> <span class="n">gammaarray</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">rates</span>
+			
+
+		
+	<span class="nd">@staticmethod</span>
+	<span class="k">def</span> <span class="nf">spec_dens</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">omega</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate spectral density at omega</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		omega : float</span>
+<span class="sd">			the spectral density argument</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		value : float</span>
+<span class="sd">			the value of the spectral denstiy at &lt;omega&gt;</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">tau</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">omega</span><span class="o">*</span><span class="n">tau</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+	<span class="nd">@staticmethod</span>
+	<span class="k">def</span> <span class="nf">second_invariant_squared</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate the second invariant at some position</span>
+<span class="sd">		due to the magnetic susceptibility</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		position : array floats</span>
+<span class="sd">			the position (x, y, z) in meters</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		secondInvariant : float</span>
+<span class="sd">			the second invariant of the shift tensor</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">aniso</span> <span class="o">=</span> <span class="n">tensor</span> <span class="o">-</span> <span class="n">tensor</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mf">3.</span>
+		<span class="n">eigenvals</span><span class="p">,</span> <span class="n">eigenvecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">aniso</span><span class="p">)</span>
+		<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">eigenvals</span>
+		<span class="n">secondInvariantSquared</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">z</span><span class="o">*</span><span class="n">z</span> <span class="o">-</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="o">*</span><span class="n">z</span> <span class="o">-</span> <span class="n">y</span><span class="o">*</span><span class="n">z</span>
+		<span class="k">if</span> <span class="n">secondInvariantSquared</span><span class="o">.</span><span class="n">imag</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Imaginary second invariant&quot;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">secondInvariantSquared</span><span class="o">.</span><span class="n">real</span>
+
+	<span class="nd">@staticmethod</span>
+	<span class="k">def</span> <span class="nf">fast_second_invariant_squared</span><span class="p">(</span><span class="n">tensorarray</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate the second invariant at some position</span>
+<span class="sd">		due to the magnetic susceptibility</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		position : array floats</span>
+<span class="sd">			the position (x, y, z) in meters</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		secondInvariant : float</span>
+<span class="sd">			the second invariant of the shift tensor</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">zz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">tensorarray</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="o">.</span><span class="n">T</span>
+		<span class="k">return</span> <span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span> <span class="o">+</span> <span class="n">zz</span><span class="o">*</span><span class="n">zz</span> <span class="o">-</span> <span class="n">xx</span><span class="o">*</span><span class="n">yy</span> <span class="o">-</span> <span class="n">xx</span><span class="o">*</span><span class="n">zz</span> <span class="o">-</span> <span class="n">yy</span><span class="o">*</span><span class="n">zz</span>
+
+	<span class="k">def</span> <span class="nf">dsa_r1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ignorePara</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate R1 relaxation due to Curie Spin</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		atom</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		value : float</span>
+<span class="sd">			The R1 relaxation rate in /s</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># if method is &#39;dsaiso&#39;:</span>
+		<span class="c1"># 	distance = np.linalg.norm(position-self.metal.position)</span>
+		<span class="c1"># 	sec_invar_sq = self.metal.isotropic_second_invariant(distance)**2</span>
+		<span class="c1"># sec_invar_sq = self.parse_curie_method(position, method, csa)</span>
+		<span class="n">omega</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">*</span> <span class="n">gamma</span>
+		<span class="k">if</span> <span class="n">ignorePara</span><span class="p">:</span>
+			<span class="n">shieldingTensor</span> <span class="o">=</span> <span class="n">csa</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">shieldingTensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_shift_tensor</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">+</span> <span class="n">csa</span>
+		<span class="n">secondInvariantSquared</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_invariant_squared</span><span class="p">(</span><span class="n">shieldingTensor</span><span class="p">)</span>
+		<span class="n">pf</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span><span class="o">/</span><span class="mf">15.</span><span class="p">)</span><span class="o">*</span><span class="n">secondInvariantSquared</span><span class="o">*</span><span class="n">omega</span><span class="o">**</span><span class="mi">2</span>
+		<span class="n">rate</span> <span class="o">=</span> <span class="n">pf</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">rate</span>
+
+	<span class="k">def</span> <span class="nf">dsa_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ignorePara</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate R2 relaxation due to Curie Spin</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		atom : </span>
+
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		value : float</span>
+<span class="sd">			The R2 relaxation rate in /s</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="c1"># if method is &#39;dsaiso&#39;:</span>
+		<span class="c1"># 	distance = np.linalg.norm(position-self.metal.position)</span>
+		<span class="c1"># 	sec_invar_sq = self.metal.isotropic_second_invariant(distance)**2</span>
+
+		<span class="c1"># sec_invar_sq = self.parse_curie_method(position, method, csa)</span>
+		<span class="n">omega</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">*</span> <span class="n">gamma</span>
+		<span class="k">if</span> <span class="n">ignorePara</span><span class="p">:</span>
+			<span class="n">shieldingTensor</span> <span class="o">=</span> <span class="n">csa</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">shieldingTensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_shift_tensor</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">+</span> <span class="n">csa</span>
+		<span class="n">secondInvariantSquared</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_invariant_squared</span><span class="p">(</span><span class="n">shieldingTensor</span><span class="p">)</span>
+		<span class="n">pf</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">45.</span><span class="p">)</span><span class="o">*</span><span class="n">secondInvariantSquared</span><span class="o">*</span><span class="n">omega</span><span class="o">**</span><span class="mi">2</span>
+		<span class="n">rate</span> <span class="o">=</span> <span class="n">pf</span> <span class="o">*</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="mf">0.</span>   <span class="p">)</span> <span class="o">+</span>
+			         <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="n">omega</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">rate</span>
+
+
+	<span class="k">def</span> <span class="nf">sbm_r1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+		<span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">position</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+		<span class="n">p1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MU0</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+		<span class="n">p2</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span><span class="p">)</span><span class="o">/</span><span class="n">distance</span><span class="o">**</span><span class="mi">3</span>
+		<span class="n">rate</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span><span class="o">/</span><span class="mf">15.</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">p1</span><span class="o">*</span><span class="n">p2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span>
+			<span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tauc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="o">*</span><span class="n">gamma</span><span class="p">)</span> <span class="o">+</span> 
+			<span class="mi">7</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tauc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">GAMMA</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">rate</span>
+
+
+	<span class="k">def</span> <span class="nf">sbm_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+		<span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">position</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+		<span class="n">p1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MU0</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+		<span class="n">p2</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mueff</span><span class="p">)</span><span class="o">/</span><span class="n">distance</span><span class="o">**</span><span class="mi">3</span>
+		<span class="n">rate</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">15.</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">p1</span><span class="o">*</span><span class="n">p2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span>
+			 <span class="mi">4</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tauc</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span> <span class="o">+</span>
+			 <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tauc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="o">*</span><span class="n">gamma</span><span class="p">)</span> <span class="o">+</span> 
+			<span class="mi">13</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tauc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">GAMMA</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">rate</span>
+
+	<span class="k">def</span> <span class="nf">rdc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector</span><span class="p">,</span> <span class="n">gam1</span><span class="p">,</span> <span class="n">gam2</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate Residual Dipolar Coupling (RDC)</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		vector : [x,y,z] array of float</span>
+<span class="sd">			internuclear vector in meters</span>
+<span class="sd">		gam1 : float</span>
+<span class="sd">			gyromagnetic ratio of spin 1 in rad/s/T</span>
+<span class="sd">		gam2 :</span>
+<span class="sd">			gyromagnetic ratio of spin 2 in rad/s/T</span>
+<span class="sd">		tensor : ChiTensor object</span>
+<span class="sd">			a paramagnetic tensor object from which</span>
+<span class="sd">			&lt;delta_tensor&gt; 3x3 traceless matrix attribute must be present</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		rdc : float</span>
+<span class="sd">			the RDC in Hz</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+		<span class="n">pf</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MU0</span> <span class="o">*</span> <span class="n">gam1</span> <span class="o">*</span> <span class="n">gam2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">HBAR</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">dist</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span>
+		<span class="n">rdc_radians</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="n">pf</span> <span class="o">*</span> <span class="n">vector</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor_saupe</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span> 
+		<span class="k">return</span> <span class="n">rdc_radians</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+
+	<span class="k">def</span> <span class="nf">make_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">40.0</span><span class="p">):</span>
+		<span class="n">origin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">density</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">*</span><span class="mf">1E10</span> <span class="o">-</span> <span class="n">size</span><span class="o">/</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">low</span> <span class="o">=</span> <span class="n">origin</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">density</span><span class="p">)</span>
+		<span class="n">high</span> <span class="o">=</span> <span class="n">low</span> <span class="o">+</span> <span class="n">size</span>
+		<span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">density</span><span class="o">*</span><span class="n">size</span><span class="p">)]</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+		<span class="n">domains</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1E-10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">points</span><span class="p">)]</span>
+		<span class="n">mesh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">domains</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+		<span class="k">return</span> <span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">pcs_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh</span><span class="p">):</span>
+		<span class="n">og_shape</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+		<span class="n">pcs_mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_pcs</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">og_shape</span><span class="p">),</span><span class="mi">3</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">pcs_mesh</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">og_shape</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">write_pymol_script</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">isoval</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">surfaceName</span><span class="o">=</span><span class="s1">&#39;isomap&#39;</span><span class="p">,</span> 
+		<span class="n">scriptName</span><span class="o">=</span><span class="s1">&#39;isomap.pml&#39;</span><span class="p">,</span> <span class="n">meshName</span><span class="o">=</span><span class="s1">&#39;./isomap.pml.ccp4&#39;</span><span class="p">,</span> <span class="n">pdbFile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="n">posname</span> <span class="o">=</span> <span class="s2">&quot;pos_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">surfaceName</span><span class="p">)</span>
+		<span class="n">negname</span> <span class="o">=</span> <span class="s2">&quot;neg_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">surfaceName</span><span class="p">)</span>
+		<span class="n">oriname</span> <span class="o">=</span> <span class="s2">&quot;ori_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">surfaceName</span><span class="p">)</span>
+		<span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;# PyMOL macro for loading tensor isosurface from paramagpy</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;import os, pymol</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;curdir = os.path.dirname(pymol.__script__)</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;set normalize_ccp4_maps, off</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;meshfile = os.path.join(curdir, &#39;</span><span class="si">{}</span><span class="s2">&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">meshName</span><span class="p">)</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;cmd.load(meshfile, &#39;isomap&#39;, 1, &#39;ccp4&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;isosurface </span><span class="si">{}</span><span class="s2">, isomap, </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">posname</span><span class="p">,</span><span class="n">isoval</span><span class="p">)</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;isosurface </span><span class="si">{}</span><span class="s2">, isomap, </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">negname</span><span class="p">,</span><span class="o">-</span><span class="n">isoval</span><span class="p">)</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;set transparency, 0.5, </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">posname</span><span class="p">)</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;set transparency, 0.5, </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">negname</span><span class="p">)</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;set surface_color, blue, </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">posname</span><span class="p">)</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;set surface_color, red, </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">negname</span><span class="p">)</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;pseudoatom </span><span class="si">{}</span><span class="s2">, pos=</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">oriname</span><span class="p">,</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">*</span><span class="mf">1E10</span><span class="p">))</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;show spheres, </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">oriname</span><span class="p">)</span>
+		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;color pink, </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">oriname</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">pdbFile</span><span class="p">:</span>
+			<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;cmd.load(os.path.join(curdir, &#39;</span><span class="si">{}</span><span class="s2">&#39;))</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdbFile</span><span class="p">)</span>
+			<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;show_as cartoon, </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdbFile</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">scriptName</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">o</span><span class="p">:</span>
+			<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> script written&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scriptName</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">write_isomap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">fileName</span><span class="o">=</span><span class="s1">&#39;isomap.pml.ccp4&#39;</span><span class="p">):</span>
+		<span class="n">mesh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+		<span class="n">origin</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">points</span> <span class="o">=</span> <span class="n">bounds</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">o</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
+				<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span> <span class="c1"># number points / dim</span>
+			<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="c1"># mode 2: 32bit float</span>
+			<span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="n">origin</span><span class="p">:</span>
+				<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="n">start</span><span class="p">))</span> <span class="c1"># start point of map</span>
+			<span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
+				<span class="n">intervals</span> <span class="o">=</span> <span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span>
+				<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="n">intervals</span><span class="p">))</span> <span class="c1"># number intervals / dim</span>
+			<span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="p">(</span><span class="n">high</span> <span class="o">-</span> <span class="n">low</span><span class="p">):</span>
+				<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="p">))</span> <span class="c1"># cell dim scales</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+				<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">))</span> <span class="c1"># lattice angles</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">):</span>
+				<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="c1"># axis mappings (fast x-&gt;y-&gt;z slow)</span>
+			<span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">mesh</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mesh</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mesh</span><span class="p">)):</span>
+				<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span> <span class="c1"># map min/avg/max values</span>
+			<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span> <span class="c1"># space group</span>
+			<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span><span class="mi">257</span><span class="p">):</span>
+				<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>  <span class="c1"># fill other fields with zero</span>
+			<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span> <span class="c1"># write data</span>
+
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> mesh written&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fileName</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">isomap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">protein</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">isoval</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="n">mesh</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_mesh</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+		<span class="n">pcs_mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcs_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">write_isomap</span><span class="p">(</span><span class="n">pcs_mesh</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">write_pymol_script</span><span class="p">(</span><span class="n">protein</span><span class="p">,</span> <span class="n">isoval</span><span class="p">)</span></div>
+
+
+
+
+
+
+<div class="viewcode-block" id="make_tensor"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.make_tensor.html#paramagpy.metal.make_tensor">[docs]</a><span class="k">def</span> <span class="nf">make_tensor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">axial</span><span class="p">,</span> <span class="n">rhombic</span><span class="p">,</span> 
+	<span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">lanthanide</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">298.15</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Make a ChiTensor isntance from given parameters.</span>
+<span class="sd">	This is designed to use pdb coordinates (x, y, z) and euler angles</span>
+<span class="sd">	from an output like Numbat.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	x, y, z : floats</span>
+<span class="sd">		tensor position in pdb coordiante in Angstroms</span>
+<span class="sd">	axial, rhombic : floats</span>
+<span class="sd">		the tensor anisotropies in units 10^-32</span>
+<span class="sd">	alpha, beta, gamma : floats</span>
+<span class="sd">		the euler angles in degrees that maps the tensor</span>
+<span class="sd">		to the pdb (I think?)</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	ChiTensor : object</span>
+<span class="sd">		a tensor object for calulating paramagnetic effects on </span>
+<span class="sd">		nuclear spins in the pdb coordinate</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">t</span> <span class="o">=</span> <span class="n">Metal</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">lanthanide</span><span class="p">:</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">set_lanthanide</span><span class="p">(</span><span class="n">lanthanide</span><span class="p">)</span>
+	<span class="n">t</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">])</span><span class="o">*</span><span class="mf">1E-10</span>
+	<span class="n">t</span><span class="o">.</span><span class="n">axrh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">axial</span><span class="p">,</span> <span class="n">rhombic</span><span class="p">])</span><span class="o">*</span><span class="mf">1E-32</span>
+	<span class="n">t</span><span class="o">.</span><span class="n">eulers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">t</span></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Henry Orton.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

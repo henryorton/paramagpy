@@ -209,39 +209,6 @@ class Metal(object):
 		rhombic = dx - dy
 		return np.array([axial, rhombic])
 
-	@classmethod
-	def make_tensor(cls, x, y, z, axial, rhombic, 
-		alpha, beta, gamma, lanthanide=None, temperature=298.15):
-		"""
-		Make a ChiTensor isntance from given parameters.
-		This is designed to use pdb coordinates (x, y, z) and euler angles
-		from an output like Numbat.
-
-		Parameters
-		----------
-		x, y, z : floats
-			tensor position in pdb coordiante in Angstroms
-		axial, rhombic : floats
-			the tensor anisotropies in units 10^-32
-		alpha, beta, gamma : floats
-			the euler angles in degrees that maps the tensor
-			to the pdb (I think?)
-
-		Returns
-		-------
-		ChiTensor : object
-			a tensor object for calulating paramagnetic effects on 
-			nuclear spins in the pdb coordinate
-		"""
-
-		t = cls()
-		if lanthanide:
-			t.set_lanthanide(lanthanide)
-		t.position = np.array([x, y, z])*1E-10
-		t.axrh = np.array([axial, rhombic])*1E-32
-		t.eulers = np.array([alpha, beta, gamma])*(np.pi/180.)
-		return t
-
 	def __init__(self, position=(0,0,0), eulers=(0,0,0), 
 		axrh=(0,0), mueff=0.0, shift=0.0, temperature=298.15, t1e=0.0,
 		B0=18.79, taur=0.0):
@@ -941,9 +908,36 @@ class Metal(object):
 
 
 
+def make_tensor(x, y, z, axial, rhombic, 
+	alpha, beta, gamma, lanthanide=None, temperature=298.15):
+	"""
+	Make a ChiTensor isntance from given parameters.
+	This is designed to use pdb coordinates (x, y, z) and euler angles
+	from an output like Numbat.
 
+	Parameters
+	----------
+	x, y, z : floats
+		tensor position in pdb coordiante in Angstroms
+	axial, rhombic : floats
+		the tensor anisotropies in units 10^-32
+	alpha, beta, gamma : floats
+		the euler angles in degrees that maps the tensor
+		to the pdb (I think?)
 
+	Returns
+	-------
+	ChiTensor : object
+		a tensor object for calulating paramagnetic effects on 
+		nuclear spins in the pdb coordinate
+	"""
 
-
+	t = Metal()
+	if lanthanide:
+		t.set_lanthanide(lanthanide)
+	t.position = np.array([x, y, z])*1E-10
+	t.axrh = np.array([axial, rhombic])*1E-32
+	t.eulers = np.array([alpha, beta, gamma])*(np.pi/180.)
+	return t
 
 

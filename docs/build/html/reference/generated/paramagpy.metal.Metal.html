@@ -1,0 +1,363 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>paramagpy.metal.Metal &#8212; paramagpy 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="paramagpy.metal.make_tensor" href="paramagpy.metal.make_tensor.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="paramagpy.metal.make_tensor.html" title="paramagpy.metal.make_tensor"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../metal.html" accesskey="U">paramagpy.metal</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="paramagpy-metal-metal">
+<h1>paramagpy.metal.Metal<a class="headerlink" href="#paramagpy-metal-metal" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="paramagpy.metal.Metal">
+<em class="property">class </em><code class="descclassname">paramagpy.metal.</code><code class="descname">Metal</code><span class="sig-paren">(</span><em>position=(0</em>, <em>0</em>, <em>0)</em>, <em>eulers=(0</em>, <em>0</em>, <em>0)</em>, <em>axrh=(0</em>, <em>0)</em>, <em>mueff=0.0</em>, <em>shift=0.0</em>, <em>temperature=298.15</em>, <em>t1e=0.0</em>, <em>B0=18.79</em>, <em>taur=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal" title="Permalink to this definition">¶</a></dt>
+<dd><p>An object for paramagnetic chi tensors and delta-chi tensors.
+This must be created by specifying position, euler angles and 
+eigenvalues only.</p>
+<dl class="method">
+<dt id="paramagpy.metal.Metal.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>position=(0</em>, <em>0</em>, <em>0)</em>, <em>eulers=(0</em>, <em>0</em>, <em>0)</em>, <em>axrh=(0</em>, <em>0)</em>, <em>mueff=0.0</em>, <em>shift=0.0</em>, <em>temperature=298.15</em>, <em>t1e=0.0</em>, <em>B0=18.79</em>, <em>taur=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate ChiTensor object</p>
+<dl class="docutils">
+<dt>lanthanide <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd>the lanthanide name e.g. ‘Tb’
+if not given, default is None and the object may only
+be used for calculating PCS</dd>
+<dt>position <span class="classifier-delimiter">:</span> <span class="classifier">array, optional</span></dt>
+<dd>the (x,y,z) position in meters. Default is (0,0,0)
+stored as a np.matrix object.</dd>
+<dt>eulers <span class="classifier-delimiter">:</span> <span class="classifier">array, optional</span></dt>
+<dd>the euler angles [alpha,beta,gamma] in radians 
+by ZYZ convention. Defualt is (0,0,0)</dd>
+<dt>eigenvalues <span class="classifier-delimiter">:</span> <span class="classifier">array, optional</span></dt>
+<dd>the principal axes magnitudes [x,y,z]. Decaulf is (0,0,0).
+If traceless &lt;eigenvalues&gt; and the argument &lt;lanthanide&gt; are
+provided, isotropic component is calculated and added 
+automatically.</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#paramagpy.metal.Metal.__init__" title="paramagpy.metal.Metal.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([position,&nbsp;eulers,&nbsp;axrh,&nbsp;mueff,&nbsp;…])</td>
+<td>Instantiate ChiTensor object</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">anisotropy_to_eigenvalues</span></code>(axial,&nbsp;rhombic)</td>
+<td>Calculate [dx,dy,dz] eigenvalues from axial and rhombic tensor anisotropies (axial and rhombic parameters).</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">atom_pcs</span></code>(atom[,&nbsp;racs,&nbsp;rads])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">atom_set_position</span></code>(atom)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">dipole_shift_tensor</span></code>(position)</td>
+<td>Calculate the chemical shift tensor at the given postition due to the paramagnetic dipole tensor field</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">dsa_r1</span></code>(position,&nbsp;gamma[,&nbsp;csa,&nbsp;ignorePara])</td>
+<td>Calculate R1 relaxation due to Curie Spin</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">dsa_r2</span></code>(position,&nbsp;gamma[,&nbsp;csa,&nbsp;ignorePara])</td>
+<td>Calculate R2 relaxation due to Curie Spin</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">eigenvalues_to_anisotropy</span></code>(dx,&nbsp;dy,&nbsp;dz)</td>
+<td>Calculate axial and rhombic tensor anisotropies from  eigenvalues dx,dy,dz</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_dipole_shift_tensor</span></code>(posarray)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_dsa_r1</span></code>(posarray,&nbsp;gammaarray[,&nbsp;csaarray])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_dsa_r2</span></code>(posarray,&nbsp;gammaarray[,&nbsp;csaarray])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_pcs</span></code>(posarray)</td>
+<td>Rapidly calculatew the psuedo-contact shift at <a href="#id1"><span class="problematic" id="id2">`</span></a>n’ positions.This efficient algorithm calculates the PCSs for an array of  positions and is best used where speed is required for fitting..</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_pre</span></code>(posarray,&nbsp;gammaarray,&nbsp;rtype[,&nbsp;dsa,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_racs</span></code>(csaarray)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_rads</span></code>(posarray)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_sbm_r1</span></code>(posarray,&nbsp;gammaarray)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_sbm_r2</span></code>(posarray,&nbsp;gammaarray)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_second_invariant_squared</span></code>(tensorarray)</td>
+<td>Calculate the second invariant at some position due to the magnetic susceptibility</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>(params)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">info</span></code>([comment])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">isomap</span></code>([protein,&nbsp;isoval])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_mesh</span></code>([density,&nbsp;size])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">pack_tensor_params</span></code>(metals)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">pcs</span></code>(position)</td>
+<td>Calculate the psuedo-contact shift at the given postition</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">pcs_mesh</span></code>(mesh)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">racs</span></code>(csa)</td>
+<td>Calculate the residual anisotropic chemical shift at the  given postition.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">rads</span></code>(position)</td>
+<td>Calculate the residual anisotropic dipolar shift at the  given postition.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">rdc</span></code>(vector,&nbsp;gam1,&nbsp;gam2)</td>
+<td>Calculate Residual Dipolar Coupling (RDC)</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">sbm_r1</span></code>(position,&nbsp;gamma)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">sbm_r2</span></code>(position,&nbsp;gamma)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">second_invariant_squared</span></code>(tensor)</td>
+<td>Calculate the second invariant at some position due to the magnetic susceptibility</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_Jg</span></code>(J,&nbsp;g)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_lanthanide</span></code>(lanthanide[,&nbsp;set_dchi])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(paramValues)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_utr</span></code>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">spec_dens</span></code>(tau,&nbsp;omega)</td>
+<td>Calculate spectral density at omega</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">unpack_tensor_params</span></code>(params)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_isomap</span></code>(mesh,&nbsp;bounds[,&nbsp;fileName])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_pymol_script</span></code>([isoval,&nbsp;surfaceName,&nbsp;…])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">B0_MHz</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">GAMMA</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">HBAR</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">K</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">MU0</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">MUB</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">a</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">ax</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">b</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">eigenvalues</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_scaling</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">g</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">iso</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">isotropy</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">lanth_axrh</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">lanth_lib</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">lower_coords</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">rh</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotationMatrix</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">saupe_factor</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">tauc</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor_saupe</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor_traceless</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">upper_coords</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">upper_triang</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">upper_triang_saupe</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="paramagpy.metal.make_tensor.html"
+                        title="previous chapter">paramagpy.metal.make_tensor</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/reference/generated/paramagpy.metal.Metal.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="paramagpy.metal.make_tensor.html" title="paramagpy.metal.make_tensor"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../metal.html" >paramagpy.metal</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Henry Orton.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
