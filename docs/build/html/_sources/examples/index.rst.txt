@@ -5,6 +5,7 @@ Examples
 ########
 
 Fitting PCS data
+----------------
 
 .. toctree::
     :maxdepth: 1

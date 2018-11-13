@@ -5,7 +5,6 @@ prot = protein.load_pdb('../data_files/4icbH_mut.pdb')
 
 # Load the PCS data
 rawData = dataparse.read_pcs('../data_files/calbindin_Er_HN_PCS.npc')
-
 # Associate PCS data with atoms of the PDB
 parsedData = prot.parse(rawData)
 
@@ -24,5 +23,6 @@ fitParameters = ['x','y','z','ax','rh','a','b','g']
 mFit = fit.nlr_fit_metal_from_pcs(mGuess, [parsedData], fitParameters)
 
 # Print the info of the fitted tensor
-print(mFit[0].info())
+with open('output.txt', 'w') as o:
+	o.write(mFit[0].info())
 
