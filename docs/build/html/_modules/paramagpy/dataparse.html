@@ -46,33 +46,6 @@
 <div class="viewcode-block" id="DataContainer"><a class="viewcode-back" href="../../reference/generated/paramagpy.dataparse.DataContainer.html#paramagpy.dataparse.DataContainer">[docs]</a><span class="k">class</span> <span class="nc">DataContainer</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;docstring for DataContainer&quot;&quot;&quot;</span>
 
-	<span class="c1"># datatypes = {</span>
-	<span class="c1"># 	&#39;PCS&#39;:np.dtype([</span>
-	<span class="c1"># 				(&#39;mdl&#39;, int   ),</span>
-	<span class="c1"># 				(&#39;use&#39;, bool  ),</span>
-	<span class="c1"># 				(&#39;atm&#39;, object),</span>
-	<span class="c1"># 				(&#39;cal&#39;, float ),</span>
-	<span class="c1"># 				(&#39;exp&#39;, float ),</span>
-	<span class="c1"># 				(&#39;err&#39;, float ),</span>
-	<span class="c1"># 				(&#39;idx&#39;, int   )]),</span>
-	<span class="c1"># 	&#39;RDC&#39;:np.dtype([</span>
-	<span class="c1"># 				(&#39;mdl&#39;, int   ),</span>
-	<span class="c1"># 				(&#39;use&#39;, bool  ),</span>
-	<span class="c1"># 				(&#39;atm&#39;, object),</span>
-	<span class="c1"># 				(&#39;atn&#39;, object),</span>
-	<span class="c1"># 				(&#39;cal&#39;, float ),</span>
-	<span class="c1"># 				(&#39;exp&#39;, float ),</span>
-	<span class="c1"># 				(&#39;err&#39;, float ),</span>
-	<span class="c1"># 				(&#39;idx&#39;, int   )]),</span>
-	<span class="c1"># 	&#39;PRE&#39;:np.dtype([</span>
-	<span class="c1"># 				(&#39;mdl&#39;, int   ),</span>
-	<span class="c1"># 				(&#39;use&#39;, bool  ),</span>
-	<span class="c1"># 				(&#39;atm&#39;, object),</span>
-	<span class="c1"># 				(&#39;cal&#39;, float ),</span>
-	<span class="c1"># 				(&#39;exp&#39;, float ),</span>
-	<span class="c1"># 				(&#39;err&#39;, float ),</span>
-	<span class="c1"># 				(&#39;idx&#39;, int   )])}</span>
-
 <div class="viewcode-block" id="DataContainer.__init__"><a class="viewcode-back" href="../../reference/generated/paramagpy.dataparse.DataContainer.__init__.html#paramagpy.dataparse.DataContainer.__init__">[docs]</a>	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 		<span class="n">dtype</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;dtype&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -80,82 +53,6 @@
 
 	<span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="k">return</span> <span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
-
-	<span class="c1"># def parse(self, protein, models=None, all_atoms=False):</span>
-	<span class="c1"># 	usedKeys = set([])</span>
-	<span class="c1"># 	data = []</span>
-
-	<span class="c1"># 	if type(models)==int:</span>
-	<span class="c1"># 		chains = protein[models].get_chains()</span>
-	<span class="c1"># 	elif type(models) in (list, tuple):</span>
-	<span class="c1"># 		chains = []</span>
-	<span class="c1"># 		for m in models:</span>
-	<span class="c1"># 			chains += protein[m].get_chains()</span>
-	<span class="c1"># 		print(chains)</span>
-	<span class="c1"># 	else:</span>
-	<span class="c1"># 		chains = protein.get_chains()</span>
-
-	<span class="c1"># 	if all_atoms:</span>
-	<span class="c1"># 		if self.dtype==&#39;RDC&#39;:</span>
-	<span class="c1"># 			raise TypeError(&quot;Cannot fetch all atoms for dtype RDC&quot;)</span>
-	<span class="c1"># 		atoms = []</span>
-	<span class="c1"># 		for chain in chains:</span>
-	<span class="c1"># 			mdl = chain.parent.id</span>
-	<span class="c1"># 			for atm in chain.get_atoms():</span>
-	<span class="c1"># 				_, _, _, (_,seq,_), (name, _) = atm.get_full_id()</span>
-	<span class="c1"># 				key = seq, name</span>
-	<span class="c1"># 				if key in self:</span>
-	<span class="c1"># 					exp, err = self[key]</span>
-	<span class="c1"># 					use = True</span>
-	<span class="c1"># 					usedKeys.add(key)</span>
-	<span class="c1"># 				else:</span>
-	<span class="c1"># 					exp, err = np.nan, np.nan, </span>
-	<span class="c1"># 					use = False</span>
-
-	<span class="c1"># 				row = mdl, use, atm, np.nan, exp, err, atm.serial_number</span>
-	<span class="c1"># 				data.append(row)</span>
-
-	<span class="c1"># 	elif self.dtype in (&#39;PCS&#39;, &#39;PRE&#39;):</span>
-	<span class="c1"># 		for chain in chains:</span>
-	<span class="c1"># 			for key, (exp, err) in self.items():</span>
-	<span class="c1"># 				seq, name = key</span>
-	<span class="c1"># 				if seq in chain:</span>
-	<span class="c1"># 					resi = chain[seq]</span>
-	<span class="c1"># 					if name in resi:</span>
-	<span class="c1"># 						mdl = chain.parent.id</span>
-	<span class="c1"># 						use = True</span>
-	<span class="c1"># 						atm = resi[name]</span>
-	<span class="c1"># 						cal = np.nan</span>
-	<span class="c1"># 						idx = atm.serial_number</span>
-	<span class="c1"># 						row = mdl, use, atm, cal, exp, err, idx</span>
-	<span class="c1"># 						data.append(row)</span>
-	<span class="c1"># 						usedKeys.add(key)</span>
-
-	<span class="c1"># 	elif self.dtype==&#39;RDC&#39;:</span>
-	<span class="c1"># 		for chain in chains:</span>
-	<span class="c1"># 			for key, (exp, err) in self.items():</span>
-	<span class="c1"># 				(seq1, name1), (seq2, name2) = key</span>
-	<span class="c1"># 				if seq1 in chain and seq2 in chain:</span>
-	<span class="c1"># 					resi1 = chain[seq1]</span>
-	<span class="c1"># 					resi2 = chain[seq2]</span>
-	<span class="c1"># 					if name1 in resi1 and name2 in resi2:</span>
-	<span class="c1"># 						mdl = chain.parent.id</span>
-	<span class="c1"># 						use = True</span>
-	<span class="c1"># 						atm = resi1[name1]</span>
-	<span class="c1"># 						atn = resi2[name2]</span>
-	<span class="c1"># 						cal = np.nan</span>
-	<span class="c1"># 						idx = unique_pairing(atm.serial_number, </span>
-	<span class="c1"># 							atn.serial_number)</span>
-	<span class="c1"># 						row = mdl, use, atm, atn, cal, exp, err, idx</span>
-	<span class="c1"># 						data.append(row)</span>
-	<span class="c1"># 						usedKeys.add(key)</span>
-
-	<span class="c1"># 	unused = set(self) - usedKeys</span>
-	<span class="c1"># 	if unused:</span>
-	<span class="c1"># 		message = &quot;WARNING: Some values were not parsed to {}:&quot;</span>
-	<span class="c1"># 		print(message.format(protein.id))</span>
-	<span class="c1"># 		print(list(unused))</span>
-	<span class="c1"># 	return np.array(data, dtype=self.datatypes[self.dtype]).view(np.recarray)</span>
 
 
 <div class="viewcode-block" id="read_pcs"><a class="viewcode-back" href="../../reference/generated/paramagpy.dataparse.read_pcs.html#paramagpy.dataparse.read_pcs">[docs]</a><span class="k">def</span> <span class="nf">read_pcs</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
@@ -192,10 +89,6 @@
 			<span class="n">key</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="n">name</span>
 			<span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">values</span></div>
-
-
-<span class="k">def</span> <span class="nf">blank_array</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
-	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">recarray</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">DataContainer</span><span class="o">.</span><span class="n">datatypes</span><span class="p">[</span><span class="n">dtype</span><span class="p">])</span>
 
 </pre></div>
 

@@ -13,4 +13,5 @@ Welcome to paramagpy's documentation
     :maxdepth: 2
 
     install
+    examples/index
     reference/index

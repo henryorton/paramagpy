@@ -864,8 +864,9 @@ class Metal(object):
 		s += "show spheres, {}\n".format(oriname)
 		s += "color pink, {}\n".format(oriname)
 		if pdbFile:
-			s += "cmd.load(os.path.join(curdir, '{}'))\n".format(pdbFile)
-			s += "show_as cartoon, {}\n".format(pdbFile.replace('.pdb',''))
+			protName = ntpath.basename(pdbFile).replace('.pdb','')
+			s += "cmd.load(os.path.join(curdir, '{}'),'{}')\n".format(pdbFile, protName)
+			s += "show_as cartoon, {}\n".format(protName)
 		with open(scriptName, 'w') as o:
 			o.write(s)
 			print("{} script written".format(scriptName))
@@ -901,7 +902,7 @@ class Metal(object):
 		mesh, bounds = self.make_mesh(**kwargs)
 		pcs_mesh = self.pcs_mesh(mesh)
 		self.write_isomap(pcs_mesh, bounds)
-		self.write_pymol_script(protein, isoval)
+		self.write_pymol_script(isoval=isoval, pdbFile=protein)
 
 
 

@@ -130,7 +130,6 @@
 <span class="sd">	An object for paramagnetic chi tensors and delta-chi tensors.</span>
 <span class="sd">	This must be created by specifying position, euler angles and </span>
 <span class="sd">	eigenvalues only.</span>
-
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="c1"># Gyromagnetic ratio of an electron</span>
@@ -906,8 +905,9 @@
 		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;show spheres, </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">oriname</span><span class="p">)</span>
 		<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;color pink, </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">oriname</span><span class="p">)</span>
 		<span class="k">if</span> <span class="n">pdbFile</span><span class="p">:</span>
-			<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;cmd.load(os.path.join(curdir, &#39;</span><span class="si">{}</span><span class="s2">&#39;))</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdbFile</span><span class="p">)</span>
-			<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;show_as cartoon, </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdbFile</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+			<span class="n">protName</span> <span class="o">=</span> <span class="n">ntpath</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">pdbFile</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+			<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;cmd.load(os.path.join(curdir, &#39;</span><span class="si">{}</span><span class="s2">&#39;),&#39;</span><span class="si">{}</span><span class="s2">&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdbFile</span><span class="p">,</span> <span class="n">protName</span><span class="p">)</span>
+			<span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;show_as cartoon, </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">protName</span><span class="p">)</span>
 		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">scriptName</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">o</span><span class="p">:</span>
 			<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> script written&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scriptName</span><span class="p">))</span></div>
@@ -943,7 +943,7 @@
 		<span class="n">mesh</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_mesh</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 		<span class="n">pcs_mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcs_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">write_isomap</span><span class="p">(</span><span class="n">pcs_mesh</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">write_pymol_script</span><span class="p">(</span><span class="n">protein</span><span class="p">,</span> <span class="n">isoval</span><span class="p">)</span></div></div>
+		<span class="bp">self</span><span class="o">.</span><span class="n">write_pymol_script</span><span class="p">(</span><span class="n">isoval</span><span class="o">=</span><span class="n">isoval</span><span class="p">,</span> <span class="n">pdbFile</span><span class="o">=</span><span class="n">protein</span><span class="p">)</span></div></div>
 
 
 

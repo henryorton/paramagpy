@@ -1,0 +1,1 @@
+.. include:: ../../../examples/pcs_single_fit/README.rst
