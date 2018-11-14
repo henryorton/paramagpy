@@ -1,4 +1,4 @@
-.. _protein
+.. _protein:
 
 paramagpy.protein
 =================

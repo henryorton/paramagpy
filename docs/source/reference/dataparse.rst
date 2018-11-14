@@ -1,4 +1,4 @@
-.. _dataparse
+.. _dataparse:
 
 paramagpy.dataparse
 ===================

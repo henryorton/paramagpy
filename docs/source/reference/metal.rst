@@ -1,4 +1,4 @@
-.. _metal
+.. _metal:
 
 paramagpy.metal
 ===============

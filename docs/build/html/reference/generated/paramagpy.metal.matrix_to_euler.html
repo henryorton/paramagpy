@@ -57,7 +57,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>M</strong> (<em>3x3 array</em>) – a rotation matrix</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>M</strong> (<em>3x3 numpy ndarray</em>) – a rotation matrix</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>eulers</strong> – the euler angles [alpha,beta,gamma] in radians
 by ZYZ convention</td>
@@ -66,6 +66,14 @@ by ZYZ convention</td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">0.1223669</span> <span class="p">,</span> <span class="o">-</span><span class="mf">0.5621374</span> <span class="p">,</span>  <span class="mf">0.81794125</span><span class="p">],</span>
+<span class="go">                    [ 0.75057357,  0.486796  ,  0.44684334],</span>
+<span class="go">                    [-0.64935788,  0.66860392,  0.36235775]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">matrix_to_euler</span><span class="p">(</span><span class="n">matrix</span><span class="p">))</span>
+<span class="go">np.array([0.5,1.2,0.8])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>

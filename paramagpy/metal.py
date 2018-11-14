@@ -15,8 +15,16 @@ def euler_to_matrix(eulers):
 
 	Returns
 	-------
-	matrix : numpy 3x3 matrix object
+	matrix : 3x3 numpy ndarray
 		the rotation matrix
+
+	Examples
+	--------
+	>>> eulers = np.array([0.5,1.2,0.8])
+	>>> print(euler_to_matrix(eulers))
+	array([[-0.1223669 , -0.5621374 ,  0.81794125],
+	       [ 0.75057357,  0.486796  ,  0.44684334],
+	       [-0.64935788,  0.66860392,  0.36235775]])
 	"""
 	c1, c2, c3 = np.cos(eulers)
 	s1, s2, s3 = np.sin(eulers)
@@ -39,7 +47,7 @@ def matrix_to_euler(M):
 
 	Parameters
 	----------
-	M : 3x3 array
+	M : 3x3 numpy ndarray
 		a rotation matrix
 
 	Returns
@@ -47,6 +55,14 @@ def matrix_to_euler(M):
 	eulers : array of floats
 		the euler angles [alpha,beta,gamma] in radians
 		by ZYZ convention
+
+	Examples
+	--------
+	>>> matrix = array([[-0.1223669 , -0.5621374 ,  0.81794125],
+	                    [ 0.75057357,  0.486796  ,  0.44684334],
+	                    [-0.64935788,  0.66860392,  0.36235775]])
+	>>> print(matrix_to_euler(matrix))
+	np.array([0.5,1.2,0.8])
 	"""
 	if M[2,2]<1.0:
 		if M[2,2] > -1.0:
@@ -103,6 +119,9 @@ class Metal(object):
 		'x': 1E10,
 		'y': 1E10,
 		'z': 1E10,
+		'a': 180.0/np.pi,
+		'b': 180.0/np.pi,
+		'g': 180.0/np.pi,
 		'ax': 1E32,
 		'rh': 1E32,
 		'iso': 1E32,
@@ -525,7 +544,7 @@ class Metal(object):
 
 	def fast_pcs(self, posarray):
 		"""
-		Rapidly calculatew the psuedo-contact shift at `n' positions.
+		Rapidly calculatew the psuedo-contact shift at `n` positions.
 		This efficient algorithm calculates the PCSs for an array of 
 		positions and is best used where speed is required for fitting.
 
@@ -811,11 +830,8 @@ class Metal(object):
 			internuclear vector in meters
 		gam1 : float
 			gyromagnetic ratio of spin 1 in rad/s/T
-		gam2 :
+		gam2 : float
 			gyromagnetic ratio of spin 2 in rad/s/T
-		tensor : ChiTensor object
-			a paramagnetic tensor object from which
-			<delta_tensor> 3x3 traceless matrix attribute must be present
 
 		Returns
 		-------
@@ -904,6 +920,10 @@ class Metal(object):
 		self.write_isomap(pcs_mesh, bounds)
 		self.write_pymol_script(isoval=isoval, pdbFile=protein)
 
+	def save(self, fileName='tensor.txt'):
+		with open(fileName, 'w') as o:
+			o.write(self.info(comment=False))
+
 
 
 
@@ -941,4 +961,21 @@ def make_tensor(x, y, z, axial, rhombic,
 	t.eulers = np.array([alpha, beta, gamma])*(np.pi/180.)
 	return t
 
+
+def load_tensor(fileName):
+	"""
+	Docstring for load tensor
+	"""
+	with open(fileName) as o:
+		params = []
+		for line in o:
+			try:
+				variableUnits, value = line.split(':')
+				variable, units = variableUnits.split('|')
+				params.append([variable.strip(), float(value)])
+			except ValueError:
+				print("WARNING: Line ignored reading tensor:\n{}".format(line))
+		t = Metal()
+		t.set_params(params)
+	return t
 

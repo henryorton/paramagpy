@@ -1,0 +1,194 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Plot experiment/calculated PCS and Q-factor &#8212; paramagpy 0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plot PCS isosurface (PyMol view)" href="pcs_plot_isosurface.html" />
+    <link rel="prev" title="Fit Tensor to PCS Data" href="pcs_fit.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pcs_plot_isosurface.html" title="Plot PCS isosurface (PyMol view)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pcs_fit.html" title="Fit Tensor to PCS Data"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Examples</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="plot-experiment-calculated-pcs-and-q-factor">
+<span id="pcs-plot-correlation"></span><h1>Plot experiment/calculated PCS and Q-factor<a class="headerlink" href="#plot-experiment-calculated-pcs-and-q-factor" title="Permalink to this headline">¶</a></h1>
+<p>This example shows how to plot calculated vs experimental PCS values of a fitted <span class="math notranslate nohighlight">\({\Delta\chi}\)</span>-tensor and calculate the Q-factor for data from the example <a class="reference internal" href="pcs_fit.html#pcs-fit"><span class="std std-ref">Fit Tensor to PCS Data</span></a>.</p>
+<div class="section" id="downloads">
+<h2>Downloads<a class="headerlink" href="#downloads" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Download the data files <code class="docutils literal notranslate"><span class="pre">4icbH_mut.pdb</span></code>, <code class="docutils literal notranslate"><span class="pre">calbindin_Er_HN_PCS.npc</span></code> and <code class="docutils literal notranslate"><span class="pre">calbindin_Er_HN_PCS_tensor.txt</span></code> from <a class="reference external" href="https://github.com/henryorton/paramagpy/tree/master/examples/data_files/">here</a>:</li>
+<li>Download the script <a class="reference external" href="https://github.com/henryorton/paramagpy/tree/master/examples/pcs_plot_correlation/pcs_plot_correlation.py">pcs_plot_correlation.py</a></li>
+</ul>
+</div>
+<div class="section" id="explanation">
+<h2>Explanation<a class="headerlink" href="#explanation" title="Permalink to this headline">¶</a></h2>
+<p>The protein and data are loaded as described previously in <a class="reference internal" href="pcs_fit.html#pcs-fit"><span class="std std-ref">Fit Tensor to PCS Data</span></a>.</p>
+<p>The fitted metal is loaded into the variable <code class="docutils literal notranslate"><span class="pre">met</span></code> from a file using the function <code class="xref py py-func docutils literal notranslate"><span class="pre">paramagpy.metal.load_tensor()</span></code>.</p>
+<p>A <em>for loop</em> is used to make two lists, <code class="docutils literal notranslate"><span class="pre">exp</span></code> and <code class="docutils literal notranslate"><span class="pre">cal</span></code> which contain the experimental and calculated PCS values respectively.</p>
+<p>The Q-factor is then calculated using the function <a class="reference internal" href="../reference/generated/paramagpy.fit.qfactor.html#paramagpy.fit.qfactor" title="paramagpy.fit.qfactor"><code class="xref py py-func docutils literal notranslate"><span class="pre">paramagpy.fit.qfactor()</span></code></a>.</p>
+<p>Finally the results are plotted using standard functions of the plotting module <a class="reference external" href="https://matplotlib.org/">matplotlib</a></p>
+</div>
+<div class="section" id="script">
+<h2>Script<a class="headerlink" href="#script" title="Permalink to this headline">¶</a></h2>
+<p>[<a class="reference download internal" download="" href="../_downloads/c32f2d3e90ba41708308b82caebba325/pcs_plot_correlation.py"><code class="xref download docutils literal notranslate"><span class="pre">pcs_plot_correlation.py</span></code></a>]</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">paramagpy</span> <span class="k">import</span> <span class="n">protein</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">dataparse</span><span class="p">,</span> <span class="n">metal</span>
+
+<span class="c1"># Load the PDB file</span>
+<span class="n">prot</span> <span class="o">=</span> <span class="n">protein</span><span class="o">.</span><span class="n">load_pdb</span><span class="p">(</span><span class="s1">&#39;../data_files/4icbH_mut.pdb&#39;</span><span class="p">)</span>
+
+<span class="c1"># Load the PCS data</span>
+<span class="n">rawData</span> <span class="o">=</span> <span class="n">dataparse</span><span class="o">.</span><span class="n">read_pcs</span><span class="p">(</span><span class="s1">&#39;../data_files/calbindin_Er_HN_PCS.npc&#39;</span><span class="p">)</span>
+
+<span class="c1"># Associate PCS data with atoms of the PDB</span>
+<span class="n">parsedData</span> <span class="o">=</span> <span class="n">prot</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rawData</span><span class="p">)</span>
+
+<span class="c1"># Load the fitted tensor</span>
+<span class="n">met</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">load_tensor</span><span class="p">(</span><span class="s1">&#39;../data_files/calbindin_Er_HN_PCS_tensor.txt&#39;</span><span class="p">)</span>
+
+<span class="c1"># Make two lists of experimental and calculated values</span>
+<span class="n">exp</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">cal</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">atom</span><span class="p">,</span> <span class="n">exp_pcs</span><span class="p">,</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">parsedData</span><span class="p">:</span>
+	<span class="n">exp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">exp_pcs</span><span class="p">)</span>
+	<span class="n">cal</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">atom_pcs</span><span class="p">(</span><span class="n">atom</span><span class="p">))</span>
+
+<span class="c1"># Calculate the Q-factor for the correlation</span>
+<span class="n">qfactor</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">qfactor</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="n">cal</span><span class="p">)</span>
+
+<span class="c1">#### Plot the correlation ####</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+
+<span class="c1"># Plot the data</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="n">cal</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> 
+	<span class="n">label</span><span class="o">=</span><span class="s2">&quot;Q-factor = </span><span class="si">{:5.4f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qfactor</span><span class="p">))</span>
+
+<span class="c1"># Plot a diagonal</span>
+<span class="n">l</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">l</span><span class="p">,</span><span class="n">h</span><span class="p">],[</span><span class="n">l</span><span class="p">,</span><span class="n">h</span><span class="p">],</span><span class="s1">&#39;-k&#39;</span><span class="p">,</span><span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+
+<span class="c1"># Axis labels</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Experiment&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Calculated&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;pcs_plot_correlation.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="output">
+<h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<p><em>Correlation Plot</em></p>
+<p>[<a class="reference download internal" download="" href="../_downloads/d5a517cc993710ec694b01daa1c44f33/pcs_plot_correlation.png"><code class="xref download docutils literal notranslate"><span class="pre">pcs_plot_correlation.png</span></code></a>]</p>
+<img alt="../_images/pcs_plot_correlation.png" src="../_images/pcs_plot_correlation.png" />
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Plot experiment/calculated PCS and Q-factor</a><ul>
+<li><a class="reference internal" href="#downloads">Downloads</a></li>
+<li><a class="reference internal" href="#explanation">Explanation</a></li>
+<li><a class="reference internal" href="#script">Script</a></li>
+<li><a class="reference internal" href="#output">Output</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pcs_fit.html"
+                        title="previous chapter">Fit Tensor to PCS Data</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pcs_plot_isosurface.html"
+                        title="next chapter">Plot PCS isosurface (PyMol view)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/pcs_plot_correlation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pcs_plot_isosurface.html" title="Plot PCS isosurface (PyMol view)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pcs_fit.html" title="Fit Tensor to PCS Data"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Examples</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Henry Orton.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

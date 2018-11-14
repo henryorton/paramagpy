@@ -1,0 +1,194 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Fit Tensor to PCS Data &#8212; paramagpy 0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plot experiment/calculated PCS and Q-factor" href="pcs_plot_correlation.html" />
+    <link rel="prev" title="Examples" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pcs_plot_correlation.html" title="Plot experiment/calculated PCS and Q-factor"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Examples"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Examples</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="fit-tensor-to-pcs-data">
+<span id="pcs-fit"></span><h1>Fit Tensor to PCS Data<a class="headerlink" href="#fit-tensor-to-pcs-data" title="Permalink to this headline">¶</a></h1>
+<p>This example shows how to fit a <span class="math notranslate nohighlight">\({\Delta\chi}\)</span>-tensor to experimental PCS data for the protein calbindin D9k. These data contain amide 1H and 15N chemical shifts between diamagnetic and paramagnetic states with the lanthanide Er3+ bound.</p>
+<div class="section" id="downloads">
+<h2>Downloads<a class="headerlink" href="#downloads" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Download the data files <code class="docutils literal notranslate"><span class="pre">4icbH_mut.pdb</span></code> and <code class="docutils literal notranslate"><span class="pre">calbindin_Er_HN_PCS.npc</span></code> from <a class="reference external" href="https://github.com/henryorton/paramagpy/tree/master/examples/data_files/">here</a>:</li>
+<li>Download the script <a class="reference external" href="https://github.com/henryorton/paramagpy/tree/master/examples/pcs_fit/pcs_fit.py">pcs_fit.py</a></li>
+</ul>
+</div>
+<div class="section" id="explanation">
+<h2>Explanation<a class="headerlink" href="#explanation" title="Permalink to this headline">¶</a></h2>
+<p>First the protein is loaded from a PDB file using <a class="reference internal" href="../reference/generated/paramagpy.protein.load_pdb.html#paramagpy.protein.load_pdb" title="paramagpy.protein.load_pdb"><code class="xref py py-func docutils literal notranslate"><span class="pre">paramagpy.protein.load_pdb()</span></code></a> into the variable <code class="docutils literal notranslate"><span class="pre">prot</span></code>. This returns a <code class="docutils literal notranslate"><span class="pre">CustomStructure</span></code> object which is closely based on the <code class="docutils literal notranslate"><span class="pre">Structure</span></code> object from <a class="reference external" href="https://biopython.org/">BioPython</a> and contains the atomic coordinates. The object, and how to access atomic coordinates is discussed at this <a class="reference external" href="https://biopython.org/wiki/The_Biopython_Structural_Bioinformatics_FAQ">link</a>.</p>
+<p>The PCS data is then loaded from a <code class="docutils literal notranslate"><span class="pre">.npc</span></code> file using the function <a class="reference internal" href="../reference/generated/paramagpy.dataparse.read_pcs.html#paramagpy.dataparse.read_pcs" title="paramagpy.dataparse.read_pcs"><code class="xref py py-func docutils literal notranslate"><span class="pre">paramagpy.dataparse.read_pcs()</span></code></a> into the variable <code class="docutils literal notranslate"><span class="pre">rawData</span></code>. This is a dictionary of <code class="docutils literal notranslate"><span class="pre">(PCS,</span> <span class="pre">Error)</span></code> tuples which may be accessed by <code class="docutils literal notranslate"><span class="pre">rawData[(seq,</span> <span class="pre">atom)]</span></code> where <code class="docutils literal notranslate"><span class="pre">seq</span></code> is an integer specifying the sequence and <code class="docutils literal notranslate"><span class="pre">atom</span></code> is the atom name e.g <code class="docutils literal notranslate"><span class="pre">(3,'HA')</span></code>. Note that these should match the corresponding sequence and atom in the PDB file.</p>
+<p>To associate the experimental PCS value with atoms of the PDB structure, the method <a class="reference internal" href="../reference/generated/paramagpy.protein.CustomStructure.parse.html#paramagpy.protein.CustomStructure.parse" title="paramagpy.protein.CustomStructure.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">paramagpy.protein.CustomStructure.parse()</span></code></a> is called on <code class="docutils literal notranslate"><span class="pre">rawData</span></code>. The new list <code class="docutils literal notranslate"><span class="pre">parsedData</span></code> contains elements <code class="docutils literal notranslate"><span class="pre">[atom,</span> <span class="pre">PCS,</span> <span class="pre">Error]</span></code>, where <code class="docutils literal notranslate"><span class="pre">atom</span></code> is now an atom object from the PDB.</p>
+<p>An initial <span class="math notranslate nohighlight">\({\Delta\chi}\)</span>-tensor is defined by initialising a <a class="reference internal" href="../reference/generated/paramagpy.metal.Metal.html#paramagpy.metal.Metal" title="paramagpy.metal.Metal"><code class="xref py py-class docutils literal notranslate"><span class="pre">paramagpy.metal.Metal</span></code></a> object. The initial position is known to be near the binding site, which is set to the CA atom of residue 56. Note that the <code class="docutils literal notranslate"><span class="pre">position</span></code> attribute is always in Angstrom units.</p>
+<p>A quick gridsearch is conducted in a sphere of 10 Angstrom with 10 points per radius using the function <a class="reference internal" href="../reference/generated/paramagpy.fit.svd_gridsearch_fit_metal_from_pcs.html#paramagpy.fit.svd_gridsearch_fit_metal_from_pcs" title="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs"><code class="xref py py-func docutils literal notranslate"><span class="pre">paramagpy.fit.svd_gridsearch_fit_metal_from_pcs()</span></code></a>. This requires two lists containing the starting metals <code class="docutils literal notranslate"><span class="pre">mStart</span></code> and parsed experimental data <code class="docutils literal notranslate"><span class="pre">parsedData</span></code> and return a new metal object which fits best.</p>
+<p>This is then refined using a non-linear regression gradient descent with the function <a class="reference internal" href="../reference/generated/paramagpy.fit.nlr_fit_metal_from_pcs.html#paramagpy.fit.nlr_fit_metal_from_pcs" title="paramagpy.fit.nlr_fit_metal_from_pcs"><code class="xref py py-func docutils literal notranslate"><span class="pre">paramagpy.fit.nlr_fit_metal_from_pcs()</span></code></a>.</p>
+<p>The fitted tensor parameters are then output by calling the method <a class="reference internal" href="../reference/generated/paramagpy.metal.Metal.save.html#paramagpy.metal.Metal.save" title="paramagpy.metal.Metal.save"><code class="xref py py-func docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.save()</span></code></a>.</p>
+</div>
+<div class="section" id="script">
+<h2>Script<a class="headerlink" href="#script" title="Permalink to this headline">¶</a></h2>
+<p>[<a class="reference download internal" download="" href="../_downloads/637d3d5cfee14a0b4ccd964df594484a/pcs_fit.py"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit.py</span></code></a>]</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">paramagpy</span> <span class="k">import</span> <span class="n">protein</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">dataparse</span><span class="p">,</span> <span class="n">metal</span>
+
+<span class="c1"># Load the PDB file</span>
+<span class="n">prot</span> <span class="o">=</span> <span class="n">protein</span><span class="o">.</span><span class="n">load_pdb</span><span class="p">(</span><span class="s1">&#39;../data_files/4icbH_mut.pdb&#39;</span><span class="p">)</span>
+
+<span class="c1"># Load the PCS data</span>
+<span class="n">rawData</span> <span class="o">=</span> <span class="n">dataparse</span><span class="o">.</span><span class="n">read_pcs</span><span class="p">(</span><span class="s1">&#39;../data_files/calbindin_Er_HN_PCS.npc&#39;</span><span class="p">)</span>
+
+<span class="c1"># Associate PCS data with atoms of the PDB</span>
+<span class="n">parsedData</span> <span class="o">=</span> <span class="n">prot</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rawData</span><span class="p">)</span>
+
+<span class="c1"># Define an initial tensor</span>
+<span class="n">mStart</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">Metal</span><span class="p">()</span>
+
+<span class="c1"># Set the starting position to an atom close to the metal</span>
+<span class="n">mStart</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">prot</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;A&#39;</span><span class="p">][</span><span class="mi">56</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">position</span>
+
+<span class="c1"># Calculate an initial tensor from an SVD gridsearch</span>
+<span class="n">mGuess</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">svd_gridsearch_fit_metal_from_pcs</span><span class="p">(</span>
+	<span class="p">[</span><span class="n">mStart</span><span class="p">],[</span><span class="n">parsedData</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Refine the tensor using non-linear regression</span>
+<span class="n">fitParameters</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">,</span><span class="s1">&#39;ax&#39;</span><span class="p">,</span><span class="s1">&#39;rh&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">]</span>
+<span class="n">mFit</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">nlr_fit_metal_from_pcs</span><span class="p">(</span><span class="n">mGuess</span><span class="p">,</span> <span class="p">[</span><span class="n">parsedData</span><span class="p">],</span> <span class="n">fitParameters</span><span class="p">)</span>
+
+<span class="c1"># Save the fitted tensor to file</span>
+<span class="n">mFit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;calbindin_Er_HN_PCS_tensor.txt&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="output">
+<h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<p><em>The fitted tensor parameters</em></p>
+<p>[<a class="reference download internal" download="" href="../_downloads/b6f3da7fa2fe7a8eca48a7641bf7ade0/calbindin_Er_HN_PCS_tensor.txt"><code class="xref download docutils literal notranslate"><span class="pre">calbindin_Er_HN_PCS_tensor.txt</span></code></a>]</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span>    <span class="o">|</span> <span class="mf">1E-32</span> <span class="n">m</span><span class="o">^</span><span class="mi">3</span> <span class="p">:</span>    <span class="o">-</span><span class="mf">8.688</span>
+<span class="n">rh</span>    <span class="o">|</span> <span class="mf">1E-32</span> <span class="n">m</span><span class="o">^</span><span class="mi">3</span> <span class="p">:</span>    <span class="o">-</span><span class="mf">4.192</span>
+<span class="n">x</span>     <span class="o">|</span>   <span class="mf">1E-10</span> <span class="n">m</span> <span class="p">:</span>    <span class="mf">25.517</span>
+<span class="n">y</span>     <span class="o">|</span>   <span class="mf">1E-10</span> <span class="n">m</span> <span class="p">:</span>     <span class="mf">8.652</span>
+<span class="n">z</span>     <span class="o">|</span>   <span class="mf">1E-10</span> <span class="n">m</span> <span class="p">:</span>     <span class="mf">6.358</span>
+<span class="n">a</span>     <span class="o">|</span>       <span class="n">deg</span> <span class="p">:</span>   <span class="mf">116.011</span>
+<span class="n">b</span>     <span class="o">|</span>       <span class="n">deg</span> <span class="p">:</span>   <span class="mf">138.058</span>
+<span class="n">g</span>     <span class="o">|</span>       <span class="n">deg</span> <span class="p">:</span>    <span class="mf">43.492</span>
+<span class="n">mueff</span> <span class="o">|</span>        <span class="n">Bm</span> <span class="p">:</span>     <span class="mf">0.000</span>
+<span class="n">shift</span> <span class="o">|</span>       <span class="n">ppm</span> <span class="p">:</span>     <span class="mf">0.000</span>
+<span class="n">B0</span>    <span class="o">|</span>         <span class="n">T</span> <span class="p">:</span>    <span class="mf">18.790</span>
+<span class="n">temp</span>  <span class="o">|</span>         <span class="n">K</span> <span class="p">:</span>   <span class="mf">298.150</span>
+<span class="n">t1e</span>   <span class="o">|</span>        <span class="n">ps</span> <span class="p">:</span>     <span class="mf">0.000</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Fit Tensor to PCS Data</a><ul>
+<li><a class="reference internal" href="#downloads">Downloads</a></li>
+<li><a class="reference internal" href="#explanation">Explanation</a></li>
+<li><a class="reference internal" href="#script">Script</a></li>
+<li><a class="reference internal" href="#output">Output</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Examples</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pcs_plot_correlation.html"
+                        title="next chapter">Plot experiment/calculated PCS and Q-factor</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/pcs_fit.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pcs_plot_correlation.html" title="Plot experiment/calculated PCS and Q-factor"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Examples"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Examples</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Henry Orton.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

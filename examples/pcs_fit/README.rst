@@ -6,18 +6,18 @@ Fit Tensor to PCS Data
 This example shows how to fit a :math:`{\Delta\chi}`-tensor to experimental PCS data for the protein calbindin D9k. These data contain amide 1H and 15N chemical shifts between diamagnetic and paramagnetic states with the lanthanide Er3+ bound.
 
 
-Instructions
-------------
+Downloads
+---------
 
 * Download the data files ``4icbH_mut.pdb`` and ``calbindin_Er_HN_PCS.npc`` from `here <https://github.com/henryorton/paramagpy/tree/master/examples/data_files/>`_:
 
 * Download the script `pcs_fit.py <https://github.com/henryorton/paramagpy/tree/master/examples/pcs_fit/pcs_fit.py>`_
 
 
-Running the script
-------------------
+Explanation
+-----------
 
-First the protein is loaded from a PDB file using :py:func:`paramagpy.protein.load_pdb` into the variable ``prot``. This returns a ``CustomStructure`` object which is closely based on the ``Structure`` object from `BioPython <https://biopython.org/>`_ and contains the atomic coordinates. The object, and how to access atomic coordinates is discussed `here <https://biopython.org/wiki/The_Biopython_Structural_Bioinformatics_FAQ>`_.
+First the protein is loaded from a PDB file using :py:func:`paramagpy.protein.load_pdb` into the variable ``prot``. This returns a ``CustomStructure`` object which is closely based on the ``Structure`` object from `BioPython <https://biopython.org/>`_ and contains the atomic coordinates. The object, and how to access atomic coordinates is discussed at this `link <https://biopython.org/wiki/The_Biopython_Structural_Bioinformatics_FAQ>`_.
 
 The PCS data is then loaded from a ``.npc`` file using the function :py:func:`paramagpy.dataparse.read_pcs` into the variable ``rawData``. This is a dictionary of ``(PCS, Error)`` tuples which may be accessed by ``rawData[(seq, atom)]`` where ``seq`` is an integer specifying the sequence and ``atom`` is the atom name e.g ``(3,'HA')``. Note that these should match the corresponding sequence and atom in the PDB file.
 
@@ -29,14 +29,21 @@ A quick gridsearch is conducted in a sphere of 10 Angstrom with 10 points per ra
 
 This is then refined using a non-linear regression gradient descent with the function :py:func:`paramagpy.fit.nlr_fit_metal_from_pcs`.
 
-The fitted tensor parameters are then output by calling the method :py:func:`paramagpy.metal.Metal.info`.
+The fitted tensor parameters are then output by calling the method :py:func:`paramagpy.metal.Metal.save`.
+
+
+Script
+------
 
 [:download:`pcs_fit.py <../../../examples/pcs_fit/pcs_fit.py>`]
 
 .. literalinclude:: ../../../examples/pcs_fit/pcs_fit.py
 
-Output: *The fitted tensor parameters*
+Output
+------
 
-[:download:`output.txt <../../../examples/pcs_fit/output.txt>`]
+*The fitted tensor parameters*
 
-.. literalinclude:: ../../../examples/pcs_fit/output.txt
+[:download:`calbindin_Er_HN_PCS_tensor.txt <../../../examples/pcs_fit/calbindin_Er_HN_PCS_tensor.txt>`]
+
+.. literalinclude:: ../../../examples/pcs_fit/calbindin_Er_HN_PCS_tensor.txt

@@ -56,8 +56,16 @@
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
-<span class="sd">	matrix : numpy 3x3 matrix object</span>
+<span class="sd">	matrix : 3x3 numpy ndarray</span>
 <span class="sd">		the rotation matrix</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; eulers = np.array([0.5,1.2,0.8])</span>
+<span class="sd">	&gt;&gt;&gt; print(euler_to_matrix(eulers))</span>
+<span class="sd">	array([[-0.1223669 , -0.5621374 ,  0.81794125],</span>
+<span class="sd">	       [ 0.75057357,  0.486796  ,  0.44684334],</span>
+<span class="sd">	       [-0.64935788,  0.66860392,  0.36235775]])</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">eulers</span><span class="p">)</span>
 	<span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">s3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">eulers</span><span class="p">)</span>
@@ -80,7 +88,7 @@
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
-<span class="sd">	M : 3x3 array</span>
+<span class="sd">	M : 3x3 numpy ndarray</span>
 <span class="sd">		a rotation matrix</span>
 
 <span class="sd">	Returns</span>
@@ -88,6 +96,14 @@
 <span class="sd">	eulers : array of floats</span>
 <span class="sd">		the euler angles [alpha,beta,gamma] in radians</span>
 <span class="sd">		by ZYZ convention</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; matrix = array([[-0.1223669 , -0.5621374 ,  0.81794125],</span>
+<span class="sd">	                    [ 0.75057357,  0.486796  ,  0.44684334],</span>
+<span class="sd">	                    [-0.64935788,  0.66860392,  0.36235775]])</span>
+<span class="sd">	&gt;&gt;&gt; print(matrix_to_euler(matrix))</span>
+<span class="sd">	np.array([0.5,1.2,0.8])</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">if</span> <span class="n">M</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">&lt;</span><span class="mf">1.0</span><span class="p">:</span>
 		<span class="k">if</span> <span class="n">M</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">:</span>
@@ -144,6 +160,9 @@
 		<span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mf">1E10</span><span class="p">,</span>
 		<span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mf">1E10</span><span class="p">,</span>
 		<span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mf">1E10</span><span class="p">,</span>
+		<span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mf">180.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
+		<span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mf">180.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
+		<span class="s1">&#39;g&#39;</span><span class="p">:</span> <span class="mf">180.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
 		<span class="s1">&#39;ax&#39;</span><span class="p">:</span> <span class="mf">1E32</span><span class="p">,</span>
 		<span class="s1">&#39;rh&#39;</span><span class="p">:</span> <span class="mf">1E32</span><span class="p">,</span>
 		<span class="s1">&#39;iso&#39;</span><span class="p">:</span> <span class="mf">1E32</span><span class="p">,</span>
@@ -250,7 +269,7 @@
 		<span class="n">rhombic</span> <span class="o">=</span> <span class="n">dx</span> <span class="o">-</span> <span class="n">dy</span>
 		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">axial</span><span class="p">,</span> <span class="n">rhombic</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Metal.__init__"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.__init__.html#paramagpy.metal.Metal.__init__">[docs]</a>	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">eulers</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> 
+<div class="viewcode-block" id="Metal.__init__"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.html#paramagpy.metal.Metal.__init__">[docs]</a>	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">eulers</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> 
 		<span class="n">axrh</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">mueff</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">298.15</span><span class="p">,</span> <span class="n">t1e</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
 		<span class="n">B0</span><span class="o">=</span><span class="mf">18.79</span><span class="p">,</span> <span class="n">taur</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
@@ -566,7 +585,7 @@
 
 <div class="viewcode-block" id="Metal.fast_pcs"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.fast_pcs.html#paramagpy.metal.Metal.fast_pcs">[docs]</a>	<span class="k">def</span> <span class="nf">fast_pcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">posarray</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Rapidly calculatew the psuedo-contact shift at `n&#39; positions.</span>
+<span class="sd">		Rapidly calculatew the psuedo-contact shift at `n` positions.</span>
 <span class="sd">		This efficient algorithm calculates the PCSs for an array of </span>
 <span class="sd">		positions and is best used where speed is required for fitting.</span>
 
@@ -852,11 +871,8 @@
 <span class="sd">			internuclear vector in meters</span>
 <span class="sd">		gam1 : float</span>
 <span class="sd">			gyromagnetic ratio of spin 1 in rad/s/T</span>
-<span class="sd">		gam2 :</span>
+<span class="sd">		gam2 : float</span>
 <span class="sd">			gyromagnetic ratio of spin 2 in rad/s/T</span>
-<span class="sd">		tensor : ChiTensor object</span>
-<span class="sd">			a paramagnetic tensor object from which</span>
-<span class="sd">			&lt;delta_tensor&gt; 3x3 traceless matrix attribute must be present</span>
 
 <span class="sd">		Returns</span>
 <span class="sd">		-------</span>
@@ -943,7 +959,11 @@
 		<span class="n">mesh</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_mesh</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 		<span class="n">pcs_mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcs_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">write_isomap</span><span class="p">(</span><span class="n">pcs_mesh</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">write_pymol_script</span><span class="p">(</span><span class="n">isoval</span><span class="o">=</span><span class="n">isoval</span><span class="p">,</span> <span class="n">pdbFile</span><span class="o">=</span><span class="n">protein</span><span class="p">)</span></div></div>
+		<span class="bp">self</span><span class="o">.</span><span class="n">write_pymol_script</span><span class="p">(</span><span class="n">isoval</span><span class="o">=</span><span class="n">isoval</span><span class="p">,</span> <span class="n">pdbFile</span><span class="o">=</span><span class="n">protein</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Metal.save"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.save.html#paramagpy.metal.Metal.save">[docs]</a>	<span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fileName</span><span class="o">=</span><span class="s1">&#39;tensor.txt&#39;</span><span class="p">):</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">o</span><span class="p">:</span>
+			<span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span></div></div>
 
 
 
@@ -982,6 +1002,23 @@
 	<span class="n">t</span><span class="o">.</span><span class="n">eulers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">t</span></div>
 
+
+<span class="k">def</span> <span class="nf">load_tensor</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Docstring for load tensor</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span> <span class="k">as</span> <span class="n">o</span><span class="p">:</span>
+		<span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">o</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">variableUnits</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+				<span class="n">variable</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">variableUnits</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">)</span>
+				<span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">variable</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)])</span>
+			<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: Line ignored reading tensor:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+		<span class="n">t</span> <span class="o">=</span> <span class="n">Metal</span><span class="p">()</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">t</span>
 
 </pre></div>
 

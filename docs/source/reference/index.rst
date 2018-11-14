@@ -1,4 +1,4 @@
-.. _reference_guide:
+.. _reference_index:
 
 ###############
 Reference Guide

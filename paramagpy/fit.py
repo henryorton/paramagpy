@@ -440,6 +440,8 @@ def nlr_fit_metal_from_pcs(initMetals, pcss, params,
 		pars = metal.get_params(otherpars)
 		startpars += pars
 	fmin_bfgs(cost, startpars, disp=False)
+	for metal in metals:
+		metal.set_utr()
 	if progress:
 		progress.set(1.0)
 	return metals
@@ -651,6 +653,8 @@ def nlr_fit_metal_from_pre(initMetals, pres, params, sumIndices=None,
 		pars = metal.get_params(otherpars)
 		startpars += pars
 	fmin_bfgs(cost, startpars, disp=False)
+	for metal in metals:
+		metal.set_utr()
 	if progress:
 		progress.set(1.0)
 	return metals
