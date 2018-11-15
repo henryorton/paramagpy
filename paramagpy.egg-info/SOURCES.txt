@@ -1,0 +1,15 @@
+MANIFEST.in
+README.rst
+setup.py
+paramagpy/__init__.py
+paramagpy/dataparse.py
+paramagpy/fit.py
+paramagpy/gui.py
+paramagpy/icon.gif
+paramagpy/metal.py
+paramagpy/protein.py
+paramagpy.egg-info/PKG-INFO
+paramagpy.egg-info/SOURCES.txt
+paramagpy.egg-info/dependency_links.txt
+paramagpy.egg-info/not-zip-safe
+paramagpy.egg-info/top_level.txt

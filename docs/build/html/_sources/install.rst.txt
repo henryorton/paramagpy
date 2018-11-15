@@ -7,6 +7,7 @@ Where to get paramagpy
 
 Install files for all platforms are available for `download <https://github.com/henryorton/paramagpy>`_.
 
+
 Requirements
 ------------
 
@@ -18,11 +19,18 @@ Paramagpy is written for python 3. It requires packages:
 
 * `matplotlib <http://matplotlib.org/>`_
 
+* `BioPython <https://biopython.org/>`_
+
+
 Unix/OSX Installation
 ---------------------
 
-After installing the above dependencies download and extract the source 
-distribution and run::
+Install directly using pip::
+
+    $ pip install paramagpy
+
+Or, download the source code and run::
 
     $ python setup.py install
 
+within the source directory.

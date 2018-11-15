@@ -13,3 +13,5 @@ doctrees/
 *.sublime-workspace
 /gui_executables/**
 /icon/**
+/build/**
+/dist/**
