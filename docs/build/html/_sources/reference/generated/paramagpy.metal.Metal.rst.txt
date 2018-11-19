@@ -14,14 +14,12 @@ paramagpy.metal.Metal
          .. autosummary::
             :toctree:
             
-                  ~Metal.anisotropy_to_eigenvalues
                   ~Metal.atom_pcs
                   ~Metal.atom_set_position
                   ~Metal.copy
                   ~Metal.dipole_shift_tensor
                   ~Metal.dsa_r1
                   ~Metal.dsa_r2
-                  ~Metal.eigenvalues_to_anisotropy
                   ~Metal.fast_dipole_shift_tensor
                   ~Metal.fast_dsa_r1
                   ~Metal.fast_dsa_r2
@@ -29,6 +27,7 @@ paramagpy.metal.Metal
                   ~Metal.fast_pre
                   ~Metal.fast_racs
                   ~Metal.fast_rads
+                  ~Metal.fast_rdc
                   ~Metal.fast_sbm_r1
                   ~Metal.fast_sbm_r2
                   ~Metal.fast_second_invariant_squared
@@ -36,7 +35,6 @@ paramagpy.metal.Metal
                   ~Metal.info
                   ~Metal.isomap
                   ~Metal.make_mesh
-                  ~Metal.pack_tensor_params
                   ~Metal.pcs
                   ~Metal.pcs_mesh
                   ~Metal.racs
@@ -51,7 +49,6 @@ paramagpy.metal.Metal
                   ~Metal.set_params
                   ~Metal.set_utr
                   ~Metal.spec_dens
-                  ~Metal.unpack_tensor_params
                   ~Metal.write_isomap
                   ~Metal.write_pymol_script
       
@@ -62,6 +59,7 @@ paramagpy.metal.Metal
          .. rubric:: Attributes
 
          .. autosummary::
+            :toctree:
             
                ~Metal.B0_MHz
                ~Metal.GAMMA
@@ -70,6 +68,7 @@ paramagpy.metal.Metal
                ~Metal.MU0
                ~Metal.MUB
                ~Metal.a
+               ~Metal.alignment_factor
                ~Metal.ax
                ~Metal.b
                ~Metal.eigenvalues
@@ -85,10 +84,12 @@ paramagpy.metal.Metal
                ~Metal.saupe_factor
                ~Metal.tauc
                ~Metal.tensor
+               ~Metal.tensor_alignment
                ~Metal.tensor_saupe
                ~Metal.tensor_traceless
                ~Metal.upper_coords
                ~Metal.upper_triang
+               ~Metal.upper_triang_alignment
                ~Metal.upper_triang_saupe
                ~Metal.x
                ~Metal.y

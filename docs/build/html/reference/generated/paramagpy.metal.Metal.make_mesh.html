@@ -18,7 +18,7 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="paramagpy.metal.Metal.pack_tensor_params" href="paramagpy.metal.Metal.pack_tensor_params.html" />
+    <link rel="next" title="paramagpy.metal.Metal.pcs" href="paramagpy.metal.Metal.pcs.html" />
     <link rel="prev" title="paramagpy.metal.Metal.isomap" href="paramagpy.metal.Metal.isomap.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -31,7 +31,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="paramagpy.metal.Metal.pack_tensor_params.html" title="paramagpy.metal.Metal.pack_tensor_params"
+          <a href="paramagpy.metal.Metal.pcs.html" title="paramagpy.metal.Metal.pcs"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="paramagpy.metal.Metal.isomap.html" title="paramagpy.metal.Metal.isomap"
@@ -53,7 +53,35 @@
 <dl class="method">
 <dt id="paramagpy.metal.Metal.make_mesh">
 <code class="descclassname">Metal.</code><code class="descname">make_mesh</code><span class="sig-paren">(</span><em>density=2</em>, <em>size=40.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.make_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.make_mesh" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Construct a 3D grid of points to map an isosurface</p>
+<p>This is contained in a cube</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>density</strong> (<em>int</em>) – the points per Angstrom in the grid</li>
+<li><strong>size</strong> (<em>float</em>) – the length of one edge of the cube</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul>
+<li><p class="first"><strong>mesh</strong> (<em>cubic grid array</em>) – This has shape (n,n,n,3) where n is the number of points
+along one edge of the grid. Units are meters</p>
+</li>
+<li><p class="first"><strong>bounds</strong> (<em>tuple (origin, low, high, points)</em>) – This tuple has information about the bounding box</p>
+<p>origin : array of floats, the (x,y,z) location of mesh vertex</p>
+<p>low : array of ints, the integer location of the first point in each dimension</p>
+<p>high : array of ints, the integer location of the last point in each dimension</p>
+<p>points : array of ints, the number of points along each dimension</p>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 
@@ -67,8 +95,8 @@
   <p class="topless"><a href="paramagpy.metal.Metal.isomap.html"
                         title="previous chapter">paramagpy.metal.Metal.isomap</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="paramagpy.metal.Metal.pack_tensor_params.html"
-                        title="next chapter">paramagpy.metal.Metal.pack_tensor_params</a></p>
+  <p class="topless"><a href="paramagpy.metal.Metal.pcs.html"
+                        title="next chapter">paramagpy.metal.Metal.pcs</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -102,7 +130,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="paramagpy.metal.Metal.pack_tensor_params.html" title="paramagpy.metal.Metal.pack_tensor_params"
+          <a href="paramagpy.metal.Metal.pcs.html" title="paramagpy.metal.Metal.pcs"
              >next</a> |</li>
         <li class="right" >
           <a href="paramagpy.metal.Metal.isomap.html" title="paramagpy.metal.Metal.isomap"

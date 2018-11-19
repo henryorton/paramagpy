@@ -11,6 +11,5 @@ Fitting PCS data
     :maxdepth: 1
 
     pcs_fit.rst
-    pcs_plot_correlation.rst
     pcs_plot_isosurface.rst    
     pcs_fit_multiple.rst    

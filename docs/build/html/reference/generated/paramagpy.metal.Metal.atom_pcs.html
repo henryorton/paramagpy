@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="paramagpy.metal.Metal.atom_set_position" href="paramagpy.metal.Metal.atom_set_position.html" />
-    <link rel="prev" title="paramagpy.metal.Metal.anisotropy_to_eigenvalues" href="paramagpy.metal.Metal.anisotropy_to_eigenvalues.html" /> 
+    <link rel="prev" title="paramagpy.metal.Metal" href="paramagpy.metal.Metal.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -34,7 +34,7 @@
           <a href="paramagpy.metal.Metal.atom_set_position.html" title="paramagpy.metal.Metal.atom_set_position"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="paramagpy.metal.Metal.anisotropy_to_eigenvalues.html" title="paramagpy.metal.Metal.anisotropy_to_eigenvalues"
+          <a href="paramagpy.metal.Metal.html" title="paramagpy.metal.Metal"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
@@ -53,7 +53,29 @@
 <dl class="method">
 <dt id="paramagpy.metal.Metal.atom_pcs">
 <code class="descclassname">Metal.</code><code class="descname">atom_pcs</code><span class="sig-paren">(</span><em>atom</em>, <em>racs=False</em>, <em>rads=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.atom_pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.atom_pcs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculate the psuedo-contact shift at the given atom</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>atom</strong> (<em>biopython atom object</em>) – must have ‘position’ attribute</li>
+<li><strong>racs</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True, RACS (residual anisotropic chemical shielding)
+correction is included. Default is False</li>
+<li><strong>rads</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True, RADS (residual anisotropic dipolar shielding)
+correction is included. Defualt is False</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pcs</strong> – the pseudo-contact shift in parts-per-million (ppm)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 
@@ -64,8 +86,8 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="paramagpy.metal.Metal.anisotropy_to_eigenvalues.html"
-                        title="previous chapter">paramagpy.metal.Metal.anisotropy_to_eigenvalues</a></p>
+  <p class="topless"><a href="paramagpy.metal.Metal.html"
+                        title="previous chapter">paramagpy.metal.Metal</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="paramagpy.metal.Metal.atom_set_position.html"
                         title="next chapter">paramagpy.metal.Metal.atom_set_position</a></p>
@@ -105,7 +127,7 @@
           <a href="paramagpy.metal.Metal.atom_set_position.html" title="paramagpy.metal.Metal.atom_set_position"
              >next</a> |</li>
         <li class="right" >
-          <a href="paramagpy.metal.Metal.anisotropy_to_eigenvalues.html" title="paramagpy.metal.Metal.anisotropy_to_eigenvalues"
+          <a href="paramagpy.metal.Metal.html" title="paramagpy.metal.Metal"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>

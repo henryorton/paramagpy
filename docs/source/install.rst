@@ -2,12 +2,6 @@
 Installation Guide
 ==================
 
-Where to get paramagpy
-----------------------
-
-Install files for all platforms are available for `download <https://github.com/henryorton/paramagpy>`_.
-
-
 Requirements
 ------------
 
@@ -29,7 +23,7 @@ Install directly using pip::
 
     $ pip install paramagpy
 
-Or, download the source code and run::
+Or, download the `source code <https://github.com/henryorton/paramagpy>`_ and run::
 
     $ python setup.py install
 

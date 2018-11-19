@@ -53,7 +53,21 @@
 <dl class="method">
 <dt id="paramagpy.metal.Metal.fast_racs">
 <code class="descclassname">Metal.</code><code class="descname">fast_racs</code><span class="sig-paren">(</span><em>csaarray</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.fast_racs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.fast_racs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.racs.html#paramagpy.metal.Metal.racs" title="paramagpy.metal.Metal.racs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.racs()</span></code></a></p>
+<p>This is generally used when speed is required for fitting</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>csaarray</strong> (<em>array with shape</em><em> (</em><em>n</em><em>,</em><em>3</em><em>,</em><em>3</em><em>)</em>) – array of chemical shift anisotropy tensors</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>racs_array</strong> – the residual anisotropic chemical shift in parts-per-million (ppm)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array of floats with shape (n,1)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 

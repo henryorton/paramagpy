@@ -53,7 +53,32 @@
 <dl class="method">
 <dt id="paramagpy.metal.Metal.fast_pre">
 <code class="descclassname">Metal.</code><code class="descname">fast_pre</code><span class="sig-paren">(</span><em>posarray</em>, <em>gammaarray</em>, <em>rtype</em>, <em>dsa=True</em>, <em>sbm=True</em>, <em>csaarray=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.fast_pre"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.fast_pre" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculate the PRE for a set of spins using Curie and or SBM theory</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>posarray</strong> (<em>array with shape</em><em> (</em><em>n</em><em>,</em><em>3</em><em>)</em>) – array of positions in meters</li>
+<li><strong>gammaarray</strong> (<em>array with shape</em><em> (</em><em>n</em><em>,</em><em>3</em><em>)</em>) – array of gyromagnetic ratios of the spins</li>
+<li><strong>rtype</strong> (<em>str</em>) – either ‘r1’ or ‘r2’, the relaxation type</li>
+<li><strong>dsa</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True (defualt), DSA or Curie spin relaxation is included</li>
+<li><strong>sbm</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True (defualt), SBM spin relaxation is included</li>
+<li><strong>csaarray</strong> (<em>array with shape</em><em> (</em><em>m</em><em>,</em><em>3</em><em>,</em><em>3</em><em>) </em><em>(</em><em>optional</em><em>)</em>) – array of CSA tensors of the spins.
+This defualts to 0.0, meaning CSAxDSA crosscorrelation is
+not accounted for.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>rates</strong> – The PRE rates in /s</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array with shape (n,1)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 

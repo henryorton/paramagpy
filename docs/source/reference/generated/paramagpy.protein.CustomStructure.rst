@@ -41,6 +41,7 @@ paramagpy.protein.CustomStructure
          .. rubric:: Attributes
 
          .. autosummary::
+            :toctree:
             
                ~CustomStructure.id
       

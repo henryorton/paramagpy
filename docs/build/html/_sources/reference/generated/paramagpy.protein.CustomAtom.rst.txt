@@ -52,6 +52,7 @@ paramagpy.protein.CustomAtom
          .. rubric:: Attributes
 
          .. autosummary::
+            :toctree:
             
                ~CustomAtom.csa
                ~CustomAtom.csa_lib

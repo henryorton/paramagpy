@@ -21,7 +21,7 @@ def euler_to_matrix(eulers):
 	Examples
 	--------
 	>>> eulers = np.array([0.5,1.2,0.8])
-	>>> print(euler_to_matrix(eulers))
+	>>> euler_to_matrix(eulers)
 	array([[-0.1223669 , -0.5621374 ,  0.81794125],
 	       [ 0.75057357,  0.486796  ,  0.44684334],
 	       [-0.64935788,  0.66860392,  0.36235775]])
@@ -61,7 +61,7 @@ def matrix_to_euler(M):
 	>>> matrix = array([[-0.1223669 , -0.5621374 ,  0.81794125],
 	                    [ 0.75057357,  0.486796  ,  0.44684334],
 	                    [-0.64935788,  0.66860392,  0.36235775]])
-	>>> print(matrix_to_euler(matrix))
+	>>> matrix_to_euler(matrix)
 	np.array([0.5,1.2,0.8])
 	"""
 	if M[2,2]<1.0:
@@ -80,34 +80,146 @@ def matrix_to_euler(M):
 	return np.array([alpha,beta,gamma])
 
 
-def unique_eulers(a, b, g):
-	if a < 0.0 and g < 0.0:
-		alpha = a + np.pi
-		beta  = np.pi - b
-		gamma = -g
-	elif a < 0.0:
-		alpha = a + np.pi
-		beta  = np.pi - b
-		gamma = np.pi - g
-	elif g < 0.0:
-		alpha = a
-		beta  = b
-		gamma = g + np.pi
-	else:
+def unique_eulers(eulers):
+	"""
+	Calculate Euler angles in unique tensor representation.
+
+	Given general Euler angles by ZYZ convention, this function accounts for 
+	the symmetry of	a second rank symmetric tensor to map all angles within 
+	the range [0, pi].
+
+	Parameters
+	----------
+	eulers : array of float
+		the three Euler angles in radians
+
+	Returns
+	-------
+	eulers_utr : array of floats
+		the euler angles [alpha,beta,gamma] in radians
+		by ZYZ convention
+
+	Examples
+	--------
+	>>> eulers = np.array([-5.2,10.3,0.1])
+	>>> unique_eulers(eulers)
+	np.array([1.08318531 0.87522204 3.04159265])
+	"""
+	def normalise(x):
+		mod = x % (2*np.pi)
+		if mod < np.pi:
+			return mod
+		else:
+			return mod - 2*np.pi
+
+	a, b, g = map(normalise, eulers)
+
+	if   a>0 and b>0 and g>0:
 		alpha = a
 		beta  = b
 		gamma = g
-	return np.array([alpha, beta, gamma])
+	elif a<0 and b>0 and g>0:
+		alpha = a + np.pi
+		beta  = np.pi - b
+		gamma = np.pi - g
+	elif a>0 and b<0 and g>0:
+		alpha = a
+		beta  = b + np.pi
+		gamma = np.pi - g
+	elif a>0 and b>0 and g<0:
+		alpha = a
+		beta  = b
+		gamma = g + np.pi
+	elif a<0 and b<0 and g>0:
+		alpha = a + np.pi
+		beta  = -b
+		gamma = g
+	elif a<0 and b>0 and g<0:
+		alpha = a + np.pi
+		beta  = np.pi - b
+		gamma = -g
+	elif a>0 and b<0 and g<0:
+		alpha = a
+		beta  = b + np.pi
+		gamma = -g
+	elif a<0 and b<0 and g<0:
+		alpha = a + np.pi
+		beta  = -b
+		gamma = g + np.pi
+
+	eulers_utr = np.array([alpha, beta, gamma])
+	return eulers_utr
+
+
+def anisotropy_to_eigenvalues(axial_rhombic):
+	"""
+	Calculate [dx,dy,dz] eigenvalues from axial and rhombic
+	tensor anisotropies (axial and rhombic parameters).
+
+	Calculations assume traceless tensor.
+
+	Parameters
+	----------
+	axial_rhombic : array of floats
+		two values defining the axial and rhombic anisotropy 
+		of the tensor respectively
+
+	Returns
+	-------
+	eigenvalues : array of floats
+		the three eigenvalues defining the magnitude of the priciple axes
+
+	Examples
+	--------
+	>>> ax = 10.5
+	>>> rh = 3.0
+	>>> anisotropy_to_eigenvalues([ax, rh])
+	[-2. -5.  7.]
+	"""
+	axial, rhombic = axial_rhombic
+	dx =  rhombic/2. - axial/3.
+	dy = -rhombic/2. - axial/3.
+	dz = (axial*2.)/3.
+	return np.array([dx,dy,dz])
+
+
+def eigenvalues_to_anisotropy(eigenvalues):
+	"""
+	Calculate axial and rhombic tensor anisotropies from 
+	eigenvalues dx,dy,dz
+
+	Parameters
+	----------
+	eigenvalues : array of floats
+		the three eigenvalues of the tensor.
+		These are the principle axis magnitudes
+
+	Returns
+	-------
+	axial_rhombic : tuple of floats
+		the tensor axial/rhombic anisotropies respectively
+
+	Examples
+	--------
+	>>> eigenvalues = [-2.0, -5.0, 7.0]
+	>>> eigenvalues_to_anisotropy(eigenvalues)
+	[10.5  3. ]
+	"""
+	dx, dy, dz = eigenvalues
+	axial = dz - (dx + dy) / 2.
+	rhombic = dx - dy
+	return np.array([axial, rhombic])
+
 
 
 class Metal(object):
 	"""
 	An object for paramagnetic chi tensors and delta-chi tensors.
-	This must be created by specifying position, euler angles and 
-	eigenvalues only.
+	This class has basic attributes that specify position, 
+	axiality/rhombicity, isotropy and euler angles.
 	"""
 
-	# Gyromagnetic ratio of an electron
+	# Gyromagnetic ratio of an electron and other constants
 	MU0 = 4*np.pi*1E-7
 	MUB = 9.274E-24
 	K = 1.381E-23
@@ -163,70 +275,9 @@ class Metal(object):
 		('Yb', ( -8.3, -5.8))]
 	)
 
+	# Indices defining 5 unique elements of tensor anisotropy
 	upper_coords = ((0,1,0,0,1),(0,1,1,2,2))
 	lower_coords = ((0,1,1,2,2),(0,1,0,0,1))
-
-	@staticmethod
-	def pack_tensor_params(metals):
-		params = tuple(metals[0].position*1E10)
-		for m in metals:
-			params += tuple(m.upper_triang*1E32)
-		return params
-
-	@staticmethod
-	def unpack_tensor_params(params):
-		num = (len(params)-3)//5
-		pos = np.array(params[:3])*1E-10
-		tensor_params = [np.array(params[3+5*i:3+5+5*i])*1E-32 
-			for i in range(num)]
-		return pos, tensor_params
-
-	@classmethod
-	def anisotropy_to_eigenvalues(cls, axial, rhombic):
-		"""
-		Calculate [dx,dy,dz] eigenvalues from axial and rhombic
-		tensor anisotropies (axial and rhombic parameters).
-		Calculations assume traceless tensor.
-
-		Parameters
-		----------
-		axial : float
-			the axial anisotropy of the tensor
-
-		rhombic : float
-			the rhombic anisotropy of the tensor
-
-		Returns
-		-------
-		euler_angles : array of floats
-			the euler angles [alpha,beta,gamma] in radians
-			by ZYZ convention
-		"""
-		dx =  rhombic/2. - axial/3.
-		dy = -rhombic/2. - axial/3.
-		dz = (axial*2.)/3.
-		return np.array([dx,dy,dz])
-	
-	@classmethod
-	def eigenvalues_to_anisotropy(cls, dx, dy, dz):
-		"""
-		Calculate axial and rhombic tensor anisotropies from 
-		eigenvalues dx,dy,dz
-
-		Parameters
-		----------
-		dx, dy, dz : floats
-			the eigenvalues of the tensor.
-			These are the principle axis magnitudes
-
-		Returns
-		-------
-		axial, rhombic : tuple of floats
-			the tensor anisotropies
-		"""
-		axial = dz - (dx + dy) / 2.
-		rhombic = dx - dy
-		return np.array([axial, rhombic])
 
 	def __init__(self, position=(0,0,0), eulers=(0,0,0), 
 		axrh=(0,0), mueff=0.0, shift=0.0, temperature=298.15, t1e=0.0,
@@ -236,21 +287,29 @@ class Metal(object):
 
 		Parameters
 		----------
-		lanthanide : str, optional
-			the lanthanide name e.g. 'Tb'
-			if not given, default is None and the object may only
-			be used for calculating PCS
-		position : array, optional
+		position : array of floats, optional
 			the (x,y,z) position in meters. Default is (0,0,0)
 			stored as a np.matrix object.
-		eulers : array, optional
+		eulers : array of floats, optional
 			the euler angles [alpha,beta,gamma] in radians 
 			by ZYZ convention. Defualt is (0,0,0)
-		eigenvalues : array, optional
-			the principal axes magnitudes [x,y,z]. Decaulf is (0,0,0).
-			If traceless <eigenvalues> and the argument <lanthanide> are
-			provided, isotropic component is calculated and added 
-			automatically. 
+		axrh : array of floats, optional
+			the axial and rhombic values defining the magnetic susceptibility
+			anisotropy
+		mueff : float
+			the effective magnetic moment in units of A.m^2
+		shift : float
+			a bulk shift value applied to all PCS calculations.
+			This is a correction parameter that may arise due to an offset
+			between diamagnetic and paramagnetic PCS datasets.
+		temperature : float
+			the temperature in Kelvin
+		t1e : float
+			the longitudinal electronic relaxation time
+		B0 : float
+			the magnetic field in Telsa
+		taur : float
+			the rotational correlation time in seconds
 		"""
 		self.position = np.array(position, dtype=float)
 		self.eulers = np.array(eulers, dtype=float)
@@ -270,9 +329,26 @@ class Metal(object):
 
 	@property
 	def tauc(self):
+		"""
+		The effective rotational correlation time.
+
+		This is calculated by combining the rotational correaltion time
+		and the electronic relaxation time:
+
+		.. math::
+			\\tau_c = \\frac{1}{\\frac{1}{\\tau_r}+\\frac{1}{T_{1e}}}
+		"""
 		return 1./(1./self.taur + 1./self.t1e)
 
 	def copy(self):
+		"""
+		Copy the current Metal object to a new instance
+
+		Returns
+		-------
+		new_tensor : Metal object
+			a new Metal instance with the same parameters
+		"""
 		return self.__class__(
 			position=tuple(self.position), 
 			eulers=tuple(self.eulers),
@@ -285,6 +361,19 @@ class Metal(object):
 			taur=self.taur)
 
 	def set_lanthanide(self, lanthanide, set_dchi=True):
+		"""
+		Set the anisotropy, isotropy and T1e parameters from
+		literature values
+
+		Parameters
+		----------
+		lanthanide : str
+			one of ['Ce','Pr','Nd','Pm','Sm','Eu','Gd',
+			        'Tb','Dy','Ho','Er','Tm','Yb']
+		set_dichi : bool (optional)
+			if True (default), the tensor anisotropy is set.
+			Otherwise only the isotropy and T1e values are set 
+		"""
 		J, g, t1e = self.lanth_lib[lanthanide]
 		self.t1e = t1e
 		self.set_Jg(J, g)
@@ -293,9 +382,59 @@ class Metal(object):
 			self.axrh = np.array([ax,rh])*1E-32
 
 	def set_Jg(self, J, g):
+		"""
+		Set the magnetic susceptibility absolute magnitude from J/g.
+
+		This is achieved using the following formula:
+
+		.. math::
+			\\mu_{eff}=g\\mu_B\\sqrt{J(J+1)}
+
+		Parameters
+		----------
+		J : str
+			the total spin angular momentum quantum number
+		g : bool, optional
+			the Lande g-factor
+		"""
 		self.mueff = g * self.MUB * (J*(J+1))**0.5
 
 	def info(self, comment=True):
+		"""
+		Get basic information about the Metal object
+
+		This is returned as a string in human readable units
+		This is also the file format for saving the tensor
+		
+		Parameters
+		----------
+		comment : bool (optional)
+			if True, each line has a '#' placed at the front
+
+		Returns
+		-------
+		information : str
+			a string containing basic information about the Metal
+
+		Examples
+		--------
+		>>> metal = Metal()
+		>>> metal.set_lanthanide('Er')
+		>>> metal.info()
+		# ax    | 1E-32 m^3 :   -11.600
+		# rh    | 1E-32 m^3 :    -8.600
+		# x     |   1E-10 m :     0.000
+		# y     |   1E-10 m :     0.000
+		# z     |   1E-10 m :     0.000
+		# a     |       deg :     0.000
+		# b     |       deg :     0.000
+		# g     |       deg :     0.000
+		# mueff |        Bm :     9.581
+		# shift |       ppm :     0.000
+		# B0    |         T :    18.790
+		# temp  |         K :   298.150
+		# t1e   |        ps :     0.189
+		"""
 		l = "{0:<6}| {1:>9} : {2:9.3f}\n"
 		if comment:
 			l = '# ' + l 
@@ -318,6 +457,30 @@ class Metal(object):
 		return i
 
 	def get_params(self, params):
+		"""
+		Get tensor parameters that have been scaled appropriately
+
+		This is often used to get parameter values during fitting where
+		floating point errors would otherwise occur on the small values
+		encountered.
+
+		Parameters
+		----------
+		params : list of str
+			each element of the list is a string that corresponds to 
+			an attribute of the Metal to be retrieved.
+
+		Returns
+		-------
+		scaled_params : list
+			a list with respective scaled parameter values from the input.
+
+		Examples
+		--------
+		>>> metal = Metal(axrh=[20E-32, 3E-32],position=[0.0,10E-10,-5E-10])
+		>>> metal.get_params(['ax','rh','x','y','z'])
+		[20.0, 3.0, 0.0, 10.0, -5.0]
+		"""
 		pars = []
 		for param in params:
 			scale = self.fit_scaling.get(param, 1.0)
@@ -325,66 +488,95 @@ class Metal(object):
 		return pars
 
 	def set_params(self, paramValues):
+		"""
+		Set tensor parameters that have been scaled appropriately
+
+		This is the inverse of the method <get_params>
+
+		Parameters
+		----------
+		paramValues : list of tuple
+			each element is a tuple (variable, value) where 'variable'
+			is the string indentifying the attribute to be set, and 'value'
+			is the corresponding value
+
+		Examples
+		--------
+		>>> metal = Metal()
+		>>> metal.set_params([('ax',20.0),('rh',3.0)])
+		>>> metal.axrh
+		[2.e-31 3.e-32]
+		"""
 		for param, value in paramValues:
 			scale = self.fit_scaling.get(param, 1.0)
 			setattr(self, param, value/scale)
 
 	@property
 	def x(self):
+		"""x coordinate"""
 		return self.position[0]
 	@x.setter
 	def x(self, value):
 		self.position[0] = value
 	@property
 	def y(self):
+		"""y coordinate"""
 		return self.position[1]
 	@y.setter
 	def y(self, value):
 		self.position[1] = value
 	@property
 	def z(self):
+		"""z coordinate"""
 		return self.position[2]
 	@z.setter
 	def z(self, value):
 		self.position[2] = value
 	@property
 	def a(self):
+		"""alpha euler anglue"""
 		return self.eulers[0]
 	@a.setter
 	def a(self, value):
 		self.eulers[0] = value
 	@property
 	def b(self):
+		"""beta euler anglue"""
 		return self.eulers[1]
 	@b.setter
 	def b(self, value):
 		self.eulers[1] = value
 	@property
 	def g(self):
+		"""gamma euler anglue"""
 		return self.eulers[2]
 	@g.setter
 	def g(self, value):
 		self.eulers[2] = value
 	@property
 	def ax(self):
+		"""axiality"""
 		return self.axrh[0]
 	@ax.setter
 	def ax(self, value):
 		self.axrh[0] = value
 	@property
 	def rh(self):
+		"""rhombicity"""
 		return self.axrh[1]
 	@rh.setter
 	def rh(self, value):
 		self.axrh[1] = value
 	@property
 	def iso(self):
+		"""isotropy"""
 		return self.isotropy
 	@iso.setter
 	def iso(self, value):
 		self.isotropy = value
 	@property
 	def B0_MHz(self):
+		"""1H NMR frequency for the given field in MHz"""
 		return self.B0 * 42.57747892
 	@B0_MHz.setter
 	def B0_MHz(self, value):
@@ -392,33 +584,38 @@ class Metal(object):
 
 	@property
 	def eigenvalues(self):
-		return self.anisotropy_to_eigenvalues(*self.axrh) + self.isotropy
+		"""The eigenvalues defining the magnitude of the principle axes"""
+		return anisotropy_to_eigenvalues(self.axrh) + self.isotropy
 
 	@eigenvalues.setter
 	def eigenvalues(self, newEigenvalues):
-		self.axrh = self.eigenvalues_to_anisotropy(*newEigenvalues)
-		self.isotropy = np.round(np.sum(newEigenvalues)/3., 40)
+		self.axrh = eigenvalues_to_anisotropy(newEigenvalues)
+		# self.isotropy = np.round(np.sum(newEigenvalues)/3., 40)
+		self.isotropy = np.sum(newEigenvalues)/3.
 
 	@property
 	def isotropy(self):
+		"""The magnidue of the isotropic component of the tensor"""
 		return (self.MU0 * self.mueff**2) / (3*self.K*self.temperature)
 
 	@isotropy.setter
 	def isotropy(self, newIsotropy):
 		if newIsotropy<0:
-			raise ValueError("A tensor with negative isotropy is not allowed")
+			newIsotropy = 0.0
 		self.mueff = ((newIsotropy*3*self.K*self.temperature) / self.MU0)**0.5
 
 	@property
 	def rotationMatrix(self):
+		"""The rotation matrix as defined by the euler angles"""
 		return euler_to_matrix(self.eulers)
 
 	@rotationMatrix.setter
 	def rotationMatrix(self, newMatrix):
-		self.eulers = unique_eulers(*matrix_to_eulers(newMatrix))
+		self.eulers = unique_eulers(matrix_to_eulers(newMatrix))
 
 	@property
 	def tensor(self):
+		"""The magnetic susceptibility tensor matrix representation"""
 		R = self.rotationMatrix
 		return R.dot(np.diag(self.eigenvalues)).dot(R.T)
 
@@ -430,30 +627,53 @@ class Metal(object):
 		eigenvals, (x, y, z) = zip(*sorted(eigs, key=lambda x: abs(x[0]-iso)))
 		eigenvecs = x * z.dot(np.cross(x,y)), y, z
 		rotationMatrix = np.vstack(eigenvecs).T
-		eulers = unique_eulers(*matrix_to_euler(rotationMatrix))
+		eulers = unique_eulers(matrix_to_euler(rotationMatrix))
 		self.eulers = np.array(eulers, dtype=float)
 		self.eigenvalues = eigenvals
 
 	@property
 	def tensor_traceless(self):
+		"""The traceless magnetic susceptibility tensor matrix representation"""
 		return self.tensor - np.identity(3)*self.isotropy
 
 	@property
+	def alignment_factor(self):
+		"""Factor for conversion between magnetic susceptibility 
+		and alignment tensors"""
+		return (self.B0**2) / (15 * self.MU0 * self.K * self.temperature)
+
+	@property
 	def saupe_factor(self):
-		return (self.B0**2) / (5 * self.MU0 * self.K * self.temperature)
+		"""Factor for conversion between magnetic susceptibility 
+		and saupe tensors"""
+		return (3./2.)*self.alignment_factor
+
+	@property
+	def tensor_alignment(self):
+		"""The alignment tensor matrix representation"""
+		return self.alignment_factor * self.tensor_traceless
+
+	@tensor_alignment.setter
+	def tensor_alignment(self, new_tensor_alignment):
+		old_mueff = self.mueff
+		self.tensor = new_tensor_alignment / self.alignment_factor
+		self.mueff = old_mueff
 
 	@property
 	def tensor_saupe(self):
+		"""The saupe tensor matrix representation"""
 		return self.saupe_factor * self.tensor_traceless
 
 	@tensor_saupe.setter
-	def tensor_saupe(self, new_saupe_tensor):
+	def tensor_saupe(self, new_tensor_saupe):
 		old_mueff = self.mueff
-		self.tensor = new_saupe_tensor / self.saupe_factor
+		self.tensor = new_tensor_saupe / self.saupe_factor
 		self.mueff = old_mueff
 
 	@property
 	def upper_triang(self):
+		"""Fetch 5 unique matrix element defining the magnetic 
+		susceptibility tensor"""
 		return self.tensor_traceless[self.upper_coords]
 
 	@upper_triang.setter
@@ -467,7 +687,21 @@ class Metal(object):
 		self.mueff = old_mueff
 
 	@property
+	def upper_triang_alignment(self):
+		"""Fetch 5 unique matrix element defining the alignment tensor"""
+		return self.tensor_alignment[self.upper_coords]
+
+	@upper_triang_alignment.setter
+	def upper_triang_alignment(self, elements):
+		newTensor = np.zeros(9).reshape(3,3)
+		newTensor[self.upper_coords] = elements
+		newTensor[self.lower_coords] = elements
+		newTensor[2,2] = - elements[0] - elements[1]
+		self.tensor_alignment = newTensor
+
+	@property
 	def upper_triang_saupe(self):
+		"""Fetch 5 unique matrix element defining the saupe tensor"""
 		return self.tensor_saupe[self.upper_coords]
 
 	@upper_triang.setter
@@ -479,12 +713,36 @@ class Metal(object):
 		self.tensor_saupe = newTensor
 
 	def set_utr(self):
+		"""
+		Modify current tensor parameters to unique tensor representation (UTR)
+
+		Note that multiple axial/rhombic and euler angles can give congruent
+		tensors. 
+		This method ensures that identical tensors may always be compared
+		by using Numbat style representation.
+		"""
 		self.tensor = self.tensor
+
+	def atom_set_position(self, atom):
+		"""
+		Set the position of the Metal object to that of an atom
+
+		Parameters
+		----------
+		atom : biopython atom object
+			must have 'position' attribute
+		"""
+		self.position = atom.position
+
+	################################
+	# Methods for PCS calculations #
+	################################
 
 	def dipole_shift_tensor(self, position):
 		"""
-		Calculate the chemical shift tensor at the given postition due to the
-		paramagnetic dipole tensor field
+		Calculate the chemical shift tensor at the given postition
+
+		This arises due to the paramagnetic dipole tensor field
 
 		Parameters
 		----------
@@ -504,6 +762,23 @@ class Metal(object):
 		return (preFactor * (3.*p1 - p2)).dot(self.tensor)
 
 	def fast_dipole_shift_tensor(self, posarray):
+		"""
+		A vectorised version of 
+		:meth:`paramagpy.metal.Metal.dipole_shift_tensor`
+
+		This is generally used for fast calculations.
+
+		Parameters
+		----------
+		posarray : array
+			an array of positions with shape (n,3)
+
+		Returns
+		-------
+		dipole_shift_tensor_array : array
+			and array of dipole shift tensors at corresponding positions.
+			This has shape (n,3,3)
+		"""
 		pos = posarray - self.position
 		distance = np.linalg.norm(pos, axis=1)[:,None,None]
 		preFactor = 1./(4.*np.pi)
@@ -525,12 +800,37 @@ class Metal(object):
 		-------
 		pcs : float
 			the pseudo-contact shift in parts-per-million (ppm)
+
+		Examples
+		--------
+		>>> metal = Metal()
+		>>> metal.set_lanthanide('Er')
+		>>> metal.pcs([0.,0.,10E-10])
+		-6.153991132886608
 		"""
 		val = self.dipole_shift_tensor(position).trace()/3.
 		return 1E6*val + self.shift
 
-
 	def atom_pcs(self, atom, racs=False, rads=False):
+		"""
+		Calculate the psuedo-contact shift at the given atom
+
+		Parameters
+		----------
+		atom : biopython atom object
+			must have 'position' attribute
+		racs : bool (optional)
+			when True, RACS (residual anisotropic chemical shielding) 
+			correction is included. Default is False
+		rads : bool (optional)
+			when True, RADS (residual anisotropic dipolar shielding) 
+			correction is included. Defualt is False
+
+		Returns
+		-------
+		pcs : float
+			the pseudo-contact shift in parts-per-million (ppm)
+		"""
 		value = self.pcs(atom.position)
 		if racs:
 			value += self.racs(atom.csa)
@@ -538,20 +838,17 @@ class Metal(object):
 			value += self.rads(atom.position)
 		return value
 
-
-	def atom_set_position(self, atom):
-		self.position = atom.position
-
 	def fast_pcs(self, posarray):
 		"""
-		Rapidly calculatew the psuedo-contact shift at `n` positions.
+		A vectorised version of :meth:`paramagpy.metal.Metal.pcs`
+
 		This efficient algorithm calculates the PCSs for an array of 
 		positions and is best used where speed is required for fitting.
 
 		Parameters
 		----------
-		posarray : array of positions with shape (n,3)
-			the position (x, y, z) in meters
+		posarray : array with shape (n,3)
+			array of 'n' positions (x, y, z) in meters
 
 		Returns
 		-------
@@ -564,13 +861,12 @@ class Metal(object):
 		dot2 = np.einsum('ij,ij->i', pos, dot1)
 		return 1E6*(1./(4.*np.pi))*(dot2/dist**5) + self.shift
 
-
-
-
 	def rads(self, position):
 		"""
 		Calculate the residual anisotropic dipolar shift at the 
-		given postition. The partial alignment induced by an anisotropic 
+		given postition. 
+
+		The partial alignment induced by an anisotropic 
 		magnetic susecptiblity causes the dipole shift tensor at a nuclear
 		position to average to a value different to the PCS.
 
@@ -589,6 +885,21 @@ class Metal(object):
 		return 1E6*rads
 
 	def fast_rads(self, posarray):
+		"""
+		A vectorised version of :meth:`paramagpy.metal.Metal.rads`
+
+		This is generally used when speed is required for fitting
+
+		Parameters
+		----------
+		posarray : array with shape (n,3)
+			an array of 'n' positions (x, y, z) in meters
+
+		Returns
+		-------
+		rads_array : array of floats with shape (n,1)
+			the residual anisotropic dipole shift in parts-per-million (ppm)
+		"""
 		ds = self.fast_dipole_shift_tensor(posarray)
 		rads = np.einsum('jk,ikl->ijl',self.tensor_saupe,ds)
 		return 1E6*rads.trace(axis1=1,axis2=2)/3.
@@ -596,7 +907,9 @@ class Metal(object):
 	def racs(self, csa):
 		"""
 		Calculate the residual anisotropic chemical shift at the 
-		given postition. The partial alignment induced by an anisotropic 
+		given postition. 
+
+		The partial alignment induced by an anisotropic 
 		magnetic susecptiblity causes the chemical shift tensor at a nuclear
 		position to average to a value different to the isotropic value.
 
@@ -614,10 +927,156 @@ class Metal(object):
 		return 1E6*racs
 
 	def fast_racs(self, csaarray):
+		"""
+		A vectorised version of :meth:`paramagpy.metal.Metal.racs`
+
+		This is generally used when speed is required for fitting
+
+		Parameters
+		----------
+		csaarray : array with shape (n,3,3)
+			array of chemical shift anisotropy tensors
+
+		Returns
+		-------
+		racs_array : array of floats with shape (n,1)
+			the residual anisotropic chemical shift in parts-per-million (ppm)
+		"""
 		racs = np.einsum('jk,ikl->ijl',self.tensor_saupe,csaarray)
 		return 1E6*racs.trace(axis1=1,axis2=2)/3.
 
+	################################
+	# Methods for PRE calculations #
+	################################
+
+	@staticmethod
+	def spec_dens(tau, omega):
+		"""
+		A spectral density function with Lorentzian shape:
+
+		.. math::
+			\\mathbb{J}(\\tau,\\omega)=\\frac{\\tau}{1+(\\omega\\tau)^2}
+
+		Parameters
+		----------
+		tau : float
+			correaltion time
+		omega : float
+			frequency
+
+		Returns
+		-------
+		value : float
+			the value of the spectral denstiy
+		"""
+		return tau/(1+(omega*tau)**2)
+
+	@staticmethod
+	def second_invariant_squared(tensor):
+		"""
+		Calculate the second invariant of a tensor.
+
+		This is required for PRE calculations using the dipolar shilding tensor
+
+		Parameters
+		----------
+		tensor : 3x3 matrix
+			a second rank symmetric tensor
+
+		Returns
+		-------
+		secondInvariant : float
+			the second invariant squared of the shift tensor
+		"""
+		aniso = tensor - tensor.trace()*np.identity(3)/3.
+		eigenvals, eigenvecs = np.linalg.eig(aniso)
+		x, y, z = eigenvals
+		secondInvariantSquared = x*x + y*y + z*z - x*y - x*z - y*z
+		if secondInvariantSquared.imag>0:
+			raise ValueError("Imaginary second invariant")
+		return secondInvariantSquared.real
+
+	@staticmethod
+	def fast_second_invariant_squared(tensorarray):
+		"""
+		Vectorised version of 
+		:meth:`paramagpy.metal.Metal.second_invariant_squared`
+
+		This is generally used for speed in fitting PRE data
+
+		Parameters
+		----------
+		tensorarray : array with shape (n,3,3)
+			array of tensors
+
+		Returns
+		-------
+		secondInvariant : array with shape (n,1)
+			the second invariants squared of the tensors
+		"""
+		xx, yy, zz = np.linalg.eigvals(tensorarray).real.T
+		return xx*xx + yy*yy + zz*zz - xx*yy - xx*zz - yy*zz
+
+	def dsa_r1(self, position, gamma, csa=0.0, ignorePara=False):
+		"""
+		Calculate R1 relaxation due to Curie Spin
+
+		If the metal has an anisotropic magnetic susceptibility, this is
+		taken into account, resulting in orientation dependent PRE as
+		predicted by Vega and Fiat. CSA cross-correlated relaxation may
+		be included by providing an appropriate CSA tensor.
+
+		Parameters
+		----------
+		position : array of floats
+			three coordinates (x,y,z) in meters
+		gamma : float
+			the gyromagnetic ratio of the spin
+		csa : 3x3 matrix (optional)
+			the CSA tensor of the given spin.
+			This defualts to 0.0, meaning CSAxDSA crosscorrelation is
+			not accounted for.
+		ignorePara : bool (optional)
+			when True, only the CSA relaxation is calculated and returned.
+			All paramagnetic effects are ignored.
+
+		Returns
+		-------
+		value : float
+			The R1 relaxation rate in /s
+		"""
+		omega = self.B0 * gamma
+		if ignorePara:
+			shieldingTensor = csa
+		else:
+			shieldingTensor = self.dipole_shift_tensor(position) + csa
+		secondInvariantSquared = self.second_invariant_squared(shieldingTensor)
+		pf = (2./15.)*secondInvariantSquared*omega**2
+		rate = pf * self.spec_dens(self.taur, omega)
+		return rate
+
 	def fast_dsa_r1(self, posarray, gammaarray, csaarray=0.0):
+		"""
+		Vectorised version of :meth:`paramagpy.metal.Metal.dsa_r1`
+
+		This is generally used for speed in fitting PRE data
+
+		Parameters
+		----------
+		posarray : array with shape (n,3)
+			array of positions in meters
+		gammaarray : array with shape (n,3)
+			array of gyromagnetic ratios of the spins
+		csaarray : array with shape (m,3,3) (optional)
+			array of CSA tensors of the spins.
+			This defualts to 0.0, meaning CSAxDSA crosscorrelation is
+			not accounted for.
+
+		Returns
+		-------
+		rates : array with shape (n,1)
+			The R1 relaxation rates in /s
+		"""
 		ds = self.fast_dipole_shift_tensor(posarray)
 		sis_para = self.fast_second_invariant_squared(ds + csaarray)
 		if isinstance(csaarray, np.ndarray):
@@ -630,7 +1089,67 @@ class Metal(object):
 		rate = pf * self.spec_dens(self.taur, omegas)
 		return rate
 
+	def dsa_r2(self, position, gamma, csa=0.0, ignorePara=False):
+		"""
+		Calculate R2 relaxation due to Curie Spin
+
+		If the metal has an anisotropic magnetic susceptibility, this is
+		taken into account, resulting in orientation dependent PRE as
+		predicted by Vega and Fiat. CSA cross-correlated relaxation may
+		be included by providing an appropriate CSA tensor.
+
+		Parameters
+		----------
+		position : array of floats
+			three coordinates (x,y,z)
+		gamma : float
+			the gyromagnetic ratio of the spin
+		csa : 3x3 matrix (optional)
+			the CSA tensor of the given spin.
+			This defualts to 0.0, meaning CSAxDSA crosscorrelation is
+			not accounted for.
+		ignorePara : bool (optional)
+			when True, only the CSA relaxation is calculated and returned.
+			All paramagnetic effects are ignored.
+
+		Returns
+		-------
+		value : float
+			The R2 relaxation rate in /s
+		"""
+		omega = self.B0 * gamma
+		if ignorePara:
+			shieldingTensor = csa
+		else:
+			shieldingTensor = self.dipole_shift_tensor(position) + csa
+		secondInvariantSquared = self.second_invariant_squared(shieldingTensor)
+		pf = (1./45.)*secondInvariantSquared*omega**2
+		rate = pf * (4*self.spec_dens(self.taur, 0.   ) +
+			         3*self.spec_dens(self.taur, omega))
+		return rate
+
 	def fast_dsa_r2(self, posarray, gammaarray, csaarray=0.0):
+		"""
+		Vectorised version of :meth:`paramagpy.metal.Metal.dsa_r2`
+
+		This is generally used for speed in fitting PRE data.
+
+		Parameters
+		----------
+		posarray : array with shape (n,3)
+			array of positions in meters
+		gammaarray : array with shape (n,3)
+			array of gyromagnetic ratios of the spins
+		csaarray : array with shape (m,3,3) (optional)
+			array of CSA tensors of the spins.
+			This defualts to 0.0, meaning CSAxDSA crosscorrelation is
+			not accounted for.
+
+		Returns
+		-------
+		rates : array with shape (n,1)
+			The R2 relaxation rates in /s
+		"""
 		ds = self.fast_dipole_shift_tensor(posarray)
 		xx, yy, zz = np.linalg.eigvals(ds+csaarray).T
 		sis_para = self.fast_second_invariant_squared(ds + csaarray)
@@ -645,7 +1164,49 @@ class Metal(object):
 			         3*self.spec_dens(self.taur, omegas))
 		return rate
 
+
+	def sbm_r1(self, position, gamma):
+		"""
+		Calculate R1 relaxation due to Solomon-Bloembergen-Morgan theory
+
+		Parameters
+		----------
+		position : array of floats
+			three coordinates (x,y,z)
+		gamma : float
+			the gyromagnetic ratio of the spin
+
+		Returns
+		-------
+		value : float
+			The R1 relaxation rate in /s
+		"""
+		distance = np.linalg.norm(position-self.position)
+		p1 = self.MU0/(4.*np.pi)
+		p2 = (gamma * self.mueff)/distance**3
+		rate = (2./15.)*(p1*p2)**2 * (
+			3*self.spec_dens(self.tauc, self.B0*gamma) + 
+			7*self.spec_dens(self.tauc, self.B0*self.GAMMA))
+		return rate
+
 	def fast_sbm_r1(self, posarray, gammaarray):
+		"""
+		Vectorised version of :meth:`paramagpy.metal.Metal.sbm_r1`
+
+		This is generally used for speed in fitting PRE data
+
+		Parameters
+		----------
+		posarray : array with shape (n,3)
+			array of positions in meters
+		gammaarray : array with shape (n,3)
+			array of gyromagnetic ratios of the spins
+
+		Returns
+		-------
+		rates : array with shape (n,1)
+			The R1 relaxation rates in /s
+		"""
 		distance = np.linalg.norm(posarray-self.position, axis=1)
 		p1 = self.MU0/(4.*np.pi)
 		p2 = (gammaarray * self.mueff)/distance**3
@@ -654,7 +1215,49 @@ class Metal(object):
 			7*self.spec_dens(self.tauc, self.B0*self.GAMMA))
 		return rate
 
+	def sbm_r2(self, position, gamma):
+		"""
+		Calculate R2 relaxation due to Solomon-Bloembergen-Morgan theory
+
+		Parameters
+		----------
+		position : array of floats
+			three coordinates (x,y,z)
+		gamma : float
+			the gyromagnetic ratio of the spin
+
+		Returns
+		-------
+		value : float
+			The R2 relaxation rate in /s
+		"""
+		distance = np.linalg.norm(position-self.position)
+		p1 = self.MU0/(4.*np.pi)
+		p2 = (gamma * self.mueff)/distance**3
+		rate = (1./15.)*(p1*p2)**2 * (
+			 4*self.spec_dens(self.tauc, 0.) +
+			 3*self.spec_dens(self.tauc, self.B0*gamma) + 
+			13*self.spec_dens(self.tauc, self.B0*self.GAMMA))
+		return rate
+
 	def fast_sbm_r2(self, posarray, gammaarray):
+		"""
+		Vectorised version of :meth:`paramagpy.metal.Metal.sbm_r2`
+
+		This is generally used for speed in fitting PRE data
+
+		Parameters
+		----------
+		posarray : array with shape (n,3)
+			array of positions in meters
+		gammaarray : array with shape (n,3)
+			array of gyromagnetic ratios of the spins
+
+		Returns
+		-------
+		rates : array with shape (n,1)
+			The R2 relaxation rates in /s
+		"""
 		distance = np.linalg.norm(posarray-self.position, axis=1)
 		p1 = self.MU0/(4.*np.pi)
 		p2 = (gammaarray * self.mueff)/distance**3
@@ -666,6 +1269,31 @@ class Metal(object):
 
 	def fast_pre(self, posarray, gammaarray, rtype, 
 		dsa=True, sbm=True, csaarray=0.0):
+		"""
+		Calculate the PRE for a set of spins using Curie and or SBM theory
+
+		Parameters
+		----------
+		posarray : array with shape (n,3)
+			array of positions in meters
+		gammaarray : array with shape (n,3)
+			array of gyromagnetic ratios of the spins
+		rtype : str
+			either 'r1' or 'r2', the relaxation type
+		dsa : bool (optional)
+			when True (defualt), DSA or Curie spin relaxation is included
+		sbm : bool (optional)
+			when True (defualt), SBM spin relaxation is included 
+		csaarray : array with shape (m,3,3) (optional)
+			array of CSA tensors of the spins.
+			This defualts to 0.0, meaning CSAxDSA crosscorrelation is
+			not accounted for. 
+
+		Returns
+		-------
+		rates : array with shape (n,1)
+			The PRE rates in /s
+		"""
 		rates = 0.0
 		if rtype=='r1':
 			if dsa:
@@ -679,159 +1307,21 @@ class Metal(object):
 				rates += self.fast_sbm_r2(posarray, gammaarray)
 		return rates
 			
+	################################
+	# Methods for RDC calculations #
+	################################
 
-		
-	@staticmethod
-	def spec_dens(tau, omega):
-		"""
-		Calculate spectral density at omega
-
-		Parameters
-		----------
-		omega : float
-			the spectral density argument
-
-		Returns
-		-------
-		value : float
-			the value of the spectral denstiy at <omega>
-		"""
-		return tau/(1+(omega*tau)**2)
-
-	@staticmethod
-	def second_invariant_squared(tensor):
-		"""
-		Calculate the second invariant at some position
-		due to the magnetic susceptibility
-
-		Parameters
-		----------
-		position : array floats
-			the position (x, y, z) in meters
-
-		Returns
-		-------
-		secondInvariant : float
-			the second invariant of the shift tensor
-		"""
-		aniso = tensor - tensor.trace()*np.identity(3)/3.
-		eigenvals, eigenvecs = np.linalg.eig(aniso)
-		x, y, z = eigenvals
-		secondInvariantSquared = x*x + y*y + z*z - x*y - x*z - y*z
-		if secondInvariantSquared.imag>0:
-			raise ValueError("Imaginary second invariant")
-		return secondInvariantSquared.real
-
-	@staticmethod
-	def fast_second_invariant_squared(tensorarray):
-		"""
-		Calculate the second invariant at some position
-		due to the magnetic susceptibility
-
-		Parameters
-		----------
-		position : array floats
-			the position (x, y, z) in meters
-
-		Returns
-		-------
-		secondInvariant : float
-			the second invariant of the shift tensor
-		"""
-		xx, yy, zz = np.linalg.eigvals(tensorarray).real.T
-		return xx*xx + yy*yy + zz*zz - xx*yy - xx*zz - yy*zz
-
-	def dsa_r1(self, position, gamma, csa=0.0, ignorePara=False):
-		"""
-		Calculate R1 relaxation due to Curie Spin
-
-		Parameters
-		----------
-		atom
-
-		Returns
-		-------
-		value : float
-			The R1 relaxation rate in /s
-		"""
-		# if method is 'dsaiso':
-		# 	distance = np.linalg.norm(position-self.metal.position)
-		# 	sec_invar_sq = self.metal.isotropic_second_invariant(distance)**2
-		# sec_invar_sq = self.parse_curie_method(position, method, csa)
-		omega = self.B0 * gamma
-		if ignorePara:
-			shieldingTensor = csa
-		else:
-			shieldingTensor = self.dipole_shift_tensor(position) + csa
-		secondInvariantSquared = self.second_invariant_squared(shieldingTensor)
-		pf = (2./15.)*secondInvariantSquared*omega**2
-		rate = pf * self.spec_dens(self.taur, omega)
-		return rate
-
-	def dsa_r2(self, position, gamma, csa=0.0, ignorePara=False):
-		"""
-		Calculate R2 relaxation due to Curie Spin
-
-		Parameters
-		----------
-		atom : 
-
-
-		Returns
-		-------
-		value : float
-			The R2 relaxation rate in /s
-		"""
-
-		# if method is 'dsaiso':
-		# 	distance = np.linalg.norm(position-self.metal.position)
-		# 	sec_invar_sq = self.metal.isotropic_second_invariant(distance)**2
-
-		# sec_invar_sq = self.parse_curie_method(position, method, csa)
-		omega = self.B0 * gamma
-		if ignorePara:
-			shieldingTensor = csa
-		else:
-			shieldingTensor = self.dipole_shift_tensor(position) + csa
-		secondInvariantSquared = self.second_invariant_squared(shieldingTensor)
-		pf = (1./45.)*secondInvariantSquared*omega**2
-		rate = pf * (4*self.spec_dens(self.taur, 0.   ) +
-			         3*self.spec_dens(self.taur, omega))
-		return rate
-
-
-	def sbm_r1(self, position, gamma):
-		distance = np.linalg.norm(position-self.position)
-		p1 = self.MU0/(4.*np.pi)
-		p2 = (gamma * self.mueff)/distance**3
-		rate = (2./15.)*(p1*p2)**2 * (
-			3*self.spec_dens(self.tauc, self.B0*gamma) + 
-			7*self.spec_dens(self.tauc, self.B0*self.GAMMA))
-		return rate
-
-
-	def sbm_r2(self, position, gamma):
-		distance = np.linalg.norm(position-self.position)
-		p1 = self.MU0/(4.*np.pi)
-		p2 = (gamma * self.mueff)/distance**3
-		rate = (1./15.)*(p1*p2)**2 * (
-			 4*self.spec_dens(self.tauc, 0.) +
-			 3*self.spec_dens(self.tauc, self.B0*gamma) + 
-			13*self.spec_dens(self.tauc, self.B0*self.GAMMA))
-		return rate
-
-	def rdc(self, vector, gam1, gam2):
+	def rdc(self, vector, gammaProd):
 		"""
 		Calculate Residual Dipolar Coupling (RDC)
 
 		Parameters
 		----------
-		vector : [x,y,z] array of float
-			internuclear vector in meters
-		gam1 : float
-			gyromagnetic ratio of spin 1 in rad/s/T
-		gam2 : float
-			gyromagnetic ratio of spin 2 in rad/s/T
+		vector : array of floats
+			internuclear vector (x,y,z) in meters
+		gammaProd : float
+			the product of gyromagnetic ratios of spin A and B 
+			where each has units of rad/s/T
 
 		Returns
 		-------
@@ -839,12 +1329,70 @@ class Metal(object):
 			the RDC in Hz
 		"""
 		dist = np.linalg.norm(vector)
-		pf = -(self.MU0 * gam1 * gam2 * self.HBAR) / (4 * np.pi * dist**5)
-		rdc_radians = 3*pf * vector.dot(self.tensor_saupe).dot(vector) 
+		pf = -(self.MU0 * gammaProd * self.HBAR) / (4 * np.pi * dist**5)
+		rdc_radians = 3*pf * vector.dot(self.tensor_alignment).dot(vector) 
 		return rdc_radians / (2*np.pi)
 
+	def fast_rdc(self, vecarray, gammaProdArray):
+		"""
+		A vectorised version of :meth:`paramagpy.metal.Metal.rdc` method.
+
+		This is generally used for speed in fitting RDC data
+
+		Parameters
+		----------
+		vecarray : array with shape (n,3)
+			array of internuclear vectors in meters
+		gammaProdArray : array with shape (n,1)
+			the products of gyromagnetic ratios of spins A and B 
+			where each has units of rad/s/T
+
+		Returns
+		-------
+		rdc_array : array with shape (n,1)
+			the RDC values in Hz
+		"""
+		dist = np.linalg.norm(vecarray, axis=1)
+		pf = -(self.MU0 * gammaProdArray * self.HBAR) / (4 * np.pi * dist**5)
+		dot1 = np.einsum('ik,jk->ji', self.tensor_alignment, vecarray)
+		dot2 = np.einsum('ij,ij->i', vecarray, dot1)
+		rdc_radians = 3*pf * dot2
+		return rdc_radians / (2*np.pi)
+
+	####################################
+	# Methods for plotting isosurfaces #
+	####################################
 
 	def make_mesh(self, density=2, size=40.0):
+		"""
+		Construct a 3D grid of points to map an isosurface
+
+		This is contained in a cube
+
+		Parameters
+		----------
+		density : int
+			the points per Angstrom in the grid
+		size : float
+			the length of one edge of the cube
+
+		Returns
+		-------
+		mesh : cubic grid array
+			This has shape (n,n,n,3) where n is the number of points
+			along one edge of the grid. Units are meters
+		bounds : tuple (origin, low, high, points)
+			This tuple has information about the bounding box
+
+			origin : array of floats, the (x,y,z) location of mesh vertex
+
+			low : array of ints, the integer location of the first point in each dimension
+
+			high : array of ints, the integer location of the last point in each dimension
+
+			points : array of ints, the number of points along each dimension
+
+		"""
 		origin = np.asarray(density * (self.position*1E10 - size/2.0), dtype=int)
 		low = origin / float(density)
 		high = low + size
@@ -854,6 +1402,19 @@ class Metal(object):
 		return mesh, (origin, low, high, points)
 
 	def pcs_mesh(self, mesh):
+		"""
+		Calculate a PCS value at each location of cubic grid of points
+
+		Parameters
+		----------
+		mesh : array with shape (n,n,n,3)
+			a cubic grid as generated by the method <make_mesh>
+
+		Returns
+		-------
+		pcs_mesh : array with shape (n,n,n,1)
+			The same grid shape, with PCS values at the respective locations
+		"""
 		og_shape = mesh.shape[:3]
 		pcs_mesh = self.fast_pcs(mesh.reshape(np.prod(og_shape),3))
 		return pcs_mesh.reshape(*og_shape)
@@ -964,7 +1525,7 @@ def make_tensor(x, y, z, axial, rhombic,
 
 def load_tensor(fileName):
 	"""
-	Docstring for load tensor
+	Load a metal object from file
 	"""
 	with open(fileName) as o:
 		params = []
@@ -978,4 +1539,5 @@ def load_tensor(fileName):
 		t = Metal()
 		t.set_params(params)
 	return t
+
 

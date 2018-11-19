@@ -14,6 +14,7 @@ paramagpy.fit
             
                ccr
                clean_indices
+               ensemble_average
                extract_csa
                extract_pcs
                extract_pre

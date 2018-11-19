@@ -18,7 +18,7 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="paramagpy.metal.Metal.eigenvalues_to_anisotropy" href="paramagpy.metal.Metal.eigenvalues_to_anisotropy.html" />
+    <link rel="next" title="paramagpy.metal.Metal.fast_dipole_shift_tensor" href="paramagpy.metal.Metal.fast_dipole_shift_tensor.html" />
     <link rel="prev" title="paramagpy.metal.Metal.dsa_r1" href="paramagpy.metal.Metal.dsa_r1.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -31,7 +31,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="paramagpy.metal.Metal.eigenvalues_to_anisotropy.html" title="paramagpy.metal.Metal.eigenvalues_to_anisotropy"
+          <a href="paramagpy.metal.Metal.fast_dipole_shift_tensor.html" title="paramagpy.metal.Metal.fast_dipole_shift_tensor"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="paramagpy.metal.Metal.dsa_r1.html" title="paramagpy.metal.Metal.dsa_r1"
@@ -54,15 +54,30 @@
 <dt id="paramagpy.metal.Metal.dsa_r2">
 <code class="descclassname">Metal.</code><code class="descname">dsa_r2</code><span class="sig-paren">(</span><em>position</em>, <em>gamma</em>, <em>csa=0.0</em>, <em>ignorePara=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.dsa_r2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.dsa_r2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate R2 relaxation due to Curie Spin</p>
+<p>If the metal has an anisotropic magnetic susceptibility, this is
+taken into account, resulting in orientation dependent PRE as
+predicted by Vega and Fiat. CSA cross-correlated relaxation may
+be included by providing an appropriate CSA tensor.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atom</strong> – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>position</strong> (<em>array of floats</em>) – three coordinates (x,y,z)</li>
+<li><strong>gamma</strong> (<em>float</em>) – the gyromagnetic ratio of the spin</li>
+<li><strong>csa</strong> (<em>3x3 matrix</em><em> (</em><em>optional</em><em>)</em>) – the CSA tensor of the given spin.
+This defualts to 0.0, meaning CSAxDSA crosscorrelation is
+not accounted for.</li>
+<li><strong>ignorePara</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True, only the CSA relaxation is calculated and returned.
+All paramagnetic effects are ignored.</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> – The R2 relaxation rate in /s</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>value</strong> – The R2 relaxation rate in /s</p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -80,8 +95,8 @@
   <p class="topless"><a href="paramagpy.metal.Metal.dsa_r1.html"
                         title="previous chapter">paramagpy.metal.Metal.dsa_r1</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="paramagpy.metal.Metal.eigenvalues_to_anisotropy.html"
-                        title="next chapter">paramagpy.metal.Metal.eigenvalues_to_anisotropy</a></p>
+  <p class="topless"><a href="paramagpy.metal.Metal.fast_dipole_shift_tensor.html"
+                        title="next chapter">paramagpy.metal.Metal.fast_dipole_shift_tensor</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -115,7 +130,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="paramagpy.metal.Metal.eigenvalues_to_anisotropy.html" title="paramagpy.metal.Metal.eigenvalues_to_anisotropy"
+          <a href="paramagpy.metal.Metal.fast_dipole_shift_tensor.html" title="paramagpy.metal.Metal.fast_dipole_shift_tensor"
              >next</a> |</li>
         <li class="right" >
           <a href="paramagpy.metal.Metal.dsa_r1.html" title="paramagpy.metal.Metal.dsa_r1"

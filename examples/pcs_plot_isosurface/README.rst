@@ -17,7 +17,7 @@ Downloads
 Explanation
 -----------
 
-The protein and tensor are loaded as described previously in :ref:`pcs_plot_correlation`.
+The protein and tensor are loaded as described previously in.
 
 The isosurface files are generated using the function :py:func:`paramagpy.metal.Metal.isomap`. The contour level can be chosen by setting the ``isoval`` argument. A larger ``density`` value will result in a smoother surface. This function writes two files ``isomap.pml`` and ``isomap.pml.ccp4`` which are the PyMol script and PCS grid files respectively.
 

@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="paramagpy.metal.Metal.fast_sbm_r2" href="paramagpy.metal.Metal.fast_sbm_r2.html" />
-    <link rel="prev" title="paramagpy.metal.Metal.fast_rads" href="paramagpy.metal.Metal.fast_rads.html" /> 
+    <link rel="prev" title="paramagpy.metal.Metal.fast_rdc" href="paramagpy.metal.Metal.fast_rdc.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -34,7 +34,7 @@
           <a href="paramagpy.metal.Metal.fast_sbm_r2.html" title="paramagpy.metal.Metal.fast_sbm_r2"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="paramagpy.metal.Metal.fast_rads.html" title="paramagpy.metal.Metal.fast_rads"
+          <a href="paramagpy.metal.Metal.fast_rdc.html" title="paramagpy.metal.Metal.fast_rdc"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
@@ -53,7 +53,27 @@
 <dl class="method">
 <dt id="paramagpy.metal.Metal.fast_sbm_r1">
 <code class="descclassname">Metal.</code><code class="descname">fast_sbm_r1</code><span class="sig-paren">(</span><em>posarray</em>, <em>gammaarray</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.fast_sbm_r1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.fast_sbm_r1" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.sbm_r1.html#paramagpy.metal.Metal.sbm_r1" title="paramagpy.metal.Metal.sbm_r1"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.sbm_r1()</span></code></a></p>
+<p>This is generally used for speed in fitting PRE data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>posarray</strong> (<em>array with shape</em><em> (</em><em>n</em><em>,</em><em>3</em><em>)</em>) – array of positions in meters</li>
+<li><strong>gammaarray</strong> (<em>array with shape</em><em> (</em><em>n</em><em>,</em><em>3</em><em>)</em>) – array of gyromagnetic ratios of the spins</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>rates</strong> – The R1 relaxation rates in /s</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array with shape (n,1)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 
@@ -64,8 +84,8 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="paramagpy.metal.Metal.fast_rads.html"
-                        title="previous chapter">paramagpy.metal.Metal.fast_rads</a></p>
+  <p class="topless"><a href="paramagpy.metal.Metal.fast_rdc.html"
+                        title="previous chapter">paramagpy.metal.Metal.fast_rdc</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="paramagpy.metal.Metal.fast_sbm_r2.html"
                         title="next chapter">paramagpy.metal.Metal.fast_sbm_r2</a></p>
@@ -105,7 +125,7 @@
           <a href="paramagpy.metal.Metal.fast_sbm_r2.html" title="paramagpy.metal.Metal.fast_sbm_r2"
              >next</a> |</li>
         <li class="right" >
-          <a href="paramagpy.metal.Metal.fast_rads.html" title="paramagpy.metal.Metal.fast_rads"
+          <a href="paramagpy.metal.Metal.fast_rdc.html" title="paramagpy.metal.Metal.fast_rdc"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>

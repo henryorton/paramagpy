@@ -51,8 +51,31 @@
 <h1>paramagpy.metal.unique_eulers<a class="headerlink" href="#paramagpy-metal-unique-eulers" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="paramagpy.metal.unique_eulers">
-<code class="descclassname">paramagpy.metal.</code><code class="descname">unique_eulers</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>g</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#unique_eulers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.unique_eulers" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">paramagpy.metal.</code><code class="descname">unique_eulers</code><span class="sig-paren">(</span><em>eulers</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#unique_eulers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.unique_eulers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Euler angles in unique tensor representation.</p>
+<p>Given general Euler angles by ZYZ convention, this function accounts for
+the symmetry of a second rank symmetric tensor to map all angles within
+the range [0, pi].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>eulers</strong> (<em>array of float</em>) – the three Euler angles in radians</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>eulers_utr</strong> – the euler angles [alpha,beta,gamma] in radians
+by ZYZ convention</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array of floats</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">eulers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">5.2</span><span class="p">,</span><span class="mf">10.3</span><span class="p">,</span><span class="mf">0.1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">unique_eulers</span><span class="p">(</span><span class="n">eulers</span><span class="p">)</span>
+<span class="go">np.array([1.08318531 0.87522204 3.04159265])</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </div>
 

@@ -53,7 +53,26 @@
 <dl class="method">
 <dt id="paramagpy.metal.Metal.set_params">
 <code class="descclassname">Metal.</code><code class="descname">set_params</code><span class="sig-paren">(</span><em>paramValues</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.set_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.set_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Set tensor parameters that have been scaled appropriately</p>
+<p>This is the inverse of the method &lt;get_params&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>paramValues</strong> (<em>list of tuple</em>) – each element is a tuple (variable, value) where ‘variable’
+is the string indentifying the attribute to be set, and ‘value’
+is the corresponding value</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">metal</span> <span class="o">=</span> <span class="n">Metal</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metal</span><span class="o">.</span><span class="n">set_params</span><span class="p">([(</span><span class="s1">&#39;ax&#39;</span><span class="p">,</span><span class="mf">20.0</span><span class="p">),(</span><span class="s1">&#39;rh&#39;</span><span class="p">,</span><span class="mf">3.0</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metal</span><span class="o">.</span><span class="n">axrh</span>
+<span class="go">[2.e-31 3.e-32]</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </div>
 

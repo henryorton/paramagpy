@@ -51,7 +51,7 @@
 <h1>paramagpy.fit.nlr_fit_metal_from_pcs<a class="headerlink" href="#paramagpy-fit-nlr-fit-metal-from-pcs" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="paramagpy.fit.nlr_fit_metal_from_pcs">
-<code class="descclassname">paramagpy.fit.</code><code class="descname">nlr_fit_metal_from_pcs</code><span class="sig-paren">(</span><em>initMetals</em>, <em>pcss</em>, <em>params</em>, <em>sumIndices=None</em>, <em>userads=False</em>, <em>useracs=False</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#nlr_fit_metal_from_pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.nlr_fit_metal_from_pcs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">paramagpy.fit.</code><code class="descname">nlr_fit_metal_from_pcs</code><span class="sig-paren">(</span><em>initMetals</em>, <em>pcss</em>, <em>params=('x'</em>, <em>'y'</em>, <em>'z'</em>, <em>'ax'</em>, <em>'rh'</em>, <em>'a'</em>, <em>'b'</em>, <em>'g')</em>, <em>sumIndices=None</em>, <em>userads=False</em>, <em>useracs=False</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#nlr_fit_metal_from_pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.nlr_fit_metal_from_pcs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit deltaChi tensor to PCS values using non-linear regression.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -83,10 +83,11 @@ iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>metals</strong> – the metals fitted by NLR to the PCS data provided</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of metals</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>metals</strong> (<em>list of metals</em>) – the metals fitted by NLR to the PCS data provided</li>
+<li><strong>calc_pcss</strong> (<em>list of lists of floats</em>) – the calculated PCS values</li>
+</ul>
+</p>
 </td>
 </tr>
 </tbody>

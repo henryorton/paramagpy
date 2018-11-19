@@ -52,7 +52,32 @@
 <dl class="function">
 <dt id="paramagpy.fit.svd_calc_metal_from_rdc">
 <code class="descclassname">paramagpy.fit.</code><code class="descname">svd_calc_metal_from_rdc</code><span class="sig-paren">(</span><em>vec</em>, <em>rdc_parameterised</em>, <em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#svd_calc_metal_from_rdc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.svd_calc_metal_from_rdc" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Solve RDC equation by single value decomposition.
+This function is generally called by higher methods like
+&lt;svd_fit_metal_from_rdc&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>vec</strong> (<em>array of</em><em> [</em><em>x</em><em>,</em><em>y</em><em>,</em><em>z</em><em>] </em><em>floats</em>) – the internuclear vectors in meters</li>
+<li><strong>rdc_parameterised</strong> (<em>array of floats</em>) – the experimental RDC values, normalised by a prefactor</li>
+<li><strong>idx</strong> (<em>array of ints</em>) – an index assigned to each atom. Common indices determine summation
+between models for ensemble averaging.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>calc</strong> (<em>array of floats</em>) – the calculated RDC values from the fitted tensor</li>
+<li><strong>sol</strong> (<em>array of floats</em>) – sol is the solution to the linearised PCS equation and
+consists of the tensor matrix elements</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 

@@ -1574,11 +1574,14 @@ class DataTab(tk.Frame):
 			self.data['cal'] = pcss
 
 		elif self.dtype=='RDC':
+			vecs = []
+			gams = []
 			for row in self.data:
-				vec = (row['atx'].coord - row['atm'].coord)*1E-10
-				gam1 = row['atm'].gamma
-				gam2 = row['atx'].gamma
-				row['cal'] = self.tensorFit.tensor.rdc(vec, gam1, gam2)
+				vecs.append(row['atx'].position - row['atm'].position)
+				gams.append(row['atx'].gamma * row['atm'].gamma)
+			vecs = np.array(vecs)
+			gams = np.array(gams)
+			self.data['cal'] = self.tensorFit.tensor.fast_rdc(vecs, gams)
 
 		elif self.dtype=='PRE':
 			poss = np.array([atom.coord for atom in self.data['atm']])*1E-10
@@ -1602,10 +1605,10 @@ class DataTab(tk.Frame):
 		filt = self.data[self.data['use']]
 		if model is not None:
 			filt = filt[filt['mdl']==model]
-		qnumer = np.sum((filt['exp'] - filt['cal'])**2)
-		qdenom = np.sum(filt['exp']**2)
-		sqfac += (qnumer/qdenom)**0.5
-		qfac = sqfac
+		exp = filt['exp']
+		cal = filt['cal']
+		idx = filt['idx']
+		qfac = fit.qfactor(exp, cal, idx)
 		self.viewData.set_qfac(qfac)
 		return qfac
 
@@ -1844,7 +1847,7 @@ class FittingOptionsFrame(tk.LabelFrame):
 			return modeldata
 		elif self.dtype=='RDC':
 			for model in models:
-				fitdata = dataTab.get_fit_data(model)
+				fitdata = dataTabs.get_fit_data(model)
 				data = fitdata[['atm','atx','exp','err']]
 				summ = fitdata['idx']
 				tmp = model, data, summ
@@ -1885,7 +1888,7 @@ class FittingOptionsFrame(tk.LabelFrame):
 		# 	messagebox.showerror("Error", "Experimental data missing")
 		# 	return
 
-		qfac = 1E50
+		minqfac = 1E50
 		minmod = None
 		minmetal = None
 		progVar = tk.DoubleVar(value=0.0)
@@ -1906,34 +1909,34 @@ class FittingOptionsFrame(tk.LabelFrame):
 				if points<1:
 					points = 1
 				ref = self.params['ref'].get()
-				metals = fit.svd_gridsearch_fit_metal_from_pcs(metals, data,
-					origin=None, radius=radius, points=points, 
+				metals, calc, qfacs = fit.svd_gridsearch_fit_metal_from_pcs(
+					metals, data, origin=None, radius=radius, points=points, 
 					offsetShift=ref, progress=progVar)
 
 			if self.params['nlr'].get():
 				progbar.set_label(nlrline)
 				progVar.set(1.0)
 				pars = self.get_params()
-				metals = fit.nlr_fit_metal_from_pcs(metals, data, pars,
+				metals, calc, qfacs = fit.nlr_fit_metal_from_pcs(
+					metals, data, pars,
 					userads=self.params['rads'].get(), 
 					useracs=self.params['racs'].get())
 
 			if self.params['mod'].get():
-				q = sum([fit.qfactor(m, d) for m, d in zip(metals, data)])
-				if q<qfac:
+				qfac = np.mean(qfacs)
+				if qfac<minqfac:
 					minmod = model
 					minmetals = [m.copy() for m in metals]
-					qfac = q
+					minqfac = qfac
 
 		progbar.death()
 		if self.params['mod'].get():
 			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
 			messagebox.showinfo("Model with best fit found", 
-				line.format(minmod, qfac))
+				line.format(minmod, minqfac))
 			metals = minmetals
 
 		for tab, metal in zip(dataTabs, metals):
-			metal.set_utr()
 			tab.tensorFit.tensor = metal.copy()
 			if minmod is not None:
 				tab.viewData.set_current_model(minmod)
@@ -2030,7 +2033,6 @@ class FittingOptionsFrame(tk.LabelFrame):
 			metals = minmetals
 
 		for tab, metal in zip(dataTabs, metals):
-			metal.set_utr()
 			tab.tensorFit.tensor = metal.copy()
 			if minmod is not None:
 				tab.viewData.set_current_model(minmod)
@@ -2043,37 +2045,28 @@ class FittingOptionsFrame(tk.LabelFrame):
 		modeldata = self.get_data(dataTab, 
 			seperateModels=self.params['mod'].get())
 
-		# datacheck = all([all([bool(j) for j in d]) for m, d, s in modeldata])
-		# if not datacheck:
-		# 	messagebox.showerror("Error", "Experimental data missing")
-		# 	return
-
-		qfac = 1E50
+		minqfac = 1E50
 		minmod = None
 		minmetal = None
 		progVar = tk.DoubleVar(value=0.0)
 		for model, data, summ in modeldata:
-			metal = fit.svd_fit_metal_from_rdc(metal, data)
+			metal, calc, qfac = fit.svd_fit_metal_from_rdc(metal, data)
 
+			if self.params['mod'].get():
+				if qfac<minqfac:
+					minmod = model
+					minmetal = m.copy()
+					minqfac = qfac
 
-			# if self.params['mod'].get():
-			# 	q = sum([fit.qfactor(m, d) for m, d in zip(metals, data)])
-			# 	if q<qfac:
-			# 		minmod = model
-			# 		minmetals = [m.copy() for m in metals]
-			# 		qfac = q
+		if self.params['mod'].get():
+			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
+			messagebox.showinfo("Model with best fit found", 
+				line.format(minmod, qfac))
+			metal = minmetal
 
-		# if self.params['mod'].get():
-		# 	line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
-		# 	messagebox.showinfo("Model with best fit found", 
-		# 		line.format(minmod, qfac))
-		# 	metals = minmetals
-
-		metal.set_utr()
-		print(metal.info())
 		dataTab.tensorFit.tensor = metal.copy()
-		# if minmod is not None:
-			# dataTab.viewData.set_current_model(minmod)
+		if minmod is not None:
+			dataTab.viewData.set_current_model(minmod)
 		dataTab.update(0)
 		dataTab.back_calc()
 

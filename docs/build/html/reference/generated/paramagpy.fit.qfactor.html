@@ -52,7 +52,39 @@
 <dl class="function">
 <dt id="paramagpy.fit.qfactor">
 <code class="descclassname">paramagpy.fit.</code><code class="descname">qfactor</code><span class="sig-paren">(</span><em>experiment</em>, <em>calculated</em>, <em>sumIndices=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#qfactor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.qfactor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculate the Q-factor to judge tensor fit quality</p>
+<p>A lower value indicates a better fit. The Q-factor is calculated using
+the following equation:</p>
+<div class="math notranslate nohighlight">
+\[Q = \sqrt{
+        \frac{\sum_i\left[\sum_m
+                \left[PCS^{exp}_{m,i}-PCS^{calc}_{m,i}\right]^2\right]}
+        {\sum_i\left[\sum_m\left[PCS^{exp}_{m,i}\right]^2\right]}
+}\]</div>
+<p>where <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(i\)</span> are usually indexed over models and atoms
+respectively.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>experiment</strong> (<em>list of floats</em>) – the experimental values</li>
+<li><strong>calculated</strong> (<em>list of floats</em>) – the corresponding caluclated values from the fitted model</li>
+<li><strong>sumIndices</strong> (<em>list ints</em><em>, </em><em>optional</em>) – Common indices determine summation between models
+for ensemble averaging.
+If None, no ensemble averaging is conducted</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>qfactor</strong> – the Q-factor</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 

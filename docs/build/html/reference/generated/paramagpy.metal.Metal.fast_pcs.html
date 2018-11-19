@@ -53,14 +53,14 @@
 <dl class="method">
 <dt id="paramagpy.metal.Metal.fast_pcs">
 <code class="descclassname">Metal.</code><code class="descname">fast_pcs</code><span class="sig-paren">(</span><em>posarray</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.fast_pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.fast_pcs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rapidly calculatew the psuedo-contact shift at <cite>n</cite> positions.
-This efficient algorithm calculates the PCSs for an array of
+<dd><p>A vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.pcs.html#paramagpy.metal.Metal.pcs" title="paramagpy.metal.Metal.pcs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.pcs()</span></code></a></p>
+<p>This efficient algorithm calculates the PCSs for an array of
 positions and is best used where speed is required for fitting.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>posarray</strong> (<em>array of positions with shape</em><em> (</em><em>n</em><em>,</em><em>3</em><em>)</em>) – the position (x, y, z) in meters</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>posarray</strong> (<em>array with shape</em><em> (</em><em>n</em><em>,</em><em>3</em><em>)</em>) – array of ‘n’ positions (x, y, z) in meters</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>pcs</strong> – the peudo-contact shift in parts-per-million (ppm)</td>
 </tr>

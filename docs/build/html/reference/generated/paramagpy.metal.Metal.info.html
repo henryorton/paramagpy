@@ -53,7 +53,41 @@
 <dl class="method">
 <dt id="paramagpy.metal.Metal.info">
 <code class="descclassname">Metal.</code><code class="descname">info</code><span class="sig-paren">(</span><em>comment=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.info" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get basic information about the Metal object</p>
+<p>This is returned as a string in human readable units
+This is also the file format for saving the tensor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>comment</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – if True, each line has a ‘#’ placed at the front</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>information</strong> – a string containing basic information about the Metal</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">metal</span> <span class="o">=</span> <span class="n">Metal</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metal</span><span class="o">.</span><span class="n">set_lanthanide</span><span class="p">(</span><span class="s1">&#39;Er&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metal</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+<span class="go"># ax    | 1E-32 m^3 :   -11.600</span>
+<span class="go"># rh    | 1E-32 m^3 :    -8.600</span>
+<span class="go"># x     |   1E-10 m :     0.000</span>
+<span class="go"># y     |   1E-10 m :     0.000</span>
+<span class="go"># z     |   1E-10 m :     0.000</span>
+<span class="go"># a     |       deg :     0.000</span>
+<span class="go"># b     |       deg :     0.000</span>
+<span class="go"># g     |       deg :     0.000</span>
+<span class="go"># mueff |        Bm :     9.581</span>
+<span class="go"># shift |       ppm :     0.000</span>
+<span class="go"># B0    |         T :    18.790</span>
+<span class="go"># temp  |         K :   298.150</span>
+<span class="go"># t1e   |        ps :     0.189</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </div>
 

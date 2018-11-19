@@ -312,10 +312,9 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 	if sumIndices is not None:
 		idxarrays = sumIndices
 
-	tmp = []
+	pcsarrays_eavg = []
 	for pcsarray, idxarray in zip(pcsarrays, idxarrays):
-		tmp.append(np.bincount(idxarray, weights=pcsarray))
-	pcsarrays = tmp
+		pcsarrays_eavg.append(np.bincount(idxarray, weights=pcsarray))
 
 	minscore = 1E50
 	print("SVD search started in {} points".format(len(sphere)))
@@ -326,30 +325,40 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 			prog += 1
 			progress.set(prog/tot)
 		score = 0.0
-		for pcsarray, posarray, idxarray in zip(pcsarrays, posarrays, idxarrays):
+		sols = []
+		for pcsarray_eavg, posarray, idxarray in zip(pcsarrays_eavg, 
+												posarrays, idxarrays):
 			coords = posarray - pos
-			calculated, solution = svd_func(coords, pcsarray, idxarray)
-			score += np.sum((calculated - pcsarray)**2)
+			calculated, solution = svd_func(coords, pcsarray_eavg, idxarray)
+			sols.append(solution)
+			score += np.sum((calculated - pcsarray_eavg)**2)
 		if score<minscore:
 			minscore = score
 			minpos = pos
+			minsols = sols
 
 	minmetals = [m.copy() for m in metals]
-	for pcsarray, posarray, idxarray, metal in zip(pcsarrays, posarrays, 
-		idxarrays, minmetals):
-		coords = posarray - minpos
-		_, solution = svd_func(coords, pcsarray, idxarray)
+	calc_pcss = []
+	qfactors = []
+	for pcsarray, posarray, idxarray, metal, sol in zip(pcsarrays, posarrays, 
+		idxarrays, minmetals, minsols):
 		metal.position = minpos
 		if offsetShift:
-			metal.upper_triang = solution[:-1]
-			metal.shift = solution[-1]*1E6
+			metal.upper_triang = sol[:-1]
+			metal.shift = sol[-1]*1E6
 		else:
-			metal.upper_triang = solution
-	return minmetals
+			metal.upper_triang = sol
+		calculated = metal.fast_pcs(posarray)
+		calc_pcss.append(calculated)
+		qfac = qfactor(pcsarray, calculated, idxarray)
+		qfactors.append(qfactor)
+
+	return minmetals, calc_pcss, qfactors
 
 
 
-def nlr_fit_metal_from_pcs(initMetals, pcss, params, 
+def nlr_fit_metal_from_pcs(initMetals, pcss, 
+	params=('x','y','z','ax','rh','a','b','g'), 
 	sumIndices=None, userads=False, useracs=False, progress=None):
 	"""
 	Fit deltaChi tensor to PCS values using non-linear regression.
@@ -390,6 +399,8 @@ def nlr_fit_metal_from_pcs(initMetals, pcss, params,
 	-------
 	metals : list of metals
 		the metals fitted by NLR to the PCS data provided
+	calc_pcss : list of lists of floats
+		the calculated PCS values
 	"""
 	posarrays = []
 	csaarrays = []
@@ -436,15 +447,28 @@ def nlr_fit_metal_from_pcs(initMetals, pcss, params,
 		return score
 
 	startpars = metals[0].get_params(pospars)
+
 	for metal in metals:
 		pars = metal.get_params(otherpars)
 		startpars += pars
 	fmin_bfgs(cost, startpars, disp=False)
-	for metal in metals:
+	calc_pcss = []
+	qfactors = []
+	zipped = zip(metals, posarrays, csaarrays, pcsarrays, idxarrays)
+	for metal, posarray, csaarray, pcsarray, idxarray in zipped:
 		metal.set_utr()
+		calculated = metal.fast_pcs(posarray)
+		if userads:
+			calculated += metal.fast_rads(posarray)
+		if useracs:
+			calculated += metal.fast_racs(csaarray)
+		calc_pcss.append(calculated)
+		qfac = qfactor(pcsarray, calculated, idxarray)
+		qfactors.append(qfac)
+
 	if progress:
 		progress.set(1.0)
-	return metals
+	return metals, calc_pcss, qfactors
 
 
 def pcs_fit_error_monte_carlo(initMetals, pcss, params, iterations,
@@ -465,7 +489,7 @@ def pcs_fit_error_monte_carlo(initMetals, pcss, params, iterations,
 			noisey = pcs + np.random.normal(scale=err)
 			tmp = zip(atm, noisey, err)
 			data.append(list(tmp))
-		metals = nlr_fit_metal_from_pcs(initMetals, data, params, 
+		metals, _, _ = nlr_fit_metal_from_pcs(initMetals, data, params, 
 			sumIndices, userads, useracs, progress=None)
 		for metal, std in zip(metals, stds):
 			std.append(metal.get_params(params))
@@ -506,7 +530,7 @@ def pcs_fit_error_bootstrap(initMetals, pcss, params, iterations,
 			sumIndices_trunc.append(idxs_trunc)
 			data_trunc = np.array(list(zip(atm, pcs, err)))[mask]
 			datas_trunc.append(data_trunc.tolist())
-		metals = nlr_fit_metal_from_pcs(initMetals, datas_trunc, params, 
+		metals, _, _ = nlr_fit_metal_from_pcs(initMetals, datas_trunc, params, 
 			sumIndices_trunc, userads, useracs, progress=None)
 		for metal, std in zip(metals, stds):
 			std.append(metal.get_params(params))
@@ -518,9 +542,9 @@ def pcs_fit_error_bootstrap(initMetals, pcss, params, iterations,
 
 
 def fit_metal_from_pcs(metals, pcss):
-	fitmetals = svd_gridsearch_calc_metal_from_pcs(metals, pcss)
-	fitmetals = nlr_fit_metal_from_pcs(fitmetals, pcss)
-	return fitmetals
+	fitmetals, _, _ = svd_gridsearch_calc_metal_from_pcs(metals, pcss)
+	fitmetals, calcs, qfacs = nlr_fit_metal_from_pcs(fitmetals, pcss)
+	return fitmetals, calcs, qfacs
 
 
 def plot_pcs_fit(metals, pcss):
@@ -544,13 +568,47 @@ def plot_pcs_fit(metals, pcss):
 
 
 def qfactor(experiment, calculated, sumIndices=None):
+	"""
+	Calculate the Q-factor to judge tensor fit quality
+
+	A lower value indicates a better fit. The Q-factor is calculated using
+	the following equation:
+
+	.. math::
+		Q = \\sqrt{
+			\\frac{\\sum_i\\left[\\sum_m
+				\\left[PCS^{exp}_{m,i}-PCS^{calc}_{m,i}\\right]^2\\right]}
+			{\\sum_i\\left[\\sum_m\\left[PCS^{exp}_{m,i}\\right]^2\\right]}
+		}
+
+	where :math:`m` and :math:`i` are usually indexed over models and atoms
+	respectively.
+
+	Parameters
+	----------
+	experiment : list of floats
+		the experimental values
+	calculated : list of floats
+		the corresponding caluclated values from the fitted model
+	sumIndices : list ints, optional
+		Common indices determine summation between models 
+		for ensemble averaging.
+		If None, no ensemble averaging is conducted
+
+	Returns
+	-------
+	qfactor : float
+		the Q-factor
+	"""
 	experiment = np.array(experiment)
 	calculated = np.array(calculated)
 	if sumIndices is None:
-		sumIndices = np.arange(len(experiment))
+		idxs = np.arange(len(experiment))
+	else:
+		idxs = clean_indices(sumIndices)
 	diff = experiment - calculated
-	numer = np.sum(np.bincount(sumIndices, weights=diff)**2)
-	denom = np.sum(np.bincount(sumIndices, weights=experiment)**2)
+	numer = np.sum(np.bincount(idxs, weights=diff)**2)
+	denom = np.sum(np.bincount(idxs, weights=experiment)**2)
 	return (numer/denom)**0.5
 
 
@@ -713,6 +771,29 @@ def ccr(metal, atom):
 
 
 def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx):
+	"""
+	Solve RDC equation by single value decomposition.
+	This function is generally called by higher methods like 
+	<svd_fit_metal_from_rdc>
+
+	Parameters
+	----------
+	vec : array of [x,y,z] floats
+		the internuclear vectors in meters
+	rdc_parameterised : array of floats
+		the experimental RDC values, normalised by a prefactor
+	idx : array of ints
+		an index assigned to each atom. Common indices determine summation
+		between models for ensemble averaging.
+
+	Returns
+	-------
+	calc : array of floats
+		the calculated RDC values from the fitted tensor
+	sol : array of floats
+		sol is the solution to the linearised PCS equation and 
+		consists of the tensor matrix elements
+	"""
 	dist = np.linalg.norm(vec, axis=1)
 	x, y, z = vec.T
 	a = x**2 - z**2
@@ -721,7 +802,6 @@ def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx):
 	d = 2 * x * z
 	e = 2 * y * z
 	mat = (1./dist**5) * np.array([a,b,c,d,e])
-	print(idx)
 	mat = np.array([np.bincount(idx, weights=col) for col in mat])
 	matinv = np.linalg.pinv(mat)
 	sol = matinv.T.dot(rdc_parameterised)
@@ -730,16 +810,21 @@ def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx):
 
 
 def svd_fit_metal_from_rdc(metal, rdc):
+
 	vecarray, gamarray, rdcarray, errarray, idxarray = extract_rdc(rdc)
 	pfarray = -3*(metal.MU0 * gamarray * metal.HBAR) / (8 * np.pi**2)
-	rdc_param = np.bincount(idxarray, weights=rdcarray / pfarray)
+	rdc_parameterised = np.bincount(idxarray, weights=rdcarray / pfarray)
 	fitMetal = metal.copy()
-	_, sol = svd_calc_metal_from_rdc(vecarray, rdc_param, idxarray)
-	fitMetal.upper_triang_saupe = sol
-	return fitMetal
+	_, sol = svd_calc_metal_from_rdc(vecarray, rdc_parameterised, idxarray)
+	fitMetal.upper_triang_alignment = sol
+	calculated = fitMetal.fast_rdc(vecarray, gamarray)
+	qfac = qfactor(rdcarray, calculated, idxarray)
+	return fitMetal, calculated, qfac
 
 
-
+def ensemble_average(atoms, values):
+	idxs = clean_indices([i.serial_number for i in atoms])
+	return np.bincount(idxs, weights=values)
 
 
 

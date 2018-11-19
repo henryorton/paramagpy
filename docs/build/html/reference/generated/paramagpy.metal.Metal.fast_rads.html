@@ -18,7 +18,7 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="paramagpy.metal.Metal.fast_sbm_r1" href="paramagpy.metal.Metal.fast_sbm_r1.html" />
+    <link rel="next" title="paramagpy.metal.Metal.fast_rdc" href="paramagpy.metal.Metal.fast_rdc.html" />
     <link rel="prev" title="paramagpy.metal.Metal.fast_racs" href="paramagpy.metal.Metal.fast_racs.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -31,7 +31,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="paramagpy.metal.Metal.fast_sbm_r1.html" title="paramagpy.metal.Metal.fast_sbm_r1"
+          <a href="paramagpy.metal.Metal.fast_rdc.html" title="paramagpy.metal.Metal.fast_rdc"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="paramagpy.metal.Metal.fast_racs.html" title="paramagpy.metal.Metal.fast_racs"
@@ -53,7 +53,21 @@
 <dl class="method">
 <dt id="paramagpy.metal.Metal.fast_rads">
 <code class="descclassname">Metal.</code><code class="descname">fast_rads</code><span class="sig-paren">(</span><em>posarray</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.fast_rads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.fast_rads" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.rads.html#paramagpy.metal.Metal.rads" title="paramagpy.metal.Metal.rads"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.rads()</span></code></a></p>
+<p>This is generally used when speed is required for fitting</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>posarray</strong> (<em>array with shape</em><em> (</em><em>n</em><em>,</em><em>3</em><em>)</em>) – an array of ‘n’ positions (x, y, z) in meters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>rads_array</strong> – the residual anisotropic dipole shift in parts-per-million (ppm)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array of floats with shape (n,1)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 
@@ -67,8 +81,8 @@
   <p class="topless"><a href="paramagpy.metal.Metal.fast_racs.html"
                         title="previous chapter">paramagpy.metal.Metal.fast_racs</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="paramagpy.metal.Metal.fast_sbm_r1.html"
-                        title="next chapter">paramagpy.metal.Metal.fast_sbm_r1</a></p>
+  <p class="topless"><a href="paramagpy.metal.Metal.fast_rdc.html"
+                        title="next chapter">paramagpy.metal.Metal.fast_rdc</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -102,7 +116,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="paramagpy.metal.Metal.fast_sbm_r1.html" title="paramagpy.metal.Metal.fast_sbm_r1"
+          <a href="paramagpy.metal.Metal.fast_rdc.html" title="paramagpy.metal.Metal.fast_rdc"
              >next</a> |</li>
         <li class="right" >
           <a href="paramagpy.metal.Metal.fast_racs.html" title="paramagpy.metal.Metal.fast_racs"
