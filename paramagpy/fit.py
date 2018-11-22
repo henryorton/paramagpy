@@ -351,7 +351,7 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 		calculated = metal.fast_pcs(posarray)
 		calc_pcss.append(calculated)
 		qfac = qfactor(pcsarray, calculated, idxarray)
-		qfactors.append(qfactor)
+		qfactors.append(qfac)
 
 	return minmetals, calc_pcss, qfactors
 
@@ -753,17 +753,6 @@ def pre(metal, atom, method='sbm+dsa+csaxdsa', rtype='r2'):
 
 	return rate
 
-def rdc(metal, atom1, atom2):
-	vector = (atom1.position - atom2.position)
-	return metal.rdc(vector, atom1.gamma, atom2.gamma)
-	# vec = (atom1.position - atom2.position)
-	# distance = np.linalg.norm(vec)
-	# numer = -metal.HBAR * metal.B0**2 * atom1.gamma * atom2.gamma
-	# denom = 120. * metal.K * metal.temperature * np.pi**2
-	# preFactor = numer/denom
-	# p1 = (1./distance**5)*np.kron(vec,vec).reshape(3,3)
-	# p2 = (1./distance**3)*np.identity(3)
-	# return preFactor * ((3.*p1 - p2).dot(metal.tensor)).trace()
 
 def ccr(metal, atom):
 	pass
@@ -810,7 +799,6 @@ def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx):
 
 
 def svd_fit_metal_from_rdc(metal, rdc):
-
 	vecarray, gamarray, rdcarray, errarray, idxarray = extract_rdc(rdc)
 	pfarray = -3*(metal.MU0 * gamarray * metal.HBAR) / (8 * np.pi**2)
 	rdc_parameterised = np.bincount(idxarray, weights=rdcarray / pfarray)
@@ -822,9 +810,37 @@ def svd_fit_metal_from_rdc(metal, rdc):
 	return fitMetal, calculated, qfac
 
 
-def ensemble_average(atoms, values):
-	idxs = clean_indices([i.serial_number for i in atoms])
-	return np.bincount(idxs, weights=values)
+def ensemble_average(atoms, *values):
+	if type(atoms[0]) in (list, tuple):
+		dtype = 'RDC'
+	else:
+		dtype = 'other'
+
+	d = {}
+	if dtype=='RDC':
+		for x in zip(atoms, *values):
+			key = unique_pairing(x[0][0].serial_number, x[0][1].serial_number)
+			if key not in d:
+				d[key] = []
+			d[key].append(x[1:])
+
+	else:
+		for x in zip(atoms, *values):
+			key = x[0].serial_number
+			if key not in d:
+				d[key] = []
+			d[key].append(x[1:])
+
+	out = []
+	for x in d.values():
+		vals = [sum(i)/float(len(i)) for i in zip(*x)]
+		out.append(vals)
+
+	return list(zip(*out))
+
+
+
+
 
 
 

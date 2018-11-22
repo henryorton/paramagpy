@@ -1543,9 +1543,12 @@ class DataTab(tk.Frame):
 			for atom1, atom2, val, err in pdata:
 				_, mdl1, chn1, (_,seq1,_), (atm1, _) = atom1.get_full_id()
 				_, mdl2, chn2, (_,seq2,_), (atm2, _) = atom2.get_full_id()
+				assert mdl1==mdl2
+				if mdl1 not in self.frm_pdb.models:
+					continue
+
 				res1 = atom1.parent.resname
 				res2 = atom2.parent.resname
-				assert mdl1==mdl2
 				idx = fit.unique_pairing(atom1.serial_number, atom2.serial_number)
 				row = (mdl1, True, atom1, atom2, np.nan, val, err, idx)
 
@@ -2055,13 +2058,13 @@ class FittingOptionsFrame(tk.LabelFrame):
 			if self.params['mod'].get():
 				if qfac<minqfac:
 					minmod = model
-					minmetal = m.copy()
+					minmetal = metal.copy()
 					minqfac = qfac
 
 		if self.params['mod'].get():
 			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
 			messagebox.showinfo("Model with best fit found", 
-				line.format(minmod, qfac))
+				line.format(minmod, minqfac))
 			metal = minmetal
 
 		dataTab.tensorFit.tensor = metal.copy()

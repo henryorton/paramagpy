@@ -28,7 +28,6 @@ paramagpy.fit
                plot_pcs_fit
                pre
                qfactor
-               rdc
                sphere_grid
                svd_calc_metal_from_pcs
                svd_calc_metal_from_pcs_offset
