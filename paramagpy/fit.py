@@ -576,9 +576,9 @@ def qfactor(experiment, calculated, sumIndices=None):
 
 	.. math::
 		Q = \\sqrt{
-			\\frac{\\sum_i\\left[\\sum_m
-				\\left[PCS^{exp}_{m,i}-PCS^{calc}_{m,i}\\right]^2\\right]}
-			{\\sum_i\\left[\\sum_m\\left[PCS^{exp}_{m,i}\\right]^2\\right]}
+			\\frac{\\sum_i\\left[\\left(\\sum_m
+							\\left[PCS^{exp}_{m,i}-PCS^{calc}_{m,i}\\right]\\right)^2\\right]}
+			{\\sum_i\\left[\\left(\\sum_m\\left[PCS^{exp}_{m,i}\\right]\\right)^2\\right]}
 		}
 
 	where :math:`m` and :math:`i` are usually indexed over models and atoms

@@ -114,31 +114,31 @@ def unique_eulers(eulers):
 
 	a, b, g = map(normalise, eulers)
 
-	if   a>0 and b>0 and g>0:
+	if   a>=0 and b>=0 and g>=0:
 		alpha = a
 		beta  = b
 		gamma = g
-	elif a<0 and b>0 and g>0:
+	elif a<0 and b>=0 and g>=0:
 		alpha = a + np.pi
 		beta  = np.pi - b
 		gamma = np.pi - g
-	elif a>0 and b<0 and g>0:
+	elif a>=0 and b<0 and g>=0:
 		alpha = a
 		beta  = b + np.pi
 		gamma = np.pi - g
-	elif a>0 and b>0 and g<0:
+	elif a>=0 and b>=0 and g<0:
 		alpha = a
 		beta  = b
 		gamma = g + np.pi
-	elif a<0 and b<0 and g>0:
+	elif a<0 and b<0 and g>=0:
 		alpha = a + np.pi
 		beta  = -b
 		gamma = g
-	elif a<0 and b>0 and g<0:
+	elif a<0 and b>=0 and g<0:
 		alpha = a + np.pi
 		beta  = np.pi - b
 		gamma = -g
-	elif a>0 and b<0 and g<0:
+	elif a>=0 and b<0 and g<0:
 		alpha = a
 		beta  = b + np.pi
 		gamma = -g
@@ -146,6 +146,10 @@ def unique_eulers(eulers):
 		alpha = a + np.pi
 		beta  = -b
 		gamma = g + np.pi
+	else:
+		alpha = a
+		beta  = b
+		gamma = g
 
 	eulers_utr = np.array([alpha, beta, gamma])
 	return eulers_utr
