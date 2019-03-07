@@ -736,22 +736,22 @@ class ErrorSimulationPopup(Popup):
 			row=0,column=5,rowspan=3,sticky='ns')
 
 		tk.Label(self.frm_opt, text="Parameters:").grid(
-			row=0,column=6,sticky='W')
-		tk.Label(self.frm_opt, text="Iters:").grid(
+			row=0,column=6,columnspan=2,sticky='W')
+		tk.Label(self.frm_opt, text="Iterations:").grid(
 			row=1,column=6,sticky='W')
 		self.iterations = NumericEntry(self.frm_opt, None, 200, 
 			formatter="{:d}", dtype=int, onlyPositive=True)
 		self.iterations.grid(row=1,column=7, sticky='W')
-		tk.Label(self.frm_opt, text="Frac:").grid(
+		tk.Label(self.frm_opt, text="Sample Fraction:").grid(
 			row=2,column=6,sticky='W')
-		self.bootfrac = NumericEntry(self.frm_opt, None, 0.1, 
+		self.bootfrac = NumericEntry(self.frm_opt, None, 0.9, 
 			formatter="{:.3f}", dtype=float, onlyPositive=True)
 		self.bootfrac.grid(row=2,column=7, sticky='W')
 		
 		ttk.Separator(self.frm_opt, orient='horizontal').grid(
 			row=3,column=0,columnspan=8,sticky='ew')
 
-		tk.Button(self.frm_opt, text='Run', 
+		ttk.Button(self.frm_opt, text='Run', 
 			command=self.run).grid(row=4,column=0,columnspan=8,sticky='EW')
 
 		self.textbox = tk.Text(self, state="disabled", 
@@ -792,15 +792,13 @@ class ErrorSimulationPopup(Popup):
 
 		method = self.var_error_method.get()
 		iters = int(self.iterations.floatVar.get())
-		bsfrac = self.bootfrac.floatVar.get()
+		bsfrac = 1.0-self.bootfrac.floatVar.get()
 
 		if self.parent.dtype=='PCS':
 			stds, devs = self.parent.fopts.error_pcs(dataTabs, method, iters, 
 				bsfrac=bsfrac, singleModel=model)
 		elif self.parent.dtype=='PRE':
 			pass
-
-
 
 		self.errorTensor.set_params(devs.items())
 		def transform(vector):
@@ -874,7 +872,7 @@ class DataLoad(tk.LabelFrame):
 		self.fields = {}
 		self.currentFile = None
 
-		tk.Button(self, text='Read {} Data'.format(self.dtype),
+		ttk.Button(self, text='Read {} Data'.format(self.dtype),
 			command=self.load_data).grid(row=0,column=0)
 
 		self.lbl_dataFile = tk.Label(self, text=" "*self.pathWidth)
@@ -2290,7 +2288,7 @@ class PDBFrame(tk.LabelFrame):
 		self.resi_selection = set(self.default_resi_selection)
 		self.reset_selection()
 
-		b = tk.Button(self, text='Read PDB file',command=self.read_pdb)
+		b = ttk.Button(self, text='Read PDB file',command=self.read_pdb)
 		Tooltip(b, tt['read_pdb'])
 		b.grid(row=0,column=0,sticky='EW')
 
@@ -2298,7 +2296,7 @@ class PDBFrame(tk.LabelFrame):
 		self.lbl_pdb_file.grid(row=0,column=1)
 
 		# tk.Label(self, text="Models for pdb:").grid(row=1, column=0)
-		b = tk.Button(self, text='Set Models', 
+		b = ttk.Button(self, text='Set Models', 
 			command=self.parse_models)
 		Tooltip(b, tt['parse_models'])
 		b.grid(row=1,column=0,sticky='EW')

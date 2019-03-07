@@ -576,9 +576,10 @@ def qfactor(experiment, calculated, sumIndices=None):
 
 	.. math::
 		Q = \\sqrt{
-			\\frac{\\sum_i\\left[\\left(\\sum_m
-							\\left[PCS^{exp}_{m,i}-PCS^{calc}_{m,i}\\right]\\right)^2\\right]}
-			{\\sum_i\\left[\\left(\\sum_m\\left[PCS^{exp}_{m,i}\\right]\\right)^2\\right]}
+			\\frac{\\sum_i\\left[\\left(\\sum_m\\left[
+			PCS^{exp}_{m,i}-PCS^{calc}_{m,i}\\right]\\right)^2\\right]}
+			{\\sum_i\\left[
+			\\left(\\sum_m\\left[PCS^{exp}_{m,i}\\right]\\right)^2\\right]}
 		}
 
 	where :math:`m` and :math:`i` are usually indexed over models and atoms
@@ -602,6 +603,9 @@ def qfactor(experiment, calculated, sumIndices=None):
 	"""
 	experiment = np.array(experiment)
 	calculated = np.array(calculated)
+
+	if len(experiment)==0:
+		return np.nan
 	if sumIndices is None:
 		idxs = np.arange(len(experiment))
 	else:

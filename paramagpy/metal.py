@@ -1001,6 +1001,11 @@ class Metal(object):
 		return secondInvariantSquared.real
 
 	@staticmethod
+	def second_invariant_squared_test(tensor):
+		aniso = tensor - tensor.trace()*np.identity(3)/3.
+		return (3./2.)*aniso.dot(aniso).trace()
+
+	@staticmethod
 	def fast_second_invariant_squared(tensorarray):
 		"""
 		Vectorised version of 
@@ -1543,5 +1548,3 @@ def load_tensor(fileName):
 		t = Metal()
 		t.set_params(params)
 	return t
-
-
