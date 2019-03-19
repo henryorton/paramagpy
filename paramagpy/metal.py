@@ -438,6 +438,7 @@ class Metal(object):
 		# B0    |         T :    18.790
 		# temp  |         K :   298.150
 		# t1e   |        ps :     0.189
+		# taur  |        ns :     0.000
 		"""
 		l = "{0:<6}| {1:>9} : {2:9.3f}\n"
 		if comment:
@@ -458,6 +459,10 @@ class Metal(object):
 			i += l.format('t1e','ps',self.t1e*1E12)
 		else:
 			i += l.format('t1e','ps',0.0)
+		if self.taur:
+			i += l.format('taur','ns',self.taur*1E9)
+		else:
+			i += l.format('taur','ns',0.0)
 		return i
 
 	def get_params(self, params):

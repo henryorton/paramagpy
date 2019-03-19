@@ -327,7 +327,7 @@ class PlotTensorPopup(Popup):
 		self.lbl_dir = tk.Label(self, 
 			text=format_path(self.curdir, self.pathWidth)+'/')
 		self.lbl_dir.grid(row=0,column=1)
-		tk.Button(self, text="...", 
+		ttk.Button(self, text="...", 
 			command=self.change_dir).grid(row=0,column=2)
 
 		tk.Label(self, text='Save Directory Name:').grid(
@@ -379,8 +379,8 @@ class PlotTensorPopup(Popup):
 		self.cont_input.grid(row=7,column=1, sticky='W')
 		self.params['cont'] = self.cont_input.floatVar
 
-		tk.Button(self, text='Save', command=self.save).grid(row=8,column=0)
-		tk.Button(self, text='Save + Pymol', 
+		ttk.Button(self, text='Save', command=self.save).grid(row=8,column=0)
+		ttk.Button(self, text='Save + Pymol', 
 			command=self.save_and_call_pymol).grid(row=8,column=1)
 
 		self.saveNameChange()
@@ -487,7 +487,7 @@ class PlotCorrelationPopup(Popup):
 		chk = ttk.Checkbutton(self.frm_opt, text="Average Models",
 			variable=self.params['avg']).grid(row=3,column=2, sticky='W')
 
-		tk.Button(self.frm_opt, text='\u2193   Re-plot   \u2193', 
+		ttk.Button(self.frm_opt, text='\u2193   Re-plot   \u2193', 
 			command=self.plot).grid(row=4,column=0,columnspan=4,sticky='EW')
 
 		self.fig = Figure(figsize=(5, 5), dpi=100, tight_layout=True)
@@ -578,8 +578,8 @@ class SaveDataPopup(Popup):
 		ttk.Radiobutton(self, text='Current', variable=self.varAverage, 
 			value='current').grid(row=2,column=2, sticky='W')
 
-		tk.Button(self, text='Cancel', command=self.death).grid(row=3,column=0)
-		tk.Button(self, text='Save', command=self.save).grid(row=3,column=2)
+		ttk.Button(self, text='Cancel', command=self.death).grid(row=3,column=0)
+		ttk.Button(self, text='Save', command=self.save).grid(row=3,column=2)
 
 		self.update()
 
@@ -657,8 +657,8 @@ class SelectionPopup(Popup):
 			ttk.Checkbutton(self, text=residue,variable=self.residues[residue]
 				).grid(row=i%4+1,column=2+i//4, sticky='W',padx=4)
 
-		tk.Button(self, text='Cancel', command=self.death).grid(row=5,column=0)
-		tk.Button(self, text='Save', command=self.save).grid(row=5,column=5)
+		ttk.Button(self, text='Cancel', command=self.death).grid(row=5,column=0)
+		ttk.Button(self, text='Save', command=self.save).grid(row=5,column=5)
 		self.update()
 
 	def save(self):
@@ -1049,9 +1049,9 @@ class DataView(tk.LabelFrame):
 		self.buttonFrame = tk.Frame(self)
 		self.buttonFrame.grid(row=2,column=0,columnspan=3)
 		tk.Label(self.buttonFrame, text='Change models:').grid(row=0,column=0)
-		self.buttonR = tk.Button(self.buttonFrame, text='<', 
+		self.buttonR = ttk.Button(self.buttonFrame, text='<', 
 			command=self.prev_model, state='disabled')
-		self.buttonF = tk.Button(self.buttonFrame, text='>', 
+		self.buttonF = ttk.Button(self.buttonFrame, text='>', 
 			command=self.next_model, state='disabled')
 		self.lblModel = tk.Label(self.buttonFrame, 
 			textvariable=self.currentModel)
@@ -2261,7 +2261,7 @@ class CSAPopup(Popup):
 		title = "Set CSA parameters"
 		super().__init__(parent, title)
 		CSAFrame(self).pack()
-		tk.Button(self, text='Ok', command=self.death).pack()
+		ttk.Button(self, text='Ok', command=self.death).pack()
 		self.update()
 
 	def save(self):
@@ -2477,7 +2477,7 @@ for line in tooltips_raw.split('\n'):
 def run():
 	settings = platform_settings()
 	root = tk.Tk()
-	root.title('ParaMagPy GUI')
+	root.title('Paramagpy GUI')
 
 	if hasattr(sys, '_MEIPASS'):
 		dataDir = sys._MEIPASS

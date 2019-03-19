@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.optimize import fmin_bfgs
 from pprint import pprint
+import warnings
 
 def unique_pairing(a, b):
 	"""
@@ -61,7 +62,7 @@ def extract_pcs(data):
 	errors = np.array(errors)
 	if 0.0 in errors:
 		errors = np.ones(len(errors))
-		print("Warning: 0.0 value uncertainty. All values weighted evenly")
+		warnings.warn("0.0 value uncertainty. All values weighted evenly")
 	idxs = clean_indices([i.serial_number for i in atoms])
 	return (coords, values, errors, idxs)
 
@@ -87,7 +88,7 @@ def extract_pre(data):
 	errors = np.array(errors)
 	if 0.0 in errors:
 		errors = np.ones(len(errors))
-		print("Warning: 0.0 value uncertainty. All values weighted evenly")
+		warnings.warn("0.0 value uncertainty. All values weighted evenly")
 	idxs = clean_indices([i.serial_number for i in atoms])
 	return (coords, gammas, values, errors, idxs)
 
@@ -129,6 +130,9 @@ def extract_rdc(data):
 	atoms1, atoms2, values, errors = zip(*data)
 	vectors = [j.position - i.position for i, j in zip(atoms1, atoms2)]
 	gammas = [i.gamma * j.gamma for i, j in zip(atoms1, atoms2)]
+	if 0.0 in errors:
+		errors = np.ones(len(errors))
+		warnings.warn("0.0 value uncertainty. All values weighted evenly")
 	idxs = clean_indices([unique_pairing(i.serial_number, 
 		j.serial_number) for i, j in zip(atoms1, atoms2)])
 	return map(np.array, [vectors, gammas, values, errors, idxs])
@@ -158,7 +162,7 @@ def sphere_grid(origin, radius, points):
 	return mgrid[sphere_idx] + origin
 
 
-def svd_calc_metal_from_pcs(pos, pcs, idx):
+def svd_calc_metal_from_pcs(pos, pcs, idx, errors):
 	"""
 	Solve PCS equation by single value decomposition.
 	This function is generally called by higher methods like 
@@ -173,6 +177,9 @@ def svd_calc_metal_from_pcs(pos, pcs, idx):
 	idx : array of ints
 		an index assigned to each atom. Common indices determine summation
 		between models for ensemble averaging.
+	errors : array of floats
+		the standard deviation representing experimental uncertainty
+		in the measured value
 
 	Returns
 	-------
@@ -189,7 +196,7 @@ def svd_calc_metal_from_pcs(pos, pcs, idx):
 	c = 2 * x * y
 	d = 2 * x * z
 	e = 2 * y * z
-	mat = (1./(4.*np.pi*dist**5)) * np.array([a,b,c,d,e])
+	mat = (1./(4.*np.pi*dist**5)) * np.array([a,b,c,d,e]) / errors
 	mat = np.array([np.bincount(idx, weights=col) for col in mat])*1E-24
 	matinv = np.linalg.pinv(mat)
 	sol = matinv.T.dot(pcs*1E-6)*1E-24
@@ -197,7 +204,7 @@ def svd_calc_metal_from_pcs(pos, pcs, idx):
 	return calc, sol
 
 
-def svd_calc_metal_from_pcs_offset(pos, pcs, idx):
+def svd_calc_metal_from_pcs_offset(pos, pcs, idx, errors):
 	"""
 	Solve PCS equation by single value decomposition with offset.
 	An offset arising from referencing errors between diamagnetic
@@ -216,6 +223,9 @@ def svd_calc_metal_from_pcs_offset(pos, pcs, idx):
 	idx : array of ints
 		an index assigned to each atom. Common indices determine summation
 		between models for ensemble averaging.
+	errors : array of floats
+		the standard deviation representing experimental uncertainty
+		in the measured value
 
 	Returns
 	-------
@@ -232,7 +242,7 @@ def svd_calc_metal_from_pcs_offset(pos, pcs, idx):
 	d = 2 * x * z
 	e = 2 * y * z
 	scale = 1./(4.*np.pi*dist**5)
-	mat = scale * np.array([a,b,c,d,e,1E26/scale])
+	mat = scale * np.array([a,b,c,d,e,1E26/scale]) / errors
 	mat = np.array([np.bincount(idx, weights=col) for col in mat])*1E-24
 	matinv = np.linalg.pinv(mat)
 	sol = matinv.T.dot(pcs*1E-6)*1E-24
@@ -246,6 +256,9 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 	"""
 	Fit deltaChi tensor to PCS values using Single Value Decomposition over
 	a grid of points in a sphere.
+	Note this uses a weighted SVD fit which takes into account 
+	experimental errors
+	Ensemble averaging is determined by atom number.
 
 	Parameters
 	----------
@@ -301,11 +314,13 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 
 	posarrays = []
 	pcsarrays = []
+	errarrays = []
 	idxarrays = []
 	for pcs in pcss:
 		posarray, pcsarray, errarray, idxarray = extract_pcs(pcs)
 		posarrays.append(posarray)
 		pcsarrays.append(pcsarray)
+		errarrays.append(errarray)
 		idxarrays.append(idxarray)
 	sphere = sphere_grid(origin, radius, points)*1E-10
 
@@ -313,8 +328,8 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 		idxarrays = sumIndices
 
 	pcsarrays_eavg = []
-	for pcsarray, idxarray in zip(pcsarrays, idxarrays):
-		pcsarrays_eavg.append(np.bincount(idxarray, weights=pcsarray))
+	for pcsarray, idxarray, errarray in zip(pcsarrays, idxarrays, errarrays):
+		pcsarrays_eavg.append(np.bincount(idxarray, weights=pcsarray/errarray))
 
 	minscore = 1E50
 	print("SVD search started in {} points".format(len(sphere)))
@@ -326,10 +341,11 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 			progress.set(prog/tot)
 		score = 0.0
 		sols = []
-		for pcsarray_eavg, posarray, idxarray in zip(pcsarrays_eavg, 
-												posarrays, idxarrays):
+		zipped = zip(pcsarrays_eavg, posarrays, idxarrays, errarrays)
+		for pcsarray_eavg, posarray, idxarray, errarray in zipped:
 			coords = posarray - pos
-			calculated, solution = svd_func(coords, pcsarray_eavg, idxarray)
+			calculated, solution = svd_func(coords, 
+				pcsarray_eavg, idxarray, errarray)
 			sols.append(solution)
 			score += np.sum((calculated - pcsarray_eavg)**2)
 		if score<minscore:
@@ -354,7 +370,6 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 		qfactors.append(qfac)
 
 	return minmetals, calc_pcss, qfactors
-
 
 
 def nlr_fit_metal_from_pcs(initMetals, pcss, 
@@ -486,7 +501,9 @@ def pcs_fit_error_monte_carlo(initMetals, pcss, params, iterations,
 	for i in range(iterations):
 		data = []
 		for atm, pcs, err in zip(atmarrays, pcsarrays, errarrays):
-			noisey = pcs + np.random.normal(scale=err)
+			# noisey = pcs + np.random.normal(scale=err)
+			noisey = pcs + (np.random.uniform(low=-1, high=-1, 
+				size=len(err)))*err
 			tmp = zip(atm, noisey, err)
 			data.append(list(tmp))
 		metals, _, _ = nlr_fit_metal_from_pcs(initMetals, data, params, 
@@ -538,7 +555,6 @@ def pcs_fit_error_bootstrap(initMetals, pcss, params, iterations,
 			progress.set(float(i+1)/iterations)
 
 	return [dict(zip(params, zip(*std))) for std in stds]
-
 
 
 def fit_metal_from_pcs(metals, pcss):
@@ -618,7 +634,6 @@ def qfactor(experiment, calculated, sumIndices=None):
 
 def pcs(metal, atom):
 	return metal.pcs(atom.position)
-
 
 
 def nlr_fit_metal_from_pre(initMetals, pres, params, sumIndices=None, 
@@ -763,7 +778,58 @@ def ccr(metal, atom):
 
 
 
-def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx):
+########## THIS OLD VERSION IT NOT WEIGHTED #############
+# def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx):
+# 	"""
+# 	Solve RDC equation by single value decomposition.
+# 	This function is generally called by higher methods like 
+# 	<svd_fit_metal_from_rdc>
+
+# 	Parameters
+# 	----------
+# 	vec : array of [x,y,z] floats
+# 		the internuclear vectors in meters
+# 	rdc_parameterised : array of floats
+# 		the experimental RDC values, normalised by a prefactor
+# 	idx : array of ints
+# 		an index assigned to each atom. Common indices determine summation
+# 		between models for ensemble averaging.
+
+# 	Returns
+# 	-------
+# 	calc : array of floats
+# 		the calculated RDC values from the fitted tensor
+# 	sol : array of floats
+# 		sol is the solution to the linearised PCS equation and 
+# 		consists of the tensor matrix elements
+# 	"""
+# 	dist = np.linalg.norm(vec, axis=1)
+# 	x, y, z = vec.T
+# 	a = x**2 - z**2
+# 	b = y**2 - z**2
+# 	c = 2 * x * y
+# 	d = 2 * x * z
+# 	e = 2 * y * z
+# 	mat = (1./dist**5) * np.array([a,b,c,d,e])
+# 	mat = np.array([np.bincount(idx, weights=col) for col in mat])
+# 	matinv = np.linalg.pinv(mat)
+# 	sol = matinv.T.dot(rdc_parameterised)
+# 	calc = mat.T.dot(sol)
+# 	return calc, sol
+
+
+# def svd_fit_metal_from_rdc(metal, rdc):
+# 	vecarray, gamarray, rdcarray, errarray, idxarray = extract_rdc(rdc)
+# 	pfarray = -3*(metal.MU0 * gamarray * metal.HBAR) / (8 * np.pi**2)
+# 	rdc_parameterised = np.bincount(idxarray, weights=rdcarray / pfarray)
+# 	fitMetal = metal.copy()
+# 	_, sol = svd_calc_metal_from_rdc(vecarray, rdc_parameterised, idxarray)
+# 	fitMetal.upper_triang_alignment = sol
+# 	calculated = fitMetal.fast_rdc(vecarray, gamarray)
+# 	qfac = qfactor(rdcarray, calculated, idxarray)
+# 	return fitMetal, calculated, qfac
+
+def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx, errors):
 	"""
 	Solve RDC equation by single value decomposition.
 	This function is generally called by higher methods like 
@@ -778,6 +844,9 @@ def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx):
 	idx : array of ints
 		an index assigned to each atom. Common indices determine summation
 		between models for ensemble averaging.
+	errors : array of floats
+		the standard deviation representing experimental uncertainty
+		in the measured value
 
 	Returns
 	-------
@@ -794,23 +863,117 @@ def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx):
 	c = 2 * x * y
 	d = 2 * x * z
 	e = 2 * y * z
-	mat = (1./dist**5) * np.array([a,b,c,d,e])
-	mat = np.array([np.bincount(idx, weights=col) for col in mat])
-	matinv = np.linalg.pinv(mat)
+	mat = (1./dist**5) * np.array([a,b,c,d,e]) / errors
+	matSum = np.array([np.bincount(idx, weights=col) for col in mat])
+	matinv = np.linalg.pinv(matSum)
 	sol = matinv.T.dot(rdc_parameterised)
-	calc = mat.T.dot(sol)
+	calc = matSum.T.dot(sol)
 	return calc, sol
 
 
-def svd_fit_metal_from_rdc(metal, rdc):
+def svd_fit_metal_from_rdc(metal, rdc, sumIndices=None):
+	"""
+	Fit deltaChi tensor to RDC values using SVD algorithm.
+	Note this is a weighted SVD calculation which takes into account
+	experimental errors.
+	Ensemble averaging defaults to atom numbers.
+
+	Parameters
+	----------
+	metal : Metal object
+		the starting metal for fitting
+	rdc : the RDC dataset
+		each RDC dataset has structure [(Atom1, Atom2), value, error], 
+		where Atom is an Atom object, value is the RDC value
+		and error is the uncertainty
+	sumIndices : array of ints, optional
+		the list contains an index assigned to each atom. 
+		Common indices determine summation between models 
+		for ensemble averaging.
+		If None, defaults to atom serial number to determine summation 
+		between models.
+
+	Returns
+	-------
+	fitMetal : Metal object
+		the fitted metal by NLR to the RDC data provided
+	calculated : array of floats
+		the calculated RDC values
+	qfac : float
+		the qfactor judging the fit quality
+	"""
 	vecarray, gamarray, rdcarray, errarray, idxarray = extract_rdc(rdc)
+	if sumIndices is None:
+		sumIndices = idxarray
 	pfarray = -3*(metal.MU0 * gamarray * metal.HBAR) / (8 * np.pi**2)
-	rdc_parameterised = np.bincount(idxarray, weights=rdcarray / pfarray)
+	rdc_parameterised = np.bincount(idxarray, 
+		weights=rdcarray / (pfarray * errarray))
 	fitMetal = metal.copy()
-	_, sol = svd_calc_metal_from_rdc(vecarray, rdc_parameterised, idxarray)
+	_, sol = svd_calc_metal_from_rdc(vecarray, rdc_parameterised, 
+		idxarray, errarray)
 	fitMetal.upper_triang_alignment = sol
 	calculated = fitMetal.fast_rdc(vecarray, gamarray)
 	qfac = qfactor(rdcarray, calculated, idxarray)
+	return fitMetal, calculated, qfac
+
+
+def nlr_fit_metal_from_rdc(metal, rdc, params=('ax','rh','a','b','g'), 
+	sumIndices=None, progress=None):
+	"""
+	Fit deltaChi tensor to RDC values using non-linear regression.
+
+	Parameters
+	----------
+	metal : Metal object
+		the starting metal for fitting
+	rdc : the RDC dataset
+		each RDC dataset has structure [Atom, value, error], where Atom is 
+		an Atom object, value is the PCS/RDC/PRE value
+		and error is the uncertainty
+	params : list of str, optional
+		the parameters to be fit. 
+		this defaults to ['ax','rh','a','b','g']
+	sumIndices : array of ints, optional
+		the list contains an index assigned to each atom. 
+		Common indices determine summation between models 
+		for ensemble averaging.
+		If None, defaults to atom serial number to determine summation 
+		between models.
+	progress : object, optional
+		to keep track of the calculation, progress.set(x) is called each
+		iteration and varies from 0.0 -> 1.0 when the calculation is complete.
+
+	Returns
+	-------
+	fitMetal : Metal object
+		the fitted metal by NLR to the RDC data provided
+	calculated : array of floats
+		the calculated RDC values
+	qfac : float
+		the qfactor judging the fit quality
+	"""
+	vecarray, gamarray, rdcarray, errarray, idxarray = extract_rdc(rdc)
+	if sumIndices is None:
+		sumIndices = idxarray
+	fitMetal = metal.copy()
+
+	def cost(args):
+		fitMetal.set_params(zip(params, args))
+		calrdc = fitMetal.fast_rdc(vecarray, gamarray)
+		diff = (calrdc - rdcarray) / errarray
+		selectiveSum = np.bincount(idxarray, weights=diff)
+		score = np.sum(selectiveSum**2)
+		return score
+
+	startpars = fitMetal.get_params(params)
+	fmin_bfgs(cost, startpars, disp=False)
+	fitMetal.set_utr()
+	calculated = fitMetal.fast_rdc(vecarray, gamarray)
+	qfac = qfactor(rdcarray, calculated, idxarray)
+
+	if progress:
+		progress.set(1.0)
+
 	return fitMetal, calculated, qfac
 
 
