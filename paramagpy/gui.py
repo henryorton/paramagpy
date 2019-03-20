@@ -634,7 +634,7 @@ class SelectionPopup(Popup):
 		super().__init__(parent, title)
 		tk.Label(self, text="Atom:").grid(row=0,column=0,sticky='W')
 		self.atoms = {}
-		for i, atom in enumerate(['H','N','C','O']):
+		for i, atom in enumerate(self.parent.default_atom_selection):
 			if atom in parent.atom_selection:
 				value = True
 			else:
@@ -657,7 +657,7 @@ class SelectionPopup(Popup):
 			ttk.Checkbutton(self, text=residue,variable=self.residues[residue]
 				).grid(row=i%4+1,column=2+i//4, sticky='W',padx=4)
 
-		ttk.Button(self, text='Cancel', command=self.death).grid(row=5,column=0)
+		ttk.Button(self, text='Cancel', command=self.death).grid(row=5,column=2)
 		ttk.Button(self, text='Save', command=self.save).grid(row=5,column=5)
 		self.update()
 
@@ -910,11 +910,20 @@ class DataLoad(tk.LabelFrame):
 			ttk.Radiobutton(self, text='R2', variable=self.rtype_var, 
 				value='r2').grid(row=2,column=2, sticky='W')
 
+		elif self.dtype=='RDC':
+			self.show_hn_var = tk.BooleanVar(value=False)
+			ttk.Checkbutton(self, text='Show H-N', variable=self.show_hn_var, 
+				command=self.show_hn_change,
+				).grid(row=2,column=1, columnspan=2, sticky='W')
+
 	def rtype(self):
 		if self.dtype=='PRE':
 			return self.rtype_var.get()
 		else:
 			return None
+
+	def show_hn_change(self):
+		self.parent.update(2)
 
 	def currentDir(self):
 		if self.currentFile:
@@ -1534,7 +1543,14 @@ class DataTab(tk.Frame):
 			dtype = self.parent.parent.parent.structdtype[self.dtype]
 			expdata = self.loadData.data
 			if not expdata:
-				self.data = np.array([], dtype=dtype)
+				if self.loadData.show_hn_var.get():
+					for row in self.data:
+						if row['atm'].name=='H':
+							_, mdl, chn, (_,seq,_), (atm, _) = row['atm'].get_full_id()
+							row['atx'] = self.frm_pdb.prot[mdl][chn][seq].child_dict.get('N', None)
+					self.data = self.data[self.data['atx']!=None]
+				else:
+					self.data = np.array([], dtype=dtype)
 				return
 			pdata = self.frm_pdb.prot.parse(expdata)
 			df = []
@@ -1596,7 +1612,6 @@ class DataTab(tk.Frame):
 				sbm=self.fopts.params['sbm'].get(), csaarray=csas)
 
 			self.data['cal'] = pres
-
 
 		self.set_qfactor()
 		self.update(1)
@@ -2171,6 +2186,7 @@ class MethodsNotebook(ttk.Notebook):
 		self.tabs = []
 		self.templates = {i:None for i in self.dtypes}
 		self.copied_tensor = None
+		self.atomSet = set([])
 		for dtype in self.dtypes:
 			tab = MethodsTab(self, dtype)
 			self.add(tab, text=dtype)
@@ -2197,6 +2213,7 @@ class MethodsNotebook(ttk.Notebook):
 		return self.parent.frm_coords.frm_pdb
 
 	def make_templates(self):
+		self.atomSet = set([])
 		templates = {i:[] for i in self.dtypes}
 		if not self.frm_pdb.prot:
 			return
@@ -2209,9 +2226,16 @@ class MethodsNotebook(ttk.Notebook):
 			templates['PRE'].append(
 				(m, False, a, nan, nan, nan, a.serial_number))
 
+			self.atomSet.add(a.name)
+
 		for dtype in self.dtypes:
 			template = np.array(templates[dtype], dtype=self.structdtype[dtype])
 			self.templates[dtype] = template
+
+		old_atomNames = set(self.frm_pdb.default_atom_selection)
+		new_atomNames = self.atomSet - old_atomNames
+		self.frm_pdb.atom_selection |= new_atomNames
+		self.frm_pdb.default_atom_selection = list(self.atomSet)
 
 
 class CSAFrame(tk.LabelFrame):
