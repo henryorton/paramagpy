@@ -18,11 +18,15 @@ def read_pcs(fileName):
 	values = DataContainer(dtype='PCS')
 	with open(fileName) as o:
 		for line in o:
-			if line.strip().startswith("#"):
-				continue
-			seq, name, value, error = line.split()
-			key = int(seq), name
-			values[key] = float(value), float(error)
+			try:
+				if line.strip().startswith("#"):
+					continue
+				seq, name, value, error = line.split()
+				key = int(seq), name
+				values[key] = float(value), float(error)
+			except ValueError:
+				print("Line ignored while reading file: {}\n{}".format(
+					fileName, line))
 	return values
 
 
@@ -30,11 +34,15 @@ def read_rdc(fileName):
 	values = DataContainer(dtype='RDC')
 	with open(fileName) as o:
 		for line in o:
-			if line.strip().startswith("#"):
-				continue
-			seq1, name1, seq2, name2, value, error = line.split()
-			key = frozenset([(int(seq1), name1), (int(seq2), name2)])
-			values[key] = float(value), float(error)
+			try:
+				if line.strip().startswith("#"):
+					continue
+				seq1, name1, seq2, name2, value, error = line.split()
+				key = frozenset([(int(seq1), name1), (int(seq2), name2)])
+				values[key] = float(value), float(error)
+			except ValueError:
+				print("Line ignored while reading file: {}\n{}".format(
+					fileName, line))
 	return values
 
 
@@ -42,10 +50,14 @@ def read_pre(fileName):
 	values = DataContainer(dtype='PRE')
 	with open(fileName) as o:
 		for line in o:
-			if line.strip().startswith("#"):
-				continue
-			seq, name, value, error = line.split()
-			key = int(seq), name
-			values[key] = float(value), float(error)
+			try:
+				if line.strip().startswith("#"):
+					continue
+				seq, name, value, error = line.split()
+				key = int(seq), name
+				values[key] = float(value), float(error)
+			except ValueError:
+				print("Line ignored while reading file: {}\n{}".format(
+					fileName, line))
 	return values
 

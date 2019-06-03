@@ -1320,6 +1320,16 @@ class Metal(object):
 			if sbm:
 				rates += self.fast_sbm_r2(posarray, gammaarray)
 		return rates
+
+
+	def ccr_r2(self, position, gamma, nuclear_dipole_shift_tensor):
+		spinUp = self.dsa_r2(position, gamma, csa=nuclear_dipole_shift_tensor)
+		spinDown = self.dsa_r2(position, gamma, csa=-nuclear_dipole_shift_tensor)
+		return spinUp - spinDown
+
+
+
+
 			
 	################################
 	# Methods for RDC calculations #
@@ -1398,6 +1408,7 @@ class Metal(object):
 		value : float
 			The R2 differential line broadening rate in /s
 		"""
+		pass
 		
 		
 
@@ -1591,7 +1602,4 @@ def load_tensor(fileName):
 	return t
 
 
-m = Metal()
-m.set_lanthanide('Er')
-print(m.mueff)
 
