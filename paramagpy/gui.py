@@ -2091,7 +2091,7 @@ class DataNotebook(ttk.Notebook):
 	"""
 	Notebook for datasets
 	"""
-	def __init__(self, parent, num_tabs=5):
+	def __init__(self, parent, num_tabs=6):
 		super().__init__(parent)
 		self.parent = parent # MethodsTab
 		self.dtype = parent.dtype
@@ -2473,7 +2473,7 @@ select_models : Select models to be used during fitting. This can be specified u
 parse_models : Selects only the desired models from the PDB file
 selection : Select the atoms and residues to be used during fitting
 csa_frame : Set chemical shift anisotropy tensor parameters for backbone H, N and C nuclei. These are set via the three principle axes and single angle. Default values are taken from G. Cornilescu and A. Bax "Measurement of proton, nitrogen, and carbonyl chemical shielding anisotropies in a protein dissolved in a dilute liquid crystalline phase" J. Am. Chem. Soc. 2000, 122, 10143-10154.
-svd : Single value decomposition is used to analytically solve the tensor anisotropy and orientation over a spherical grid of positions. The best position and tensor are then taken. Note that RACS and RADS cannot be included in this calculation. Note that uncertainties are not taken into account during this calculation.
+svd : Single value decomposition is used to analytically solve the tensor anisotropy and orientation over a spherical grid of positions. The best position and tensor are then taken. Note that RACS and RADS cannot be included in this calculation.
 nlr : Non-linear regression is used to solve a least-squares algorithm by gradient descent. This is generally used for refinement after an initial guess by the SVD grid search. Note that RACS and RADS can be taken into account by this algorithm.
 ref : Allows fitting of an offset that shifts the entire PCS list by a given value. This may arise due to referencing errors between diamagnetic and paramagnetic peak lists when calculating the PCS. This should always be used when there are many PCS values available.
 pos : Option to disable fitting of the tensor position. Note that the SVD grid search for PCS will collapse to a single point if the position is constrained.

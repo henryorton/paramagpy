@@ -1322,13 +1322,62 @@ class Metal(object):
 		return rates
 
 
-	def ccr_r2(self, position, gamma, nuclear_dipole_shift_tensor):
-		spinUp = self.dsa_r2(position, gamma, csa=nuclear_dipole_shift_tensor)
-		spinDown = self.dsa_r2(position, gamma, csa=-nuclear_dipole_shift_tensor)
+	def ccr_r2(self, position, gamma, dipole_shift_tensor):
+		"""
+		Calculate R2 cross-corelated relaxation due to DDxDSA 
+
+		If the metal has an anisotropic magnetic susceptibility, this is
+		taken into account.
+
+		Parameters
+		----------
+		position : array of floats
+			three coordinates (x,y,z)
+			this is the position of the nuclear spin
+		gamma : float
+			the gyromagnetic ratio of the relaxing spin
+		dipole_shift_tensor : 3x3 array of floats
+			this is the dipole shift tensor arising from 
+			the nuclear spin of the coupling partner
+
+		Returns
+		-------
+		value : float
+			The R2 differential line broadening rate in /s
+		"""
+		shield = dipole_shift_tensor/self.B0
+		spinUp   = self.dsa_r2(position, gamma, csa= shield)
+		spinDown = self.dsa_r2(position, gamma, csa=-shield)
 		return spinUp - spinDown
 
+	def fast_ccr_r2(self, posarray, gammaarray, dstarray):
+		"""
+		Vectorised version of :meth:`paramagpy.metal.Metal.ccr_r2`
 
+		This is generally used for speed in fitting DDxDSA data
 
+		If the metal has an anisotropic magnetic susceptibility, this is
+		taken into account.
+
+		Parameters
+		----------
+		posarray : array with shape (n,3)
+			array of positions in meters
+		gammaarray : array with shape (n,3)
+			array of gyromagnetic ratios of the spins
+		dstarray : array with shape (n,3,3)
+			array of nuclear dipole shift tensors arising from
+			the coupling partners
+
+		Returns
+		-------
+		rates : array with shape (n,1)
+			The R2 differential line broadening rates in /s
+		"""
+		shield = dipole_shift_tensor/self.B0
+		spinUp   = self.dsa_r2(position, gamma, csa= shield)
+		spinDown = self.dsa_r2(position, gamma, csa=-shield)
+		return spinUp - spinDown
 
 			
 	################################
@@ -1382,42 +1431,6 @@ class Metal(object):
 		dot2 = np.einsum('ij,ij->i', vecarray, dot1)
 		rdc_radians = 3*pf * dot2
 		return rdc_radians / (2*np.pi)
-
-	################################
-	# Methods for CCR calculations #
-	################################
-
-	def ccr(self, position, dipole_shift_tensor):
-		"""
-		Calculate R2 cross-corelated relaxation due to DDxDSA 
-
-		If the metal has an anisotropic magnetic susceptibility, this is
-		taken into account.
-
-		Parameters
-		----------
-		position : array of floats
-			three coordinates (x,y,z)
-			this is the position of the nuclear spin
-		dipole_shift_tensor : 3x3 array of floats
-			this is the dipole shift tensor arising from 
-			the nuclear spin of the coupling partner
-
-		Returns
-		-------
-		value : float
-			The R2 differential line broadening rate in /s
-		"""
-		pass
-		
-		
-
-
-
-
-
-
-
 
 
 	####################################

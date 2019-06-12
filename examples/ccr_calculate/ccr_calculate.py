@@ -16,5 +16,18 @@ N = prot[0]['A'][2]['N']
 dd = N.dipole_shift_tensor(H.position)
 r2 = met.ccr_r2(H.position, H.gamma, dd)
 
+# print(met.info())
+# print(r2)
+# numres(i),namres(i),namat(i),obs(i),
+# *           tolprot(i),wprot(i)
 
-print(r2)
+for atom in prot.get_atoms():
+	if atom.name == 'H':
+		atomH = atom
+		res = atom.parent
+		atomN = res['N']
+		dd = atomN.dipole_shift_tensor(atomH.position)
+		r2 = met.ccr_r2(atomH.position, atomH.gamma, dd)
+
+		line = "{0:3d} {1:4s} {2:4s}  {3:7.3f} {4:5.2f} {5:5.2f}".format(res.id[1], res.resname, atomH.name, r2, 0.0, 0.0)
+		print(line)

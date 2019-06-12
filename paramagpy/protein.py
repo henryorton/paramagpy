@@ -34,14 +34,13 @@ def rotation_matrix(axis, theta):
 
 class CustomAtom(Atom):
 
-	MU_N = 5.050783699E-27 # J/T
-	MU_Z = 2.79284734 # muN units
 	MU0 = 4*np.pi*1E-7
+	HBAR = 1.0546E-34
 
 	gyro_lib = {
 		'H': 2*np.pi*42.576E6,
 		'N': 2*np.pi*-4.316E6,
-		'C': 2*np.pi*10.705E6}
+		'C': 2*np.pi*10.705E6} # rad/s/T
 
 	csa_lib = {
 		'H': (np.array([-5.8 , 0.0  ,5.8 ])*1E-6, 8. *(np.pi/180.)),
@@ -60,10 +59,6 @@ class CustomAtom(Atom):
 
 	def top(self):
 		return self.parent.parent.parent.parent
-
-	@property
-	def mueff(self):
-		return (self.MU_Z / self.gyro_lib['H']) * self.gamma * self.MU_N
 
 	@property
 	def position(self):
@@ -159,7 +154,7 @@ class CustomAtom(Atom):
 	def dipole_shift_tensor(self, position):
 		pos = np.array(position, dtype=float) - self.position
 		distance = np.linalg.norm(pos)
-		preFactor = -(self.MU0 * self.mueff) / (4.*np.pi)
+		preFactor = (self.MU0 * self.gamma * self.HBAR * 0.5) / (8.*np.pi)
 		p1 = (1./distance**5)*np.kron(pos,pos).reshape(3,3)
 		p2 = (1./distance**3)*np.identity(3)
 		return (preFactor * (3.*p1 - p2))
