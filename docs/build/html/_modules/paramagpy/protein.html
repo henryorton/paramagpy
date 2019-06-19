@@ -245,10 +245,10 @@
 						<span class="n">resi</span> <span class="o">=</span> <span class="n">chain</span><span class="p">[</span><span class="n">seq</span><span class="p">]</span>
 						<span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">resi</span><span class="p">:</span>
 							<span class="n">atom</span> <span class="o">=</span> <span class="n">resi</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-							<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">atom</span><span class="p">,</span> <span class="o">*</span><span class="n">dataValues</span><span class="p">[</span><span class="n">key</span><span class="p">]])</span>
+							<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">atom</span><span class="p">,</span> <span class="o">*</span><span class="n">dataValues</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
 							<span class="n">used</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
-		<span class="k">elif</span> <span class="n">dataValues</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;RDC&#39;</span><span class="p">:</span>
+		<span class="k">elif</span> <span class="n">dataValues</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;RDC&#39;</span><span class="p">,</span> <span class="s1">&#39;CCR&#39;</span><span class="p">):</span>
 			<span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">:</span>
 				<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dataValues</span><span class="p">:</span>
 					<span class="p">(</span><span class="n">seq1</span><span class="p">,</span> <span class="n">name1</span><span class="p">),</span> <span class="p">(</span><span class="n">seq2</span><span class="p">,</span> <span class="n">name2</span><span class="p">)</span> <span class="o">=</span> <span class="n">key</span>
@@ -258,7 +258,7 @@
 						<span class="k">if</span> <span class="n">name1</span> <span class="ow">in</span> <span class="n">resi1</span> <span class="ow">and</span> <span class="n">name2</span> <span class="ow">in</span> <span class="n">resi2</span><span class="p">:</span>
 							<span class="n">atom1</span> <span class="o">=</span> <span class="n">resi1</span><span class="p">[</span><span class="n">name1</span><span class="p">]</span>
 							<span class="n">atom2</span> <span class="o">=</span> <span class="n">resi2</span><span class="p">[</span><span class="n">name2</span><span class="p">]</span>
-							<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">atom1</span><span class="p">,</span> <span class="n">atom2</span><span class="p">,</span> <span class="o">*</span><span class="n">dataValues</span><span class="p">[</span><span class="n">key</span><span class="p">]])</span>
+							<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">atom1</span><span class="p">,</span> <span class="n">atom2</span><span class="p">,</span> <span class="o">*</span><span class="n">dataValues</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
 							<span class="n">used</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
 		<span class="n">unused</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">dataValues</span><span class="p">)</span> <span class="o">-</span> <span class="n">used</span>
