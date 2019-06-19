@@ -1,33 +1,50 @@
 from paramagpy import protein, fit, dataparse, metal
+import numpy as np
 
-# Load the PDB file
-prot = protein.load_pdb('../data_files/4icbH_mut.pdb')
+# Load the PDB file and get iron centre
+prot = protein.load_pdb('1bzrH.pdb')
+ironAtom = prot[0]['A'][("H_HEM",154," ")]['FE']
 
-# Load the fitted tensor
-met = metal.load_tensor('../data_files/calbindin_Er_HN_PCS_tensor.txt')
-tmp = metal.Metal()
-tmp.set_lanthanide('Er')
-met.mueff = tmp.mueff
-met.t1e = tmp.t1e
-met.taur = 4.5E-9
+# Make high and low spin Fe paramagnetic centers
+met_cn = metal.Metal(position=ironAtom.position, 
+					 B0=18.79, 
+					 temperature=303.0,
+					 taur=5.7E-9)
+met_f = met_cn.copy()
 
-H = prot[0]['A'][2]['H']
-N = prot[0]['A'][2]['N']
-dd = N.dipole_shift_tensor(H.position)
-r2 = met.ccr_r2(H.position, H.gamma, dd)
+met_cn.iso = 4.4E-32
+met_f.iso = 30.1E-32
 
-# print(met.info())
-# print(r2)
-# numres(i),namres(i),namat(i),obs(i),
-# *           tolprot(i),wprot(i)
+# Load experimental data
+data_cn = prot.parse(dataparse.read_ccr("myo_cn.ccr"))
+data_f = prot.parse(dataparse.read_ccr("myo_f.ccr"))
 
-for atom in prot.get_atoms():
-	if atom.name == 'H':
-		atomH = atom
-		res = atom.parent
-		atomN = res['N']
-		dd = atomN.dipole_shift_tensor(atomH.position)
-		r2 = met.ccr_r2(atomH.position, atomH.gamma, dd)
+# Calculate the cross-correlated realxation
+compare_cn = []
+for atom1, atom2, value, error in data_cn:
+	if atom1.name=='H':
+		H, N = atom1, atom2
+	else:
+		H, N = atom2, atom1
+	delta = met_cn.atom_ccr(H, N)
+	compare_cn.append((delta, value))
 
-		line = "{0:3d} {1:4s} {2:4s}  {3:7.3f} {4:5.2f} {5:5.2f}".format(res.id[1], res.resname, atomH.name, r2, 0.0, 0.0)
-		print(line)
+compare_f = []
+for atom1, atom2, value, error in data_f:
+	if atom1.name=='H':
+		H, N = atom1, atom2
+	else:
+		H, N = atom2, atom1
+	delta = met_f.atom_ccr(H, N)
+	compare_f.append((delta, value))
+
+# Plot theory compared to experimental data
+from matplotlib import pyplot as plt
+fig = plt.figure(figsize=(6,6))
+ax = fig.add_subplot(111)
+ax.scatter(*zip(*compare_cn), label="myo_cn")
+ax.scatter(*zip(*compare_f), label="myo_f")
+ax.legend()
+ax.set_xlabel("Calculated")
+ax.set_ylabel("Experiment")
+plt.show()

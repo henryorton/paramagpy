@@ -46,6 +46,8 @@ def unpack_ranges(string):
 
 
 class Tooltip:
+	"""Notifications that contain information 
+	and appear on mouse hover"""
 	def __init__(self, widget, text, bg='#FFFFEA', pad=(5, 3, 5, 3),
 		waittime=1000, wraplength=250):
 		self.waittime = waittime
@@ -176,7 +178,7 @@ class CustomTextDefaultEntry(tk.Entry):
 
 
 class NumericEntry(tk.Entry):
-	"""Includes float validation and variable storing in tk.StringVar"""
+	"""Includes float validation and variable storage in tk.StringVar"""
 	def __init__(self, root, parse, display, state='normal', 
 		label=None, formatter="{:.3f}", onlyPositive=False, dtype=float):
 
@@ -440,7 +442,7 @@ class PlotTensorPopup(Popup):
 
 	def save_and_call_pymol(self):
 		self.save()
-		subprocess.call(["pymol", "{}".format(self.get_pymol_file_path())])
+		subprocess.Popen(["pymol", "{}".format(self.get_pymol_file_path())])
 
 
 class PlotCorrelationPopup(Popup):

@@ -44,8 +44,11 @@
 <span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pformat</span>
 
 <div class="viewcode-block" id="DataContainer"><a class="viewcode-back" href="../../reference/generated/paramagpy.dataparse.DataContainer.html#paramagpy.dataparse.DataContainer">[docs]</a><span class="k">class</span> <span class="nc">DataContainer</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;docstring for DataContainer&quot;&quot;&quot;</span>
-
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A dictionary-like container for storing </span>
+<span class="sd">	PCS, RDC, PRE and CCR data</span>
+<span class="sd">	Has an additional attribute &#39;dtype&#39; to define datatype</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="DataContainer.__init__"><a class="viewcode-back" href="../../reference/generated/paramagpy.dataparse.DataContainer.html#paramagpy.dataparse.DataContainer.__init__">[docs]</a>	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 		<span class="n">dtype</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;dtype&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -56,40 +59,170 @@
 
 
 <div class="viewcode-block" id="read_pcs"><a class="viewcode-back" href="../../reference/generated/paramagpy.dataparse.read_pcs.html#paramagpy.dataparse.read_pcs">[docs]</a><span class="k">def</span> <span class="nf">read_pcs</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Read pseudo contact shift values from file.</span>
+<span class="sd">	The returned object is a dicationary.</span>
+<span class="sd">	They keys are tuples of (sequence, atomName)</span>
+<span class="sd">	The values are tuples of (value, error)</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	fileName : str</span>
+<span class="sd">		the path to the file</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	values : :class:`paramagpy.dataparse.DataContainer`</span>
+<span class="sd">		a dictionary containing the parsed data</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; values = paramagpy.dataparse.read_pcs(&quot;calbindin_Er_HN_PCS_errors.npc&quot;)</span>
+<span class="sd">	&gt;&gt;&gt; for v in values.items():</span>
+<span class="sd">	...     print(v)</span>
+<span class="sd">	... </span>
+<span class="sd">	((2, &#39;H&#39;), (-0.04855485, 0.0016))</span>
+<span class="sd">	((2, &#39;N&#39;), (-0.03402764, 0.0009))</span>
+<span class="sd">	((4, &#39;H&#39;), (-0.18470315, 0.0004))</span>
+<span class="sd">	...</span>
+<span class="sd">	((75, &#39;H&#39;), (0.19553661, 0.0005))</span>
+<span class="sd">	((75, &#39;N&#39;), (0.17840666, 0.0004))</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">values</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;PCS&#39;</span><span class="p">)</span>
 	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span> <span class="k">as</span> <span class="n">o</span><span class="p">:</span>
 		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">o</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
-				<span class="k">continue</span>
-			<span class="n">seq</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-			<span class="n">key</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="n">name</span>
-			<span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
+					<span class="k">continue</span>
+				<span class="n">seq</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+				<span class="n">key</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="n">name</span>
+				<span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+			<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Line ignored while reading file: </span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+					<span class="n">fileName</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
 	<span class="k">return</span> <span class="n">values</span></div>
 
 
 <div class="viewcode-block" id="read_rdc"><a class="viewcode-back" href="../../reference/generated/paramagpy.dataparse.read_rdc.html#paramagpy.dataparse.read_rdc">[docs]</a><span class="k">def</span> <span class="nf">read_rdc</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Read residual dipolar coupling values from file.</span>
+<span class="sd">	The returned object is a dicationary.</span>
+<span class="sd">	They keys are frozensets of tuples of the form:</span>
+<span class="sd">	frozenset({(sequence1, atomName1), (sequence2, atomName2)})</span>
+<span class="sd">	The frozenset only allows unordered unique atom identification pairs</span>
+<span class="sd">	The values are tuples of (value, error)</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	fileName : str</span>
+<span class="sd">		the path to the file</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	values : :class:`paramagpy.dataparse.DataContainer`</span>
+<span class="sd">		a dictionary containing the parsed data</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; values = paramagpy.dataparse.read_rdc(&quot;ubiquitin_a28c_c1_Tb_HN.rdc&quot;)</span>
+<span class="sd">	&gt;&gt;&gt; for v in values.items():</span>
+<span class="sd">	...     print(v)</span>
+<span class="sd">	... </span>
+<span class="sd">	(frozenset({(2, &#39;N&#39;), (2, &#39;H&#39;)}), (-2.35, 0.32))</span>
+<span class="sd">	(frozenset({(3, &#39;N&#39;), (3, &#39;H&#39;)}), (-4.05, 0.38))</span>
+<span class="sd">	(frozenset({(4, &#39;H&#39;), (4, &#39;N&#39;)}), (-3.58, 0.42))</span>
+<span class="sd">	...</span>
+<span class="sd">	(frozenset({(73, &#39;N&#39;), (73, &#39;H&#39;)}), (-0.47, 0.75))</span>
+<span class="sd">	(frozenset({(76, &#39;H&#39;), (76, &#39;N&#39;)}), (0.14, 0.3))</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">values</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;RDC&#39;</span><span class="p">)</span>
 	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span> <span class="k">as</span> <span class="n">o</span><span class="p">:</span>
 		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">o</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
-				<span class="k">continue</span>
-			<span class="n">seq1</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">seq2</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-			<span class="n">key</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([(</span><span class="nb">int</span><span class="p">(</span><span class="n">seq1</span><span class="p">),</span> <span class="n">name1</span><span class="p">),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">seq2</span><span class="p">),</span> <span class="n">name2</span><span class="p">)])</span>
-			<span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
+					<span class="k">continue</span>
+				<span class="n">seq1</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">seq2</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+				<span class="n">key</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([(</span><span class="nb">int</span><span class="p">(</span><span class="n">seq1</span><span class="p">),</span> <span class="n">name1</span><span class="p">),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">seq2</span><span class="p">),</span> <span class="n">name2</span><span class="p">)])</span>
+				<span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+			<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Line ignored while reading file: </span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+					<span class="n">fileName</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
 	<span class="k">return</span> <span class="n">values</span></div>
 
 
 <div class="viewcode-block" id="read_pre"><a class="viewcode-back" href="../../reference/generated/paramagpy.dataparse.read_pre.html#paramagpy.dataparse.read_pre">[docs]</a><span class="k">def</span> <span class="nf">read_pre</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Read paramagnetic relaxation enhancement values from file.</span>
+<span class="sd">	The returned object is a dicationary.</span>
+<span class="sd">	They keys are tuples of (sequence, atomName)</span>
+<span class="sd">	The values are tuples of (value, error)</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	fileName : str</span>
+<span class="sd">		the path to the file</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	values : :class:`paramagpy.dataparse.DataContainer`</span>
+<span class="sd">		a dictionary containing the parsed data</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	see :func:`paramagpy.dataparse.read_pcs` which has the same file structure</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">values</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;PRE&#39;</span><span class="p">)</span>
 	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span> <span class="k">as</span> <span class="n">o</span><span class="p">:</span>
 		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">o</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
-				<span class="k">continue</span>
-			<span class="n">seq</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-			<span class="n">key</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="n">name</span>
-			<span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
+					<span class="k">continue</span>
+				<span class="n">seq</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+				<span class="n">key</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="n">name</span>
+				<span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+			<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Line ignored while reading file: </span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+					<span class="n">fileName</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
 	<span class="k">return</span> <span class="n">values</span></div>
 
+
+<span class="k">def</span> <span class="nf">read_ccr</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Read cross-correlated relaxation values from file.</span>
+<span class="sd">	These are typically Curie-spin cross Dipole-dipole relaxation rates</span>
+<span class="sd">	The returned object is a dicationary.</span>
+<span class="sd">	They keys are frozensets of tuples of the form:</span>
+<span class="sd">		frozenset({(sequence1, atomName1), (sequence2, atomName2)})</span>
+<span class="sd">	The frozenset only allows unordered unique atom identification pairs</span>
+<span class="sd">	The values are tuples of (value, error)</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	fileName : str</span>
+<span class="sd">		the path to the file</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	values : :class:`paramagpy.dataparse.DataContainer`</span>
+<span class="sd">		a dictionary containing the parsed data</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	see :func:`paramagpy.dataparse.read_rdc` which has the same file structure</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">values</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;CCR&#39;</span><span class="p">)</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span> <span class="k">as</span> <span class="n">o</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">o</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
+					<span class="k">continue</span>
+				<span class="n">seq1</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">seq2</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+				<span class="n">key</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([(</span><span class="nb">int</span><span class="p">(</span><span class="n">seq1</span><span class="p">),</span> <span class="n">name1</span><span class="p">),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">seq2</span><span class="p">),</span> <span class="n">name2</span><span class="p">)])</span>
+				<span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+			<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Line ignored while reading file: </span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+					<span class="n">fileName</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+	<span class="k">return</span> <span class="n">values</span>
 </pre></div>
 
           </div>

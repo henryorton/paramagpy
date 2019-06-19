@@ -51,7 +51,7 @@
 <h1>paramagpy.fit.svd_calc_metal_from_pcs_offset<a class="headerlink" href="#paramagpy-fit-svd-calc-metal-from-pcs-offset" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="paramagpy.fit.svd_calc_metal_from_pcs_offset">
-<code class="descclassname">paramagpy.fit.</code><code class="descname">svd_calc_metal_from_pcs_offset</code><span class="sig-paren">(</span><em>pos</em>, <em>pcs</em>, <em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#svd_calc_metal_from_pcs_offset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.svd_calc_metal_from_pcs_offset" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">paramagpy.fit.</code><code class="descname">svd_calc_metal_from_pcs_offset</code><span class="sig-paren">(</span><em>pos</em>, <em>pcs</em>, <em>idx</em>, <em>errors</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#svd_calc_metal_from_pcs_offset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.svd_calc_metal_from_pcs_offset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solve PCS equation by single value decomposition with offset.
 An offset arising from referencing errors between diamagnetic
 and paramagnetic datasets can be accounted for using this method.
@@ -67,6 +67,8 @@ This function is generally called by higher methods like
 <li><strong>pcs</strong> (<em>array of floats</em>) – the PCS values in ppm</li>
 <li><strong>idx</strong> (<em>array of ints</em>) – an index assigned to each atom. Common indices determine summation
 between models for ensemble averaging.</li>
+<li><strong>errors</strong> (<em>array of floats</em>) – the standard deviation representing experimental uncertainty
+in the measured value</li>
 </ul>
 </td>
 </tr>

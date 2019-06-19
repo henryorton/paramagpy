@@ -620,7 +620,7 @@ class Metal(object):
 
 	@rotationMatrix.setter
 	def rotationMatrix(self, newMatrix):
-		self.eulers = unique_eulers(matrix_to_eulers(newMatrix))
+		self.eulers = unique_eulers(matrix_to_euler(newMatrix))
 
 	@property
 	def tensor(self):
@@ -1321,6 +1321,9 @@ class Metal(object):
 				rates += self.fast_sbm_r2(posarray, gammaarray)
 		return rates
 
+	################################
+	# Methods for CCR calculations #
+	################################
 
 	def ccr_r2(self, position, gamma, dipole_shift_tensor):
 		"""
@@ -1379,6 +1382,26 @@ class Metal(object):
 		spinDown = self.dsa_r2(position, gamma, csa=-shield)
 		return spinUp - spinDown
 
+	def atom_ccr(self, atom, atomPartner):
+		"""
+		Calculate the residual dipolar coupling between two atoms
+
+		Parameters
+		----------
+		atom : biopython atom object
+			the active nuclear spin for which relaxation will be calculated
+			must have attributes 'position' and 'gamma'
+		atomPartner : biopython atom object
+			the coupling parnter nuclear spin
+			must have method 'dipole_shift_tensor'
+
+		Returns
+		-------
+		value : float
+			the CCR differential line broadening in Hz
+		"""
+		dd_tensor = atomPartner.dipole_shift_tensor(atom.position)
+		return self.ccr_r2(atom.position, atom.gamma, dd_tensor)
 			
 	################################
 	# Methods for RDC calculations #
@@ -1431,6 +1454,26 @@ class Metal(object):
 		dot2 = np.einsum('ij,ij->i', vecarray, dot1)
 		rdc_radians = 3*pf * dot2
 		return rdc_radians / (2*np.pi)
+
+	def atom_rdc(self, atom1, atom2):
+		"""
+		Calculate the residual dipolar coupling between two atoms
+
+		Parameters
+		----------
+		atom1 : biopython atom object
+			must have 'position' and 'gamma' attribute
+		atom1 : biopython atom object
+			must have 'position' and 'gamma' attribute
+
+		Returns
+		-------
+		rdc : float
+			the RDC values in Hz
+		"""
+		vector = atom2.position - atom1.position
+		gammaProd = atom1.gamma * atom2.gamma
+		return self.rdc(vector, gammaProd)
 
 
 	####################################

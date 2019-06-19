@@ -204,10 +204,10 @@ class CustomStructure(Structure):
 						resi = chain[seq]
 						if name in resi:
 							atom = resi[name]
-							data.append([atom, *dataValues[key]])
+							data.append((atom, *dataValues[key]))
 							used.add(key)
 
-		elif dataValues.dtype == 'RDC':
+		elif dataValues.dtype in ('RDC', 'CCR'):
 			for chain in chains:
 				for key in dataValues:
 					(seq1, name1), (seq2, name2) = key
@@ -217,7 +217,7 @@ class CustomStructure(Structure):
 						if name1 in resi1 and name2 in resi2:
 							atom1 = resi1[name1]
 							atom2 = resi2[name2]
-							data.append([atom1, atom2, *dataValues[key]])
+							data.append((atom1, atom2, *dataValues[key]))
 							used.add(key)
 
 		unused = set(dataValues) - used

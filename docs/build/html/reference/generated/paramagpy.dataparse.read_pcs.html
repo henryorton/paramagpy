@@ -52,7 +52,36 @@
 <dl class="function">
 <dt id="paramagpy.dataparse.read_pcs">
 <code class="descclassname">paramagpy.dataparse.</code><code class="descname">read_pcs</code><span class="sig-paren">(</span><em>fileName</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/dataparse.html#read_pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.dataparse.read_pcs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Read pseudo contact shift values from file.
+The returned object is a dicationary.
+They keys are tuples of (sequence, atomName)
+The values are tuples of (value, error)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fileName</strong> (<em>str</em>) – the path to the file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>values</strong> – a dictionary containing the parsed data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="paramagpy.dataparse.DataContainer.html#paramagpy.dataparse.DataContainer" title="paramagpy.dataparse.DataContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">paramagpy.dataparse.DataContainer</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">paramagpy</span><span class="o">.</span><span class="n">dataparse</span><span class="o">.</span><span class="n">read_pcs</span><span class="p">(</span><span class="s2">&quot;calbindin_Er_HN_PCS_errors.npc&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">((2, &#39;H&#39;), (-0.04855485, 0.0016))</span>
+<span class="go">((2, &#39;N&#39;), (-0.03402764, 0.0009))</span>
+<span class="go">((4, &#39;H&#39;), (-0.18470315, 0.0004))</span>
+<span class="gp">...</span>
+<span class="go">((75, &#39;H&#39;), (0.19553661, 0.0005))</span>
+<span class="go">((75, &#39;N&#39;), (0.17840666, 0.0004))</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </div>
 

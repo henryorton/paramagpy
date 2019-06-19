@@ -75,10 +75,13 @@
 
 <div class="viewcode-block" id="CustomAtom"><a class="viewcode-back" href="../../reference/generated/paramagpy.protein.CustomAtom.html#paramagpy.protein.CustomAtom">[docs]</a><span class="k">class</span> <span class="nc">CustomAtom</span><span class="p">(</span><span class="n">Atom</span><span class="p">):</span>
 
+	<span class="n">MU0</span> <span class="o">=</span> <span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mf">1E-7</span>
+	<span class="n">HBAR</span> <span class="o">=</span> <span class="mf">1.0546E-34</span>
+
 	<span class="n">gyro_lib</span> <span class="o">=</span> <span class="p">{</span>
 		<span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mf">42.576E6</span><span class="p">,</span>
 		<span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*-</span><span class="mf">4.316E6</span><span class="p">,</span>
-		<span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mf">10.705E6</span><span class="p">}</span>
+		<span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mf">10.705E6</span><span class="p">}</span> <span class="c1"># rad/s/T</span>
 
 	<span class="n">csa_lib</span> <span class="o">=</span> <span class="p">{</span>
 		<span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">5.8</span> <span class="p">,</span> <span class="mf">0.0</span>  <span class="p">,</span><span class="mf">5.8</span> <span class="p">])</span><span class="o">*</span><span class="mf">1E-6</span><span class="p">,</span> <span class="mf">8.</span> <span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">)),</span>
@@ -186,11 +189,25 @@
 		<span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">):</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The specified CSA tensor does not have the correct format&quot;</span><span class="p">)</span>
 			<span class="k">raise</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">_csa</span> <span class="o">=</span> <span class="n">newTensor</span></div>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_csa</span> <span class="o">=</span> <span class="n">newTensor</span>
 
 
+	<span class="k">def</span> <span class="nf">dipole_shift_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+		<span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span>
+		<span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+		<span class="n">preFactor</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MU0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">HBAR</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">8.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+		<span class="n">p1</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">distance</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+		<span class="n">p2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">distance</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+		<span class="k">return</span> <span class="p">(</span><span class="n">preFactor</span> <span class="o">*</span> <span class="p">(</span><span class="mf">3.</span><span class="o">*</span><span class="n">p1</span> <span class="o">-</span> <span class="n">p2</span><span class="p">))</span></div>
 
-		
+
+<span class="c1"># a = CustomAtom(&#39;H&#39;,[0,0,0],0,0,0,&#39;H&#39;,0)</span>
+
+<span class="c1"># pos = np.array([0,0,1.])*1E-10</span>
+<span class="c1"># field = a.dipole_shift_tensor(pos).dot(np.array([0.,0.,1.]))</span>
+<span class="c1"># omega = field * CustomAtom.gyro_lib[&#39;H&#39;]</span>
+<span class="c1"># print(a.dipole_shift_tensor(pos)*1E6)</span>
+
 
 
 <div class="viewcode-block" id="CustomStructure"><a class="viewcode-back" href="../../reference/generated/paramagpy.protein.CustomStructure.html#paramagpy.protein.CustomStructure">[docs]</a><span class="k">class</span> <span class="nc">CustomStructure</span><span class="p">(</span><span class="n">Structure</span><span class="p">):</span>

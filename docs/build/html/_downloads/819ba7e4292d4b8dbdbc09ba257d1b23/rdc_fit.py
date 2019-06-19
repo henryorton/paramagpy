@@ -29,7 +29,7 @@ fig = plt.figure(figsize=(5,10))
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
 ax1.set_title('A28C-C1-Tb')
-ax1.set_title('S57C-C1-Tb')
+ax2.set_title('S57C-C1-Tb')
 
 for sol, ax, pdata in zip([sol1,sol2], [ax1,ax2], 
 	[parsedData1,parsedData2]):

@@ -53,7 +53,10 @@
 <dt id="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs">
 <code class="descclassname">paramagpy.fit.</code><code class="descname">svd_gridsearch_fit_metal_from_pcs</code><span class="sig-paren">(</span><em>metals</em>, <em>pcss</em>, <em>sumIndices=None</em>, <em>origin=None</em>, <em>radius=20.0</em>, <em>points=16</em>, <em>offsetShift=False</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#svd_gridsearch_fit_metal_from_pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.svd_gridsearch_fit_metal_from_pcs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit deltaChi tensor to PCS values using Single Value Decomposition over
-a grid of points in a sphere.</p>
+a grid of points in a sphere.
+Note this uses a weighted SVD fit which takes into account
+experimental errors
+Ensemble averaging is determined by atom number.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
