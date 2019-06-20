@@ -150,9 +150,10 @@ def read_ccr(fileName):
 	Read cross-correlated relaxation values from file.
 	These are typically Curie-spin cross Dipole-dipole relaxation rates
 	The returned object is a dicationary.
-	They keys are frozensets of tuples of the form:
-		frozenset({(sequence1, atomName1), (sequence2, atomName2)})
-	The frozenset only allows unordered unique atom identification pairs
+	They keys are tuples of the form:
+	((sequence1, atomName1), (sequence2, atomName2))
+	Note that the first column is for the active nucleus undergoing 
+	relaxation and the second column is for the partner spin.
 	The values are tuples of (value, error)
 
 	Parameters
@@ -171,14 +172,22 @@ def read_ccr(fileName):
 	"""
 	values = DataContainer(dtype='CCR')
 	with open(fileName) as o:
+		check1 = set([])
+		check2 = set([])
 		for line in o:
 			try:
 				if line.strip().startswith("#"):
 					continue
 				seq1, name1, seq2, name2, value, error = line.split()
-				key = frozenset([(int(seq1), name1), (int(seq2), name2)])
+				key = (int(seq1), name1), (int(seq2), name2)
 				values[key] = float(value), float(error)
+				check1.add(name1)
+				check2.add(name2)
 			except ValueError:
 				print("Line ignored while reading file: {}\n{}".format(
 					fileName, line))
+		if len(check1 & check2) > 0:
+			print("WARNING: Varied atom ordering detected in file")
 	return values
+
+
