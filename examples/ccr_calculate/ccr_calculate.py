@@ -29,21 +29,15 @@ for H, N, value, error in data_f:
 	delta = met_f.atom_ccr(H, N)
 	compare_f.append((delta, value))
 
-m0 = metal.Metal(position=ironAtom.position)
-m, cal, qfac = fit.nlr_fit_metal_from_ccr(m0, data_f)
+m0 = metal.Metal(taur=5.7E-9, position=ironAtom.position)
+m0.iso = 30.1E-32
+m, cal, qfac = fit.nlr_fit_metal_from_ccr([m0], [data_f])
 
+print(qfac)
 print(m.info())
 
 
-
-
-
-
-
-
-
-
-# # Plot theory compared to experimental data
+# Plot theory compared to experimental data
 # from matplotlib import pyplot as plt
 # fig = plt.figure(figsize=(6,6))
 # ax = fig.add_subplot(111)

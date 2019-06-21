@@ -16,6 +16,7 @@ paramagpy.protein.CustomAtom
             
                   ~CustomAtom.copy
                   ~CustomAtom.detach_parent
+                  ~CustomAtom.dipole_shift_tensor
                   ~CustomAtom.flag_disorder
                   ~CustomAtom.get_altloc
                   ~CustomAtom.get_anisou
@@ -54,6 +55,8 @@ paramagpy.protein.CustomAtom
          .. autosummary::
             :toctree:
             
+               ~CustomAtom.HBAR
+               ~CustomAtom.MU0
                ~CustomAtom.csa
                ~CustomAtom.csa_lib
                ~CustomAtom.gyro_lib

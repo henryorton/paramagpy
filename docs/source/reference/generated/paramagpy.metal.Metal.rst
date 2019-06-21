@@ -14,12 +14,16 @@ paramagpy.metal.Metal
          .. autosummary::
             :toctree:
             
+                  ~Metal.atom_ccr
                   ~Metal.atom_pcs
+                  ~Metal.atom_rdc
                   ~Metal.atom_set_position
+                  ~Metal.ccr_r2
                   ~Metal.copy
                   ~Metal.dipole_shift_tensor
                   ~Metal.dsa_r1
                   ~Metal.dsa_r2
+                  ~Metal.fast_ccr_r2
                   ~Metal.fast_dipole_shift_tensor
                   ~Metal.fast_dsa_r1
                   ~Metal.fast_dsa_r2
@@ -44,6 +48,7 @@ paramagpy.metal.Metal
                   ~Metal.sbm_r1
                   ~Metal.sbm_r2
                   ~Metal.second_invariant_squared
+                  ~Metal.second_invariant_squared_test
                   ~Metal.set_Jg
                   ~Metal.set_lanthanide
                   ~Metal.set_params

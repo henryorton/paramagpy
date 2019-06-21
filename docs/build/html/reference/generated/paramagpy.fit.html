@@ -64,20 +64,26 @@
 <tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.ensemble_average.html#paramagpy.fit.ensemble_average" title="paramagpy.fit.ensemble_average"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensemble_average</span></code></a>(atoms,&nbsp;*values)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.extract_csa.html#paramagpy.fit.extract_csa" title="paramagpy.fit.extract_csa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_csa</span></code></a>(data)</td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.extract_ccr.html#paramagpy.fit.extract_ccr" title="paramagpy.fit.extract_ccr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_ccr</span></code></a>(data)</td>
+<td>Extract values required for CCR calculations</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.extract_csa.html#paramagpy.fit.extract_csa" title="paramagpy.fit.extract_csa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_csa</span></code></a>(data)</td>
 <td>Extract CSA tensors from atoms</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.extract_pcs.html#paramagpy.fit.extract_pcs" title="paramagpy.fit.extract_pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_pcs</span></code></a>(data)</td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.extract_pcs.html#paramagpy.fit.extract_pcs" title="paramagpy.fit.extract_pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_pcs</span></code></a>(data)</td>
 <td>Extract values required for PCS calculations</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.extract_pre.html#paramagpy.fit.extract_pre" title="paramagpy.fit.extract_pre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_pre</span></code></a>(data)</td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.extract_pre.html#paramagpy.fit.extract_pre" title="paramagpy.fit.extract_pre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_pre</span></code></a>(data)</td>
 <td>Extract values required for PRE calculations</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.extract_rdc.html#paramagpy.fit.extract_rdc" title="paramagpy.fit.extract_rdc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_rdc</span></code></a>(data)</td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.extract_rdc.html#paramagpy.fit.extract_rdc" title="paramagpy.fit.extract_rdc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_rdc</span></code></a>(data)</td>
 <td>Extract values required for RDC calculations</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.fit_metal_from_pcs.html#paramagpy.fit.fit_metal_from_pcs" title="paramagpy.fit.fit_metal_from_pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_metal_from_pcs</span></code></a>(metals,&nbsp;pcss)</td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.fit_metal_from_pcs.html#paramagpy.fit.fit_metal_from_pcs" title="paramagpy.fit.fit_metal_from_pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_metal_from_pcs</span></code></a>(metals,&nbsp;pcss)</td>
 <td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.nlr_fit_metal_from_ccr.html#paramagpy.fit.nlr_fit_metal_from_ccr" title="paramagpy.fit.nlr_fit_metal_from_ccr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nlr_fit_metal_from_ccr</span></code></a>(metal,&nbsp;ccr[,&nbsp;params,&nbsp;…])</td>
+<td>Fit Chi tensor to CCR values using non-linear regression.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.nlr_fit_metal_from_pcs.html#paramagpy.fit.nlr_fit_metal_from_pcs" title="paramagpy.fit.nlr_fit_metal_from_pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nlr_fit_metal_from_pcs</span></code></a>(initMetals,&nbsp;pcss[,&nbsp;…])</td>
 <td>Fit deltaChi tensor to PCS values using non-linear regression.</td>
@@ -85,43 +91,46 @@
 <tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.nlr_fit_metal_from_pre.html#paramagpy.fit.nlr_fit_metal_from_pre" title="paramagpy.fit.nlr_fit_metal_from_pre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nlr_fit_metal_from_pre</span></code></a>(initMetals,&nbsp;pres,&nbsp;params)</td>
 <td>Fit deltaChi tensor to PCS values using non-linear regression.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.pcs.html#paramagpy.fit.pcs" title="paramagpy.fit.pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pcs</span></code></a>(metal,&nbsp;atom)</td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.nlr_fit_metal_from_rdc.html#paramagpy.fit.nlr_fit_metal_from_rdc" title="paramagpy.fit.nlr_fit_metal_from_rdc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nlr_fit_metal_from_rdc</span></code></a>(metal,&nbsp;rdc[,&nbsp;params,&nbsp;…])</td>
+<td>Fit deltaChi tensor to RDC values using non-linear regression.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.pcs.html#paramagpy.fit.pcs" title="paramagpy.fit.pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pcs</span></code></a>(metal,&nbsp;atom)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.pcs_fit_error_bootstrap.html#paramagpy.fit.pcs_fit_error_bootstrap" title="paramagpy.fit.pcs_fit_error_bootstrap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pcs_fit_error_bootstrap</span></code></a>(initMetals,&nbsp;pcss,&nbsp;…)</td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.pcs_fit_error_bootstrap.html#paramagpy.fit.pcs_fit_error_bootstrap" title="paramagpy.fit.pcs_fit_error_bootstrap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pcs_fit_error_bootstrap</span></code></a>(initMetals,&nbsp;pcss,&nbsp;…)</td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.pcs_fit_error_monte_carlo.html#paramagpy.fit.pcs_fit_error_monte_carlo" title="paramagpy.fit.pcs_fit_error_monte_carlo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pcs_fit_error_monte_carlo</span></code></a>(initMetals,&nbsp;pcss,&nbsp;…)</td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.pcs_fit_error_monte_carlo.html#paramagpy.fit.pcs_fit_error_monte_carlo" title="paramagpy.fit.pcs_fit_error_monte_carlo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pcs_fit_error_monte_carlo</span></code></a>(initMetals,&nbsp;pcss,&nbsp;…)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.plot_pcs_fit.html#paramagpy.fit.plot_pcs_fit" title="paramagpy.fit.plot_pcs_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_pcs_fit</span></code></a>(metals,&nbsp;pcss)</td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.plot_pcs_fit.html#paramagpy.fit.plot_pcs_fit" title="paramagpy.fit.plot_pcs_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_pcs_fit</span></code></a>(metals,&nbsp;pcss)</td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.pre.html#paramagpy.fit.pre" title="paramagpy.fit.pre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pre</span></code></a>(metal,&nbsp;atom[,&nbsp;method,&nbsp;rtype])</td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.pre.html#paramagpy.fit.pre" title="paramagpy.fit.pre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pre</span></code></a>(metal,&nbsp;atom[,&nbsp;method,&nbsp;rtype])</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.qfactor.html#paramagpy.fit.qfactor" title="paramagpy.fit.qfactor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qfactor</span></code></a>(experiment,&nbsp;calculated[,&nbsp;sumIndices])</td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.qfactor.html#paramagpy.fit.qfactor" title="paramagpy.fit.qfactor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qfactor</span></code></a>(experiment,&nbsp;calculated[,&nbsp;sumIndices])</td>
 <td>Calculate the Q-factor to judge tensor fit quality</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.sphere_grid.html#paramagpy.fit.sphere_grid" title="paramagpy.fit.sphere_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sphere_grid</span></code></a>(origin,&nbsp;radius,&nbsp;points)</td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.sphere_grid.html#paramagpy.fit.sphere_grid" title="paramagpy.fit.sphere_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sphere_grid</span></code></a>(origin,&nbsp;radius,&nbsp;points)</td>
 <td>Make a grid of cartesian points within a sphere</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.svd_calc_metal_from_pcs.html#paramagpy.fit.svd_calc_metal_from_pcs" title="paramagpy.fit.svd_calc_metal_from_pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">svd_calc_metal_from_pcs</span></code></a>(pos,&nbsp;pcs,&nbsp;idx,&nbsp;errors)</td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.svd_calc_metal_from_pcs.html#paramagpy.fit.svd_calc_metal_from_pcs" title="paramagpy.fit.svd_calc_metal_from_pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">svd_calc_metal_from_pcs</span></code></a>(pos,&nbsp;pcs,&nbsp;idx,&nbsp;errors)</td>
 <td>Solve PCS equation by single value decomposition.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.svd_calc_metal_from_pcs_offset.html#paramagpy.fit.svd_calc_metal_from_pcs_offset" title="paramagpy.fit.svd_calc_metal_from_pcs_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">svd_calc_metal_from_pcs_offset</span></code></a>(pos,&nbsp;pcs,&nbsp;…)</td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.svd_calc_metal_from_pcs_offset.html#paramagpy.fit.svd_calc_metal_from_pcs_offset" title="paramagpy.fit.svd_calc_metal_from_pcs_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">svd_calc_metal_from_pcs_offset</span></code></a>(pos,&nbsp;pcs,&nbsp;…)</td>
 <td>Solve PCS equation by single value decomposition with offset.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.svd_calc_metal_from_rdc.html#paramagpy.fit.svd_calc_metal_from_rdc" title="paramagpy.fit.svd_calc_metal_from_rdc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">svd_calc_metal_from_rdc</span></code></a>(vec,&nbsp;…)</td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.svd_calc_metal_from_rdc.html#paramagpy.fit.svd_calc_metal_from_rdc" title="paramagpy.fit.svd_calc_metal_from_rdc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">svd_calc_metal_from_rdc</span></code></a>(vec,&nbsp;…)</td>
 <td>Solve RDC equation by single value decomposition.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.svd_fit_metal_from_rdc.html#paramagpy.fit.svd_fit_metal_from_rdc" title="paramagpy.fit.svd_fit_metal_from_rdc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">svd_fit_metal_from_rdc</span></code></a>(metal,&nbsp;rdc[,&nbsp;sumIndices])</td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.svd_fit_metal_from_rdc.html#paramagpy.fit.svd_fit_metal_from_rdc" title="paramagpy.fit.svd_fit_metal_from_rdc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">svd_fit_metal_from_rdc</span></code></a>(metal,&nbsp;rdc[,&nbsp;sumIndices])</td>
 <td>Fit deltaChi tensor to RDC values using SVD algorithm.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs.html#paramagpy.fit.svd_gridsearch_fit_metal_from_pcs" title="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">svd_gridsearch_fit_metal_from_pcs</span></code></a>(metals,&nbsp;pcss)</td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs.html#paramagpy.fit.svd_gridsearch_fit_metal_from_pcs" title="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">svd_gridsearch_fit_metal_from_pcs</span></code></a>(metals,&nbsp;pcss)</td>
 <td>Fit deltaChi tensor to PCS values using Single Value Decomposition over a grid of points in a sphere.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.fit.unique_pairing.html#paramagpy.fit.unique_pairing" title="paramagpy.fit.unique_pairing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique_pairing</span></code></a>(a,&nbsp;b)</td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.fit.unique_pairing.html#paramagpy.fit.unique_pairing" title="paramagpy.fit.unique_pairing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique_pairing</span></code></a>(a,&nbsp;b)</td>
 <td>Uniquely map two integers to a single integer.</td>
 </tr>
 </tbody>

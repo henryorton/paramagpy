@@ -13,9 +13,10 @@ Functions
 .. autosummary::
     :toctree: generated
     
-    read_pcs
+	read_pcs
 	read_rdc
 	read_pre
+	read_ccr
 
 Classes
 -------

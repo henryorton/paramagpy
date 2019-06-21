@@ -2,6 +2,7 @@ import numpy as np
 from scipy.optimize import fmin_bfgs
 from pprint import pprint
 import warnings
+from collections import OrderedDict
 
 def unique_pairing(a, b):
 	"""
@@ -149,21 +150,25 @@ def extract_ccr(data):
 
 	Returns
 	-------
-	tuple : (atom coordinates, gamma values, dipole shielding tensors,
-			CCR values, CCR errors, atom indices)
+	tuple : dict
 		all information required for CCR calculations
 	"""
 	atoms, atomsPartner, values, errors = zip(*data)
-	coords = np.array([i.position for i in atoms])
-	gammas = np.array([i.gamma for i in atoms])
-	dsts = np.array([j.dipole_shift_tensor(i.position) 
-		for i, j in zip(atoms, atomsPartner)])
 	if 0.0 in errors:
 		errors = np.ones(len(errors))
 		warnings.warn("0.0 value uncertainty. All values weighted evenly")
-	idxs = clean_indices([unique_pairing(i.serial_number, 
-		j.serial_number) for i, j in zip(atoms, atomsPartner)])
-	return map(np.array, [coords, gammas, dsts, values, errors, idxs])
+
+	d = {
+		'pos':np.array([i.position for i in atoms]),
+		'gam':np.array([i.gamma for i in atoms]),
+		'dst':np.array([j.dipole_shift_tensor(i.position) 
+						for i, j in zip(atoms, atomsPartner)]),
+		'val':np.array(values),
+		'err':np.array(errors),
+		'idx':clean_indices([unique_pairing(i.serial_number, j.serial_number) 
+							 for i, j in zip(atoms, atomsPartner)])
+	}
+	return d
 
 def sphere_grid(origin, radius, points):
 	"""
@@ -1004,65 +1009,163 @@ def nlr_fit_metal_from_rdc(metal, rdc, params=('ax','rh','a','b','g'),
 
 	return fitMetal, calculated, qfac
 
-def nlr_fit_metal_from_ccr(metal, ccr, params=('x','y','z','iso'), 
+# def nlr_fit_metal_from_ccr(metal, ccr, params=('x','y','z'), 
+# 	sumIndices=None, progress=None):
+# 	"""
+# 	Fit Chi tensor to CCR values using non-linear regression.
+
+# 	Parameters
+# 	----------
+# 	metal : Metal object
+# 		the starting metal for fitting
+# 	ccr : the CCR dataset
+# 		each CCR dataset has structure [Atom1, Atom2, value, error], 
+# 		where Atom is an Atom object, value is the PCS/RDC/PRE value
+# 		and error is the uncertainty
+# 	params : list of str, optional
+# 		the parameters to be fit. 
+# 		this defaults to only position ('x','y','z')
+# 	sumIndices : array of ints, optional
+# 		the list contains an index assigned to each atom. 
+# 		Common indices determine summation between models 
+# 		for ensemble averaging.
+# 		If None, defaults to atom serial number to determine summation 
+# 		between models.
+# 	progress : object, optional
+# 		to keep track of the calculation, progress.set(x) is called each
+# 		iteration and varies from 0.0 -> 1.0 when the calculation is complete.
+
+# 	Returns
+# 	-------
+# 	fitMetal : Metal object
+# 		the fitted metal by NLR to the CCR data provided
+# 	calculated : array of floats
+# 		the calculated CCR values
+# 	qfac : float
+# 		the qfactor judging the fit quality
+# 	"""
+# 	(posarray, gamarray, dstarray, 
+# 		ccrarray, errarray, idxarray) = extract_ccr(ccr)
+# 	if sumIndices is None:
+# 		sumIndices = idxarray
+# 	fitMetal = metal.copy()
+
+# 	def cost(args):
+# 		fitMetal.set_params(zip(params, args))
+# 		calccr = fitMetal.fast_ccr_r2(posarray, gamarray, dstarray)
+# 		diff = (calccr - ccrarray) / errarray
+# 		selectiveSum = np.bincount(idxarray, weights=diff)
+# 		score = np.sum(selectiveSum**2)
+# 		return score
+
+# 	startpars = fitMetal.get_params(params)
+# 	fmin_bfgs(cost, startpars, disp=False)
+# 	fitMetal.set_utr()
+# 	calculated = fitMetal.fast_ccr_r2(posarray, gamarray, dstarray)
+# 	qfac = qfactor(ccrarray, calculated, idxarray)
+
+# 	if progress:
+# 		progress.set(1.0)
+
+# 	return fitMetal, calculated, qfac
+
+
+
+def nlr_fit_metal_from_ccr(initMetals, ccrs, params=('x','y','z'), 
 	sumIndices=None, progress=None):
 	"""
-	Fit Chi tensor to CCR values using non-linear regression.
+	Fit deltaChi tensor to CCR values using non-linear regression.
 
 	Parameters
 	----------
-	metal : Metal object
-		the starting metal for fitting
-	ccr : the CCR dataset
-		each CCR dataset has structure [Atom1, Atom2, value, error], 
-		where Atom is an Atom object, value is the PCS/RDC/PRE value
+	initMetals : list of Metal objects
+		a list of metals used as starting points for fitting. 
+		a list must always be provided, but may also contain 
+		only one element. If multiple metals are provided, each metal
+		is fitted to their respective PCS dataset by index, but all are 
+		fitted to a common position.
+	pcss : list of PCS datasets
+		each PCS dataset must correspond to an associated metal for fitting.
+		each PCS dataset has structure [Atom, value, error], where Atom is 
+		an Atom object, value is the PCS/RDC/PRE value
 		and error is the uncertainty
-	params : list of str, optional
+	params : list of str
 		the parameters to be fit. 
-		this defaults to ('x','y','z','iso')
-	sumIndices : array of ints, optional
-		the list contains an index assigned to each atom. 
+		For example ['x','y','z','ax','rh','a','b','g','shift']
+	sumIndices : list of arrays of ints, optional
+		each index list must correspond to an associated pcs dataset.
+		each index list contains an index assigned to each atom. 
 		Common indices determine summation between models 
 		for ensemble averaging.
 		If None, defaults to atom serial number to determine summation 
 		between models.
+	userads : bool, optional
+		include residual anisotropic dipolar shielding (RADS) during fitting
+	useracs : bool, optional
+		include residual anisotropic chemical shielding (RACS) during fitting.
+		CSA tensors are taken using the <csa> method of atoms.
 	progress : object, optional
 		to keep track of the calculation, progress.set(x) is called each
 		iteration and varies from 0.0 -> 1.0 when the calculation is complete.
 
 	Returns
 	-------
-	fitMetal : Metal object
-		the fitted metal by NLR to the CCR data provided
-	calculated : array of floats
-		the calculated CCR values
-	qfac : float
-		the qfactor judging the fit quality
+	metals : list of metals
+		the metals fitted by NLR to the PCS data provided
+	calc_pcss : list of lists of floats
+		the calculated PCS values
 	"""
-	(posarray, gamarray, dstarray, 
-		ccrarray, errarray, idxarray) = extract_ccr(ccr)
-	if sumIndices is None:
-		sumIndices = idxarray
-	fitMetal = metal.copy()
+	datas = []
+	for metal, ccr in zip(initMetals, ccrs):
+		d = extract_ccr(ccr)
+		d['met'] = metal.copy()
+		datas.append(d)
+
+	pospars = [param for param in params if param in ['x','y','z']]
+	otherpars = [param for param in params if param not in ['x','y','z']]
+
+	if sumIndices is not None:
+		idxarrays = sumIndices
 
 	def cost(args):
-		fitMetal.set_params(zip(params, args))
-		calccr = fitMetal.fast_ccr_r2(posarray, gamarray, dstarray)
-		diff = (calccr - ccrarray) / errarray
-		selectiveSum = np.bincount(idxarray, weights=diff)
-		score = np.sum(selectiveSum**2)
+		pos = args[:len(pospars)]
+		allother = args[len(pospars):]
+
+		score = 0.0
+		for d in datas:
+			other = allother[len(otherpars)*i:len(otherpars)*(i+1)]
+			d['met'].set_params(zip(pospars, pos))
+			d['met'].set_params(zip(otherpars, other))
+			d['cal'] = d['met'].fast_ccr_r2(d['pos'], d['gam'], d['dst'])
+			diff = (d['cal'] - d['val']) / d['err']
+			selectiveSum = np.bincount(d['idx'], weights=diff)
+			score += np.sum(selectiveSum**2)
+
 		return score
 
-	startpars = fitMetal.get_params(params)
+
+	startpars = datas[0]['met'].get_params(pospars)
+	for d in datas:
+		pars = d['met'].get_params(otherpars)
+		startpars += pars
 	fmin_bfgs(cost, startpars, disp=False)
-	fitMetal.set_utr()
-	calculated = fitMetal.fast_ccr_r2(posarray, gamarray, dstarray)
-	qfac = qfactor(ccrarray, calculated, idxarray)
+	fitmetals = []
+	calc_ccrs = []
+	qfactors = []
+	for d in datas:
+		d['met'].set_utr()
+		fitmetals.append(d['met'])
+		calc_ccrs.append(d['cal'])
+		qfac = qfactor(d['val'], d['cal'], d['idx'])
+		qfactors.append(qfac)
 
 	if progress:
 		progress.set(1.0)
+	return metals, calc_ccrs, qfactors
 
-	return fitMetal, calculated, qfac
+
+
+
 
 def ensemble_average(atoms, *values):
 	if type(atoms[0]) in (list, tuple):

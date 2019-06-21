@@ -186,14 +186,15 @@
 	<span class="k">return</span> <span class="n">values</span></div>
 
 
-<span class="k">def</span> <span class="nf">read_ccr</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+<div class="viewcode-block" id="read_ccr"><a class="viewcode-back" href="../../reference/generated/paramagpy.dataparse.read_ccr.html#paramagpy.dataparse.read_ccr">[docs]</a><span class="k">def</span> <span class="nf">read_ccr</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Read cross-correlated relaxation values from file.</span>
 <span class="sd">	These are typically Curie-spin cross Dipole-dipole relaxation rates</span>
 <span class="sd">	The returned object is a dicationary.</span>
-<span class="sd">	They keys are frozensets of tuples of the form:</span>
-<span class="sd">		frozenset({(sequence1, atomName1), (sequence2, atomName2)})</span>
-<span class="sd">	The frozenset only allows unordered unique atom identification pairs</span>
+<span class="sd">	They keys are tuples of the form:</span>
+<span class="sd">	((sequence1, atomName1), (sequence2, atomName2))</span>
+<span class="sd">	Note that the first column is for the active nucleus undergoing </span>
+<span class="sd">	relaxation and the second column is for the partner spin.</span>
 <span class="sd">	The values are tuples of (value, error)</span>
 
 <span class="sd">	Parameters</span>
@@ -212,17 +213,25 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">values</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;CCR&#39;</span><span class="p">)</span>
 	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span> <span class="k">as</span> <span class="n">o</span><span class="p">:</span>
+		<span class="n">check1</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+		<span class="n">check2</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
 		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">o</span><span class="p">:</span>
 			<span class="k">try</span><span class="p">:</span>
 				<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
 					<span class="k">continue</span>
 				<span class="n">seq1</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">seq2</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-				<span class="n">key</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([(</span><span class="nb">int</span><span class="p">(</span><span class="n">seq1</span><span class="p">),</span> <span class="n">name1</span><span class="p">),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">seq2</span><span class="p">),</span> <span class="n">name2</span><span class="p">)])</span>
+				<span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">seq1</span><span class="p">),</span> <span class="n">name1</span><span class="p">),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">seq2</span><span class="p">),</span> <span class="n">name2</span><span class="p">)</span>
 				<span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+				<span class="n">check1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name1</span><span class="p">)</span>
+				<span class="n">check2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name2</span><span class="p">)</span>
 			<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
 				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Line ignored while reading file: </span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
 					<span class="n">fileName</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
-	<span class="k">return</span> <span class="n">values</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">check1</span> <span class="o">&amp;</span> <span class="n">check2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: Varied atom ordering detected in file&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">values</span></div>
+
+
 </pre></div>
 
           </div>

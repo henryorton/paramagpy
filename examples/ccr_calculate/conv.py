@@ -5,6 +5,7 @@ with open("data_from_paper.txt") as o:
 		a, b, c, d = line.split(",")
 		seq = int(a)
 		unpack = lambda x: map(lambda y: float(y.strip()), x.split('±'))
+
 		try:
 			dv, de = unpack(b)
 			pv, pe = unpack(c)
@@ -20,12 +21,12 @@ with open("data_from_paper.txt") as o:
 			pass
 
 
-with open("myo_CN.ccr", 'w') as o:
+with open("myo_cn.ccr", 'w') as o:
 	for s, v, e in d1:
 		line = "{0:3d} H{1:4d} N {2:4.1f} {3:3.1f}\n".format(s, s, v, e)
 		o.write(line)
 
-with open("myo_F.ccr", 'w') as o:
+with open("myo_f.ccr", 'w') as o:
 	for s, v, e in d2:
-		line = "{0:3d} H{1:4d} N {2:4.1f} {3:3.1f}\n".format(s, s, v, e)
+		line = "{0:3d} H{1:4d} N {2:5.1f} {3:3.1f}\n".format(s, s, v, e)
 		o.write(line)

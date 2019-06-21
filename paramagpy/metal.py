@@ -243,6 +243,7 @@ class Metal(object):
 		'iso': 1E32,
 		't1e': 1E12,
 		'taur': 1E9,
+		'mueff': 1./MUB,
 	}
 
 	# J, g, T1e values for lanthanide series
