@@ -1082,28 +1082,24 @@ def nlr_fit_metal_from_ccr(initMetals, ccrs, params=('x','y','z'),
 		a list of metals used as starting points for fitting. 
 		a list must always be provided, but may also contain 
 		only one element. If multiple metals are provided, each metal
-		is fitted to their respective PCS dataset by index, but all are 
+		is fitted to their respective CCR dataset by index, but all are 
 		fitted to a common position.
-	pcss : list of PCS datasets
-		each PCS dataset must correspond to an associated metal for fitting.
-		each PCS dataset has structure [Atom, value, error], where Atom is 
-		an Atom object, value is the PCS/RDC/PRE value
+	ccrs : list of CCR datasets
+		each CCR dataset must correspond to an associated metal for fitting.
+		each CCR dataset has structure [Atom, value, error], where Atom is 
+		an Atom object, value is the PCS/RDC/PRE/CCR value
 		and error is the uncertainty
 	params : list of str
 		the parameters to be fit. 
 		For example ['x','y','z','ax','rh','a','b','g','shift']
+		This defaults to ['x','y','z']
 	sumIndices : list of arrays of ints, optional
-		each index list must correspond to an associated pcs dataset.
+		each index list must correspond to an associated ccr dataset.
 		each index list contains an index assigned to each atom. 
 		Common indices determine summation between models 
 		for ensemble averaging.
 		If None, defaults to atom serial number to determine summation 
 		between models.
-	userads : bool, optional
-		include residual anisotropic dipolar shielding (RADS) during fitting
-	useracs : bool, optional
-		include residual anisotropic chemical shielding (RACS) during fitting.
-		CSA tensors are taken using the <csa> method of atoms.
 	progress : object, optional
 		to keep track of the calculation, progress.set(x) is called each
 		iteration and varies from 0.0 -> 1.0 when the calculation is complete.
@@ -1111,9 +1107,10 @@ def nlr_fit_metal_from_ccr(initMetals, ccrs, params=('x','y','z'),
 	Returns
 	-------
 	metals : list of metals
-		the metals fitted by NLR to the PCS data provided
-	calc_pcss : list of lists of floats
-		the calculated PCS values
+		the metals fitted by NLR to the CCR data provided
+	calc_ccrs : list of lists of floats
+		the calculated CCR values
+	qfactors : list
 	"""
 	datas = []
 	for metal, ccr in zip(initMetals, ccrs):
@@ -1121,21 +1118,25 @@ def nlr_fit_metal_from_ccr(initMetals, ccrs, params=('x','y','z'),
 		d['met'] = metal.copy()
 		datas.append(d)
 
-	pospars = [param for param in params if param in ['x','y','z']]
-	otherpars = [param for param in params if param not in ['x','y','z']]
+	params = set(params)
+	pospars = tuple(params & set(['x','y','z']))
+	otherpars = tuple(params - set(['x','y','z']))
+
+	startpars = initMetals[0].get_params(pospars)
+	for i, d in enumerate(datas):
+		d['pospars'] = slice(0, len(pospars))
+		d['othpars'] = slice(len(pospars) + i*len(otherpars), 
+						  len(pospars) + (i+1)*len(otherpars))
+		startpars += d['met'].get_params(otherpars)
 
 	if sumIndices is not None:
 		idxarrays = sumIndices
 
 	def cost(args):
-		pos = args[:len(pospars)]
-		allother = args[len(pospars):]
-
 		score = 0.0
 		for d in datas:
-			other = allother[len(otherpars)*i:len(otherpars)*(i+1)]
-			d['met'].set_params(zip(pospars, pos))
-			d['met'].set_params(zip(otherpars, other))
+			d['met'].set_params(zip(pospars, args[d['pospars']]))
+			d['met'].set_params(zip(otherpars, args[d['othpars']]))
 			d['cal'] = d['met'].fast_ccr_r2(d['pos'], d['gam'], d['dst'])
 			diff = (d['cal'] - d['val']) / d['err']
 			selectiveSum = np.bincount(d['idx'], weights=diff)
@@ -1143,11 +1144,6 @@ def nlr_fit_metal_from_ccr(initMetals, ccrs, params=('x','y','z'),
 
 		return score
 
-
-	startpars = datas[0]['met'].get_params(pospars)
-	for d in datas:
-		pars = d['met'].get_params(otherpars)
-		startpars += pars
 	fmin_bfgs(cost, startpars, disp=False)
 	fitmetals = []
 	calc_ccrs = []
@@ -1161,7 +1157,7 @@ def nlr_fit_metal_from_ccr(initMetals, ccrs, params=('x','y','z'),
 
 	if progress:
 		progress.set(1.0)
-	return metals, calc_ccrs, qfactors
+	return fitmetals, calc_ccrs, qfactors
 
 
 

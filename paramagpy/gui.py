@@ -912,7 +912,7 @@ class DataLoad(tk.LabelFrame):
 			ttk.Radiobutton(self, text='R2', variable=self.rtype_var, 
 				value='r2').grid(row=2,column=2, sticky='W')
 
-		elif self.dtype=='RDC':
+		elif self.dtype in ['RDC','CCR']:
 			self.show_hn_var = tk.BooleanVar(value=False)
 			ttk.Checkbutton(self, text='Show H-N', variable=self.show_hn_var, 
 				command=self.show_hn_change,
@@ -934,7 +934,7 @@ class DataLoad(tk.LabelFrame):
 			return os.getcwd()
 
 	def load_data(self):
-		filedict = {'PCS':'.npc','RDC':'.rdc','PRE':'.npc'}
+		filedict = {'PCS':'.npc','RDC':'.rdc','PRE':'.pre','CCR':'.ccr'}
 		fileName = filedialog.askopenfilename(
 			title="Choose {} file".format(self.dtype),
 			defaultextension=filedict[self.dtype],
@@ -948,6 +948,8 @@ class DataLoad(tk.LabelFrame):
 			self.data = dataparse.read_rdc(fileName)
 		elif fileName and self.dtype=='PRE':
 			self.data = dataparse.read_pre(fileName)
+		elif fileName and self.dtype=='CCT':
+			self.data = dataparse.read_ccr(fileName)
 		else:
 			self.data = dataparse.DataContainer()
 		self.lbl_dataFile.config(text=format_path(fileName, self.pathWidth))
@@ -1118,7 +1120,7 @@ class DataView(tk.LabelFrame):
 				dispData.append(fd.copy())
 				self.rowReference.append(row)
 
-		elif self.dtype=='RDC':
+		elif self.dtype in ['RDC','CCR']:
 			for row in data:
 				if row['use']:
 					fd['use'] = 'x'
@@ -1126,20 +1128,21 @@ class DataView(tk.LabelFrame):
 					fd['use'] = ' '
 				atom1 = row['atm']
 				atom2 = row['atx']
-				_, mdl,chn1,(_,seq1,_),(atm1,_) = atom1.get_full_id()
-				_, mdl,chn2,(_,seq2,_),(atm2,_) = atom2.get_full_id()
-				res1 = atom1.parent.resname
-				res2 = atom2.parent.resname
-				fd['seq'] = "{}-{}".format(seq1, seq2)
-				fd['res'] = "{}-{}".format(res1, res2)
-				fd['atm'] = "{}-{}".format(atm1, atm2)
-				fd['chn'] = "{}-{}".format(chn1, chn2)
-				fd['exp'] = row['exp']
-				fd['cal'] = row['cal']
-				fd['err'] = row['err']
-				fd['dev'] = abs(row['exp'] - row['cal'])
-				dispData.append(fd.copy())
-				self.rowReference.append(row)
+				if bool(atom1) and bool(atom2):
+					_, mdl,chn1,(_,seq1,_),(atm1,_) = atom1.get_full_id()
+					_, mdl,chn2,(_,seq2,_),(atm2,_) = atom2.get_full_id()
+					res1 = atom1.parent.resname
+					res2 = atom2.parent.resname
+					fd['seq'] = "{}-{}".format(seq1, seq2)
+					fd['res'] = "{}-{}".format(res1, res2)
+					fd['atm'] = "{}-{}".format(atm1, atm2)
+					fd['chn'] = "{}-{}".format(chn1, chn2)
+					fd['exp'] = row['exp']
+					fd['cal'] = row['cal']
+					fd['err'] = row['err']
+					fd['dev'] = abs(row['exp'] - row['cal'])
+					dispData.append(fd.copy())
+					self.rowReference.append(row)
 
 		self.listBox.set_data(dispData)
 
@@ -1354,6 +1357,7 @@ class TensorFrame(tk.LabelFrame):
 		pcs_fields = set(['x','y','z','a','b','g','ax','rh','ref'])
 		rdc_fields = set(['a','b','g','ax','rh'])
 		pre_fields = set(['x','y','z','a','b','g','ax','rh','iso','taur','t1e'])
+		ccr_fields = set(['x','y','z','a','b','g','ax','rh','iso','taur','t1e'])
 
 		fpars = self.fopts.params
 		if self.dtype=='PCS':
@@ -1384,7 +1388,7 @@ class TensorFrame(tk.LabelFrame):
 				else:
 					field.disable()
 
-		elif self.dtype=='PRE':
+		elif self.dtype in ['PRE','CCR']:
 			for var in self.fields:
 				field = self.fields[var]
 				if var in pre_fields:
@@ -1541,7 +1545,7 @@ class DataTab(tk.Frame):
 				message = "WARNING: Some atoms were not found in the PDB:{}"
 				print(message.format(unused))
 
-		elif self.dtype=='RDC':
+		elif self.dtype==['RDC','CCR']:
 			dtype = self.parent.parent.parent.structdtype[self.dtype]
 			expdata = self.loadData.data
 			if not expdata:
@@ -1614,6 +1618,19 @@ class DataTab(tk.Frame):
 				sbm=self.fopts.params['sbm'].get(), csaarray=csas)
 
 			self.data['cal'] = pres
+
+		elif self.dtype=='CCR':
+			poss = []
+			gams = []
+			dsts = []
+			for row in self.data:
+				poss.append(row['atm'].position)
+				gams.append(row['atm'].gamma)
+				dsts.append(row['atx'].dipole_shift_tensor(row['atm'].position))
+			poss = np.array(vecs)
+			gams = np.array(gams)
+			dsts = np.array(dsts)
+			self.data['cal'] = self.tensorFit.tensor.fast_ccr(poss, gams, dsts)
 
 		self.set_qfactor()
 		self.update(1)
@@ -1791,6 +1808,15 @@ class FittingOptionsFrame(tk.LabelFrame):
 			self.set_checkbox('sbm', 1, 2, 1)
 			self.set_checkbox('csa', 2, 2, 1, 0)
 
+		elif self.dtype=='CCR':
+			self.set_checkbox('iso', 0, 0, 1, 0)
+			self.set_checkbox('pos', 1, 0, 1)
+			self.set_checkbox('mod', 2, 0, 1, 0)
+
+			self.set_checkbox('dchi', 0, 1, 1, 0)
+			self.set_checkbox('taur', 1, 1, 1, 0)
+			self.set_checkbox('taue', 2, 1, 1, 0)
+
 
 	@property
 	def frm_pdb(self):
@@ -1835,7 +1861,6 @@ class FittingOptionsFrame(tk.LabelFrame):
 				self.fields['rad'].enable()
 				self.fields['den'].enable()
 
-
 		self.parent.update(0)
 
 	def single_calc(self, dataTab):
@@ -1845,6 +1870,8 @@ class FittingOptionsFrame(tk.LabelFrame):
 			self.fit_rdc(dataTab)
 		if self.dtype=='PRE':
 			self.fit_pre([dataTab])
+		if self.dtype=='CCR':
+			self.fit_ccr([dataTab])
 
 	def multiple_calc(self, dataTabs):
 		if self.dtype=='PCS':
@@ -1863,7 +1890,7 @@ class FittingOptionsFrame(tk.LabelFrame):
 				tmp = model, data
 				modeldata.append(tmp)
 			return modeldata
-		elif self.dtype=='RDC':
+		elif self.dtype in ['RDC','CCR']:
 			for model in models:
 				fitdata = dataTabs.get_fit_data(model)
 				data = fitdata[['atm','atx','exp','err']]
@@ -1881,6 +1908,19 @@ class FittingOptionsFrame(tk.LabelFrame):
 				pars += ['shift']
 			return pars
 		elif self.dtype=='PRE':
+			pars = []
+			if self.params['pos'].get():
+				pars += ['x','y','z']
+			if self.params['iso'].get():
+				pars += ['iso']
+			if self.params['dchi'].get():
+				pars += ['ax','rh','a','b','g']
+			if self.params['taur'].get():
+				pars += ['taur']
+			if self.params['taue'].get():
+				pars += ['t1e']
+			return pars
+		elif self.dtype=='CCR':
 			pars = []
 			if self.params['pos'].get():
 				pars += ['x','y','z']
@@ -2089,6 +2129,50 @@ class FittingOptionsFrame(tk.LabelFrame):
 		dataTab.back_calc()
 
 
+	def fit_ccr(self, dataTabs):
+		metals = [tab.tensorStart.tensor.copy() for tab in dataTabs]
+		rtypes = [tab.rtype() for tab in dataTabs]
+		modeldata = self.get_data(dataTabs, 
+			seperateModels=self.params['mod'].get())
+
+		qfac = 1E50
+		minmod = None
+		minmetal = None
+		progVar = tk.DoubleVar(value=0.0)
+		progbar = ProgressPopup(self, progVar, "", auto_close=False)
+		for model, data in modeldata:
+			if model is not None:
+				nlrline = "Model: {}\nNLR Fitting . . .".format(model)
+			else:
+				nlrline = "NLR Fitting . . ."
+
+			progbar.set_label(nlrline)
+			progVar.set(1.0)
+			pars = self.get_params()
+			metals = fit.nlr_fit_metal_from_ccr(metals, data, pars)
+
+			if self.params['mod'].get():
+				q = sum([fit.qfactor(m, d) for m, d in zip(metals, data)])
+				if q<qfac:
+					minmod = model
+					minmetals = [m.copy() for m in metals]
+					qfac = q
+
+		progbar.death()
+		if self.params['mod'].get():
+			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
+			messagebox.showinfo("Model with best fit found", 
+				line.format(minmod, qfac))
+			metals = minmetals
+
+		for tab, metal in zip(dataTabs, metals):
+			tab.tensorFit.tensor = metal.copy()
+			if minmod is not None:
+				tab.viewData.set_current_model(minmod)
+			tab.update(0)
+			tab.back_calc()
+
+
 class DataNotebook(ttk.Notebook):
 	"""
 	Notebook for datasets
@@ -2133,7 +2217,7 @@ class MethodsTab(tk.Frame):
 		self.frm_fopts.grid(row=0,column=0)
 		self.ntb_data.grid(row=1,column=0,columnspan=2)
 
-		if self.dtype in ['PCS','PRE']:
+		if self.dtype in ['PCS','PRE','CCR']:
 			self.frm_fmul = MultipleFitFrame(self)
 			self.frm_fmul.grid(row=0,column=1,sticky='NS')
 
@@ -2179,12 +2263,21 @@ class MethodsNotebook(ttk.Notebook):
 					('cal', float ),
 					('exp', float ),
 					('err', float ),
-					('idx', int   )])}
+					('idx', int   )]),
+		'CCR':np.dtype([
+					('mdl',  int   ),
+					('use',  bool  ),
+					('atm',  object),
+					('atx',  object),
+					('cal',  float ),
+					('exp',  float ),
+					('err',  float ),
+					('idx',  int   )])}
 
 	def __init__(self, parent):
 		super().__init__(parent)
 		self.parent = parent # MainGui
-		self.dtypes = ['PCS','RDC','PRE']
+		self.dtypes = ['PCS','RDC','PRE','CCR']
 		self.tabs = []
 		self.templates = {i:None for i in self.dtypes}
 		self.copied_tensor = None
@@ -2227,6 +2320,8 @@ class MethodsNotebook(ttk.Notebook):
 				(m, False, a, None, nan, nan, nan, a.serial_number))
 			templates['PRE'].append(
 				(m, False, a, nan, nan, nan, a.serial_number))
+			templates['CCR'].append(
+				(m, False, a, None, nan, nan, nan, a.serial_number))
 
 			self.atomSet.add(a.name)
 
