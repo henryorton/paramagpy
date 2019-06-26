@@ -12,7 +12,7 @@ paramagpy.fit
          .. autosummary::
             :toctree:
             
-               ccr
+               cantor_pairing
                clean_indices
                ensemble_average
                extract_ccr
@@ -25,7 +25,6 @@ paramagpy.fit
                nlr_fit_metal_from_pcs
                nlr_fit_metal_from_pre
                nlr_fit_metal_from_rdc
-               pcs
                pcs_fit_error_bootstrap
                pcs_fit_error_monte_carlo
                plot_pcs_fit

@@ -948,7 +948,7 @@ class DataLoad(tk.LabelFrame):
 			self.data = dataparse.read_rdc(fileName)
 		elif fileName and self.dtype=='PRE':
 			self.data = dataparse.read_pre(fileName)
-		elif fileName and self.dtype=='CCT':
+		elif fileName and self.dtype=='CCR':
 			self.data = dataparse.read_ccr(fileName)
 		else:
 			self.data = dataparse.DataContainer()
@@ -1128,21 +1128,20 @@ class DataView(tk.LabelFrame):
 					fd['use'] = ' '
 				atom1 = row['atm']
 				atom2 = row['atx']
-				if bool(atom1) and bool(atom2):
-					_, mdl,chn1,(_,seq1,_),(atm1,_) = atom1.get_full_id()
-					_, mdl,chn2,(_,seq2,_),(atm2,_) = atom2.get_full_id()
-					res1 = atom1.parent.resname
-					res2 = atom2.parent.resname
-					fd['seq'] = "{}-{}".format(seq1, seq2)
-					fd['res'] = "{}-{}".format(res1, res2)
-					fd['atm'] = "{}-{}".format(atm1, atm2)
-					fd['chn'] = "{}-{}".format(chn1, chn2)
-					fd['exp'] = row['exp']
-					fd['cal'] = row['cal']
-					fd['err'] = row['err']
-					fd['dev'] = abs(row['exp'] - row['cal'])
-					dispData.append(fd.copy())
-					self.rowReference.append(row)
+				_, mdl,chn1,(_,seq1,_),(atm1,_) = atom1.get_full_id()
+				_, mdl,chn2,(_,seq2,_),(atm2,_) = atom2.get_full_id()
+				res1 = atom1.parent.resname
+				res2 = atom2.parent.resname
+				fd['seq'] = "{}-{}".format(seq1, seq2)
+				fd['res'] = "{}-{}".format(res1, res2)
+				fd['atm'] = "{}-{}".format(atm1, atm2)
+				fd['chn'] = "{}-{}".format(chn1, chn2)
+				fd['exp'] = row['exp']
+				fd['cal'] = row['cal']
+				fd['err'] = row['err']
+				fd['dev'] = abs(row['exp'] - row['cal'])
+				dispData.append(fd.copy())
+				self.rowReference.append(row)
 
 		self.listBox.set_data(dispData)
 
@@ -1545,14 +1544,14 @@ class DataTab(tk.Frame):
 				message = "WARNING: Some atoms were not found in the PDB:{}"
 				print(message.format(unused))
 
-		elif self.dtype==['RDC','CCR']:
+		elif self.dtype in ['RDC','CCR']:
 			dtype = self.parent.parent.parent.structdtype[self.dtype]
 			expdata = self.loadData.data
 			if not expdata:
 				if self.loadData.show_hn_var.get():
 					for row in self.data:
 						if row['atm'].name=='H':
-							_, mdl, chn, (_,seq,_), (atm, _) = row['atm'].get_full_id()
+							_, mdl, chn, seq, (atm, _) = row['atm'].get_full_id()
 							row['atx'] = self.frm_pdb.prot[mdl][chn][seq].child_dict.get('N', None)
 					self.data = self.data[self.data['atx']!=None]
 				else:
@@ -1627,7 +1626,7 @@ class DataTab(tk.Frame):
 				poss.append(row['atm'].position)
 				gams.append(row['atm'].gamma)
 				dsts.append(row['atx'].dipole_shift_tensor(row['atm'].position))
-			poss = np.array(vecs)
+			poss = np.array(poss)
 			gams = np.array(gams)
 			dsts = np.array(dsts)
 			self.data['cal'] = self.tensorFit.tensor.fast_ccr(poss, gams, dsts)
@@ -1876,8 +1875,16 @@ class FittingOptionsFrame(tk.LabelFrame):
 	def multiple_calc(self, dataTabs):
 		if self.dtype=='PCS':
 			self.fit_pcs(dataTabs)
+		if self.dtype=='RDC':
+			raise TypeError("RDC does not support multiple fit")
+		if self.dtype=='PRE':
+			self.fit_pre(dataTabs)
+		if self.dtype=='CCR':
+			self.fit_ccr(dataTabs)
+
 
 	def get_data(self, dataTabs, seperateModels=False):
+		print(self.dtype)
 		if seperateModels:
 			models = self.frm_pdb.models
 		else:
@@ -1890,12 +1897,18 @@ class FittingOptionsFrame(tk.LabelFrame):
 				tmp = model, data
 				modeldata.append(tmp)
 			return modeldata
-		elif self.dtype in ['RDC','CCR']:
+		elif self.dtype=='RDC':
 			for model in models:
 				fitdata = dataTabs.get_fit_data(model)
 				data = fitdata[['atm','atx','exp','err']]
-				summ = fitdata['idx']
-				tmp = model, data, summ
+				tmp = model, data
+				modeldata.append(tmp)
+			return modeldata
+		elif self.dtype=='CCR':
+			for model in models:
+				fitdata = [tab.get_fit_data(model) for tab in dataTabs]
+				data = [d[['atm','atx','exp','err']] for d in fitdata]
+				tmp = model, data
 				modeldata.append(tmp)
 			return modeldata
 
@@ -2107,7 +2120,7 @@ class FittingOptionsFrame(tk.LabelFrame):
 		minmod = None
 		minmetal = None
 		progVar = tk.DoubleVar(value=0.0)
-		for model, data, summ in modeldata:
+		for model, data in modeldata:
 			metal, calc, qfac = fit.svd_fit_metal_from_rdc(metal, data)
 
 			if self.params['mod'].get():
@@ -2131,7 +2144,6 @@ class FittingOptionsFrame(tk.LabelFrame):
 
 	def fit_ccr(self, dataTabs):
 		metals = [tab.tensorStart.tensor.copy() for tab in dataTabs]
-		rtypes = [tab.rtype() for tab in dataTabs]
 		modeldata = self.get_data(dataTabs, 
 			seperateModels=self.params['mod'].get())
 
@@ -2149,10 +2161,10 @@ class FittingOptionsFrame(tk.LabelFrame):
 			progbar.set_label(nlrline)
 			progVar.set(1.0)
 			pars = self.get_params()
-			metals = fit.nlr_fit_metal_from_ccr(metals, data, pars)
+			metals, calc, qfacs = fit.nlr_fit_metal_from_ccr(metals, data, pars)
 
 			if self.params['mod'].get():
-				q = sum([fit.qfactor(m, d) for m, d in zip(metals, data)])
+				q = sum(qfacs)
 				if q<qfac:
 					minmod = model
 					minmetals = [m.copy() for m in metals]
@@ -2318,16 +2330,13 @@ class MethodsNotebook(ttk.Notebook):
 				(m, False, a, nan, nan, nan, a.serial_number))
 			templates['RDC'].append(
 				(m, False, a, None, nan, nan, nan, a.serial_number))
-			templates['PRE'].append(
-				(m, False, a, nan, nan, nan, a.serial_number))
-			templates['CCR'].append(
-				(m, False, a, None, nan, nan, nan, a.serial_number))
-
 			self.atomSet.add(a.name)
 
 		for dtype in self.dtypes:
 			template = np.array(templates[dtype], dtype=self.structdtype[dtype])
 			self.templates[dtype] = template
+		self.templates['PRE'] = self.templates['PCS'].copy()
+		self.templates['CCR'] = self.templates['RDC'].copy()
 
 		old_atomNames = set(self.frm_pdb.default_atom_selection)
 		new_atomNames = self.atomSet - old_atomNames

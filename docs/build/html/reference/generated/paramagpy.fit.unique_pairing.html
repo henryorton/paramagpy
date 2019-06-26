@@ -48,9 +48,10 @@
 <dl class="function">
 <dt id="paramagpy.fit.unique_pairing">
 <code class="descclassname">paramagpy.fit.</code><code class="descname">unique_pairing</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#unique_pairing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.unique_pairing" title="Permalink to this definition">¶</a></dt>
-<dd><p>Uniquely map two integers to a single integer.
+<dd><p>Bijectively map two integers to a single integer.
 The mapped space is minimum size.
-The input is symmetric.</p>
+The input is symmetric.
+see <a class="reference external" href="https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/">Bijective mapping f:ZxZ-&gt;N</a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -61,7 +62,7 @@ The input is symmetric.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>c</strong> – unique symmetric mapping (a, b) -&gt; c</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>c</strong> – bijective symmetric mapping (a, b) | (b, a) -&gt; c</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>

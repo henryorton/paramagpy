@@ -51,20 +51,27 @@
 <h1>paramagpy.fit.nlr_fit_metal_from_ccr<a class="headerlink" href="#paramagpy-fit-nlr-fit-metal-from-ccr" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="paramagpy.fit.nlr_fit_metal_from_ccr">
-<code class="descclassname">paramagpy.fit.</code><code class="descname">nlr_fit_metal_from_ccr</code><span class="sig-paren">(</span><em>metal</em>, <em>ccr</em>, <em>params=('x'</em>, <em>'y'</em>, <em>'z'</em>, <em>'iso')</em>, <em>sumIndices=None</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#nlr_fit_metal_from_ccr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.nlr_fit_metal_from_ccr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit Chi tensor to CCR values using non-linear regression.</p>
+<code class="descclassname">paramagpy.fit.</code><code class="descname">nlr_fit_metal_from_ccr</code><span class="sig-paren">(</span><em>initMetals</em>, <em>ccrs</em>, <em>params=('x'</em>, <em>'y'</em>, <em>'z')</em>, <em>sumIndices=None</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#nlr_fit_metal_from_ccr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.nlr_fit_metal_from_ccr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit deltaChi tensor to CCR values using non-linear regression.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>metal</strong> (<em>Metal object</em>) – the starting metal for fitting</li>
-<li><strong>ccr</strong> (<em>the CCR dataset</em>) – each CCR dataset has structure [Atom1, Atom2, value, error],
-where Atom is an Atom object, value is the PCS/RDC/PRE value
+<li><strong>initMetals</strong> (<em>list of Metal objects</em>) – a list of metals used as starting points for fitting.
+a list must always be provided, but may also contain
+only one element. If multiple metals are provided, each metal
+is fitted to their respective CCR dataset by index, but all are
+fitted to a common position.</li>
+<li><strong>ccrs</strong> (<em>list of CCR datasets</em>) – each CCR dataset must correspond to an associated metal for fitting.
+each CCR dataset has structure [Atom, value, error], where Atom is
+an Atom object, value is the PCS/RDC/PRE/CCR value
 and error is the uncertainty</li>
-<li><strong>params</strong> (<em>list of str</em><em>, </em><em>optional</em>) – the parameters to be fit.
-this defaults to (‘x’,’y’,’z’,’iso’)</li>
-<li><strong>sumIndices</strong> (<em>array of ints</em><em>, </em><em>optional</em>) – the list contains an index assigned to each atom.
+<li><strong>params</strong> (<em>list of str</em>) – the parameters to be fit.
+For example [‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’,’shift’]
+This defaults to [‘x’,’y’,’z’]</li>
+<li><strong>sumIndices</strong> (<em>list of arrays of ints</em><em>, </em><em>optional</em>) – each index list must correspond to an associated ccr dataset.
+each index list contains an index assigned to each atom.
 Common indices determine summation between models
 for ensemble averaging.
 If None, defaults to atom serial number to determine summation
@@ -75,9 +82,9 @@ iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>fitMetal</strong> (<em>Metal object</em>) – the fitted metal by NLR to the CCR data provided</li>
-<li><strong>calculated</strong> (<em>array of floats</em>) – the calculated CCR values</li>
-<li><strong>qfac</strong> (<em>float</em>) – the qfactor judging the fit quality</li>
+<li><strong>metals</strong> (<em>list of metals</em>) – the metals fitted by NLR to the CCR data provided</li>
+<li><strong>calc_ccrs</strong> (<em>list of lists of floats</em>) – the calculated CCR values</li>
+<li><strong>qfactors</strong> (<em>list</em>)</li>
 </ul>
 </p>
 </td>

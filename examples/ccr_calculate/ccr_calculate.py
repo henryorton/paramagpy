@@ -18,24 +18,29 @@ met_f.iso = 30.1E-32
 data_cn = prot.parse(dataparse.read_ccr("myo_cn.ccr"))
 data_f = prot.parse(dataparse.read_ccr("myo_f.ccr"))
 
-# Calculate the cross-correlated realxation
-compare_cn = []
-for H, N, value, error in data_cn:
-	delta = met_cn.atom_ccr(H, N)
-	compare_cn.append((delta, value))
 
-compare_f = []
-for H, N, value, error in data_f:
-	delta = met_f.atom_ccr(H, N)
-	compare_f.append((delta, value))
 
-# Plot theory compared to experimental data
-from matplotlib import pyplot as plt
-fig = plt.figure(figsize=(6,6))
-ax = fig.add_subplot(111)
-ax.scatter(*zip(*compare_cn), label="myo_cn")
-ax.scatter(*zip(*compare_f), label="myo_f")
-ax.legend()
-ax.set_xlabel("Calculated")
-ax.set_ylabel("Experiment")
-plt.show()
+
+
+
+# # Calculate the cross-correlated realxation
+# compare_cn = []
+# for H, N, value, error in data_cn:
+# 	delta = met_cn.atom_ccr(H, N)
+# 	compare_cn.append((delta, value))
+
+# compare_f = []
+# for H, N, value, error in data_f:
+# 	delta = met_f.atom_ccr(H, N)
+# 	compare_f.append((delta, value))
+
+# # Plot theory compared to experimental data
+# from matplotlib import pyplot as plt
+# fig = plt.figure(figsize=(6,6))
+# ax = fig.add_subplot(111)
+# ax.scatter(*zip(*compare_cn), label="myo_cn")
+# ax.scatter(*zip(*compare_f), label="myo_f")
+# ax.legend()
+# ax.set_xlabel("Calculated")
+# ax.set_ylabel("Experiment")
+# plt.show()

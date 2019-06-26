@@ -53,15 +53,15 @@
 <dl class="method">
 <dt id="paramagpy.metal.Metal.atom_ccr">
 <code class="descclassname">Metal.</code><code class="descname">atom_ccr</code><span class="sig-paren">(</span><em>atom</em>, <em>atomPartner</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.atom_ccr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.atom_ccr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the residual dipolar coupling between two atoms</p>
+<dd><p>Calculate R2 cross-corelated relaxation due to DDxDSA</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>atom</strong> (<em>biopython atom object</em>) – the active nuclear spin for which relaxation will be calculated
+<li><strong>atom</strong> (<a class="reference internal" href="paramagpy.protein.CustomAtom.html#paramagpy.protein.CustomAtom" title="paramagpy.protein.CustomAtom"><em>paramagpy.protein.CustomAtom</em></a>) – the active nuclear spin for which relaxation will be calculated
 must have attributes ‘position’ and ‘gamma’</li>
-<li><strong>atomPartner</strong> (<em>biopython atom object</em>) – the coupling parnter nuclear spin
+<li><strong>atomPartner</strong> (<a class="reference internal" href="paramagpy.protein.CustomAtom.html#paramagpy.protein.CustomAtom" title="paramagpy.protein.CustomAtom"><em>paramagpy.protein.CustomAtom</em></a>) – the coupling parnter nuclear spin
 must have method ‘dipole_shift_tensor’</li>
 </ul>
 </td>

@@ -284,6 +284,7 @@
 		<span class="s1">&#39;iso&#39;</span><span class="p">:</span> <span class="mf">1E32</span><span class="p">,</span>
 		<span class="s1">&#39;t1e&#39;</span><span class="p">:</span> <span class="mf">1E12</span><span class="p">,</span>
 		<span class="s1">&#39;taur&#39;</span><span class="p">:</span> <span class="mf">1E9</span><span class="p">,</span>
+		<span class="s1">&#39;mueff&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="o">/</span><span class="n">MUB</span><span class="p">,</span>
 	<span class="p">}</span>
 
 	<span class="c1"># J, g, T1e values for lanthanide series</span>
@@ -1021,38 +1022,81 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="n">tau</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">omega</span><span class="o">*</span><span class="n">tau</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Metal.second_invariant_squared"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.second_invariant_squared.html#paramagpy.metal.Metal.second_invariant_squared">[docs]</a>	<span class="nd">@staticmethod</span>
-	<span class="k">def</span> <span class="nf">second_invariant_squared</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+<div class="viewcode-block" id="Metal.first_invariant_squared"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.first_invariant_squared.html#paramagpy.metal.Metal.first_invariant_squared">[docs]</a>	<span class="nd">@staticmethod</span>
+	<span class="k">def</span> <span class="nf">first_invariant_squared</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Calculate the second invariant of a tensor.</span>
+<span class="sd">		Calculate the antisymmetric contribution to relaxation via the</span>
+<span class="sd">		first invariant of a tensor.</span>
 
-<span class="sd">		This is required for PRE calculations using the dipolar shilding tensor</span>
+<span class="sd">		This is required for PRE calculations using the shilding tensor</span>
 
 <span class="sd">		Parameters</span>
 <span class="sd">		----------</span>
 <span class="sd">		tensor : 3x3 matrix</span>
-<span class="sd">			a second rank symmetric tensor</span>
+<span class="sd">			a second rank tensor</span>
 
 <span class="sd">		Returns</span>
 <span class="sd">		-------</span>
-<span class="sd">		secondInvariant : float</span>
+<span class="sd">		firstInvariantSquared : float</span>
+<span class="sd">			the first invariant squared of the shift tensor</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">xy</span><span class="p">,</span> <span class="n">yx</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">xz</span><span class="p">,</span> <span class="n">zx</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">yz</span><span class="p">,</span> <span class="n">zy</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">sis</span> <span class="o">=</span> <span class="p">(</span><span class="n">xy</span><span class="o">-</span><span class="n">yx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">xz</span><span class="o">-</span><span class="n">zx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">yz</span><span class="o">-</span><span class="n">zy</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+		<span class="k">return</span> <span class="n">sis</span></div>
+
+<div class="viewcode-block" id="Metal.second_invariant_squared"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.second_invariant_squared.html#paramagpy.metal.Metal.second_invariant_squared">[docs]</a>	<span class="nd">@staticmethod</span>
+	<span class="k">def</span> <span class="nf">second_invariant_squared</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate the second invariant squared of a tensor.</span>
+
+<span class="sd">		This is required for PRE calculations using the shilding tensor</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		tensor : 3x3 matrix</span>
+<span class="sd">			a second rank tensor</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		secondInvariantSquared : float</span>
 <span class="sd">			the second invariant squared of the shift tensor</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="n">aniso</span> <span class="o">=</span> <span class="n">tensor</span> <span class="o">-</span> <span class="n">tensor</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mf">3.</span>
-		<span class="n">eigenvals</span><span class="p">,</span> <span class="n">eigenvecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">aniso</span><span class="p">)</span>
-		<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">eigenvals</span>
-		<span class="n">secondInvariantSquared</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">z</span><span class="o">*</span><span class="n">z</span> <span class="o">-</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="o">*</span><span class="n">z</span> <span class="o">-</span> <span class="n">y</span><span class="o">*</span><span class="n">z</span>
-		<span class="k">if</span> <span class="n">secondInvariantSquared</span><span class="o">.</span><span class="n">imag</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Imaginary second invariant&quot;</span><span class="p">)</span>
-		<span class="k">return</span> <span class="n">secondInvariantSquared</span><span class="o">.</span><span class="n">real</span></div>
+		<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">zz</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+		<span class="n">xy</span><span class="p">,</span> <span class="n">yx</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">xz</span><span class="p">,</span> <span class="n">zx</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">yz</span><span class="p">,</span> <span class="n">zy</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">sis</span> <span class="o">=</span> <span class="n">xx</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">yy</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">zz</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span><span class="n">xx</span><span class="o">*</span><span class="n">yy</span> <span class="o">-</span> <span class="n">xx</span><span class="o">*</span><span class="n">zz</span> <span class="o">-</span> <span class="n">yy</span><span class="o">*</span><span class="n">zz</span>
+		<span class="n">sis</span> <span class="o">+=</span> <span class="mf">0.75</span><span class="o">*</span><span class="p">((</span><span class="n">xy</span><span class="o">+</span><span class="n">yx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">xz</span><span class="o">+</span><span class="n">zx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">yz</span><span class="o">+</span><span class="n">zy</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">sis</span></div>
 
-<div class="viewcode-block" id="Metal.second_invariant_squared_test"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.second_invariant_squared_test.html#paramagpy.metal.Metal.second_invariant_squared_test">[docs]</a>	<span class="nd">@staticmethod</span>
-	<span class="k">def</span> <span class="nf">second_invariant_squared_test</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
-		<span class="n">aniso</span> <span class="o">=</span> <span class="n">tensor</span> <span class="o">-</span> <span class="n">tensor</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mf">3.</span>
-		<span class="k">return</span> <span class="p">(</span><span class="mf">3.</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span><span class="o">*</span><span class="n">aniso</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">aniso</span><span class="p">)</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span></div>
+<div class="viewcode-block" id="Metal.fast_first_invariant_squared"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.fast_first_invariant_squared.html#paramagpy.metal.Metal.fast_first_invariant_squared">[docs]</a>	<span class="nd">@staticmethod</span>
+	<span class="k">def</span> <span class="nf">fast_first_invariant_squared</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Vectorised version of </span>
+<span class="sd">		:meth:`paramagpy.metal.Metal.first_invariant_squared`</span>
+
+<span class="sd">		This is generally used for speed in fitting PRE data</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		tensorarray : array with shape (n,3,3)</span>
+<span class="sd">			array of shielding tensors</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		firstInvariantSquared : array with shape (n,1)</span>
+<span class="sd">			the first invariants squared of the tensors</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">xy</span><span class="p">,</span> <span class="n">yx</span> <span class="o">=</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">xz</span><span class="p">,</span> <span class="n">zx</span> <span class="o">=</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">yz</span><span class="p">,</span> <span class="n">zy</span> <span class="o">=</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">sis</span> <span class="o">=</span> <span class="p">(</span><span class="n">xy</span><span class="o">-</span><span class="n">yx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">xz</span><span class="o">-</span><span class="n">zx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">yz</span><span class="o">-</span><span class="n">zy</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+		<span class="k">return</span> <span class="n">sis</span></div>
 
 <div class="viewcode-block" id="Metal.fast_second_invariant_squared"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.fast_second_invariant_squared.html#paramagpy.metal.Metal.fast_second_invariant_squared">[docs]</a>	<span class="nd">@staticmethod</span>
-	<span class="k">def</span> <span class="nf">fast_second_invariant_squared</span><span class="p">(</span><span class="n">tensorarray</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">fast_second_invariant_squared</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Vectorised version of </span>
 <span class="sd">		:meth:`paramagpy.metal.Metal.second_invariant_squared`</span>
@@ -1062,17 +1106,22 @@
 <span class="sd">		Parameters</span>
 <span class="sd">		----------</span>
 <span class="sd">		tensorarray : array with shape (n,3,3)</span>
-<span class="sd">			array of tensors</span>
+<span class="sd">			array of shielding tensors</span>
 
 <span class="sd">		Returns</span>
 <span class="sd">		-------</span>
-<span class="sd">		secondInvariant : array with shape (n,1)</span>
+<span class="sd">		secondInvariantSquared : array with shape (n,1)</span>
 <span class="sd">			the second invariants squared of the tensors</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">zz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">tensorarray</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="o">.</span><span class="n">T</span>
-		<span class="k">return</span> <span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span> <span class="o">+</span> <span class="n">zz</span><span class="o">*</span><span class="n">zz</span> <span class="o">-</span> <span class="n">xx</span><span class="o">*</span><span class="n">yy</span> <span class="o">-</span> <span class="n">xx</span><span class="o">*</span><span class="n">zz</span> <span class="o">-</span> <span class="n">yy</span><span class="o">*</span><span class="n">zz</span></div>
+		<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">zz</span> <span class="o">=</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+		<span class="n">xy</span><span class="p">,</span> <span class="n">yx</span> <span class="o">=</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">xz</span><span class="p">,</span> <span class="n">zx</span> <span class="o">=</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">yz</span><span class="p">,</span> <span class="n">zy</span> <span class="o">=</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">t</span><span class="p">[:,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">sis</span> <span class="o">=</span> <span class="n">xx</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">yy</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">zz</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span><span class="n">xx</span><span class="o">*</span><span class="n">yy</span> <span class="o">-</span> <span class="n">xx</span><span class="o">*</span><span class="n">zz</span> <span class="o">-</span> <span class="n">yy</span><span class="o">*</span><span class="n">zz</span>
+		<span class="n">sis</span> <span class="o">+=</span> <span class="mf">0.75</span><span class="o">*</span><span class="p">((</span><span class="n">xy</span><span class="o">+</span><span class="n">yx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">xz</span><span class="o">+</span><span class="n">zx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">yz</span><span class="o">+</span><span class="n">zy</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">sis</span></div>
 
-<div class="viewcode-block" id="Metal.dsa_r1"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.dsa_r1.html#paramagpy.metal.Metal.dsa_r1">[docs]</a>	<span class="k">def</span> <span class="nf">dsa_r1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ignorePara</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Metal.dsa_r1"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.dsa_r1.html#paramagpy.metal.Metal.dsa_r1">[docs]</a>	<span class="k">def</span> <span class="nf">dsa_r1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Calculate R1 relaxation due to Curie Spin</span>
 
@@ -1091,23 +1140,23 @@
 <span class="sd">			the CSA tensor of the given spin.</span>
 <span class="sd">			This defualts to 0.0, meaning CSAxDSA crosscorrelation is</span>
 <span class="sd">			not accounted for.</span>
-<span class="sd">		ignorePara : bool (optional)</span>
-<span class="sd">			when True, only the CSA relaxation is calculated and returned.</span>
-<span class="sd">			All paramagnetic effects are ignored.</span>
 
 <span class="sd">		Returns</span>
 <span class="sd">		-------</span>
 <span class="sd">		value : float</span>
 <span class="sd">			The R1 relaxation rate in /s</span>
 <span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_shift_tensor</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+		<span class="n">fis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_invariant_squared</span><span class="p">(</span><span class="n">ds</span> <span class="o">+</span> <span class="n">csa</span><span class="p">)</span>
+		<span class="n">sis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_invariant_squared</span><span class="p">(</span><span class="n">ds</span> <span class="o">+</span> <span class="n">csa</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">csa</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+			<span class="n">fis</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_invariant_squared</span><span class="p">(</span><span class="n">csa</span><span class="p">)</span>
+			<span class="n">sis</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_invariant_squared</span><span class="p">(</span><span class="n">csa</span><span class="p">)</span>
 		<span class="n">omega</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">*</span> <span class="n">gamma</span>
-		<span class="k">if</span> <span class="n">ignorePara</span><span class="p">:</span>
-			<span class="n">shieldingTensor</span> <span class="o">=</span> <span class="n">csa</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="n">shieldingTensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_shift_tensor</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">+</span> <span class="n">csa</span>
-		<span class="n">secondInvariantSquared</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_invariant_squared</span><span class="p">(</span><span class="n">shieldingTensor</span><span class="p">)</span>
-		<span class="n">pf</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span><span class="o">/</span><span class="mf">15.</span><span class="p">)</span><span class="o">*</span><span class="n">secondInvariantSquared</span><span class="o">*</span><span class="n">omega</span><span class="o">**</span><span class="mi">2</span>
-		<span class="n">rate</span> <span class="o">=</span> <span class="n">pf</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+		<span class="n">pfasym</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">2.</span> <span class="p">)</span> <span class="o">*</span> <span class="n">fis</span> <span class="o">*</span> <span class="n">omega</span><span class="o">**</span><span class="mi">2</span>
+		<span class="n">pfsymm</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span><span class="o">/</span><span class="mf">15.</span><span class="p">)</span> <span class="o">*</span> <span class="n">sis</span> <span class="o">*</span> <span class="n">omega</span><span class="o">**</span><span class="mi">2</span>
+		<span class="n">rate</span>  <span class="o">=</span> <span class="n">pfasym</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">omega</span><span class="p">)</span>
+		<span class="n">rate</span> <span class="o">+=</span> <span class="n">pfsymm</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span>   <span class="n">omega</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">rate</span></div>
 
 <div class="viewcode-block" id="Metal.fast_dsa_r1"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.fast_dsa_r1.html#paramagpy.metal.Metal.fast_dsa_r1">[docs]</a>	<span class="k">def</span> <span class="nf">fast_dsa_r1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">posarray</span><span class="p">,</span> <span class="n">gammaarray</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
@@ -1133,18 +1182,19 @@
 <span class="sd">			The R1 relaxation rates in /s</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_dipole_shift_tensor</span><span class="p">(</span><span class="n">posarray</span><span class="p">)</span>
-		<span class="n">sis_para</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_second_invariant_squared</span><span class="p">(</span><span class="n">ds</span> <span class="o">+</span> <span class="n">csaarray</span><span class="p">)</span>
+		<span class="n">fis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_first_invariant_squared</span><span class="p">(</span><span class="n">ds</span> <span class="o">+</span> <span class="n">csaarray</span><span class="p">)</span>
+		<span class="n">sis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_second_invariant_squared</span><span class="p">(</span><span class="n">ds</span> <span class="o">+</span> <span class="n">csaarray</span><span class="p">)</span>
 		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">csaarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-			<span class="n">sis_dia</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_second_invariant_squared</span><span class="p">(</span><span class="n">csaarray</span><span class="p">)</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="n">sis_dia</span> <span class="o">=</span> <span class="mf">0.0</span>
-		<span class="n">sis_eff</span> <span class="o">=</span> <span class="n">sis_para</span> <span class="o">-</span> <span class="n">sis_dia</span>
+			<span class="n">fis</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_first_invariant_squared</span><span class="p">(</span><span class="n">csaarray</span><span class="p">)</span>
+			<span class="n">sis</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_second_invariant_squared</span><span class="p">(</span><span class="n">csaarray</span><span class="p">)</span>
 		<span class="n">omegas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">*</span> <span class="n">gammaarray</span>
-		<span class="n">pf</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span><span class="o">/</span><span class="mf">15.</span><span class="p">)</span><span class="o">*</span><span class="n">sis_eff</span><span class="o">*</span><span class="n">omegas</span><span class="o">**</span><span class="mi">2</span>
-		<span class="n">rate</span> <span class="o">=</span> <span class="n">pf</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="n">omegas</span><span class="p">)</span>
+		<span class="n">pfasym</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">2.</span> <span class="p">)</span> <span class="o">*</span> <span class="n">fis</span> <span class="o">*</span> <span class="n">omegas</span><span class="o">**</span><span class="mi">2</span>
+		<span class="n">pfsymm</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span><span class="o">/</span><span class="mf">15.</span><span class="p">)</span> <span class="o">*</span> <span class="n">sis</span> <span class="o">*</span> <span class="n">omegas</span><span class="o">**</span><span class="mi">2</span>
+		<span class="n">rate</span>  <span class="o">=</span> <span class="n">pfasym</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">omegas</span><span class="p">)</span>
+		<span class="n">rate</span> <span class="o">+=</span> <span class="n">pfsymm</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span>   <span class="n">omegas</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">rate</span></div>
 
-<div class="viewcode-block" id="Metal.dsa_r2"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.dsa_r2.html#paramagpy.metal.Metal.dsa_r2">[docs]</a>	<span class="k">def</span> <span class="nf">dsa_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ignorePara</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Metal.dsa_r2"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.dsa_r2.html#paramagpy.metal.Metal.dsa_r2">[docs]</a>	<span class="k">def</span> <span class="nf">dsa_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Calculate R2 relaxation due to Curie Spin</span>
 
@@ -1163,24 +1213,24 @@
 <span class="sd">			the CSA tensor of the given spin.</span>
 <span class="sd">			This defualts to 0.0, meaning CSAxDSA crosscorrelation is</span>
 <span class="sd">			not accounted for.</span>
-<span class="sd">		ignorePara : bool (optional)</span>
-<span class="sd">			when True, only the CSA relaxation is calculated and returned.</span>
-<span class="sd">			All paramagnetic effects are ignored.</span>
 
 <span class="sd">		Returns</span>
 <span class="sd">		-------</span>
 <span class="sd">		value : float</span>
 <span class="sd">			The R2 relaxation rate in /s</span>
 <span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_shift_tensor</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+		<span class="n">fis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_invariant_squared</span><span class="p">(</span><span class="n">ds</span> <span class="o">+</span> <span class="n">csa</span><span class="p">)</span>
+		<span class="n">sis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_invariant_squared</span><span class="p">(</span><span class="n">ds</span> <span class="o">+</span> <span class="n">csa</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">csa</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+			<span class="n">fis</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_invariant_squared</span><span class="p">(</span><span class="n">csa</span><span class="p">)</span>
+			<span class="n">sis</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_invariant_squared</span><span class="p">(</span><span class="n">csa</span><span class="p">)</span>
 		<span class="n">omega</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">*</span> <span class="n">gamma</span>
-		<span class="k">if</span> <span class="n">ignorePara</span><span class="p">:</span>
-			<span class="n">shieldingTensor</span> <span class="o">=</span> <span class="n">csa</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="n">shieldingTensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_shift_tensor</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">+</span> <span class="n">csa</span>
-		<span class="n">secondInvariantSquared</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_invariant_squared</span><span class="p">(</span><span class="n">shieldingTensor</span><span class="p">)</span>
-		<span class="n">pf</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">45.</span><span class="p">)</span><span class="o">*</span><span class="n">secondInvariantSquared</span><span class="o">*</span><span class="n">omega</span><span class="o">**</span><span class="mi">2</span>
-		<span class="n">rate</span> <span class="o">=</span> <span class="n">pf</span> <span class="o">*</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="mf">0.</span>   <span class="p">)</span> <span class="o">+</span>
-			         <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="n">omega</span><span class="p">))</span>
+		<span class="n">pfasym</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">4.</span> <span class="p">)</span> <span class="o">*</span> <span class="n">fis</span> <span class="o">*</span> <span class="n">omega</span><span class="o">**</span><span class="mi">2</span>
+		<span class="n">pfsymm</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">45.</span><span class="p">)</span> <span class="o">*</span> <span class="n">sis</span> <span class="o">*</span> <span class="n">omega</span><span class="o">**</span><span class="mi">2</span>
+		<span class="n">rate</span>  <span class="o">=</span> <span class="n">pfasym</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">omega</span><span class="p">)</span>
+		<span class="n">rate</span> <span class="o">+=</span> <span class="n">pfsymm</span> <span class="o">*</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="mf">0.</span>   <span class="p">)</span> <span class="o">+</span>
+						 <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="n">omega</span><span class="p">))</span>
 		<span class="k">return</span> <span class="n">rate</span></div>
 
 <div class="viewcode-block" id="Metal.fast_dsa_r2"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.fast_dsa_r2.html#paramagpy.metal.Metal.fast_dsa_r2">[docs]</a>	<span class="k">def</span> <span class="nf">fast_dsa_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">posarray</span><span class="p">,</span> <span class="n">gammaarray</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
@@ -1206,19 +1256,18 @@
 <span class="sd">			The R2 relaxation rates in /s</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_dipole_shift_tensor</span><span class="p">(</span><span class="n">posarray</span><span class="p">)</span>
-		<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">zz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">ds</span><span class="o">+</span><span class="n">csaarray</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-		<span class="n">sis_para</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_second_invariant_squared</span><span class="p">(</span><span class="n">ds</span> <span class="o">+</span> <span class="n">csaarray</span><span class="p">)</span>
+		<span class="n">fis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_first_invariant_squared</span><span class="p">(</span><span class="n">ds</span> <span class="o">+</span> <span class="n">csaarray</span><span class="p">)</span>
+		<span class="n">sis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_second_invariant_squared</span><span class="p">(</span><span class="n">ds</span> <span class="o">+</span> <span class="n">csaarray</span><span class="p">)</span>
 		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">csaarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-			<span class="n">sis_dia</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_second_invariant_squared</span><span class="p">(</span><span class="n">csaarray</span><span class="p">)</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="n">sis_dia</span> <span class="o">=</span> <span class="mf">0.0</span>
-		<span class="n">sis_eff</span> <span class="o">=</span> <span class="n">sis_para</span> <span class="o">-</span> <span class="n">sis_dia</span>
+			<span class="n">fis</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_first_invariant_squared</span><span class="p">(</span><span class="n">csaarray</span><span class="p">)</span>
+			<span class="n">sis</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_second_invariant_squared</span><span class="p">(</span><span class="n">csaarray</span><span class="p">)</span>
 		<span class="n">omegas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">*</span> <span class="n">gammaarray</span>
-		<span class="n">pf</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">45.</span><span class="p">)</span><span class="o">*</span><span class="n">sis_eff</span><span class="o">*</span><span class="n">omegas</span><span class="o">**</span><span class="mi">2</span>
-		<span class="n">rate</span> <span class="o">=</span> <span class="n">pf</span> <span class="o">*</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="mf">0.</span>    <span class="p">)</span> <span class="o">+</span>
-			         <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="n">omegas</span><span class="p">))</span>
+		<span class="n">pfasym</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">4.</span> <span class="p">)</span> <span class="o">*</span> <span class="n">fis</span> <span class="o">*</span> <span class="n">omegas</span><span class="o">**</span><span class="mi">2</span>
+		<span class="n">pfsymm</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">45.</span><span class="p">)</span> <span class="o">*</span> <span class="n">sis</span> <span class="o">*</span> <span class="n">omegas</span><span class="o">**</span><span class="mi">2</span>
+		<span class="n">rate</span>  <span class="o">=</span> <span class="n">pfasym</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">omegas</span><span class="p">)</span>
+		<span class="n">rate</span> <span class="o">+=</span> <span class="n">pfsymm</span> <span class="o">*</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="mf">0.</span>   <span class="p">)</span> <span class="o">+</span>
+						 <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_dens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taur</span><span class="p">,</span> <span class="n">omegas</span><span class="p">))</span>
 		<span class="k">return</span> <span class="n">rate</span></div>
-
 
 <div class="viewcode-block" id="Metal.sbm_r1"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.sbm_r1.html#paramagpy.metal.Metal.sbm_r1">[docs]</a>	<span class="k">def</span> <span class="nf">sbm_r1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
@@ -1366,7 +1415,7 @@
 	<span class="c1"># Methods for CCR calculations #</span>
 	<span class="c1">################################</span>
 
-<div class="viewcode-block" id="Metal.ccr_r2"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.ccr_r2.html#paramagpy.metal.Metal.ccr_r2">[docs]</a>	<span class="k">def</span> <span class="nf">ccr_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">dipole_shift_tensor</span><span class="p">):</span>
+<div class="viewcode-block" id="Metal.ccr"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.ccr.html#paramagpy.metal.Metal.ccr">[docs]</a>	<span class="k">def</span> <span class="nf">ccr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">dipole_shift_tensor</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Calculate R2 cross-corelated relaxation due to DDxDSA </span>
 
@@ -1394,9 +1443,9 @@
 		<span class="n">spinDown</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dsa_r2</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">csa</span><span class="o">=-</span><span class="n">shield</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">spinUp</span> <span class="o">-</span> <span class="n">spinDown</span></div>
 
-<div class="viewcode-block" id="Metal.fast_ccr_r2"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.fast_ccr_r2.html#paramagpy.metal.Metal.fast_ccr_r2">[docs]</a>	<span class="k">def</span> <span class="nf">fast_ccr_r2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">posarray</span><span class="p">,</span> <span class="n">gammaarray</span><span class="p">,</span> <span class="n">dstarray</span><span class="p">):</span>
+<div class="viewcode-block" id="Metal.fast_ccr"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.fast_ccr.html#paramagpy.metal.Metal.fast_ccr">[docs]</a>	<span class="k">def</span> <span class="nf">fast_ccr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">posarray</span><span class="p">,</span> <span class="n">gammaarray</span><span class="p">,</span> <span class="n">dstarray</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Vectorised version of :meth:`paramagpy.metal.Metal.ccr_r2`</span>
+<span class="sd">		Vectorised version of :meth:`paramagpy.metal.Metal.ccr`</span>
 
 <span class="sd">		This is generally used for speed in fitting DDxDSA data</span>
 
@@ -1427,14 +1476,14 @@
 
 <div class="viewcode-block" id="Metal.atom_ccr"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.atom_ccr.html#paramagpy.metal.Metal.atom_ccr">[docs]</a>	<span class="k">def</span> <span class="nf">atom_ccr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">atomPartner</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Calculate the residual dipolar coupling between two atoms</span>
+<span class="sd">		Calculate R2 cross-corelated relaxation due to DDxDSA </span>
 
 <span class="sd">		Parameters</span>
 <span class="sd">		----------</span>
-<span class="sd">		atom : biopython atom object</span>
+<span class="sd">		atom : paramagpy.protein.CustomAtom</span>
 <span class="sd">			the active nuclear spin for which relaxation will be calculated</span>
 <span class="sd">			must have attributes &#39;position&#39; and &#39;gamma&#39;</span>
-<span class="sd">		atomPartner : biopython atom object</span>
+<span class="sd">		atomPartner : paramagpy.protein.CustomAtom</span>
 <span class="sd">			the coupling parnter nuclear spin</span>
 <span class="sd">			must have method &#39;dipole_shift_tensor&#39;</span>
 
@@ -1444,7 +1493,7 @@
 <span class="sd">			the CCR differential line broadening in Hz</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">dd_tensor</span> <span class="o">=</span> <span class="n">atomPartner</span><span class="o">.</span><span class="n">dipole_shift_tensor</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
-		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ccr_r2</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span> <span class="n">dd_tensor</span><span class="p">)</span></div>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ccr</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span> <span class="n">dd_tensor</span><span class="p">)</span></div>
 			
 	<span class="c1">################################</span>
 	<span class="c1"># Methods for RDC calculations #</span>

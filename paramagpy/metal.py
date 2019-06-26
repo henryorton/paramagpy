@@ -982,37 +982,80 @@ class Metal(object):
 		return tau/(1+(omega*tau)**2)
 
 	@staticmethod
-	def second_invariant_squared(tensor):
+	def first_invariant_squared(t):
 		"""
-		Calculate the second invariant of a tensor.
+		Calculate the antisymmetric contribution to relaxation via the
+		first invariant of a tensor.
 
-		This is required for PRE calculations using the dipolar shilding tensor
+		This is required for PRE calculations using the shilding tensor
 
 		Parameters
 		----------
 		tensor : 3x3 matrix
-			a second rank symmetric tensor
+			a second rank tensor
 
 		Returns
 		-------
-		secondInvariant : float
+		firstInvariantSquared : float
+			the first invariant squared of the shift tensor
+		"""
+		xy, yx = t[0,1], t[1,0]
+		xz, zx = t[0,2], t[2,0]
+		yz, zy = t[1,2], t[2,1]
+		sis = (xy-yx)**2 + (xz-zx)**2 + (yz-zy)**2
+		return sis
+
+	@staticmethod
+	def second_invariant_squared(t):
+		"""
+		Calculate the second invariant squared of a tensor.
+
+		This is required for PRE calculations using the shilding tensor
+
+		Parameters
+		----------
+		tensor : 3x3 matrix
+			a second rank tensor
+
+		Returns
+		-------
+		secondInvariantSquared : float
 			the second invariant squared of the shift tensor
 		"""
-		aniso = tensor - tensor.trace()*np.identity(3)/3.
-		eigenvals, eigenvecs = np.linalg.eig(aniso)
-		x, y, z = eigenvals
-		secondInvariantSquared = x*x + y*y + z*z - x*y - x*z - y*z
-		if secondInvariantSquared.imag>0:
-			raise ValueError("Imaginary second invariant")
-		return secondInvariantSquared.real
+		xx, yy, zz = t[0,0], t[1,1], t[2,2]
+		xy, yx = t[0,1], t[1,0]
+		xz, zx = t[0,2], t[2,0]
+		yz, zy = t[1,2], t[2,1]
+		sis = xx**2 + yy**2 + zz**2 -xx*yy - xx*zz - yy*zz
+		sis += 0.75*((xy+yx)**2 + (xz+zx)**2 + (yz+zy)**2)
+		return sis
 
 	@staticmethod
-	def second_invariant_squared_test(tensor):
-		aniso = tensor - tensor.trace()*np.identity(3)/3.
-		return (3./2.)*aniso.dot(aniso).trace()
+	def fast_first_invariant_squared(t):
+		"""
+		Vectorised version of 
+		:meth:`paramagpy.metal.Metal.first_invariant_squared`
+
+		This is generally used for speed in fitting PRE data
+
+		Parameters
+		----------
+		tensorarray : array with shape (n,3,3)
+			array of shielding tensors
+
+		Returns
+		-------
+		firstInvariantSquared : array with shape (n,1)
+			the first invariants squared of the tensors
+		"""
+		xy, yx = t[:,0,1], t[:,1,0]
+		xz, zx = t[:,0,2], t[:,2,0]
+		yz, zy = t[:,1,2], t[:,2,1]
+		sis = (xy-yx)**2 + (xz-zx)**2 + (yz-zy)**2
+		return sis
 
 	@staticmethod
-	def fast_second_invariant_squared(tensorarray):
+	def fast_second_invariant_squared(t):
 		"""
 		Vectorised version of 
 		:meth:`paramagpy.metal.Metal.second_invariant_squared`
@@ -1022,17 +1065,22 @@ class Metal(object):
 		Parameters
 		----------
 		tensorarray : array with shape (n,3,3)
-			array of tensors
+			array of shielding tensors
 
 		Returns
 		-------
-		secondInvariant : array with shape (n,1)
+		secondInvariantSquared : array with shape (n,1)
 			the second invariants squared of the tensors
 		"""
-		xx, yy, zz = np.linalg.eigvals(tensorarray).real.T
-		return xx*xx + yy*yy + zz*zz - xx*yy - xx*zz - yy*zz
+		xx, yy, zz = t[:,0,0], t[:,1,1], t[:,2,2]
+		xy, yx = t[:,0,1], t[:,1,0]
+		xz, zx = t[:,0,2], t[:,2,0]
+		yz, zy = t[:,1,2], t[:,2,1]
+		sis = xx**2 + yy**2 + zz**2 -xx*yy - xx*zz - yy*zz
+		sis += 0.75*((xy+yx)**2 + (xz+zx)**2 + (yz+zy)**2)
+		return sis
 
-	def dsa_r1(self, position, gamma, csa=0.0, ignorePara=False):
+	def dsa_r1(self, position, gamma, csa=0.0):
 		"""
 		Calculate R1 relaxation due to Curie Spin
 
@@ -1051,23 +1099,23 @@ class Metal(object):
 			the CSA tensor of the given spin.
 			This defualts to 0.0, meaning CSAxDSA crosscorrelation is
 			not accounted for.
-		ignorePara : bool (optional)
-			when True, only the CSA relaxation is calculated and returned.
-			All paramagnetic effects are ignored.
 
 		Returns
 		-------
 		value : float
 			The R1 relaxation rate in /s
 		"""
+		ds = self.dipole_shift_tensor(position)
+		fis = self.first_invariant_squared(ds + csa)
+		sis = self.second_invariant_squared(ds + csa)
+		if isinstance(csa, np.ndarray):
+			fis -= self.first_invariant_squared(csa)
+			sis -= self.second_invariant_squared(csa)
 		omega = self.B0 * gamma
-		if ignorePara:
-			shieldingTensor = csa
-		else:
-			shieldingTensor = self.dipole_shift_tensor(position) + csa
-		secondInvariantSquared = self.second_invariant_squared(shieldingTensor)
-		pf = (2./15.)*secondInvariantSquared*omega**2
-		rate = pf * self.spec_dens(self.taur, omega)
+		pfasym = (1./2. ) * fis * omega**2
+		pfsymm = (2./15.) * sis * omega**2
+		rate  = pfasym * self.spec_dens(self.taur, 3*omega)
+		rate += pfsymm * self.spec_dens(self.taur,   omega)
 		return rate
 
 	def fast_dsa_r1(self, posarray, gammaarray, csaarray=0.0):
@@ -1093,18 +1141,19 @@ class Metal(object):
 			The R1 relaxation rates in /s
 		"""
 		ds = self.fast_dipole_shift_tensor(posarray)
-		sis_para = self.fast_second_invariant_squared(ds + csaarray)
+		fis = self.fast_first_invariant_squared(ds + csaarray)
+		sis = self.fast_second_invariant_squared(ds + csaarray)
 		if isinstance(csaarray, np.ndarray):
-			sis_dia = self.fast_second_invariant_squared(csaarray)
-		else:
-			sis_dia = 0.0
-		sis_eff = sis_para - sis_dia
+			fis -= self.fast_first_invariant_squared(csaarray)
+			sis -= self.fast_second_invariant_squared(csaarray)
 		omegas = self.B0 * gammaarray
-		pf = (2./15.)*sis_eff*omegas**2
-		rate = pf * self.spec_dens(self.taur, omegas)
+		pfasym = (1./2. ) * fis * omegas**2
+		pfsymm = (2./15.) * sis * omegas**2
+		rate  = pfasym * self.spec_dens(self.taur, 3*omegas)
+		rate += pfsymm * self.spec_dens(self.taur,   omegas)
 		return rate
 
-	def dsa_r2(self, position, gamma, csa=0.0, ignorePara=False):
+	def dsa_r2(self, position, gamma, csa=0.0):
 		"""
 		Calculate R2 relaxation due to Curie Spin
 
@@ -1123,24 +1172,24 @@ class Metal(object):
 			the CSA tensor of the given spin.
 			This defualts to 0.0, meaning CSAxDSA crosscorrelation is
 			not accounted for.
-		ignorePara : bool (optional)
-			when True, only the CSA relaxation is calculated and returned.
-			All paramagnetic effects are ignored.
 
 		Returns
 		-------
 		value : float
 			The R2 relaxation rate in /s
 		"""
+		ds = self.dipole_shift_tensor(position)
+		fis = self.first_invariant_squared(ds + csa)
+		sis = self.second_invariant_squared(ds + csa)
+		if isinstance(csa, np.ndarray):
+			fis -= self.first_invariant_squared(csa)
+			sis -= self.second_invariant_squared(csa)
 		omega = self.B0 * gamma
-		if ignorePara:
-			shieldingTensor = csa
-		else:
-			shieldingTensor = self.dipole_shift_tensor(position) + csa
-		secondInvariantSquared = self.second_invariant_squared(shieldingTensor)
-		pf = (1./45.)*secondInvariantSquared*omega**2
-		rate = pf * (4*self.spec_dens(self.taur, 0.   ) +
-			         3*self.spec_dens(self.taur, omega))
+		pfasym = (1./4. ) * fis * omega**2
+		pfsymm = (1./45.) * sis * omega**2
+		rate  = pfasym * self.spec_dens(self.taur, 3*omega)
+		rate += pfsymm *(4*self.spec_dens(self.taur, 0.   ) +
+						 3*self.spec_dens(self.taur, omega))
 		return rate
 
 	def fast_dsa_r2(self, posarray, gammaarray, csaarray=0.0):
@@ -1166,19 +1215,18 @@ class Metal(object):
 			The R2 relaxation rates in /s
 		"""
 		ds = self.fast_dipole_shift_tensor(posarray)
-		xx, yy, zz = np.linalg.eigvals(ds+csaarray).T
-		sis_para = self.fast_second_invariant_squared(ds + csaarray)
+		fis = self.fast_first_invariant_squared(ds + csaarray)
+		sis = self.fast_second_invariant_squared(ds + csaarray)
 		if isinstance(csaarray, np.ndarray):
-			sis_dia = self.fast_second_invariant_squared(csaarray)
-		else:
-			sis_dia = 0.0
-		sis_eff = sis_para - sis_dia
+			fis -= self.fast_first_invariant_squared(csaarray)
+			sis -= self.fast_second_invariant_squared(csaarray)
 		omegas = self.B0 * gammaarray
-		pf = (1./45.)*sis_eff*omegas**2
-		rate = pf * (4*self.spec_dens(self.taur, 0.    ) +
-			         3*self.spec_dens(self.taur, omegas))
+		pfasym = (1./4. ) * fis * omegas**2
+		pfsymm = (1./45.) * sis * omegas**2
+		rate  = pfasym * self.spec_dens(self.taur, 3*omegas)
+		rate += pfsymm *(4*self.spec_dens(self.taur, 0.   ) +
+						 3*self.spec_dens(self.taur, omegas))
 		return rate
-
 
 	def sbm_r1(self, position, gamma):
 		"""
@@ -1326,7 +1374,7 @@ class Metal(object):
 	# Methods for CCR calculations #
 	################################
 
-	def ccr_r2(self, position, gamma, dipole_shift_tensor):
+	def ccr(self, position, gamma, dipole_shift_tensor):
 		"""
 		Calculate R2 cross-corelated relaxation due to DDxDSA 
 
@@ -1354,9 +1402,9 @@ class Metal(object):
 		spinDown = self.dsa_r2(position, gamma, csa=-shield)
 		return spinUp - spinDown
 
-	def fast_ccr_r2(self, posarray, gammaarray, dstarray):
+	def fast_ccr(self, posarray, gammaarray, dstarray):
 		"""
-		Vectorised version of :meth:`paramagpy.metal.Metal.ccr_r2`
+		Vectorised version of :meth:`paramagpy.metal.Metal.ccr`
 
 		This is generally used for speed in fitting DDxDSA data
 
@@ -1387,14 +1435,14 @@ class Metal(object):
 
 	def atom_ccr(self, atom, atomPartner):
 		"""
-		Calculate the residual dipolar coupling between two atoms
+		Calculate R2 cross-corelated relaxation due to DDxDSA 
 
 		Parameters
 		----------
-		atom : biopython atom object
+		atom : paramagpy.protein.CustomAtom
 			the active nuclear spin for which relaxation will be calculated
 			must have attributes 'position' and 'gamma'
-		atomPartner : biopython atom object
+		atomPartner : paramagpy.protein.CustomAtom
 			the coupling parnter nuclear spin
 			must have method 'dipole_shift_tensor'
 
@@ -1404,7 +1452,7 @@ class Metal(object):
 			the CCR differential line broadening in Hz
 		"""
 		dd_tensor = atomPartner.dipole_shift_tensor(atom.position)
-		return self.ccr_r2(atom.position, atom.gamma, dd_tensor)
+		return self.ccr(atom.position, atom.gamma, dd_tensor)
 			
 	################################
 	# Methods for RDC calculations #

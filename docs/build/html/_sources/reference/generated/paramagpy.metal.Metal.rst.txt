@@ -18,15 +18,16 @@ paramagpy.metal.Metal
                   ~Metal.atom_pcs
                   ~Metal.atom_rdc
                   ~Metal.atom_set_position
-                  ~Metal.ccr_r2
+                  ~Metal.ccr
                   ~Metal.copy
                   ~Metal.dipole_shift_tensor
                   ~Metal.dsa_r1
                   ~Metal.dsa_r2
-                  ~Metal.fast_ccr_r2
+                  ~Metal.fast_ccr
                   ~Metal.fast_dipole_shift_tensor
                   ~Metal.fast_dsa_r1
                   ~Metal.fast_dsa_r2
+                  ~Metal.fast_first_invariant_squared
                   ~Metal.fast_pcs
                   ~Metal.fast_pre
                   ~Metal.fast_racs
@@ -35,6 +36,7 @@ paramagpy.metal.Metal
                   ~Metal.fast_sbm_r1
                   ~Metal.fast_sbm_r2
                   ~Metal.fast_second_invariant_squared
+                  ~Metal.first_invariant_squared
                   ~Metal.get_params
                   ~Metal.info
                   ~Metal.isomap
@@ -48,7 +50,6 @@ paramagpy.metal.Metal
                   ~Metal.sbm_r1
                   ~Metal.sbm_r2
                   ~Metal.second_invariant_squared
-                  ~Metal.second_invariant_squared_test
                   ~Metal.set_Jg
                   ~Metal.set_lanthanide
                   ~Metal.set_params

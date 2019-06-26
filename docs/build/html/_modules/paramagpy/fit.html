@@ -43,12 +43,15 @@
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">fmin_bfgs</span>
 <span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 
 <div class="viewcode-block" id="unique_pairing"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.unique_pairing.html#paramagpy.fit.unique_pairing">[docs]</a><span class="k">def</span> <span class="nf">unique_pairing</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Uniquely map two integers to a single integer.</span>
+<span class="sd">	Bijectively map two integers to a single integer.</span>
 <span class="sd">	The mapped space is minimum size.</span>
 <span class="sd">	The input is symmetric.</span>
+<span class="sd">	see `Bijective mapping f:ZxZ-&gt;N &lt;https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/&gt;`_.</span>
+
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
@@ -58,9 +61,29 @@
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 <span class="sd">	c : int</span>
-<span class="sd">		unique symmetric mapping (a, b) -&gt; c</span>
+<span class="sd">		bijective symmetric mapping (a, b) | (b, a) -&gt; c</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">+</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">//</span> <span class="mi">4</span>
+	<span class="k">return</span> <span class="n">c</span></div>
+
+<div class="viewcode-block" id="cantor_pairing"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.cantor_pairing.html#paramagpy.fit.cantor_pairing">[docs]</a><span class="k">def</span> <span class="nf">cantor_pairing</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Map two integers to a single integer.</span>
+<span class="sd">	The mapped space is minimum size.</span>
+<span class="sd">	Ordering matters in this case.</span>
+<span class="sd">	see `Bijective mapping f:ZxZ-&gt;N &lt;https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/&gt;`_.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	a : int</span>
+<span class="sd">	b : int</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	c : int</span>
+<span class="sd">		bijective mapping (a, b) -&gt; c</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span> <span class="o">+</span> <span class="n">b</span>
 	<span class="k">return</span> <span class="n">c</span></div>
 
 <div class="viewcode-block" id="clean_indices"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.clean_indices.html#paramagpy.fit.clean_indices">[docs]</a><span class="k">def</span> <span class="nf">clean_indices</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span>
@@ -190,21 +213,25 @@
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
-<span class="sd">	tuple : (atom coordinates, gamma values, dipole shielding tensors,</span>
-<span class="sd">			CCR values, CCR errors, atom indices)</span>
+<span class="sd">	tuple : dict</span>
 <span class="sd">		all information required for CCR calculations</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">atoms</span><span class="p">,</span> <span class="n">atomsPartner</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
-	<span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">position</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
-	<span class="n">gammas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">gamma</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">])</span>
-	<span class="n">dsts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">dipole_shift_tensor</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">position</span><span class="p">)</span> 
-		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">atomsPartner</span><span class="p">)])</span>
 	<span class="k">if</span> <span class="mf">0.0</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
 		<span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">))</span>
 		<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;0.0 value uncertainty. All values weighted evenly&quot;</span><span class="p">)</span>
-	<span class="n">idxs</span> <span class="o">=</span> <span class="n">clean_indices</span><span class="p">([</span><span class="n">unique_pairing</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">serial_number</span><span class="p">,</span> 
-		<span class="n">j</span><span class="o">.</span><span class="n">serial_number</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">atomsPartner</span><span class="p">)])</span>
-	<span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="n">coords</span><span class="p">,</span> <span class="n">gammas</span><span class="p">,</span> <span class="n">dsts</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="n">idxs</span><span class="p">])</span></div>
+
+	<span class="n">d</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s1">&#39;pos&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">position</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]),</span>
+		<span class="s1">&#39;gam&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">gamma</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]),</span>
+		<span class="s1">&#39;dst&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">dipole_shift_tensor</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">position</span><span class="p">)</span> 
+						<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">atomsPartner</span><span class="p">)]),</span>
+		<span class="s1">&#39;val&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">),</span>
+		<span class="s1">&#39;err&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">errors</span><span class="p">),</span>
+		<span class="s1">&#39;idx&#39;</span><span class="p">:</span><span class="n">clean_indices</span><span class="p">([</span><span class="n">cantor_pairing</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">serial_number</span><span class="p">,</span> <span class="n">j</span><span class="o">.</span><span class="n">serial_number</span><span class="p">)</span> 
+							 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">atomsPartner</span><span class="p">)])</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">d</span></div>
 
 <div class="viewcode-block" id="sphere_grid"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.sphere_grid.html#paramagpy.fit.sphere_grid">[docs]</a><span class="k">def</span> <span class="nf">sphere_grid</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -701,10 +728,6 @@
 	<span class="k">return</span> <span class="p">(</span><span class="n">numer</span><span class="o">/</span><span class="n">denom</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span></div>
 
 
-<div class="viewcode-block" id="pcs"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.pcs.html#paramagpy.fit.pcs">[docs]</a><span class="k">def</span> <span class="nf">pcs</span><span class="p">(</span><span class="n">metal</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
-	<span class="k">return</span> <span class="n">metal</span><span class="o">.</span><span class="n">pcs</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">)</span></div>
-
-
 <div class="viewcode-block" id="nlr_fit_metal_from_pre"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.nlr_fit_metal_from_pre.html#paramagpy.fit.nlr_fit_metal_from_pre">[docs]</a><span class="k">def</span> <span class="nf">nlr_fit_metal_from_pre</span><span class="p">(</span><span class="n">initMetals</span><span class="p">,</span> <span class="n">pres</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">sumIndices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
 	<span class="n">rtypes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">usesbm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">usedsa</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">usecsa</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -842,61 +865,6 @@
 	<span class="k">return</span> <span class="n">rate</span></div>
 
 
-<div class="viewcode-block" id="ccr"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.ccr.html#paramagpy.fit.ccr">[docs]</a><span class="k">def</span> <span class="nf">ccr</span><span class="p">(</span><span class="n">metal</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
-	<span class="k">pass</span></div>
-
-
-
-<span class="c1">########## THIS OLD VERSION IT NOT WEIGHTED #############</span>
-<span class="c1"># def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx):</span>
-<span class="c1"># 	&quot;&quot;&quot;</span>
-<span class="c1"># 	Solve RDC equation by single value decomposition.</span>
-<span class="c1"># 	This function is generally called by higher methods like </span>
-<span class="c1"># 	&lt;svd_fit_metal_from_rdc&gt;</span>
-
-<span class="c1"># 	Parameters</span>
-<span class="c1"># 	----------</span>
-<span class="c1"># 	vec : array of [x,y,z] floats</span>
-<span class="c1"># 		the internuclear vectors in meters</span>
-<span class="c1"># 	rdc_parameterised : array of floats</span>
-<span class="c1"># 		the experimental RDC values, normalised by a prefactor</span>
-<span class="c1"># 	idx : array of ints</span>
-<span class="c1"># 		an index assigned to each atom. Common indices determine summation</span>
-<span class="c1"># 		between models for ensemble averaging.</span>
-
-<span class="c1"># 	Returns</span>
-<span class="c1"># 	-------</span>
-<span class="c1"># 	calc : array of floats</span>
-<span class="c1"># 		the calculated RDC values from the fitted tensor</span>
-<span class="c1"># 	sol : array of floats</span>
-<span class="c1"># 		sol is the solution to the linearised PCS equation and </span>
-<span class="c1"># 		consists of the tensor matrix elements</span>
-<span class="c1"># 	&quot;&quot;&quot;</span>
-<span class="c1"># 	dist = np.linalg.norm(vec, axis=1)</span>
-<span class="c1"># 	x, y, z = vec.T</span>
-<span class="c1"># 	a = x**2 - z**2</span>
-<span class="c1"># 	b = y**2 - z**2</span>
-<span class="c1"># 	c = 2 * x * y</span>
-<span class="c1"># 	d = 2 * x * z</span>
-<span class="c1"># 	e = 2 * y * z</span>
-<span class="c1"># 	mat = (1./dist**5) * np.array([a,b,c,d,e])</span>
-<span class="c1"># 	mat = np.array([np.bincount(idx, weights=col) for col in mat])</span>
-<span class="c1"># 	matinv = np.linalg.pinv(mat)</span>
-<span class="c1"># 	sol = matinv.T.dot(rdc_parameterised)</span>
-<span class="c1"># 	calc = mat.T.dot(sol)</span>
-<span class="c1"># 	return calc, sol</span>
-
-
-<span class="c1"># def svd_fit_metal_from_rdc(metal, rdc):</span>
-<span class="c1"># 	vecarray, gamarray, rdcarray, errarray, idxarray = extract_rdc(rdc)</span>
-<span class="c1"># 	pfarray = -3*(metal.MU0 * gamarray * metal.HBAR) / (8 * np.pi**2)</span>
-<span class="c1"># 	rdc_parameterised = np.bincount(idxarray, weights=rdcarray / pfarray)</span>
-<span class="c1"># 	fitMetal = metal.copy()</span>
-<span class="c1"># 	_, sol = svd_calc_metal_from_rdc(vecarray, rdc_parameterised, idxarray)</span>
-<span class="c1"># 	fitMetal.upper_triang_alignment = sol</span>
-<span class="c1"># 	calculated = fitMetal.fast_rdc(vecarray, gamarray)</span>
-<span class="c1"># 	qfac = qfactor(rdcarray, calculated, idxarray)</span>
-<span class="c1"># 	return fitMetal, calculated, qfac</span>
 
 <div class="viewcode-block" id="svd_calc_metal_from_rdc"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.svd_calc_metal_from_rdc.html#paramagpy.fit.svd_calc_metal_from_rdc">[docs]</a><span class="k">def</span> <span class="nf">svd_calc_metal_from_rdc</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">rdc_parameterised</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">errors</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -1045,24 +1013,32 @@
 
 	<span class="k">return</span> <span class="n">fitMetal</span><span class="p">,</span> <span class="n">calculated</span><span class="p">,</span> <span class="n">qfac</span></div>
 
-<div class="viewcode-block" id="nlr_fit_metal_from_ccr"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.nlr_fit_metal_from_ccr.html#paramagpy.fit.nlr_fit_metal_from_ccr">[docs]</a><span class="k">def</span> <span class="nf">nlr_fit_metal_from_ccr</span><span class="p">(</span><span class="n">metal</span><span class="p">,</span> <span class="n">ccr</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">,</span><span class="s1">&#39;iso&#39;</span><span class="p">),</span> 
+
+<div class="viewcode-block" id="nlr_fit_metal_from_ccr"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.nlr_fit_metal_from_ccr.html#paramagpy.fit.nlr_fit_metal_from_ccr">[docs]</a><span class="k">def</span> <span class="nf">nlr_fit_metal_from_ccr</span><span class="p">(</span><span class="n">initMetals</span><span class="p">,</span> <span class="n">ccrs</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">),</span> 
 	<span class="n">sumIndices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Fit Chi tensor to CCR values using non-linear regression.</span>
+<span class="sd">	Fit deltaChi tensor to CCR values using non-linear regression.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
-<span class="sd">	metal : Metal object</span>
-<span class="sd">		the starting metal for fitting</span>
-<span class="sd">	ccr : the CCR dataset</span>
-<span class="sd">		each CCR dataset has structure [Atom1, Atom2, value, error], </span>
-<span class="sd">		where Atom is an Atom object, value is the PCS/RDC/PRE value</span>
+<span class="sd">	initMetals : list of Metal objects</span>
+<span class="sd">		a list of metals used as starting points for fitting. </span>
+<span class="sd">		a list must always be provided, but may also contain </span>
+<span class="sd">		only one element. If multiple metals are provided, each metal</span>
+<span class="sd">		is fitted to their respective CCR dataset by index, but all are </span>
+<span class="sd">		fitted to a common position.</span>
+<span class="sd">	ccrs : list of CCR datasets</span>
+<span class="sd">		each CCR dataset must correspond to an associated metal for fitting.</span>
+<span class="sd">		each CCR dataset has structure [Atom, value, error], where Atom is </span>
+<span class="sd">		an Atom object, value is the PCS/RDC/PRE/CCR value</span>
 <span class="sd">		and error is the uncertainty</span>
-<span class="sd">	params : list of str, optional</span>
+<span class="sd">	params : list of str</span>
 <span class="sd">		the parameters to be fit. </span>
-<span class="sd">		this defaults to (&#39;x&#39;,&#39;y&#39;,&#39;z&#39;,&#39;iso&#39;)</span>
-<span class="sd">	sumIndices : array of ints, optional</span>
-<span class="sd">		the list contains an index assigned to each atom. </span>
+<span class="sd">		For example [&#39;x&#39;,&#39;y&#39;,&#39;z&#39;,&#39;ax&#39;,&#39;rh&#39;,&#39;a&#39;,&#39;b&#39;,&#39;g&#39;,&#39;shift&#39;]</span>
+<span class="sd">		This defaults to [&#39;x&#39;,&#39;y&#39;,&#39;z&#39;]</span>
+<span class="sd">	sumIndices : list of arrays of ints, optional</span>
+<span class="sd">		each index list must correspond to an associated ccr dataset.</span>
+<span class="sd">		each index list contains an index assigned to each atom. </span>
 <span class="sd">		Common indices determine summation between models </span>
 <span class="sd">		for ensemble averaging.</span>
 <span class="sd">		If None, defaults to atom serial number to determine summation </span>
@@ -1073,37 +1049,62 @@
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
-<span class="sd">	fitMetal : Metal object</span>
-<span class="sd">		the fitted metal by NLR to the CCR data provided</span>
-<span class="sd">	calculated : array of floats</span>
+<span class="sd">	metals : list of metals</span>
+<span class="sd">		the metals fitted by NLR to the CCR data provided</span>
+<span class="sd">	calc_ccrs : list of lists of floats</span>
 <span class="sd">		the calculated CCR values</span>
-<span class="sd">	qfac : float</span>
-<span class="sd">		the qfactor judging the fit quality</span>
+<span class="sd">	qfactors : list</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="p">(</span><span class="n">posarray</span><span class="p">,</span> <span class="n">gamarray</span><span class="p">,</span> <span class="n">dstarray</span><span class="p">,</span> 
-		<span class="n">ccrarray</span><span class="p">,</span> <span class="n">errarray</span><span class="p">,</span> <span class="n">idxarray</span><span class="p">)</span> <span class="o">=</span> <span class="n">extract_ccr</span><span class="p">(</span><span class="n">ccr</span><span class="p">)</span>
-	<span class="k">if</span> <span class="n">sumIndices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-		<span class="n">sumIndices</span> <span class="o">=</span> <span class="n">idxarray</span>
-	<span class="n">fitMetal</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+	<span class="n">datas</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">ccr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">initMetals</span><span class="p">,</span> <span class="n">ccrs</span><span class="p">):</span>
+		<span class="n">d</span> <span class="o">=</span> <span class="n">extract_ccr</span><span class="p">(</span><span class="n">ccr</span><span class="p">)</span>
+		<span class="n">d</span><span class="p">[</span><span class="s1">&#39;met&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+		<span class="n">datas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+	<span class="n">params</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+	<span class="n">pospars</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">params</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">]))</span>
+	<span class="n">otherpars</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">params</span> <span class="o">-</span> <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">]))</span>
+
+	<span class="n">startpars</span> <span class="o">=</span> <span class="n">initMetals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">pospars</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">datas</span><span class="p">):</span>
+		<span class="n">d</span><span class="p">[</span><span class="s1">&#39;pospars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pospars</span><span class="p">))</span>
+		<span class="n">d</span><span class="p">[</span><span class="s1">&#39;othpars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pospars</span><span class="p">)</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">otherpars</span><span class="p">),</span> 
+						  <span class="nb">len</span><span class="p">(</span><span class="n">pospars</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">otherpars</span><span class="p">))</span>
+		<span class="n">startpars</span> <span class="o">+=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;met&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">otherpars</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">sumIndices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">idxarrays</span> <span class="o">=</span> <span class="n">sumIndices</span>
 
 	<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-		<span class="n">fitMetal</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
-		<span class="n">calccr</span> <span class="o">=</span> <span class="n">fitMetal</span><span class="o">.</span><span class="n">fast_ccr_r2</span><span class="p">(</span><span class="n">posarray</span><span class="p">,</span> <span class="n">gamarray</span><span class="p">,</span> <span class="n">dstarray</span><span class="p">)</span>
-		<span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">calccr</span> <span class="o">-</span> <span class="n">ccrarray</span><span class="p">)</span> <span class="o">/</span> <span class="n">errarray</span>
-		<span class="n">selectiveSum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">idxarray</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">diff</span><span class="p">)</span>
-		<span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">selectiveSum</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+		<span class="n">score</span> <span class="o">=</span> <span class="mf">0.0</span>
+		<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">datas</span><span class="p">:</span>
+			<span class="n">d</span><span class="p">[</span><span class="s1">&#39;met&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">pospars</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;pospars&#39;</span><span class="p">]]))</span>
+			<span class="n">d</span><span class="p">[</span><span class="s1">&#39;met&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">otherpars</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;othpars&#39;</span><span class="p">]]))</span>
+			<span class="n">d</span><span class="p">[</span><span class="s1">&#39;cal&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;met&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fast_ccr_r2</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;gam&#39;</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;dst&#39;</span><span class="p">])</span>
+			<span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;cal&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;err&#39;</span><span class="p">]</span>
+			<span class="n">selectiveSum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;idx&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">diff</span><span class="p">)</span>
+			<span class="n">score</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">selectiveSum</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
 		<span class="k">return</span> <span class="n">score</span>
 
-	<span class="n">startpars</span> <span class="o">=</span> <span class="n">fitMetal</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 	<span class="n">fmin_bfgs</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">startpars</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-	<span class="n">fitMetal</span><span class="o">.</span><span class="n">set_utr</span><span class="p">()</span>
-	<span class="n">calculated</span> <span class="o">=</span> <span class="n">fitMetal</span><span class="o">.</span><span class="n">fast_ccr_r2</span><span class="p">(</span><span class="n">posarray</span><span class="p">,</span> <span class="n">gamarray</span><span class="p">,</span> <span class="n">dstarray</span><span class="p">)</span>
-	<span class="n">qfac</span> <span class="o">=</span> <span class="n">qfactor</span><span class="p">(</span><span class="n">ccrarray</span><span class="p">,</span> <span class="n">calculated</span><span class="p">,</span> <span class="n">idxarray</span><span class="p">)</span>
+	<span class="n">fitmetals</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">calc_ccrs</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">qfactors</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">datas</span><span class="p">:</span>
+		<span class="n">d</span><span class="p">[</span><span class="s1">&#39;met&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_utr</span><span class="p">()</span>
+		<span class="n">fitmetals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;met&#39;</span><span class="p">])</span>
+		<span class="n">calc_ccrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;cal&#39;</span><span class="p">])</span>
+		<span class="n">qfac</span> <span class="o">=</span> <span class="n">qfactor</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;cal&#39;</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;idx&#39;</span><span class="p">])</span>
+		<span class="n">qfactors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qfac</span><span class="p">)</span>
 
 	<span class="k">if</span> <span class="n">progress</span><span class="p">:</span>
 		<span class="n">progress</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">fitmetals</span><span class="p">,</span> <span class="n">calc_ccrs</span><span class="p">,</span> <span class="n">qfactors</span></div>
 
-	<span class="k">return</span> <span class="n">fitMetal</span><span class="p">,</span> <span class="n">calculated</span><span class="p">,</span> <span class="n">qfac</span></div>
+
+
+
 
 <div class="viewcode-block" id="ensemble_average"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.ensemble_average.html#paramagpy.fit.ensemble_average">[docs]</a><span class="k">def</span> <span class="nf">ensemble_average</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">):</span>
 	<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>

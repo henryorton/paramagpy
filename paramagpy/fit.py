@@ -6,9 +6,11 @@ from collections import OrderedDict
 
 def unique_pairing(a, b):
 	"""
-	Uniquely map two integers to a single integer.
+	Bijectively map two integers to a single integer.
 	The mapped space is minimum size.
 	The input is symmetric.
+	see `Bijective mapping f:ZxZ->N <https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/>`_.
+
 
 	Parameters
 	----------
@@ -18,9 +20,29 @@ def unique_pairing(a, b):
 	Returns
 	-------
 	c : int
-		unique symmetric mapping (a, b) -> c
+		bijective symmetric mapping (a, b) | (b, a) -> c
 	"""
 	c = a * b + (abs(a - b) - 1)**2 // 4
+	return c
+
+def cantor_pairing(a, b):
+	"""
+	Map two integers to a single integer.
+	The mapped space is minimum size.
+	Ordering matters in this case.
+	see `Bijective mapping f:ZxZ->N <https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/>`_.
+
+	Parameters
+	----------
+	a : int
+	b : int
+
+	Returns
+	-------
+	c : int
+		bijective mapping (a, b) -> c
+	"""
+	c = (a + b)*(a + b + 1)//2 + b
 	return c
 
 def clean_indices(indices):
@@ -165,7 +187,7 @@ def extract_ccr(data):
 						for i, j in zip(atoms, atomsPartner)]),
 		'val':np.array(values),
 		'err':np.array(errors),
-		'idx':clean_indices([unique_pairing(i.serial_number, j.serial_number) 
+		'idx':clean_indices([cantor_pairing(i.serial_number, j.serial_number) 
 							 for i, j in zip(atoms, atomsPartner)])
 	}
 	return d
@@ -665,10 +687,6 @@ def qfactor(experiment, calculated, sumIndices=None):
 	return (numer/denom)**0.5
 
 
-def pcs(metal, atom):
-	return metal.pcs(atom.position)
-
-
 def nlr_fit_metal_from_pre(initMetals, pres, params, sumIndices=None, 
 	rtypes=None, usesbm=True, usedsa=True, usecsa=False, progress=None):
 	"""
@@ -806,61 +824,6 @@ def pre(metal, atom, method='sbm+dsa+csaxdsa', rtype='r2'):
 	return rate
 
 
-def ccr(metal, atom):
-	pass
-
-
-
-########## THIS OLD VERSION IT NOT WEIGHTED #############
-# def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx):
-# 	"""
-# 	Solve RDC equation by single value decomposition.
-# 	This function is generally called by higher methods like 
-# 	<svd_fit_metal_from_rdc>
-
-# 	Parameters
-# 	----------
-# 	vec : array of [x,y,z] floats
-# 		the internuclear vectors in meters
-# 	rdc_parameterised : array of floats
-# 		the experimental RDC values, normalised by a prefactor
-# 	idx : array of ints
-# 		an index assigned to each atom. Common indices determine summation
-# 		between models for ensemble averaging.
-
-# 	Returns
-# 	-------
-# 	calc : array of floats
-# 		the calculated RDC values from the fitted tensor
-# 	sol : array of floats
-# 		sol is the solution to the linearised PCS equation and 
-# 		consists of the tensor matrix elements
-# 	"""
-# 	dist = np.linalg.norm(vec, axis=1)
-# 	x, y, z = vec.T
-# 	a = x**2 - z**2
-# 	b = y**2 - z**2
-# 	c = 2 * x * y
-# 	d = 2 * x * z
-# 	e = 2 * y * z
-# 	mat = (1./dist**5) * np.array([a,b,c,d,e])
-# 	mat = np.array([np.bincount(idx, weights=col) for col in mat])
-# 	matinv = np.linalg.pinv(mat)
-# 	sol = matinv.T.dot(rdc_parameterised)
-# 	calc = mat.T.dot(sol)
-# 	return calc, sol
-
-
-# def svd_fit_metal_from_rdc(metal, rdc):
-# 	vecarray, gamarray, rdcarray, errarray, idxarray = extract_rdc(rdc)
-# 	pfarray = -3*(metal.MU0 * gamarray * metal.HBAR) / (8 * np.pi**2)
-# 	rdc_parameterised = np.bincount(idxarray, weights=rdcarray / pfarray)
-# 	fitMetal = metal.copy()
-# 	_, sol = svd_calc_metal_from_rdc(vecarray, rdc_parameterised, idxarray)
-# 	fitMetal.upper_triang_alignment = sol
-# 	calculated = fitMetal.fast_rdc(vecarray, gamarray)
-# 	qfac = qfactor(rdcarray, calculated, idxarray)
-# 	return fitMetal, calculated, qfac
 
 def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx, errors):
 	"""
@@ -1008,67 +971,6 @@ def nlr_fit_metal_from_rdc(metal, rdc, params=('ax','rh','a','b','g'),
 		progress.set(1.0)
 
 	return fitMetal, calculated, qfac
-
-# def nlr_fit_metal_from_ccr(metal, ccr, params=('x','y','z'), 
-# 	sumIndices=None, progress=None):
-# 	"""
-# 	Fit Chi tensor to CCR values using non-linear regression.
-
-# 	Parameters
-# 	----------
-# 	metal : Metal object
-# 		the starting metal for fitting
-# 	ccr : the CCR dataset
-# 		each CCR dataset has structure [Atom1, Atom2, value, error], 
-# 		where Atom is an Atom object, value is the PCS/RDC/PRE value
-# 		and error is the uncertainty
-# 	params : list of str, optional
-# 		the parameters to be fit. 
-# 		this defaults to only position ('x','y','z')
-# 	sumIndices : array of ints, optional
-# 		the list contains an index assigned to each atom. 
-# 		Common indices determine summation between models 
-# 		for ensemble averaging.
-# 		If None, defaults to atom serial number to determine summation 
-# 		between models.
-# 	progress : object, optional
-# 		to keep track of the calculation, progress.set(x) is called each
-# 		iteration and varies from 0.0 -> 1.0 when the calculation is complete.
-
-# 	Returns
-# 	-------
-# 	fitMetal : Metal object
-# 		the fitted metal by NLR to the CCR data provided
-# 	calculated : array of floats
-# 		the calculated CCR values
-# 	qfac : float
-# 		the qfactor judging the fit quality
-# 	"""
-# 	(posarray, gamarray, dstarray, 
-# 		ccrarray, errarray, idxarray) = extract_ccr(ccr)
-# 	if sumIndices is None:
-# 		sumIndices = idxarray
-# 	fitMetal = metal.copy()
-
-# 	def cost(args):
-# 		fitMetal.set_params(zip(params, args))
-# 		calccr = fitMetal.fast_ccr_r2(posarray, gamarray, dstarray)
-# 		diff = (calccr - ccrarray) / errarray
-# 		selectiveSum = np.bincount(idxarray, weights=diff)
-# 		score = np.sum(selectiveSum**2)
-# 		return score
-
-# 	startpars = fitMetal.get_params(params)
-# 	fmin_bfgs(cost, startpars, disp=False)
-# 	fitMetal.set_utr()
-# 	calculated = fitMetal.fast_ccr_r2(posarray, gamarray, dstarray)
-# 	qfac = qfactor(ccrarray, calculated, idxarray)
-
-# 	if progress:
-# 		progress.set(1.0)
-
-# 	return fitMetal, calculated, qfac
-
 
 
 def nlr_fit_metal_from_ccr(initMetals, ccrs, params=('x','y','z'), 
