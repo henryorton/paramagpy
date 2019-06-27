@@ -11,7 +11,6 @@ def unique_pairing(a, b):
 	The input is symmetric.
 	see `Bijective mapping f:ZxZ->N <https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/>`_.
 
-
 	Parameters
 	----------
 	a : int
@@ -612,32 +611,6 @@ def pcs_fit_error_bootstrap(initMetals, pcss, params, iterations,
 	return [dict(zip(params, zip(*std))) for std in stds]
 
 
-def fit_metal_from_pcs(metals, pcss):
-	fitmetals, _, _ = svd_gridsearch_calc_metal_from_pcs(metals, pcss)
-	fitmetals, calcs, qfacs = nlr_fit_metal_from_pcs(fitmetals, pcss)
-	return fitmetals, calcs, qfacs
-
-
-def plot_pcs_fit(metals, pcss):
-	from matplotlib import pyplot as plt
-	posarrays = []
-	pcsarrays = []
-	for pcs in pcss:
-		posarray, pcsarray, errarray = extract_pcs(pcs)
-		posarrays.append(posarray)
-		pcsarrays.append(pcsarray)
-	fig = plt.figure(figsize=(5,5))
-	ax = fig.add_subplot(111)
-	ax.set_xlabel("Experiment")
-	ax.set_ylabel("Calculated")
-	mini, maxi = min([np.min(i) for i in pcsarrays]), max([np.max(i) for i in pcsarrays])
-	ax.plot([mini,maxi], [mini,maxi], '-k', lw=0.5)
-	for metal, pos, pcs in zip(metals, posarrays, pcsarrays):
-		calc_pcs = metal.fast_pcs(pos)
-		ax.plot(pcs, calc_pcs, marker='o', lw=0, ms=3)
-	return fig, ax
-
-
 def qfactor(experiment, calculated, sumIndices=None):
 	"""
 	Calculate the Q-factor to judge tensor fit quality
@@ -687,10 +660,11 @@ def qfactor(experiment, calculated, sumIndices=None):
 	return (numer/denom)**0.5
 
 
-def nlr_fit_metal_from_pre(initMetals, pres, params, sumIndices=None, 
-	rtypes=None, usesbm=True, usedsa=True, usecsa=False, progress=None):
+def nlr_fit_metal_from_pre(initMetals, pres, params=('x','y','z'), 
+	sumIndices=None, rtypes=None, usesbm=True, usedsa=True, usecsa=False, 
+	progress=None):
 	"""
-	Fit deltaChi tensor to PCS values using non-linear regression.
+	Fit deltaChi tensor to PRE values using non-linear regression.
 
 	Parameters
 	----------
@@ -698,16 +672,16 @@ def nlr_fit_metal_from_pre(initMetals, pres, params, sumIndices=None,
 		a list of metals used as starting points for fitting. 
 		a list must always be provided, but may also contain 
 		only one element. If multiple metals are provided, each metal
-		is fitted to their respective PCS dataset by index, but all are 
+		is fitted to their respective PRE dataset by index, but all are 
 		fitted to a common position.
-	pcss : list of PCS datasets
-		each PCS dataset must correspond to an associated metal for fitting.
-		each PCS dataset has structure [Atom, value, error], where Atom is 
+	pres : list of PRE datasets
+		each PRE dataset must correspond to an associated metal for fitting.
+		each PRE dataset has structure [Atom, value, error], where Atom is 
 		an Atom object, value is the PCS/RDC/PRE value
 		and error is the uncertainty
 	params : list of str
 		the parameters to be fit. 
-		For example ['x','y','z','ax','rh','a','b','g','shift']
+		For example ['x','y','z','ax','rh','a','b','g','iso','taur','t1e']
 	sumIndices : list of arrays of ints, optional
 		each index list must correspond to an associated pcs dataset.
 		each index list contains an index assigned to each atom. 
@@ -715,11 +689,19 @@ def nlr_fit_metal_from_pre(initMetals, pres, params, sumIndices=None,
 		for ensemble averaging.
 		If None, defaults to atom serial number to determine summation 
 		between models.
-	userads : bool, optional
-		include residual anisotropic dipolar shielding (RADS) during fitting
-	useracs : bool, optional
-		include residual anisotropic chemical shielding (RACS) during fitting.
-		CSA tensors are taken using the <csa> method of atoms.
+	rtypes : list of str, optional
+		the relaxtion type, either 'r1' or 'r2'. A list must be provided with
+		each element corresponding to an associated dataset.
+		Defaults to 'r2' for all datasets of None is specified.
+	usesbm : bool, optional
+		include Solomon-Bloemenbergen-Morgan (Dipole-dipole) relaxation theory.
+		default is True
+	usedsa : bool, optional
+		include Dipolar-Shielding-Anisotropy (Curie Spin) relaxation theory.
+		default is True
+	usecsa : bool, optional
+		include Chemical-Shift-Anisotropy cross-correlated realxation theory.
+		default is False
 	progress : object, optional
 		to keep track of the calculation, progress.set(x) is called each
 		iteration and varies from 0.0 -> 1.0 when the calculation is complete.
@@ -727,7 +709,7 @@ def nlr_fit_metal_from_pre(initMetals, pres, params, sumIndices=None,
 	Returns
 	-------
 	metals : list of metals
-		the metals fitted by NLR to the PCS data provided
+		the metals fitted by NLR to the PRE data provided
 	"""
 	if rtypes is None:
 		rtypes = ['r2']*len(initMetals)
@@ -770,7 +752,7 @@ def nlr_fit_metal_from_pre(initMetals, pres, params, sumIndices=None,
 						prearrays, idxarrays, errarrays, rtypes)
 		for metal, posarr, gamarr, csaarr, prearr, idxarr, errarr, rtype in zipped:
 			calcpre = metal.fast_pre(posarr, gamarr, rtype, 
-				dsa=True, sbm=True, csaarray=csaarr)
+				dsa=usedsa, sbm=usesbm, csaarray=csaarr)
 			diff = (calcpre - prearr) / errarr
 			selectiveSum = np.bincount(idxarr, weights=diff)
 			score += np.sum(selectiveSum**2)
@@ -781,49 +763,21 @@ def nlr_fit_metal_from_pre(initMetals, pres, params, sumIndices=None,
 		pars = metal.get_params(otherpars)
 		startpars += pars
 	fmin_bfgs(cost, startpars, disp=False)
-	for metal in metals:
+	calc_pres = []
+	qfactors = []
+	zipped = zip(metals, posarrays, gamarrays, csaarrays, 
+						prearrays, idxarrays, errarrays, rtypes)
+	for metal, posarr, gamarr, csaarr, prearr, idxarr, errarr, rtype in zipped:
 		metal.set_utr()
+		calculated = metal.fast_pre(posarr, gamarr, rtype, 
+			dsa=usedsa, sbm=usesbm, csaarray=csaarr)
+		calc_pres.append(calculated)
+		qfac = qfactor(prearr, calculated, idxarr)
+		qfactors.append(qfac)
+
 	if progress:
 		progress.set(1.0)
-	return metals
-
-
-def pre(metal, atom, method='sbm+dsa+csaxdsa', rtype='r2'):
-	pos = atom.position
-	gam = atom.gamma
-	csa = atom.csa()
-	rate = 0.0
-
-	methods = method.split('+')
-	if 'sbm' in methods and rtype=='r1':
-		rate += metal.sbm_r1(pos, gam)
-	elif 'sbm' in methods and rtype=='r2':
-		rate += metal.sbm_r2(pos, gam)
-
-	if 'dsa' in methods and rtype=='r1':
-		rate += metal.curie_r1(pos, gam)
-	elif 'dsa' in methods and rtype=='r2':
-		rate += metal.curie_r2(pos, gam)
-
-	if 'csa' in methods and rtype=='r1':
-		rate += metal.curie_r1(pos, gam, csa=csa, ignorePara=True)
-	elif 'csa' in methods and rtype=='r2':
-		rate += metal.curie_r2(pos, gam, csa=csa, ignorePara=True)
-
-	if ('csaxdsa' in methods or 'dsaxcsa' in methods) and rtype=='r1':
-		pre_dsa = metal.curie_r1(pos, gam)
-		pre_csa = metal.curie_r1(pos, gam, csa=csa, ignorePara=True)
-		pre_cross = metal.curie_r1(pos, gam, csa=csa)
-		rate += pre_cross - pre_dsa - pre_csa
-	elif ('csaxdsa' in methods or 'dsaxcsa' in methods) and rtype=='r2':
-		pre_dsa = metal.curie_r2(pos, gam)
-		pre_csa = metal.curie_r2(pos, gam, csa=csa, ignorePara=True)
-		pre_cross = metal.curie_r2(pos, gam, csa=csa)
-		rate += pre_cross - pre_dsa - pre_csa
-
-	return rate
-
-
+	return metals, calc_pres, qfactors
 
 def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx, errors):
 	"""

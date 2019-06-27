@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Fit tensor position to 1H PREs &#8212; paramagpy 0.1 documentation</title>
+    <title>Fit Tensor to PRE Data &#8212; paramagpy 0.1 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -46,8 +46,114 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="fit-tensor-position-to-1h-pres">
-<span id="pre-fit-proton"></span><h1>Fit tensor position to 1H PREs<a class="headerlink" href="#fit-tensor-position-to-1h-pres" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="fit-tensor-to-pre-data">
+<span id="pre-fit-proton"></span><h1>Fit Tensor to PRE Data<a class="headerlink" href="#fit-tensor-to-pre-data" title="Permalink to this headline">¶</a></h1>
+<p>This example demonstrates fitting of the rotational correlation time <span class="math notranslate nohighlight">\({\tau_r}\)</span> to 1H PRE data of calbindin D9k. You can fit any parameters of the <span class="math notranslate nohighlight">\({\chi}\)</span>-tensor you desire, such as position or magnitude as well.</p>
+<div class="section" id="downloads">
+<h2>Downloads<a class="headerlink" href="#downloads" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Download the data files <code class="docutils literal notranslate"><span class="pre">4icbH_mut.pdb</span></code>, <code class="docutils literal notranslate"><span class="pre">calbindin_Er_H_R2_600.npc</span></code> and <code class="docutils literal notranslate"><span class="pre">calbindin_Tb_H_R2_800.npc</span></code> from <a class="reference external" href="https://github.com/henryorton/paramagpy/tree/master/examples/data_files/">here</a>:</li>
+<li>Download the script <a class="reference download internal" download="" href="../_downloads/78c787a82101957c045dd50d7283d89d/pre_fit_proton.py"><code class="xref download docutils literal notranslate"><span class="pre">pre_fit_proton.py</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="script-explanation">
+<h2>Script + Explanation<a class="headerlink" href="#script-explanation" title="Permalink to this headline">¶</a></h2>
+<p>Firstly, the necessary modules are imported from paramagpy.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">paramagpy</span> <span class="k">import</span> <span class="n">protein</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">dataparse</span><span class="p">,</span> <span class="n">metal</span>
+</pre></div>
+</div>
+<p>The protein is then loaded from a PDB file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the PDB file</span>
+<span class="n">prot</span> <span class="o">=</span> <span class="n">protein</span><span class="o">.</span><span class="n">load_pdb</span><span class="p">(</span><span class="s1">&#39;../data_files/4icbH_mut.pdb&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The PRE data is loaded. Note that the Er data was recorded at 600 MHz and the Tb data was recorded at 800 MHz.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rawData_er</span> <span class="o">=</span> <span class="n">dataparse</span><span class="o">.</span><span class="n">read_pre</span><span class="p">(</span><span class="s1">&#39;../data_files/calbindin_Er_H_R2_600.pre&#39;</span><span class="p">)</span>
+<span class="n">rawData_tb</span> <span class="o">=</span> <span class="n">dataparse</span><span class="o">.</span><span class="n">read_pre</span><span class="p">(</span><span class="s1">&#39;../data_files/calbindin_Tb_H_R2_800.pre&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <span class="math notranslate nohighlight">\({\Delta\chi}\)</span>-tensors that were fitted from PCS data are loaded from file and the relevant <span class="math notranslate nohighlight">\({B_0}\)</span> magnetic field strengths are set.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mStart_er</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">load_tensor</span><span class="p">(</span><span class="s1">&#39;../data_files/calbindin_Er_HN_PCS_tensor.txt&#39;</span><span class="p">)</span>
+<span class="n">mStart_tb</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">load_tensor</span><span class="p">(</span><span class="s1">&#39;../data_files/calbindin_Tb_HN_PCS_tensor.txt&#39;</span><span class="p">)</span>
+<span class="n">mStart_er</span><span class="o">.</span><span class="n">B0</span> <span class="o">=</span> <span class="mf">14.1</span>
+<span class="n">mStart_tb</span><span class="o">.</span><span class="n">B0</span> <span class="o">=</span> <span class="mf">18.8</span>
+</pre></div>
+</div>
+<p>Fitting of the rotational correlation time is done with the function <a class="reference internal" href="../reference/generated/paramagpy.fit.nlr_fit_metal_from_pre.html#paramagpy.fit.nlr_fit_metal_from_pre" title="paramagpy.fit.nlr_fit_metal_from_pre"><code class="xref py py-func docutils literal notranslate"><span class="pre">paramagpy.fit.nlr_fit_metal_from_pre()</span></code></a>. To fit position or <span class="math notranslate nohighlight">\({\chi}\)</span>-tensor magnitude, you can change the <code class="docutils literal notranslate"><span class="pre">params</span></code> argument.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">m_er</span><span class="p">,),</span> <span class="p">(</span><span class="n">cal_er</span><span class="p">,),</span> <span class="n">qfac</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">nlr_fit_metal_from_pre</span><span class="p">(</span>
+	<span class="p">[</span><span class="n">mStart_er</span><span class="p">],</span> <span class="p">[</span><span class="n">data_er</span><span class="p">],</span> <span class="n">params</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;taur&#39;</span><span class="p">],</span> <span class="n">rtypes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;r2&#39;</span><span class="p">])</span>
+<span class="p">(</span><span class="n">m_tb</span><span class="p">,),</span> <span class="p">(</span><span class="n">cal_tb</span><span class="p">,),</span> <span class="n">qfac</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">nlr_fit_metal_from_pre</span><span class="p">(</span>
+	<span class="p">[</span><span class="n">mStart_tb</span><span class="p">],</span> <span class="p">[</span><span class="n">data_tb</span><span class="p">],</span> <span class="n">params</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;taur&#39;</span><span class="p">],</span> <span class="n">rtypes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;r2&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The fitted tensors are saved to file. Note that the Er dataset gives a reasonable <span class="math notranslate nohighlight">\({\tau_r}\)</span> of around 4 ns which is close to the literature value of 4.25 ns. However, the Tb dataset gives an unreasonably large value of 18 ns. This is due to magnetisation attenuation due to 1H-1H RDCs present during the relaxation evolution time as discussed in <a class="reference external" href="https://doi.org/10.1021/jacs.8b03858">literature</a> giving rise to artificially large measured PREs for lanthanides with highly anisotropic <span class="math notranslate nohighlight">\({\Delta\chi}\)</span>-tensors. This is also reflected in the correlation plot below.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">m_er</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;calbindin_Er_H_R2_600_tensor.txt&#39;</span><span class="p">)</span>
+<span class="n">m_tb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;calbindin_Tb_H_R2_800_tensor.txt&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Output:</em> [<a class="reference download internal" download="" href="../_downloads/807dd872fbc01f95f9cc8400ebbebed4/calbindin_Er_H_R2_600_tensor.txt"><code class="xref download docutils literal notranslate"><span class="pre">calbindin_Er_H_R2_600_tensor.txt</span></code></a>]</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ax    | 1E-32 m^3 :    -8.152
+rh    | 1E-32 m^3 :    -4.911
+x     |   1E-10 m :    25.786
+y     |   1E-10 m :     9.515
+z     |   1E-10 m :     6.558
+a     |       deg :   125.841
+b     |       deg :   142.287
+g     |       deg :    41.758
+mueff |        Bm :     9.581
+shift |       ppm :     0.000
+B0    |         T :    14.100
+temp  |         K :   298.150
+t1e   |        ps :     0.189
+taur  |        ns :     3.923
+</pre></div>
+</div>
+<p><em>Output:</em> [<a class="reference download internal" download="" href="../_downloads/98465b43954b8ba049bf5973b2d09ca8/calbindin_Tb_H_R2_800_tensor.txt"><code class="xref download docutils literal notranslate"><span class="pre">calbindin_Tb_H_R2_800_tensor.txt</span></code></a>]</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ax    | 1E-32 m^3 :    30.375
+rh    | 1E-32 m^3 :    12.339
+x     |   1E-10 m :    25.786
+y     |   1E-10 m :     9.515
+z     |   1E-10 m :     6.558
+a     |       deg :   150.957
+b     |       deg :   152.671
+g     |       deg :    70.311
+mueff |        Bm :     9.721
+shift |       ppm :     0.000
+B0    |         T :    18.800
+temp  |         K :   298.150
+t1e   |        ps :     0.251
+taur  |        ns :    18.917
+</pre></div>
+</div>
+<p>And the results are plotted.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+
+<span class="c1"># Unpack the experimental values</span>
+<span class="n">atm_er</span><span class="p">,</span> <span class="n">exp_er</span><span class="p">,</span> <span class="n">err_er</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data_er</span><span class="p">)</span>
+<span class="n">atm_tb</span><span class="p">,</span> <span class="n">exp_tb</span><span class="p">,</span> <span class="n">err_tb</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data_tb</span><span class="p">)</span>
+
+<span class="c1"># Plot the data</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">exp_er</span><span class="p">,</span> <span class="n">cal_er</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
+	<span class="n">label</span><span class="o">=</span><span class="s2">&quot;Er: taur = </span><span class="si">{:3.1f}</span><span class="s2"> ns&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mf">1E9</span><span class="o">*</span><span class="n">m_er</span><span class="o">.</span><span class="n">taur</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">exp_tb</span><span class="p">,</span> <span class="n">cal_tb</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span>
+	<span class="n">label</span><span class="o">=</span><span class="s2">&quot;Tb: taur = </span><span class="si">{:3.1f}</span><span class="s2"> ns&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mf">1E9</span><span class="o">*</span><span class="n">m_tb</span><span class="o">.</span><span class="n">taur</span><span class="p">))</span>
+
+<span class="c1"># Plot a diagonal</span>
+<span class="n">l</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">l</span><span class="p">,</span><span class="n">h</span><span class="p">],[</span><span class="n">l</span><span class="p">,</span><span class="n">h</span><span class="p">],</span><span class="s1">&#39;-k&#39;</span><span class="p">,</span><span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+
+<span class="c1"># Make axis labels and save figure</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Experiment&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Calculated&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;pre_fit_proton.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/pre_fit_proton.png" src="../_images/pre_fit_proton.png" />
+</div>
 </div>
 
 
@@ -56,6 +162,15 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Fit Tensor to PRE Data</a><ul>
+<li><a class="reference internal" href="#downloads">Downloads</a></li>
+<li><a class="reference internal" href="#script-explanation">Script + Explanation</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="rdc_calculate.html"
                         title="previous chapter">Calculate RDC from a known Tensor</a></p>

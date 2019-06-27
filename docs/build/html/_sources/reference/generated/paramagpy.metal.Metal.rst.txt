@@ -16,6 +16,7 @@ paramagpy.metal.Metal
             
                   ~Metal.atom_ccr
                   ~Metal.atom_pcs
+                  ~Metal.atom_pre
                   ~Metal.atom_rdc
                   ~Metal.atom_set_position
                   ~Metal.ccr
@@ -43,6 +44,7 @@ paramagpy.metal.Metal
                   ~Metal.make_mesh
                   ~Metal.pcs
                   ~Metal.pcs_mesh
+                  ~Metal.pre
                   ~Metal.racs
                   ~Metal.rads
                   ~Metal.rdc

@@ -1330,6 +1330,45 @@ class Metal(object):
 			13*self.spec_dens(self.tauc, self.B0*self.GAMMA))
 		return rate
 
+	def pre(self, position, gamma, rtype, dsa=True, sbm=True, csa=0.0):
+		"""
+		Calculate the PRE for a set of spins using Curie and or SBM theory
+
+		Parameters
+		----------
+		position : array of floats
+			position in meters
+		gamma : float
+			gyromagnetic ratio of the spin
+		rtype : str
+			either 'r1' or 'r2', the relaxation type
+		dsa : bool (optional)
+			when True (defualt), DSA or Curie spin relaxation is included
+		sbm : bool (optional)
+			when True (defualt), SBM spin relaxation is included 
+		csa : array with shape (3,3) (optional)
+			CSA tensor of the spin.
+			This defualts to 0.0, meaning CSAxDSA crosscorrelation is
+			not accounted for. 
+
+		Returns
+		-------
+		rate : float
+			The PRE rate in /s
+		"""
+		rate = 0.0
+		if rtype=='r1':
+			if dsa:
+				rate += self.dsa_r1(position, gamma, csa)
+			if sbm:
+				rate += self.sbm_r1(position, gamma)
+		elif rtype=='r2':
+			if dsa:
+				rate += self.dsa_r2(position, gamma, csa)
+			if sbm:
+				rate += self.sbm_r2(position, gamma)
+		return rate
+
 	def fast_pre(self, posarray, gammaarray, rtype, 
 		dsa=True, sbm=True, csaarray=0.0):
 		"""
@@ -1369,6 +1408,35 @@ class Metal(object):
 			if sbm:
 				rates += self.fast_sbm_r2(posarray, gammaarray)
 		return rates
+
+	def atom_pre(self, atom, rtype='r2', dsa=True, sbm=True, csa=0.0):
+		"""
+		Calculate the PRE for an atom
+
+		Parameters
+		----------
+		atom : paramagpy.protein.CustomAtom
+			the active nuclear spin for which relaxation will be calculated
+			must have attributes 'position' and 'gamma'
+		rtype : str
+			either 'r1' or 'r2', the relaxation type
+		dsa : bool (optional)
+			when True (defualt), DSA or Curie spin relaxation is included
+		sbm : bool (optional)
+			when True (defualt), SBM spin relaxation is included 
+		csa : array with shape (3,3) (optional)
+			CSA tensor of the spin.
+			This defualts to 0.0, meaning CSAxDSA crosscorrelation is
+			not accounted for. 
+
+		Returns
+		-------
+		rate : float
+			The PRE rate in /s
+		"""
+		return self.pre(atom.position, atom.gamma, 
+			rtype, dsa=dsa, sbm=sbm, csa=csa)
+
 
 	################################
 	# Methods for CCR calculations #

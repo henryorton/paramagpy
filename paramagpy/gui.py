@@ -145,10 +145,14 @@ class CustomTextDefaultEntry(tk.Entry):
 		self.default_text = default_text
 		self.mode = mode
 		self.insert(0, default_text)
+		self.returnKey = returnKey
 		if self.mode=='models':
 			self.defaultColour = 'grey'
 			self.config(fg = self.defaultColour)
 		elif self.mode=='files':
+			self.defaultColour = 'black'
+			self.config(fg = self.defaultColour)
+		elif self.mode=='atoms':
 			self.defaultColour = 'black'
 			self.config(fg = self.defaultColour)
 		self.bind('<FocusIn>', self.on_entry_click)
@@ -167,11 +171,15 @@ class CustomTextDefaultEntry(tk.Entry):
 			f, e = os.path.splitext(s)
 			self.icursor(len(f))
 			self.select_range(0, len(f))
+		elif self.mode=='atoms':
+			self.select_range(0, len(s))
 
 	def on_focusout(self, event):
 		if self.get() == '':
 			self.insert(0, self.default_text)
 			self.config(fg = self.defaultColour)
+		if self.mode=='atoms':
+			self.returnKey()
 
 	def clear(self):
 		self.delete(0, "end")
@@ -913,10 +921,16 @@ class DataLoad(tk.LabelFrame):
 				value='r2').grid(row=2,column=2, sticky='W')
 
 		elif self.dtype in ['RDC','CCR']:
-			self.show_hn_var = tk.BooleanVar(value=False)
-			ttk.Checkbutton(self, text='Show H-N', variable=self.show_hn_var, 
-				command=self.show_hn_change,
-				).grid(row=2,column=1, columnspan=2, sticky='W')
+			self.show_pair_var = tk.BooleanVar(value=False)
+			ttk.Checkbutton(self, text='Show Custom Atoms', variable=self.show_pair_var, 
+				command=self.show_pair_change,
+				).grid(row=2,column=0, columnspan=2, sticky='W')
+			self.pair_entry1 = CustomTextDefaultEntry(self, "H",
+				returnKey=self.show_pair_change, mode='atoms', width=4)
+			self.pair_entry1.grid(row=2,column=2, columnspan=1, sticky='W')
+			self.pair_entry2 = CustomTextDefaultEntry(self, "N",
+				returnKey=self.show_pair_change, mode='atoms', width=4)
+			self.pair_entry2.grid(row=2,column=3, columnspan=1, sticky='W')
 
 	def rtype(self):
 		if self.dtype=='PRE':
@@ -924,7 +938,7 @@ class DataLoad(tk.LabelFrame):
 		else:
 			return None
 
-	def show_hn_change(self):
+	def show_pair_change(self):
 		self.parent.update(2)
 
 	def currentDir(self):
@@ -1324,16 +1338,17 @@ class TensorFrame(tk.LabelFrame):
 			column=0, columnspan=2, sticky='EW')
 		ttk.Button(self, text='Paste', command=self.paste).grid(row=4+ofs, 
 			column=2, columnspan=2, sticky='EW')
-		ttk.Button(self, text='Plot', command=self.plot).grid(row=4+ofs, 
+		ttk.Button(self, text='Set UTR', command=self.set_utr).grid(row=4+ofs, 
 			column=4, columnspan=2, sticky='EW')
 
 		if 'Fitted' in text:
-			ttk.Button(self, text='Error Sim.', command=self.error_sim).grid(row=5+ofs, 
-				column=0, columnspan=2, sticky='EW')
-			ttk.Button(self, text='Set UTR', command=self.set_utr).grid(row=5+ofs, 
-				column=2, columnspan=2, sticky='EW')
 			ttk.Button(self, text='More', command=self.more).grid(row=5+ofs, 
-				column=4, columnspan=2, sticky='EW')
+				column=0, columnspan=2, sticky='EW')
+			if self.dtype=='PCS':
+				ttk.Button(self, text='Error Sim.', command=self.error_sim).grid(row=5+ofs, 
+					column=2, columnspan=2, sticky='EW')
+				ttk.Button(self, text='Plot', command=self.plot).grid(row=5+ofs, 
+					column=4, columnspan=2, sticky='EW')
 
 		self.update()
 
@@ -1548,11 +1563,13 @@ class DataTab(tk.Frame):
 			dtype = self.parent.parent.parent.structdtype[self.dtype]
 			expdata = self.loadData.data
 			if not expdata:
-				if self.loadData.show_hn_var.get():
+				if self.loadData.show_pair_var.get():
+					a1 = self.loadData.pair_entry1.get()
+					a2 = self.loadData.pair_entry2.get()
 					for row in self.data:
-						if row['atm'].name=='H':
+						if row['atm'].name==a1:
 							_, mdl, chn, seq, (atm, _) = row['atm'].get_full_id()
-							row['atx'] = self.frm_pdb.prot[mdl][chn][seq].child_dict.get('N', None)
+							row['atx'] = self.frm_pdb.prot[mdl][chn][seq].child_dict.get(a2, None)
 					self.data = self.data[self.data['atx']!=None]
 				else:
 					self.data = np.array([], dtype=dtype)
@@ -1948,16 +1965,23 @@ class FittingOptionsFrame(tk.LabelFrame):
 			return pars
 
 
+	def check_data(self, dataTabs):
+		if self.frm_pdb.prot is None:
+			messagebox.showerror("Error", "PDB coordinates missing")
+			return False
+		for tab in dataTabs:
+			if tab.loadData.currentFile is None:
+				messagebox.showerror("Error", "Experimental data missing")
+				return False
+		return True
+
 
 	def fit_pcs(self, dataTabs):
+		if not self.check_data(dataTabs):
+			return
 		metals = [tab.tensorStart.tensor.copy() for tab in dataTabs]
 		modeldata = self.get_data(dataTabs, 
 			seperateModels=self.params['mod'].get())
-
-		# datacheck = all([all([bool(j) for j in d]) for m, d, s in modeldata])
-		# if not datacheck:
-		# 	messagebox.showerror("Error", "Experimental data missing")
-		# 	return
 
 		minqfac = 1E50
 		minmod = None
@@ -2015,6 +2039,8 @@ class FittingOptionsFrame(tk.LabelFrame):
 			tab.back_calc()
 
 	def error_pcs(self, dataTabs, method, iters, bsfrac=None, singleModel=None):
+		if not self.check_data(dataTabs):
+			return
 		metals = [tab.tensorFit.tensor.copy() for tab in dataTabs]
 		if singleModel is None:
 			modeldata = self.get_data(dataTabs)[0]
@@ -2059,15 +2085,12 @@ class FittingOptionsFrame(tk.LabelFrame):
 		return scatter, deviations
 
 	def fit_pre(self, dataTabs):
+		if not self.check_data(dataTabs):
+			return
 		metals = [tab.tensorStart.tensor.copy() for tab in dataTabs]
 		rtypes = [tab.rtype() for tab in dataTabs]
 		modeldata = self.get_data(dataTabs, 
 			seperateModels=self.params['mod'].get())
-
-		# datacheck = all([all([bool(j) for j in d]) for m, d, s in modeldata])
-		# if not datacheck:
-		# 	messagebox.showerror("Error", "Experimental data missing")
-		# 	return
 
 		qfac = 1E50
 		minmod = None
@@ -2083,14 +2106,14 @@ class FittingOptionsFrame(tk.LabelFrame):
 			progbar.set_label(nlrline)
 			progVar.set(1.0)
 			pars = self.get_params()
-			metals = fit.nlr_fit_metal_from_pre(metals, data, pars,
+			metals, calc, qfacs = fit.nlr_fit_metal_from_pre(metals, data, pars,
 				rtypes=rtypes,
 				usesbm=self.params['sbm'].get(), 
 				usedsa=self.params['dsa'].get(),
 				usecsa=self.params['csa'].get())
 
 			if self.params['mod'].get():
-				q = sum([fit.qfactor(m, d) for m, d in zip(metals, data)])
+				q = sum(qfacs)
 				if q<qfac:
 					minmod = model
 					minmetals = [m.copy() for m in metals]
@@ -2112,6 +2135,8 @@ class FittingOptionsFrame(tk.LabelFrame):
 
 
 	def fit_rdc(self, dataTab):
+		if not self.check_data([dataTab]):
+			return
 		metal = dataTab.tensorStart.tensor.copy()
 		modeldata = self.get_data(dataTab, 
 			seperateModels=self.params['mod'].get())
@@ -2143,6 +2168,8 @@ class FittingOptionsFrame(tk.LabelFrame):
 
 
 	def fit_ccr(self, dataTabs):
+		if not self.check_data(dataTabs):
+			return
 		metals = [tab.tensorStart.tensor.copy() for tab in dataTabs]
 		modeldata = self.get_data(dataTabs, 
 			seperateModels=self.params['mod'].get())
@@ -2214,7 +2241,7 @@ class DataNotebook(ttk.Notebook):
 
 class MethodsTab(tk.Frame):
 	"""
-	A single tab for PCS, RDC or PRE
+	A single tab for PCS, RDC, PRE or CCR
 	frm_fitopts : fitting options frame
 	frm_data : data notebook containing data display and tensors
 	"""

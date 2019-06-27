@@ -20,15 +20,12 @@ paramagpy.fit
                extract_pcs
                extract_pre
                extract_rdc
-               fit_metal_from_pcs
                nlr_fit_metal_from_ccr
                nlr_fit_metal_from_pcs
                nlr_fit_metal_from_pre
                nlr_fit_metal_from_rdc
                pcs_fit_error_bootstrap
                pcs_fit_error_monte_carlo
-               plot_pcs_fit
-               pre
                qfactor
                sphere_grid
                svd_calc_metal_from_pcs

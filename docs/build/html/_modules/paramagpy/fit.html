@@ -52,7 +52,6 @@
 <span class="sd">	The input is symmetric.</span>
 <span class="sd">	see `Bijective mapping f:ZxZ-&gt;N &lt;https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/&gt;`_.</span>
 
-
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 <span class="sd">	a : int</span>
@@ -653,32 +652,6 @@
 	<span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">std</span><span class="p">)))</span> <span class="k">for</span> <span class="n">std</span> <span class="ow">in</span> <span class="n">stds</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="fit_metal_from_pcs"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.fit_metal_from_pcs.html#paramagpy.fit.fit_metal_from_pcs">[docs]</a><span class="k">def</span> <span class="nf">fit_metal_from_pcs</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">pcss</span><span class="p">):</span>
-	<span class="n">fitmetals</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">svd_gridsearch_calc_metal_from_pcs</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">pcss</span><span class="p">)</span>
-	<span class="n">fitmetals</span><span class="p">,</span> <span class="n">calcs</span><span class="p">,</span> <span class="n">qfacs</span> <span class="o">=</span> <span class="n">nlr_fit_metal_from_pcs</span><span class="p">(</span><span class="n">fitmetals</span><span class="p">,</span> <span class="n">pcss</span><span class="p">)</span>
-	<span class="k">return</span> <span class="n">fitmetals</span><span class="p">,</span> <span class="n">calcs</span><span class="p">,</span> <span class="n">qfacs</span></div>
-
-
-<div class="viewcode-block" id="plot_pcs_fit"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.plot_pcs_fit.html#paramagpy.fit.plot_pcs_fit">[docs]</a><span class="k">def</span> <span class="nf">plot_pcs_fit</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">pcss</span><span class="p">):</span>
-	<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-	<span class="n">posarrays</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="n">pcsarrays</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="k">for</span> <span class="n">pcs</span> <span class="ow">in</span> <span class="n">pcss</span><span class="p">:</span>
-		<span class="n">posarray</span><span class="p">,</span> <span class="n">pcsarray</span><span class="p">,</span> <span class="n">errarray</span> <span class="o">=</span> <span class="n">extract_pcs</span><span class="p">(</span><span class="n">pcs</span><span class="p">)</span>
-		<span class="n">posarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posarray</span><span class="p">)</span>
-		<span class="n">pcsarrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pcsarray</span><span class="p">)</span>
-	<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-	<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
-	<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Experiment&quot;</span><span class="p">)</span>
-	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Calculated&quot;</span><span class="p">)</span>
-	<span class="n">mini</span><span class="p">,</span> <span class="n">maxi</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pcsarrays</span><span class="p">]),</span> <span class="nb">max</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pcsarrays</span><span class="p">])</span>
-	<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">mini</span><span class="p">,</span><span class="n">maxi</span><span class="p">],</span> <span class="p">[</span><span class="n">mini</span><span class="p">,</span><span class="n">maxi</span><span class="p">],</span> <span class="s1">&#39;-k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-	<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">pcs</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> <span class="n">pcsarrays</span><span class="p">):</span>
-		<span class="n">calc_pcs</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">fast_pcs</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
-		<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pcs</span><span class="p">,</span> <span class="n">calc_pcs</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-	<span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
-
-
 <div class="viewcode-block" id="qfactor"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.qfactor.html#paramagpy.fit.qfactor">[docs]</a><span class="k">def</span> <span class="nf">qfactor</span><span class="p">(</span><span class="n">experiment</span><span class="p">,</span> <span class="n">calculated</span><span class="p">,</span> <span class="n">sumIndices</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Calculate the Q-factor to judge tensor fit quality</span>
@@ -728,10 +701,11 @@
 	<span class="k">return</span> <span class="p">(</span><span class="n">numer</span><span class="o">/</span><span class="n">denom</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span></div>
 
 
-<div class="viewcode-block" id="nlr_fit_metal_from_pre"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.nlr_fit_metal_from_pre.html#paramagpy.fit.nlr_fit_metal_from_pre">[docs]</a><span class="k">def</span> <span class="nf">nlr_fit_metal_from_pre</span><span class="p">(</span><span class="n">initMetals</span><span class="p">,</span> <span class="n">pres</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">sumIndices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-	<span class="n">rtypes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">usesbm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">usedsa</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">usecsa</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="nlr_fit_metal_from_pre"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.nlr_fit_metal_from_pre.html#paramagpy.fit.nlr_fit_metal_from_pre">[docs]</a><span class="k">def</span> <span class="nf">nlr_fit_metal_from_pre</span><span class="p">(</span><span class="n">initMetals</span><span class="p">,</span> <span class="n">pres</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">),</span> 
+	<span class="n">sumIndices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rtypes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">usesbm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">usedsa</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">usecsa</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+	<span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Fit deltaChi tensor to PCS values using non-linear regression.</span>
+<span class="sd">	Fit deltaChi tensor to PRE values using non-linear regression.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
@@ -739,16 +713,16 @@
 <span class="sd">		a list of metals used as starting points for fitting. </span>
 <span class="sd">		a list must always be provided, but may also contain </span>
 <span class="sd">		only one element. If multiple metals are provided, each metal</span>
-<span class="sd">		is fitted to their respective PCS dataset by index, but all are </span>
+<span class="sd">		is fitted to their respective PRE dataset by index, but all are </span>
 <span class="sd">		fitted to a common position.</span>
-<span class="sd">	pcss : list of PCS datasets</span>
-<span class="sd">		each PCS dataset must correspond to an associated metal for fitting.</span>
-<span class="sd">		each PCS dataset has structure [Atom, value, error], where Atom is </span>
+<span class="sd">	pres : list of PRE datasets</span>
+<span class="sd">		each PRE dataset must correspond to an associated metal for fitting.</span>
+<span class="sd">		each PRE dataset has structure [Atom, value, error], where Atom is </span>
 <span class="sd">		an Atom object, value is the PCS/RDC/PRE value</span>
 <span class="sd">		and error is the uncertainty</span>
 <span class="sd">	params : list of str</span>
 <span class="sd">		the parameters to be fit. </span>
-<span class="sd">		For example [&#39;x&#39;,&#39;y&#39;,&#39;z&#39;,&#39;ax&#39;,&#39;rh&#39;,&#39;a&#39;,&#39;b&#39;,&#39;g&#39;,&#39;shift&#39;]</span>
+<span class="sd">		For example [&#39;x&#39;,&#39;y&#39;,&#39;z&#39;,&#39;ax&#39;,&#39;rh&#39;,&#39;a&#39;,&#39;b&#39;,&#39;g&#39;,&#39;iso&#39;,&#39;taur&#39;,&#39;t1e&#39;]</span>
 <span class="sd">	sumIndices : list of arrays of ints, optional</span>
 <span class="sd">		each index list must correspond to an associated pcs dataset.</span>
 <span class="sd">		each index list contains an index assigned to each atom. </span>
@@ -756,11 +730,19 @@
 <span class="sd">		for ensemble averaging.</span>
 <span class="sd">		If None, defaults to atom serial number to determine summation </span>
 <span class="sd">		between models.</span>
-<span class="sd">	userads : bool, optional</span>
-<span class="sd">		include residual anisotropic dipolar shielding (RADS) during fitting</span>
-<span class="sd">	useracs : bool, optional</span>
-<span class="sd">		include residual anisotropic chemical shielding (RACS) during fitting.</span>
-<span class="sd">		CSA tensors are taken using the &lt;csa&gt; method of atoms.</span>
+<span class="sd">	rtypes : list of str, optional</span>
+<span class="sd">		the relaxtion type, either &#39;r1&#39; or &#39;r2&#39;. A list must be provided with</span>
+<span class="sd">		each element corresponding to an associated dataset.</span>
+<span class="sd">		Defaults to &#39;r2&#39; for all datasets of None is specified.</span>
+<span class="sd">	usesbm : bool, optional</span>
+<span class="sd">		include Solomon-Bloemenbergen-Morgan (Dipole-dipole) relaxation theory.</span>
+<span class="sd">		default is True</span>
+<span class="sd">	usedsa : bool, optional</span>
+<span class="sd">		include Dipolar-Shielding-Anisotropy (Curie Spin) relaxation theory.</span>
+<span class="sd">		default is True</span>
+<span class="sd">	usecsa : bool, optional</span>
+<span class="sd">		include Chemical-Shift-Anisotropy cross-correlated realxation theory.</span>
+<span class="sd">		default is False</span>
 <span class="sd">	progress : object, optional</span>
 <span class="sd">		to keep track of the calculation, progress.set(x) is called each</span>
 <span class="sd">		iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</span>
@@ -768,7 +750,7 @@
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 <span class="sd">	metals : list of metals</span>
-<span class="sd">		the metals fitted by NLR to the PCS data provided</span>
+<span class="sd">		the metals fitted by NLR to the PRE data provided</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">if</span> <span class="n">rtypes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 		<span class="n">rtypes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;r2&#39;</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">initMetals</span><span class="p">)</span>
@@ -811,7 +793,7 @@
 						<span class="n">prearrays</span><span class="p">,</span> <span class="n">idxarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">,</span> <span class="n">rtypes</span><span class="p">)</span>
 		<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">csaarr</span><span class="p">,</span> <span class="n">prearr</span><span class="p">,</span> <span class="n">idxarr</span><span class="p">,</span> <span class="n">errarr</span><span class="p">,</span> <span class="n">rtype</span> <span class="ow">in</span> <span class="n">zipped</span><span class="p">:</span>
 			<span class="n">calcpre</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">fast_pre</span><span class="p">(</span><span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">rtype</span><span class="p">,</span> 
-				<span class="n">dsa</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sbm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="n">csaarr</span><span class="p">)</span>
+				<span class="n">dsa</span><span class="o">=</span><span class="n">usedsa</span><span class="p">,</span> <span class="n">sbm</span><span class="o">=</span><span class="n">usesbm</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="n">csaarr</span><span class="p">)</span>
 			<span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">calcpre</span> <span class="o">-</span> <span class="n">prearr</span><span class="p">)</span> <span class="o">/</span> <span class="n">errarr</span>
 			<span class="n">selectiveSum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">idxarr</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">diff</span><span class="p">)</span>
 			<span class="n">score</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">selectiveSum</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
@@ -822,49 +804,21 @@
 		<span class="n">pars</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">otherpars</span><span class="p">)</span>
 		<span class="n">startpars</span> <span class="o">+=</span> <span class="n">pars</span>
 	<span class="n">fmin_bfgs</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">startpars</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-	<span class="k">for</span> <span class="n">metal</span> <span class="ow">in</span> <span class="n">metals</span><span class="p">:</span>
+	<span class="n">calc_pres</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">qfactors</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> <span class="n">gamarrays</span><span class="p">,</span> <span class="n">csaarrays</span><span class="p">,</span> 
+						<span class="n">prearrays</span><span class="p">,</span> <span class="n">idxarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">,</span> <span class="n">rtypes</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">csaarr</span><span class="p">,</span> <span class="n">prearr</span><span class="p">,</span> <span class="n">idxarr</span><span class="p">,</span> <span class="n">errarr</span><span class="p">,</span> <span class="n">rtype</span> <span class="ow">in</span> <span class="n">zipped</span><span class="p">:</span>
 		<span class="n">metal</span><span class="o">.</span><span class="n">set_utr</span><span class="p">()</span>
+		<span class="n">calculated</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">fast_pre</span><span class="p">(</span><span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">rtype</span><span class="p">,</span> 
+			<span class="n">dsa</span><span class="o">=</span><span class="n">usedsa</span><span class="p">,</span> <span class="n">sbm</span><span class="o">=</span><span class="n">usesbm</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="n">csaarr</span><span class="p">)</span>
+		<span class="n">calc_pres</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">calculated</span><span class="p">)</span>
+		<span class="n">qfac</span> <span class="o">=</span> <span class="n">qfactor</span><span class="p">(</span><span class="n">prearr</span><span class="p">,</span> <span class="n">calculated</span><span class="p">,</span> <span class="n">idxarr</span><span class="p">)</span>
+		<span class="n">qfactors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qfac</span><span class="p">)</span>
+
 	<span class="k">if</span> <span class="n">progress</span><span class="p">:</span>
 		<span class="n">progress</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
-	<span class="k">return</span> <span class="n">metals</span></div>
-
-
-<div class="viewcode-block" id="pre"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.pre.html#paramagpy.fit.pre">[docs]</a><span class="k">def</span> <span class="nf">pre</span><span class="p">(</span><span class="n">metal</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;sbm+dsa+csaxdsa&#39;</span><span class="p">,</span> <span class="n">rtype</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span><span class="p">):</span>
-	<span class="n">pos</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span>
-	<span class="n">gam</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">gamma</span>
-	<span class="n">csa</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">csa</span><span class="p">()</span>
-	<span class="n">rate</span> <span class="o">=</span> <span class="mf">0.0</span>
-
-	<span class="n">methods</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">)</span>
-	<span class="k">if</span> <span class="s1">&#39;sbm&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r1&#39;</span><span class="p">:</span>
-		<span class="n">rate</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">sbm_r1</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">)</span>
-	<span class="k">elif</span> <span class="s1">&#39;sbm&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r2&#39;</span><span class="p">:</span>
-		<span class="n">rate</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">sbm_r2</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">)</span>
-
-	<span class="k">if</span> <span class="s1">&#39;dsa&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r1&#39;</span><span class="p">:</span>
-		<span class="n">rate</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r1</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">)</span>
-	<span class="k">elif</span> <span class="s1">&#39;dsa&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r2&#39;</span><span class="p">:</span>
-		<span class="n">rate</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r2</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">)</span>
-
-	<span class="k">if</span> <span class="s1">&#39;csa&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r1&#39;</span><span class="p">:</span>
-		<span class="n">rate</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r1</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="n">csa</span><span class="p">,</span> <span class="n">ignorePara</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-	<span class="k">elif</span> <span class="s1">&#39;csa&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r2&#39;</span><span class="p">:</span>
-		<span class="n">rate</span> <span class="o">+=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r2</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="n">csa</span><span class="p">,</span> <span class="n">ignorePara</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-	<span class="k">if</span> <span class="p">(</span><span class="s1">&#39;csaxdsa&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">or</span> <span class="s1">&#39;dsaxcsa&#39;</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r1&#39;</span><span class="p">:</span>
-		<span class="n">pre_dsa</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r1</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">)</span>
-		<span class="n">pre_csa</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r1</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="n">csa</span><span class="p">,</span> <span class="n">ignorePara</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-		<span class="n">pre_cross</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r1</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="n">csa</span><span class="p">)</span>
-		<span class="n">rate</span> <span class="o">+=</span> <span class="n">pre_cross</span> <span class="o">-</span> <span class="n">pre_dsa</span> <span class="o">-</span> <span class="n">pre_csa</span>
-	<span class="k">elif</span> <span class="p">(</span><span class="s1">&#39;csaxdsa&#39;</span> <span class="ow">in</span> <span class="n">methods</span> <span class="ow">or</span> <span class="s1">&#39;dsaxcsa&#39;</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rtype</span><span class="o">==</span><span class="s1">&#39;r2&#39;</span><span class="p">:</span>
-		<span class="n">pre_dsa</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r2</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">)</span>
-		<span class="n">pre_csa</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r2</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="n">csa</span><span class="p">,</span> <span class="n">ignorePara</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-		<span class="n">pre_cross</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">curie_r2</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">gam</span><span class="p">,</span> <span class="n">csa</span><span class="o">=</span><span class="n">csa</span><span class="p">)</span>
-		<span class="n">rate</span> <span class="o">+=</span> <span class="n">pre_cross</span> <span class="o">-</span> <span class="n">pre_dsa</span> <span class="o">-</span> <span class="n">pre_csa</span>
-
-	<span class="k">return</span> <span class="n">rate</span></div>
-
-
+	<span class="k">return</span> <span class="n">metals</span><span class="p">,</span> <span class="n">calc_pres</span><span class="p">,</span> <span class="n">qfactors</span></div>
 
 <div class="viewcode-block" id="svd_calc_metal_from_rdc"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.svd_calc_metal_from_rdc.html#paramagpy.fit.svd_calc_metal_from_rdc">[docs]</a><span class="k">def</span> <span class="nf">svd_calc_metal_from_rdc</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">rdc_parameterised</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">errors</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>

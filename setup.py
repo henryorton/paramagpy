@@ -6,7 +6,7 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
 	name='paramagpy',
-	version='0.3',
+	version='0.4',
 	description='Calculate paramagnetic effects in NMR spectra of proteins',
 	long_description=long_description,
 	long_description_content_type="text/markdown",

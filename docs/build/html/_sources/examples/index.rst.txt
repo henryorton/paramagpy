@@ -4,8 +4,8 @@
 Examples
 ########
 
-Fitting PCS data
-----------------
+PCS data
+--------
 
 .. toctree::
     :maxdepth: 1
@@ -19,8 +19,8 @@ Fitting PCS data
     pcs_fit_advanced_corrections.rst
 
 
-Fitting RDC data
-----------------
+RDC data
+--------
 
 .. toctree::
     :maxdepth: 1
@@ -28,11 +28,19 @@ Fitting RDC data
     rdc_fit.rst
     rdc_calculate.rst
 
-Fitting PRE data
-----------------
+PRE data
+--------
 
 .. toctree::
     :maxdepth: 1
 
     pre_fit_proton.rst
     pre_calc_nitrogen.rst
+
+CCR data
+--------
+
+.. toctree::
+    :maxdepth: 1
+
+    ccr_calculate.rst
