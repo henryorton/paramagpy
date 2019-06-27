@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 import setuptools
+from paramagpy import __version__
 
 with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
 	name='paramagpy',
-	version='0.4',
+	version=__version__,
 	description='Calculate paramagnetic effects in NMR spectra of proteins',
 	long_description=long_description,
 	long_description_content_type="text/markdown",

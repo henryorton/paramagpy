@@ -24,9 +24,10 @@ copyright = '2018, Henry Orton'
 author = 'Henry Orton'
 
 # The short X.Y version
-version = ''
+from paramagpy import __version__
+version = __version__
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = __version__
 
 
 # -- General configuration ---------------------------------------------------
