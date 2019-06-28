@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 import setuptools
-from paramagpy import __version__
+import sys
+
+if sys.version_info < (3, 5):
+    sys.exit('paramagpy requires Python 3.5+')
 
 with open("README.rst", "r") as fh:
     long_description = fh.read()
+
+from paramagpy import __version__
 
 setuptools.setup(
 	name='paramagpy',

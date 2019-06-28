@@ -440,7 +440,10 @@ class PlotTensorPopup(Popup):
 		mesh, bounds = tensor.make_mesh(
 			density=int(self.params['dens'].get()), 
 			size=self.params['size'].get())
-		pcs_mesh = tensor.pcs_mesh(mesh)
+		if self.parent.dtype=='PCS':
+			value_mesh = tensor.pcs_mesh(mesh)
+		elif self.parent.dtype=='PRE':
+			value_mesh = tensor.pre_mesh(mesh)
 		tensor.write_isomap(pcs_mesh, bounds, fileName=meshFile)
 		tensor.write_pymol_script(isoval=self.params['cont'].get(), 
 			surfaceName=self.saveName.get(),scriptName=pymolFile, 
