@@ -45,6 +45,7 @@ paramagpy.metal.Metal
                   ~Metal.pcs
                   ~Metal.pcs_mesh
                   ~Metal.pre
+                  ~Metal.pre_mesh
                   ~Metal.racs
                   ~Metal.rads
                   ~Metal.rdc

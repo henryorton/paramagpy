@@ -1374,7 +1374,7 @@ class TensorFrame(tk.LabelFrame):
 		pcs_fields = set(['x','y','z','a','b','g','ax','rh','ref'])
 		rdc_fields = set(['a','b','g','ax','rh'])
 		pre_fields = set(['x','y','z','a','b','g','ax','rh','iso','taur','t1e'])
-		ccr_fields = set(['x','y','z','a','b','g','ax','rh','iso','taur','t1e'])
+		ccr_fields = set(['x','y','z','a','b','g','ax','rh','iso','taur'])
 
 		fpars = self.fopts.params
 		if self.dtype=='PCS':
@@ -1834,7 +1834,6 @@ class FittingOptionsFrame(tk.LabelFrame):
 
 			self.set_checkbox('dchi', 0, 1, 1, 0)
 			self.set_checkbox('taur', 1, 1, 1, 0)
-			self.set_checkbox('taue', 2, 1, 1, 0)
 
 
 	@property
@@ -1904,7 +1903,6 @@ class FittingOptionsFrame(tk.LabelFrame):
 
 
 	def get_data(self, dataTabs, seperateModels=False):
-		print(self.dtype)
 		if seperateModels:
 			models = self.frm_pdb.models
 		else:

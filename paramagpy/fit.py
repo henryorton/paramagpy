@@ -993,7 +993,7 @@ def nlr_fit_metal_from_ccr(initMetals, ccrs, params=('x','y','z'),
 		for d in datas:
 			d['met'].set_params(zip(pospars, args[d['pospars']]))
 			d['met'].set_params(zip(otherpars, args[d['othpars']]))
-			d['cal'] = d['met'].fast_ccr_r2(d['pos'], d['gam'], d['dst'])
+			d['cal'] = d['met'].fast_ccr(d['pos'], d['gam'], d['dst'])
 			diff = (d['cal'] - d['val']) / d['err']
 			selectiveSum = np.bincount(d['idx'], weights=diff)
 			score += np.sum(selectiveSum**2)
