@@ -154,7 +154,7 @@ class CustomAtom(Atom):
 	def dipole_shift_tensor(self, position):
 		pos = np.array(position, dtype=float) - self.position
 		distance = np.linalg.norm(pos)
-		preFactor = (self.MU0 * self.gamma * self.HBAR * 0.5) / (8.*np.pi)
+		preFactor = (self.MU0 * self.gamma * self.HBAR * 0.5) / (4.*np.pi)
 		p1 = (1./distance**5)*np.kron(pos,pos).reshape(3,3)
 		p2 = (1./distance**3)*np.identity(3)
 		return (preFactor * (3.*p1 - p2))
