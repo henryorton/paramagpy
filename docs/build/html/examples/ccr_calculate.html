@@ -88,12 +88,12 @@
 <span class="n">compare_cn</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">H</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">data_cn</span><span class="p">:</span>
 	<span class="n">delta</span> <span class="o">=</span> <span class="n">met_cn</span><span class="o">.</span><span class="n">atom_ccr</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
-	<span class="n">compare_cn</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">value</span><span class="p">,</span> <span class="n">delta</span><span class="p">))</span>
+	<span class="n">compare_cn</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">value</span><span class="p">,</span> <span class="n">delta</span><span class="o">*</span><span class="mf">0.5</span><span class="p">))</span>
 
 <span class="n">compare_f</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">H</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">data_f</span><span class="p">:</span>
 	<span class="n">delta</span> <span class="o">=</span> <span class="n">met_f</span><span class="o">.</span><span class="n">atom_ccr</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
-	<span class="n">compare_f</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">value</span><span class="p">,</span> <span class="n">delta</span><span class="p">))</span>
+	<span class="n">compare_f</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">value</span><span class="p">,</span> <span class="n">delta</span><span class="o">*</span><span class="mf">0.5</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Finally a correlation plot is made.</p>

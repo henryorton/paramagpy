@@ -49,7 +49,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">0.4</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">Jul 05, 2019</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">Jul 10, 2019</td>
 </tr>
 </tbody>
 </table>
@@ -82,7 +82,7 @@
 </div>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>Paramagpy is a python module for calculating paramagnetic effects in NMR spectra of proteins. This currently includes fitting of paramagnetic susceptibility tensors to experimental data associated with pseudocontact shifts (PCS) residual dipolar couplings (RDC) and paramagnetic relaxation enhancements (PRE). A GUI allows easy viewing of data and seamless transition between PCS/RDC/PRE calculations.</p>
+<p>paramagpy is a python module for calculating paramagnetic effects in NMR spectra of proteins. This currently includes fitting of paramagnetic susceptibility tensors to experimental data associated with pseudocontact shifts (PCS) residual dipolar couplings (RDC), paramagnetic relaxation enhancements (PRE) and cross-correlated relaxation (CCR). A GUI allows easy viewing of data and seamless transition between PCS/RDC/PR/CCR calculations.</p>
 <div class="figure align-center" id="id1">
 <img alt="_images/icon.gif" src="_images/icon.gif" />
 <p class="caption"><span class="caption-text"><em>Please, not the eyes!</em> - Canberra cyclist</span></p>
@@ -99,12 +99,25 @@
 <li>Plotting of correlation between experiment/calculated values</li>
 <li>Plotting of tensor isosurfaces compatible with PyMol</li>
 <li>Q-factor calculations</li>
-<li>Optimisation of multiple PCS/PRE datasets to a common position</li>
+<li>Error analysis of tensor fit quality Monte-Carlo or Bootstrap methods</li>
+<li>Optimisation of multiple PCS/PRE/CCR datasets to a common position</li>
 <li>Unique tensor representation compatible with Numbat (program)</li>
 <li>Fitting of RDC tensor by SVD algorithm</li>
 <li>PRE calculations by Solomon and Curie spin mechanisms</li>
 <li>CSA cross-correlation correction to PRE calculations</li>
+<li>Dipole-dipole/Curie spin cross-correlated relaxation calculations</li>
+<li>Fitting of tensor parameters to PRE/CCR data</li>
 </ul>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="https://henryorton.github.io/paramagpy/">https://henryorton.github.io/paramagpy/</a></li>
+</ul>
+</div>
+<div class="section" id="citing-paramagpy">
+<h2>Citing paramagpy<a class="headerlink" href="#citing-paramagpy" title="Permalink to this headline">¶</a></h2>
+<p>Hopefully paramagpy will be published soon the journal of biomolecular NMR</p>
 </div>
 </div>
 
@@ -120,6 +133,8 @@
 <li><a class="reference internal" href="#contents">Contents</a></li>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#citing-paramagpy">Citing paramagpy</a></li>
 </ul>
 </li>
 </ul>

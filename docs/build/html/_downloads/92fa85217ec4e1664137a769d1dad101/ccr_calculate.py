@@ -22,12 +22,12 @@ data_f = prot.parse(dataparse.read_ccr("../data_files/myoglobin_f.ccr"))
 compare_cn = []
 for H, N, value, error in data_cn:
 	delta = met_cn.atom_ccr(H, N)
-	compare_cn.append((value, delta))
+	compare_cn.append((value, delta*0.5))
 
 compare_f = []
 for H, N, value, error in data_f:
 	delta = met_f.atom_ccr(H, N)
-	compare_f.append((value, delta))
+	compare_f.append((value, delta*0.5))
 
 #### Plot the correlation ####
 from matplotlib import pyplot as plt
