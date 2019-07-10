@@ -1465,7 +1465,8 @@ class Metal(object):
 		value : float
 			The R2 differential line broadening rate in /s
 		"""
-		shield = dipole_shift_tensor/(self.B0*2)
+		# NOTE: B0 factor expresses shielding tensor in ppm
+		shield = dipole_shift_tensor/self.B0
 		spinUp   = self.dsa_r2(position, gamma, csa= shield)
 		spinDown = self.dsa_r2(position, gamma, csa=-shield)
 		return spinUp - spinDown
@@ -1494,7 +1495,8 @@ class Metal(object):
 		rates : array with shape (n,1)
 			The R2 differential line broadening rates in /s
 		"""
-		shield = dstarray/(self.B0*2)
+		# NOTE: B0 factor expresses shielding tensor in ppm
+		shield = dstarray/self.B0
 		spinUp   = self.fast_dsa_r2(posarray, gammaarray, 
 			csaarray= shield)
 		spinDown = self.fast_dsa_r2(posarray, gammaarray, 
