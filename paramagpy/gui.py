@@ -1405,7 +1405,7 @@ class TensorFrame(tk.LabelFrame):
 				else:
 					field.disable()
 
-		elif self.dtype in ['PRE','CCR']:
+		elif self.dtype=='PRE':
 			for var in self.fields:
 				field = self.fields[var]
 				if var in pre_fields:
@@ -1432,10 +1432,42 @@ class TensorFrame(tk.LabelFrame):
 			else:
 				self.fields['taur'].label.config(fg='red')
 
+			if fpars['iso'].get():
+				self.fields['iso'].label.config(fg='black')
+			else:
+				self.fields['iso'].label.config(fg='red')
+
 			if fpars['taue'].get():
 				self.fields['t1e'].label.config(fg='black')
 			else:
 				self.fields['t1e'].label.config(fg='red')
+
+		elif self.dtype=='CCR':
+			for var in self.fields:
+				field = self.fields[var]
+				if var in ccr_fields:
+					field.enable()
+				else:
+					field.disable()
+
+			if fpars['pos'].get():
+				for i in ['x','y','z']:
+					self.fields[i].label.config(fg='black')
+			else:
+				for i in ['x','y','z']:
+					self.fields[i].label.config(fg='red')
+
+			if fpars['dchi'].get():
+				for i in ['ax','rh','a','b','g']:
+					self.fields[i].label.config(fg='black')
+			else:
+				for i in ['ax','rh','a','b','g']:
+					self.fields[i].label.config(fg='red')
+
+			if fpars['taur'].get():
+				self.fields['taur'].label.config(fg='black')
+			else:
+				self.fields['taur'].label.config(fg='red')
 
 			if fpars['iso'].get():
 				self.fields['iso'].label.config(fg='black')
