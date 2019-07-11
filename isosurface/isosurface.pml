@@ -12,15 +12,15 @@
 # B0    |         T :    18.790
 # temp  |         K :   298.150
 # t1e   |        ps :     0.189
-# taur  |        ns :     0.000
+# taur  |        ns :     4.100
 
 import os, pymol
 curdir = os.path.dirname(pymol.__script__)
 set normalize_ccp4_maps, off
 meshfile = os.path.join(curdir, 'isosurface.pml.ccp4')
 cmd.load(meshfile, 'isomap', 1, 'ccp4')
-isosurface pos_isosurface, isomap, 10.0
-isosurface neg_isosurface, isomap, -10.0
+isosurface pos_isosurface, isomap, 5.0
+isosurface neg_isosurface, isomap, -5.0
 set transparency, 0.5, pos_isosurface
 set transparency, 0.5, neg_isosurface
 set surface_color, blue, pos_isosurface

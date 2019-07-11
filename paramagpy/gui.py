@@ -382,9 +382,15 @@ class PlotTensorPopup(Popup):
 		chk = ttk.Checkbutton(self, variable=self.params['pdb'], 
 			state=state).grid(row=6,column=1, sticky='W')
 
-		tk.Label(self, text="Contour Level").grid(
+		if self.parent.dtype=='PCS':
+			clevel = 1.0
+			clevelUnit = 'ppm'
+		elif self.parent.dtype=='PRE':
+			clevel = 50.0
+			clevelUnit = '/s'
+		tk.Label(self, text="Contour Level "+clevelUnit).grid(
 			row=7,column=0,sticky='E')
-		self.cont_input = NumericEntry(self, None, 1.0, formatter="{:.2f}",
+		self.cont_input = NumericEntry(self, None, clevel, formatter="{:.2f}",
 			onlyPositive=True)
 		self.cont_input.grid(row=7,column=1, sticky='W')
 		self.params['cont'] = self.cont_input.floatVar
@@ -444,7 +450,7 @@ class PlotTensorPopup(Popup):
 			value_mesh = tensor.pcs_mesh(mesh)
 		elif self.parent.dtype=='PRE':
 			value_mesh = tensor.pre_mesh(mesh)
-		tensor.write_isomap(pcs_mesh, bounds, fileName=meshFile)
+		tensor.write_isomap(value_mesh, bounds, fileName=meshFile)
 		tensor.write_pymol_script(isoval=self.params['cont'].get(), 
 			surfaceName=self.saveName.get(),scriptName=pymolFile, 
 			meshName=os.path.basename(meshFile), 
@@ -1347,11 +1353,12 @@ class TensorFrame(tk.LabelFrame):
 		if 'Fitted' in text:
 			ttk.Button(self, text='More', command=self.more).grid(row=5+ofs, 
 				column=0, columnspan=2, sticky='EW')
+			if self.dtype in ['PCS', 'PRE']:
+				ttk.Button(self, text='Plot', command=self.plot).grid(row=5+ofs, 
+					column=4, columnspan=2, sticky='EW')
 			if self.dtype=='PCS':
 				ttk.Button(self, text='Error Sim.', command=self.error_sim).grid(row=5+ofs, 
 					column=2, columnspan=2, sticky='EW')
-				ttk.Button(self, text='Plot', command=self.plot).grid(row=5+ofs, 
-					column=4, columnspan=2, sticky='EW')
 
 		self.update()
 
