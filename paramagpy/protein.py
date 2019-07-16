@@ -152,6 +152,22 @@ class CustomAtom(Atom):
 
 
 	def dipole_shift_tensor(self, position):
+		"""
+		Calculate the magnetic field shielding tensor at the given postition
+		due to the nuclear dipole
+
+		Assumes nuclear spin 1/2
+
+		Parameters
+		----------
+		position : array floats
+			the position (x, y, z) in meters
+
+		Returns
+		-------
+		dipole_shielding_tensor : 3x3 array
+			the tensor describing magnetic shielding at the given position
+		"""
 		pos = np.array(position, dtype=float) - self.position
 		distance = np.linalg.norm(pos)
 		preFactor = (self.MU0 * self.gamma * self.HBAR * 0.5) / (4.*np.pi)
@@ -160,28 +176,10 @@ class CustomAtom(Atom):
 		return (preFactor * (3.*p1 - p2))
 
 
-# a = CustomAtom('H',[0,0,0],0,0,0,'H',0)
-
-# pos = np.array([0,0,1.])*1E-10
-# field = a.dipole_shift_tensor(pos).dot(np.array([0.,0.,1.]))
-# omega = field * CustomAtom.gyro_lib['H']
-# print(a.dipole_shift_tensor(pos)*1E6)
-
-
-
 class CustomStructure(Structure):
-	"""docstring for CustomStructure"""
+	"""This is an overload hack of the BioPython Structure object"""
 	def __init__(self, *arg, **kwargs):
 		super().__init__(*arg, **kwargs)
-
-	# def select_models(self, models):
-	# 	new = self.copy()
-	# 	if type(models)!=list:
-	# 		models = [models]
-	# 	for i in list(new.child_dict):
-	# 		if i not in models:
-	# 			new.detach_child(i)
-	# 	return new
 
 	def parse(self, dataValues, models=None):
 		used = set([])
@@ -230,7 +228,7 @@ class CustomStructure(Structure):
 
 
 class CustomStructureBuilder(StructureBuilder):
-	"""docstring for CustomStructureBuilder"""
+	"""This is an overload hack of BioPython's CustomStructureBuilder"""
 	def __init__(self, *arg, **kwargs):
 		super().__init__(*arg, **kwargs)
 
@@ -313,6 +311,21 @@ class CustomStructureBuilder(StructureBuilder):
 
 
 def load_pdb(fileName, ident=None):
+	"""
+	Read PDB from file into biopython structure object
+
+	Parameters
+	----------
+	fileName : str
+		the path to the file
+	ident : str (optional)
+		the desired identity of the structure object
+
+	Returns
+	-------
+	values : :class:`paramagpy.protein.CustomStructure`
+		a structure object containing the atomic coordinates
+	"""
 	if not ident:
 		ident = fileName
 	parser = PDBParser(structure_builder=CustomStructureBuilder())

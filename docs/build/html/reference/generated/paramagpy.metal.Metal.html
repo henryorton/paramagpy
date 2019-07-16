@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>paramagpy.metal.Metal &#8212; paramagpy 0.4 documentation</title>
+    <title>paramagpy.metal.Metal &#8212; paramagpy 0.41 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="paramagpy.metal.make_tensor.html" title="paramagpy.metal.make_tensor"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.41 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../metal.html" accesskey="U">paramagpy.metal</a> &#187;</li> 
       </ul>
@@ -54,7 +54,8 @@
 <em class="property">class </em><code class="descclassname">paramagpy.metal.</code><code class="descname">Metal</code><span class="sig-paren">(</span><em>position=(0</em>, <em>0</em>, <em>0)</em>, <em>eulers=(0</em>, <em>0</em>, <em>0)</em>, <em>axrh=(0</em>, <em>0)</em>, <em>mueff=0.0</em>, <em>shift=0.0</em>, <em>temperature=298.15</em>, <em>t1e=0.0</em>, <em>B0=18.79</em>, <em>taur=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal" title="Permalink to this definition">¶</a></dt>
 <dd><p>An object for paramagnetic chi tensors and delta-chi tensors.
 This class has basic attributes that specify position,
-axiality/rhombicity, isotropy and euler angles.</p>
+axiality/rhombicity, isotropy and euler angles.
+It also has methods for calculating PCS, RDC, PRE and CCR values.</p>
 <dl class="method">
 <dt id="paramagpy.metal.Metal.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>position=(0</em>, <em>0</em>, <em>0)</em>, <em>eulers=(0</em>, <em>0</em>, <em>0)</em>, <em>axrh=(0</em>, <em>0)</em>, <em>mueff=0.0</em>, <em>shift=0.0</em>, <em>temperature=298.15</em>, <em>t1e=0.0</em>, <em>B0=18.79</em>, <em>taur=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.__init__" title="Permalink to this definition">¶</a></dt>
@@ -223,10 +224,10 @@ between diamagnetic and paramagnetic PCS datasets.</li>
 <td>A spectral density function with Lorentzian shape:</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.write_isomap.html#paramagpy.metal.Metal.write_isomap" title="paramagpy.metal.Metal.write_isomap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_isomap</span></code></a>(mesh,&nbsp;bounds[,&nbsp;fileName])</td>
-<td></td>
+<td>Write a PyMol script to file which allows loading of the isosurface file</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.write_pymol_script.html#paramagpy.metal.Metal.write_pymol_script" title="paramagpy.metal.Metal.write_pymol_script"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_pymol_script</span></code></a>([isoval,&nbsp;surfaceName,&nbsp;…])</td>
-<td></td>
+<td>Write a PyMol script to file which allows loading of the isosurface file</td>
 </tr>
 </tbody>
 </table>
@@ -394,7 +395,7 @@ between diamagnetic and paramagnetic PCS datasets.</li>
         <li class="right" >
           <a href="paramagpy.metal.make_tensor.html" title="paramagpy.metal.make_tensor"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.41 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../metal.html" >paramagpy.metal</a> &#187;</li> 
       </ul>

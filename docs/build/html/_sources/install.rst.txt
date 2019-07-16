@@ -28,3 +28,17 @@ Or, download the `source code <https://github.com/henryorton/paramagpy>`_ and ru
     $ python setup.py install
 
 within the source directory.
+
+
+
+Windows Installation
+--------------------
+
+Paramagpy has never been tested on windows, but theoretically it should work. Good luck!
+
+
+Running the GUI
+---------------
+
+Once you have installed paramagpy, see :ref:`paramagpy_gui` for how to run the GUI.
+

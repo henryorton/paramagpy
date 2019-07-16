@@ -168,7 +168,7 @@ def read_ccr(fileName):
 
 	Examples
 	--------
-	see :func:`paramagpy.dataparse.read_rdc` which has the same file structure
+	see :func:`paramagpy.dataparse.read_rdc` which has the similar file structure
 	"""
 	values = DataContainer(dtype='CCR')
 	with open(fileName) as o:

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>paramagpy.fit &#8212; paramagpy 0.4 documentation</title>
+    <title>paramagpy.fit &#8212; paramagpy 0.41 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.41 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -544,7 +544,8 @@
 			<span class="n">metal</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">pospars</span><span class="p">,</span> <span class="n">pos</span><span class="p">))</span>
 			<span class="n">metal</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">otherpars</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
 		<span class="n">score</span> <span class="o">=</span> <span class="mf">0.0</span>
-		<span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> <span class="n">csaarrays</span><span class="p">,</span> <span class="n">pcsarrays</span><span class="p">,</span> <span class="n">idxarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">)</span>
+		<span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> <span class="n">csaarrays</span><span class="p">,</span> <span class="n">pcsarrays</span><span class="p">,</span> 
+			<span class="n">idxarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">)</span>
 		<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">posarray</span><span class="p">,</span> <span class="n">csaarray</span><span class="p">,</span> <span class="n">pcsarray</span><span class="p">,</span> <span class="n">idxarray</span><span class="p">,</span> <span class="n">errarray</span> <span class="ow">in</span> <span class="n">zipped</span><span class="p">:</span>
 			<span class="n">calcpcs</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">fast_pcs</span><span class="p">(</span><span class="n">posarray</span><span class="p">)</span>
 			<span class="k">if</span> <span class="n">userads</span><span class="p">:</span>
@@ -633,7 +634,8 @@
 	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
 		<span class="n">datas_trunc</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="n">sumIndices_trunc</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="k">for</span> <span class="n">atm</span><span class="p">,</span> <span class="n">pcs</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atmarrays</span><span class="p">,</span> <span class="n">pcsarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">,</span> <span class="n">sumarrays</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">atm</span><span class="p">,</span> <span class="n">pcs</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atmarrays</span><span class="p">,</span> <span class="n">pcsarrays</span><span class="p">,</span> 
+			<span class="n">errarrays</span><span class="p">,</span> <span class="n">sumarrays</span><span class="p">):</span>
 			<span class="n">unique_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
 			<span class="n">chosen_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">unique_idx</span><span class="p">,</span> 
 				<span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_idx</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">fraction_removed</span><span class="p">)),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -789,8 +791,7 @@
 			<span class="n">metal</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">pospars</span><span class="p">,</span> <span class="n">pos</span><span class="p">))</span>
 			<span class="n">metal</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">otherpars</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
 		<span class="n">score</span> <span class="o">=</span> <span class="mf">0.0</span>
-		<span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> <span class="n">gamarrays</span><span class="p">,</span> <span class="n">csaarrays</span><span class="p">,</span> 
-						<span class="n">prearrays</span><span class="p">,</span> <span class="n">idxarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">,</span> <span class="n">rtypes</span><span class="p">)</span>
+		<span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> <span class="n">gamarrays</span><span class="p">,</span> <span class="n">csaarrays</span><span class="p">,</span> <span class="n">prearrays</span><span class="p">,</span> <span class="n">idxarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">,</span> <span class="n">rtypes</span><span class="p">)</span>
 		<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">csaarr</span><span class="p">,</span> <span class="n">prearr</span><span class="p">,</span> <span class="n">idxarr</span><span class="p">,</span> <span class="n">errarr</span><span class="p">,</span> <span class="n">rtype</span> <span class="ow">in</span> <span class="n">zipped</span><span class="p">:</span>
 			<span class="n">calcpre</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">fast_pre</span><span class="p">(</span><span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">rtype</span><span class="p">,</span> 
 				<span class="n">dsa</span><span class="o">=</span><span class="n">usedsa</span><span class="p">,</span> <span class="n">sbm</span><span class="o">=</span><span class="n">usesbm</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="n">csaarr</span><span class="p">)</span>
@@ -806,8 +807,7 @@
 	<span class="n">fmin_bfgs</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">startpars</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 	<span class="n">calc_pres</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="n">qfactors</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> <span class="n">gamarrays</span><span class="p">,</span> <span class="n">csaarrays</span><span class="p">,</span> 
-						<span class="n">prearrays</span><span class="p">,</span> <span class="n">idxarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">,</span> <span class="n">rtypes</span><span class="p">)</span>
+	<span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> <span class="n">gamarrays</span><span class="p">,</span> <span class="n">csaarrays</span><span class="p">,</span> <span class="n">prearrays</span><span class="p">,</span> <span class="n">idxarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">,</span> <span class="n">rtypes</span><span class="p">)</span>
 	<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">csaarr</span><span class="p">,</span> <span class="n">prearr</span><span class="p">,</span> <span class="n">idxarr</span><span class="p">,</span> <span class="n">errarr</span><span class="p">,</span> <span class="n">rtype</span> <span class="ow">in</span> <span class="n">zipped</span><span class="p">:</span>
 		<span class="n">metal</span><span class="o">.</span><span class="n">set_utr</span><span class="p">()</span>
 		<span class="n">calculated</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">fast_pre</span><span class="p">(</span><span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">rtype</span><span class="p">,</span> 
@@ -1132,7 +1132,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.41 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

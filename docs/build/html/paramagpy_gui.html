@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Graphic User Interface (GUI) &#8212; paramagpy 0.4 documentation</title>
+    <title>Graphic User Interface (GUI) &#8212; paramagpy 0.41 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="examples/ccr_calculate.html" title="Calculate Cross-correlated Relaxation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">paramagpy 0.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">paramagpy 0.41 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -48,8 +48,36 @@
   <div class="section" id="graphic-user-interface-gui">
 <span id="paramagpy-gui"></span><h1>Graphic User Interface (GUI)<a class="headerlink" href="#graphic-user-interface-gui" title="Permalink to this headline">¶</a></h1>
 <p>Paramagpy is equipped with a GUI which is cross-platform and contains most of the functionality of the scripted module. This gives a rapid way for new users to fit and compare PCS, RDC and PRE effects.</p>
-<p>The GUI can be launched by running <code class="docutils literal notranslate"><span class="pre">paramagpy.gui.run()</span></code> within a python environment, or by requesting a prebuilt executable.</p>
+<div class="section" id="youtube-tutorial">
+<h2>YouTube Tutorial<a class="headerlink" href="#youtube-tutorial" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://youtu.be/MAoBItSac-g">Check out the tutorial on YouTube</a></p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/MAoBItSac-g" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<div class="section" id="running-the-gui">
+<h2>Running the GUI<a class="headerlink" href="#running-the-gui" title="Permalink to this headline">¶</a></h2>
+<p>To run the GUI, first open the python inperpreter in the terminal</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>user@computer:~$ python3
+Python <span class="m">3</span>.5.2 <span class="o">(</span>default, Nov <span class="m">23</span> <span class="m">2017</span>, <span class="m">16</span>:37:01<span class="o">)</span>
+<span class="o">[</span>GCC <span class="m">5</span>.4.0 <span class="m">20160609</span><span class="o">]</span> on linux
+Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for</span> more information.
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<p>Then import paramagpy and start the gui with <code class="xref py py-func docutils literal notranslate"><span class="pre">paramagpy.gui.run()</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>user@computer:~$ python3
+Python <span class="m">3</span>.5.2 <span class="o">(</span>default, Nov <span class="m">23</span> <span class="m">2017</span>, <span class="m">16</span>:37:01<span class="o">)</span>
+<span class="o">[</span>GCC <span class="m">5</span>.4.0 <span class="m">20160609</span><span class="o">]</span> on linux
+Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for</span> more information.
+&gt;&gt;&gt; import paramagpy
+&gt;&gt;&gt; paramagpy.gui.run<span class="o">()</span>
+</pre></div>
+</div>
+<p>Alternatively you can simply execute the following from the command line</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>user@computer:~$ <span class="nb">echo</span> <span class="s2">&quot;import paramagpy; paramagpy.gui.run()&quot;</span> <span class="p">|</span> python3
+</pre></div>
+</div>
+<p>If all this fails, you can contact the author for a prebuilt executable at <a class="reference external" href="mailto:henry&#46;orton&#37;&#52;&#48;anu&#46;edu&#46;au">henry<span>&#46;</span>orton<span>&#64;</span>anu<span>&#46;</span>edu<span>&#46;</span>au</a></p>
 <img alt="_images/paramagpy_gui_annot.png" src="_images/paramagpy_gui_annot.png" />
+</div>
 </div>
 
 
@@ -58,6 +86,15 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Graphic User Interface (GUI)</a><ul>
+<li><a class="reference internal" href="#youtube-tutorial">YouTube Tutorial</a></li>
+<li><a class="reference internal" href="#running-the-gui">Running the GUI</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="examples/ccr_calculate.html"
                         title="previous chapter">Calculate Cross-correlated Relaxation</a></p>
@@ -102,7 +139,7 @@
         <li class="right" >
           <a href="examples/ccr_calculate.html" title="Calculate Cross-correlated Relaxation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">paramagpy 0.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">paramagpy 0.41 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

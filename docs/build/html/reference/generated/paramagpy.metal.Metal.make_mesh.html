@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>paramagpy.metal.Metal.make_mesh &#8212; paramagpy 0.4 documentation</title>
+    <title>paramagpy.metal.Metal.make_mesh &#8212; paramagpy 0.41 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="paramagpy.metal.Metal.isomap.html" title="paramagpy.metal.Metal.isomap"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.41 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../metal.html" >paramagpy.metal</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="paramagpy.metal.Metal.html" accesskey="U">paramagpy.metal.Metal</a> &#187;</li> 
@@ -60,8 +60,8 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>density</strong> (<em>int</em>) – the points per Angstrom in the grid</li>
-<li><strong>size</strong> (<em>float</em>) – the length of one edge of the cube</li>
+<li><strong>density</strong> (<em>int</em><em> (</em><em>optional</em><em>)</em>) – the points per Angstrom in the grid</li>
+<li><strong>size</strong> (<em>float</em><em> (</em><em>optional</em><em>)</em>) – the length of one edge of the cube</li>
 </ul>
 </td>
 </tr>
@@ -71,8 +71,14 @@ along one edge of the grid. Units are meters</p>
 </li>
 <li><p class="first"><strong>bounds</strong> (<em>tuple (origin, low, high, points)</em>) – This tuple has information about the bounding box</p>
 <p>origin : array of floats, the (x,y,z) location of mesh vertex</p>
-<p>low : array of ints, the integer location of the first point in each dimension</p>
-<p>high : array of ints, the integer location of the last point in each dimension</p>
+<dl class="docutils">
+<dt>low <span class="classifier-delimiter">:</span> <span class="classifier">array of ints, the integer location of the first</span></dt>
+<dd><p class="first last">point in each dimension</p>
+</dd>
+<dt>high <span class="classifier-delimiter">:</span> <span class="classifier">array of ints, the integer location of the last</span></dt>
+<dd><p class="first last">point in each dimension</p>
+</dd>
+</dl>
 <p>points : array of ints, the number of points along each dimension</p>
 </li>
 </ul>
@@ -135,7 +141,7 @@ along one edge of the grid. Units are meters</p>
         <li class="right" >
           <a href="paramagpy.metal.Metal.isomap.html" title="paramagpy.metal.Metal.isomap"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.41 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../metal.html" >paramagpy.metal</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="paramagpy.metal.Metal.html" >paramagpy.metal.Metal</a> &#187;</li> 

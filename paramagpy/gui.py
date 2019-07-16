@@ -1,4 +1,4 @@
-#!/home/u5376227/.virtualenvs/venvpylanth/bin/python
+#!/home/u5376227/.virtualenvs/venvparamagpy/bin/python
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk, font
 from tkinter.colorchooser import askcolor
@@ -449,7 +449,11 @@ class PlotTensorPopup(Popup):
 		if self.parent.dtype=='PCS':
 			value_mesh = tensor.pcs_mesh(mesh)
 		elif self.parent.dtype=='PRE':
-			value_mesh = tensor.pre_mesh(mesh)
+			rtype = self.parent.parent.loadData.rtype()
+			usesbm=self.parent.parent.fopts.params['sbm'].get()
+			usedsa=self.parent.parent.fopts.params['dsa'].get()
+			value_mesh = tensor.pre_mesh(mesh, rtype=rtype, 
+				dsa=usedsa, sbm=usesbm)
 		tensor.write_isomap(value_mesh, bounds, fileName=meshFile)
 		tensor.write_pymol_script(isoval=self.params['cont'].get(), 
 			surfaceName=self.saveName.get(),scriptName=pymolFile, 

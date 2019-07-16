@@ -503,7 +503,8 @@ def nlr_fit_metal_from_pcs(initMetals, pcss,
 			metal.set_params(zip(pospars, pos))
 			metal.set_params(zip(otherpars, other))
 		score = 0.0
-		zipped = zip(metals, posarrays, csaarrays, pcsarrays, idxarrays, errarrays)
+		zipped = zip(metals, posarrays, csaarrays, pcsarrays, 
+			idxarrays, errarrays)
 		for metal, posarray, csaarray, pcsarray, idxarray, errarray in zipped:
 			calcpcs = metal.fast_pcs(posarray)
 			if userads:
@@ -592,7 +593,8 @@ def pcs_fit_error_bootstrap(initMetals, pcss, params, iterations,
 	for i in range(iterations):
 		datas_trunc = []
 		sumIndices_trunc = []
-		for atm, pcs, err, idx in zip(atmarrays, pcsarrays, errarrays, sumarrays):
+		for atm, pcs, err, idx in zip(atmarrays, pcsarrays, 
+			errarrays, sumarrays):
 			unique_idx = np.unique(idx)
 			chosen_idx = np.random.choice(unique_idx, 
 				int(len(unique_idx)*(1-fraction_removed)), replace=False)
@@ -748,8 +750,7 @@ def nlr_fit_metal_from_pre(initMetals, pres, params=('x','y','z'),
 			metal.set_params(zip(pospars, pos))
 			metal.set_params(zip(otherpars, other))
 		score = 0.0
-		zipped = zip(metals, posarrays, gamarrays, csaarrays, 
-						prearrays, idxarrays, errarrays, rtypes)
+		zipped = zip(metals, posarrays, gamarrays, csaarrays, prearrays, idxarrays, errarrays, rtypes)
 		for metal, posarr, gamarr, csaarr, prearr, idxarr, errarr, rtype in zipped:
 			calcpre = metal.fast_pre(posarr, gamarr, rtype, 
 				dsa=usedsa, sbm=usesbm, csaarray=csaarr)
@@ -765,8 +766,7 @@ def nlr_fit_metal_from_pre(initMetals, pres, params=('x','y','z'),
 	fmin_bfgs(cost, startpars, disp=False)
 	calc_pres = []
 	qfactors = []
-	zipped = zip(metals, posarrays, gamarrays, csaarrays, 
-						prearrays, idxarrays, errarrays, rtypes)
+	zipped = zip(metals, posarrays, gamarrays, csaarrays, prearrays, idxarrays, errarrays, rtypes)
 	for metal, posarr, gamarr, csaarr, prearr, idxarr, errarr, rtype in zipped:
 		metal.set_utr()
 		calculated = metal.fast_pre(posarr, gamarr, rtype, 
