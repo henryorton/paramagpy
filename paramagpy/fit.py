@@ -385,9 +385,11 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 	for pcsarray, idxarray, errarray in zip(pcsarrays, idxarrays, errarrays):
 		pcsarrays_eavg.append(np.bincount(idxarray, weights=pcsarray/errarray))
 
-	minscore = 1E50
+	minscore = 1E308
 	print("SVD search started in {} points".format(len(sphere)))
 	tot = len(sphere)
+	if tot<1:
+		raise ValueError("Zero grid points selected for SVD search")
 	prog = 0.0
 	for pos in sphere:
 		if progress:
@@ -410,8 +412,7 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 	minmetals = [m.copy() for m in metals]
 	calc_pcss = []
 	qfactors = []
-	for pcsarray, posarray, idxarray, metal, sol in zip(pcsarrays, posarrays, 
-		idxarrays, minmetals, minsols):
+	for pcsarray, posarray, idxarray, metal, sol in zip(pcsarrays, posarrays, idxarrays, minmetals, minsols):
 		metal.position = minpos
 		if offsetShift:
 			metal.upper_triang = sol[:-1]

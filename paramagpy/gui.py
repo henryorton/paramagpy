@@ -622,20 +622,24 @@ class SaveDataPopup(Popup):
 			data = self.parent.parent.get_model_average()
 
 		outData = []
+
 		if self.varFileType.get()=='.csv':
-			outData.append(self.parent.lblLine[1:-1].replace("|",",")+'\n')
+			header = ",".join([i[0] for i in self.parent.fields.values()])
+			outData.append(header+'\n')
 			for row in data:
-				_, _, chn, (_, seq, _), (atm, _) = row['atm'].get_full_id()
-				res = row['atm'].parent.resname
-				expn = "{:^9.3f}".format(row['exp'])
-				caln = "{:^9.3f}".format(row['cal'])
+				d = {}
+				_, _, d['chn'], (_, d['seq'], _), (d['atm'], _) = row['atm'].get_full_id()
+				d['res'] = row['atm'].parent.resname
+				d['exp'] = row['exp']
+				d['cal'] = row['cal']
+				d['err'] = row['err']
+				d['dev'] = abs(row['exp'] - row['cal'])
 				if row['use']:
-					use = 'x'
+					d['use']= 'x'
 				else:
-					use = ' '
-				line = self.parent.fmtLine.format(
-					use,chn,seq,res,atm,expn,caln)
-				outData.append(line[1:-1].replace("|",',')+'\n')
+					d['use'] = ' '
+				line = self.parent.printRowFmt.format(**d)
+				outData.append(line+'\n')
 
 		elif self.varFileType.get()=='.npc':
 			for row in data:
@@ -1054,6 +1058,8 @@ class DataView(tk.LabelFrame):
 			['dev',('Dev.' ,'{:^.3f}', 7)]
 		])
 
+		self.printRowFmt = """{use:1s},{chn:1s},{seq:<3d},{res:<3s},{atm:6s},{cal:7.3f},{exp:7.3f},{err:7.3f},{dev:7.3f}"""
+
 		self.rowReference = []
 		self.currentIndex = tk.IntVar(value=0)
 		self.currentModel = tk.IntVar(value=0)
@@ -1076,8 +1082,6 @@ class DataView(tk.LabelFrame):
 
 		self.listBox = Treeviewer(self, self.fields)
 
-		# self.listBox = tk.Listbox(self, width=len(self.lblLine)+1, 
-		# 	height=25, font=("Courier", settings['listboxFontSize']))
 		self.listBox.grid(row=1,column=0,columnspan=4,pady=10,padx=5)
 		self.listBox.bind("<Double-Button-1>", self.set_position)
 		self.listBox.bind("x", self.toggle_use)
