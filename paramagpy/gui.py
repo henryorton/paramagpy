@@ -1,4 +1,4 @@
-#!/home/u5376227/.virtualenvs/venvparamagpy/bin/python
+#!/home/u5376227/.virtualenvs/paramagpyenv/bin/python
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk, font
 from tkinter.colorchooser import askcolor
