@@ -542,9 +542,9 @@ def nlr_fit_metal_from_pcs(initMetals, pcss,
 	return metals, calc_pcss, qfactors
 
 
-def pcs_fit_error_monte_carlo(initMetals, pcss, params, iterations,
+def pcs_fit_error_monte_carlo(initMetals, pcss, iterations,
+	params=('x','y','z','ax','rh','a','b','g'),
 	sumIndices=None, userads=False, useracs=False, progress=None):
-	stds = [[] for metal in initMetals]
 	atmarrays = []
 	pcsarrays = []
 	errarrays = []
@@ -554,29 +554,46 @@ def pcs_fit_error_monte_carlo(initMetals, pcss, params, iterations,
 		pcsarrays.append(pcsarray)
 		errarrays.append(errarray)
 
+	sample_metals = []
+
 	for i in range(iterations):
 		data = []
 		for atm, pcs, err in zip(atmarrays, pcsarrays, errarrays):
-			# noisey = pcs + np.random.normal(scale=err)
-			noisey = pcs + (np.random.uniform(low=-1, high=-1, 
+			noisey = pcs + (np.random.uniform(low=-1, high=1, 
 				size=len(err)))*err
 			tmp = zip(atm, noisey, err)
 			data.append(list(tmp))
 		metals, _, _ = nlr_fit_metal_from_pcs(initMetals, data, params, 
 			sumIndices, userads, useracs, progress=None)
-		for metal, std in zip(metals, stds):
-			std.append(metal.get_params(params))
+		
+		sample_metals.append(metals)
+
 		if progress:
 			progress.set(float(i+1)/iterations)
 
-	return [dict(zip(params, zip(*std))) for std in stds]
+	sample_metals = list(zip(*sample_metals))
+	std_metals = []
+	for metal_set in sample_metals:
+		all_param_values = []
+		for metal in metal_set:
+			all_param_values.append(metal.get_params(params))
+
+		std_params = {}
+		for param, values in zip(params, zip(*all_param_values)):
+			std_params[param] = np.std(values)
+
+		std_metal = metal.__class__(temperature=0.0, B0=0.0)
+		std_metal.set_params(std_params.items())
+		std_metals.append(std_metal)
+
+	return sample_metals, std_metals
 
 
-def pcs_fit_error_bootstrap(initMetals, pcss, params, iterations, 
-	fraction_removed, sumIndices=None, userads=False, useracs=False, 
-	progress=None):
-	assert 0.0<fraction_removed<1.0
-	stds = [[] for metal in initMetals]
+def pcs_fit_error_bootstrap(initMetals, pcss, iterations, fraction,
+	params=('x','y','z','ax','rh','a','b','g'), 
+	sumIndices=None, userads=False, useracs=False, progress=None):
+	if not (0.0<fraction<1.0):
+		raise ValueError("The bootstrap sample fraction must be between 0 and 1")
 	atmarrays = []
 	pcsarrays = []
 	errarrays = []
@@ -591,6 +608,8 @@ def pcs_fit_error_bootstrap(initMetals, pcss, params, iterations,
 	if sumIndices is None:
 		sumIndices = sumarrays
 
+	sample_metals = []
+
 	for i in range(iterations):
 		datas_trunc = []
 		sumIndices_trunc = []
@@ -598,7 +617,7 @@ def pcs_fit_error_bootstrap(initMetals, pcss, params, iterations,
 			errarrays, sumarrays):
 			unique_idx = np.unique(idx)
 			chosen_idx = np.random.choice(unique_idx, 
-				int(len(unique_idx)*(1-fraction_removed)), replace=False)
+				int(len(unique_idx)*(fraction)), replace=False)
 			mask = np.isin(idx, chosen_idx)
 			idxs_trunc = idx[mask]
 			sumIndices_trunc.append(idxs_trunc)
@@ -606,12 +625,26 @@ def pcs_fit_error_bootstrap(initMetals, pcss, params, iterations,
 			datas_trunc.append(data_trunc.tolist())
 		metals, _, _ = nlr_fit_metal_from_pcs(initMetals, datas_trunc, params, 
 			sumIndices_trunc, userads, useracs, progress=None)
-		for metal, std in zip(metals, stds):
-			std.append(metal.get_params(params))
+		sample_metals.append(metals)
 		if progress:
 			progress.set(float(i+1)/iterations)
 
-	return [dict(zip(params, zip(*std))) for std in stds]
+	sample_metals = list(zip(*sample_metals))
+	std_metals = []
+	for metal_set in sample_metals:
+		all_param_values = []
+		for metal in metal_set:
+			all_param_values.append(metal.get_params(params))
+
+		std_params = {}
+		for param, values in zip(params, zip(*all_param_values)):
+			std_params[param] = np.std(values)
+
+		std_metal = metal.__class__(temperature=0.0, B0=0.0)
+		std_metal.set_params(std_params.items())
+		std_metals.append(std_metal)
+
+	return sample_metals, std_metals
 
 
 def qfactor(experiment, calculated, sumIndices=None):

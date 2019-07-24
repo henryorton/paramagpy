@@ -819,15 +819,15 @@ class ErrorSimulationPopup(Popup):
 
 		method = self.var_error_method.get()
 		iters = int(self.iterations.floatVar.get())
-		bsfrac = 1.0-self.bootfrac.floatVar.get()
+		bsfrac = self.bootfrac.floatVar.get()
 
 		if self.parent.dtype=='PCS':
-			stds, devs = self.parent.fopts.error_pcs(dataTabs, method, iters, 
+			all_metals, std_metal = self.parent.fopts.error_pcs(dataTabs, method, iters, 
 				bsfrac=bsfrac, singleModel=model)
+			self.errorTensor = std_metal
 		elif self.parent.dtype=='PRE':
 			pass
 
-		self.errorTensor.set_params(devs.items())
 		def transform(vector):
 			x, y, z = vector
 			theta = np.arctan2(y, x)
@@ -835,9 +835,8 @@ class ErrorSimulationPopup(Popup):
 			return theta, phi
 
 		spcoords = []
-		for eulers in zip(stds['a'], stds['b'], stds['g']):
-			rotationMatrix = metal.euler_to_matrix(np.array(eulers))
-			x, y, z = rotationMatrix.T
+		for metal in all_metals:
+			x, y, z = metal.rotationMatrix.T
 			spcoords.append(tuple(map(transform, [x,y,z])))
 
 		self.type_tensors()
@@ -2110,27 +2109,27 @@ class FittingOptionsFrame(tk.LabelFrame):
 		model, data = modeldata
 
 		if method=='mc':
-			stds = fit.pcs_fit_error_monte_carlo(metals, data, pars, iters, 
+			all_metals, std_metals = fit.pcs_fit_error_monte_carlo(
+				metals, data, iters,
+				params=pars, 
 				userads=self.params['rads'].get(), 
 				useracs=self.params['racs'].get(), 
 				progress=progVar)
 		elif method=='bs':
-			stds = fit.pcs_fit_error_bootstrap(metals, data, pars, iters, 
-				bsfrac, 
+			all_metals, std_metals = fit.pcs_fit_error_bootstrap(
+				metals, data, iters, bsfrac, 
+				params=pars,
 				userads=self.params['rads'].get(), 
 				useracs=self.params['racs'].get(), 
 				progress=progVar)
 
-		deviations = {}
-		for tab, std in zip(dataTabs, stds):
-			if tab.is_current():
-				scatter = std
-				for param, values in std.items():
-					value = np.std(values)
-					deviations[param] = value
-
 		progbar.death()
-		return scatter, deviations
+
+		deviations = {}
+		for tab, am, sm in zip(dataTabs, all_metals, std_metals):
+			if tab.is_current():
+				return am, sm
+
 
 	def fit_pre(self, dataTabs):
 		if not self.check_data(dataTabs):
