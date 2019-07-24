@@ -542,9 +542,59 @@ def nlr_fit_metal_from_pcs(initMetals, pcss,
 	return metals, calc_pcss, qfactors
 
 
-def pcs_fit_error_monte_carlo(initMetals, pcss, params, iterations,
+def pcs_fit_error_monte_carlo(initMetals, pcss, iterations,
+	params=('x','y','z','ax','rh','a','b','g'),
 	sumIndices=None, userads=False, useracs=False, progress=None):
-	stds = [[] for metal in initMetals]
+	"""
+	Analyse uncertainty of PCS fit by Monte-Carlo simulation
+	This repeatedly adds noise to experimental PCS data and fits the tensor.
+	The standard deviation of the fitted parameters across each iteration
+	is then reported.
+
+	Parameters
+	----------
+	initMetals : list of Metal objects
+		a list of metals used as starting points for fitting. 
+		a list must always be provided, but may also contain 
+		only one element. If multiple metals are provided, each metal
+		is fitted to their respective PCS dataset by index, but all are 
+		fitted to a common position.
+	pcss : list of PCS datasets
+		each PCS dataset must correspond to an associated metal for fitting.
+		each PCS dataset has structure [Atom, value, error], where Atom is 
+		an Atom object, value is the PCS/RDC/PRE value
+		and error is the uncertainty
+	iterations : int
+		the number of Monte Carlo iterations to perform
+	params : list of str
+		the parameters to be fit. 
+		For example ['x','y','z','ax','rh','a','b','g','shift']
+	sumIndices : list of arrays of ints, optional
+		each index list must correspond to an associated pcs dataset.
+		each index list contains an index assigned to each atom. 
+		Common indices determine summation between models 
+		for ensemble averaging.
+		If None, defaults to atom serial number to determine summation 
+		between models.
+	userads : bool, optional
+		include residual anisotropic dipolar shielding (RADS) during fitting
+	useracs : bool, optional
+		include residual anisotropic chemical shielding (RACS) during fitting.
+		CSA tensors are taken using the <csa> method of atoms.
+	progress : object, optional
+		to keep track of the calculation, progress.set(x) is called each
+		iteration and varies from 0.0 -> 1.0 when the calculation is complete.
+
+	Returns
+	-------
+	sample_metals : list of list of metals
+		the metals fitted by NLR to the PCS data with noise at each iteration
+	std_metals : list of metals
+		the standard deviation in fitted parameters over all iterations of the
+		Monte Carlo simulation.
+		These are stored within the metal object. All unfitted parameters 
+		are zero.
+	"""
 	atmarrays = []
 	pcsarrays = []
 	errarrays = []
@@ -554,29 +604,100 @@ def pcs_fit_error_monte_carlo(initMetals, pcss, params, iterations,
 		pcsarrays.append(pcsarray)
 		errarrays.append(errarray)
 
+	sample_metals = []
+
 	for i in range(iterations):
 		data = []
 		for atm, pcs, err in zip(atmarrays, pcsarrays, errarrays):
-			# noisey = pcs + np.random.normal(scale=err)
-			noisey = pcs + (np.random.uniform(low=-1, high=-1, 
+			noisey = pcs + (np.random.uniform(low=-1, high=1, 
 				size=len(err)))*err
 			tmp = zip(atm, noisey, err)
 			data.append(list(tmp))
 		metals, _, _ = nlr_fit_metal_from_pcs(initMetals, data, params, 
 			sumIndices, userads, useracs, progress=None)
-		for metal, std in zip(metals, stds):
-			std.append(metal.get_params(params))
+		
+		sample_metals.append(metals)
+
 		if progress:
 			progress.set(float(i+1)/iterations)
 
-	return [dict(zip(params, zip(*std))) for std in stds]
+	sample_metals = list(zip(*sample_metals))
+	std_metals = []
+	for metal_set in sample_metals:
+		all_param_values = []
+		for metal in metal_set:
+			all_param_values.append(metal.get_params(params))
+
+		std_params = {}
+		for param, values in zip(params, zip(*all_param_values)):
+			std_params[param] = np.std(values)
+
+		std_metal = metal.__class__(temperature=0.0, B0=0.0)
+		std_metal.set_params(std_params.items())
+		std_metals.append(std_metal)
+
+	return sample_metals, std_metals
 
 
-def pcs_fit_error_bootstrap(initMetals, pcss, params, iterations, 
-	fraction_removed, sumIndices=None, userads=False, useracs=False, 
-	progress=None):
-	assert 0.0<fraction_removed<1.0
-	stds = [[] for metal in initMetals]
+def pcs_fit_error_bootstrap(initMetals, pcss, iterations, fraction,
+	params=('x','y','z','ax','rh','a','b','g'), 
+	sumIndices=None, userads=False, useracs=False, progress=None):
+	"""
+	Analyse uncertainty of PCS fit by Bootstrap methods.
+	This repeats the tensor fitting, but each time samples a fraction
+	of the data randomly. The standard deviation in fitted parameters
+	over each iteration is then reported.
+
+	Parameters
+	----------
+	initMetals : list of Metal objects
+		a list of metals used as starting points for fitting. 
+		a list must always be provided, but may also contain 
+		only one element. If multiple metals are provided, each metal
+		is fitted to their respective PCS dataset by index, but all are 
+		fitted to a common position.
+	pcss : list of PCS datasets
+		each PCS dataset must correspond to an associated metal for fitting.
+		each PCS dataset has structure [Atom, value, error], where Atom is 
+		an Atom object, value is the PCS/RDC/PRE value
+		and error is the uncertainty
+	iterations : int
+		the number of Monte Carlo iterations to perform
+	fraction : float
+		must be between 0 and 1
+		the proportion of data to be sample for fitting with each iteration
+		of the bootstrap method.
+	params : list of str
+		the parameters to be fit. 
+		For example ['x','y','z','ax','rh','a','b','g','shift']
+	sumIndices : list of arrays of ints, optional
+		each index list must correspond to an associated pcs dataset.
+		each index list contains an index assigned to each atom. 
+		Common indices determine summation between models 
+		for ensemble averaging.
+		If None, defaults to atom serial number to determine summation 
+		between models.
+	userads : bool, optional
+		include residual anisotropic dipolar shielding (RADS) during fitting
+	useracs : bool, optional
+		include residual anisotropic chemical shielding (RACS) during fitting.
+		CSA tensors are taken using the <csa> method of atoms.
+	progress : object, optional
+		to keep track of the calculation, progress.set(x) is called each
+		iteration and varies from 0.0 -> 1.0 when the calculation is complete.
+
+	Returns
+	-------
+	sample_metals : list of list of metals
+		the metals fitted by NLR to the PCS data with noise at each iteration
+	std_metals : list of metals
+		the standard deviation in fitted parameters over all iterations of the
+		Monte Carlo simulation.
+		These are stored within the metal object. All unfitted parameters 
+		are zero.
+	"""
+	if not (0.0<fraction<1.0):
+		raise ValueError("The bootstrap sample fraction must be between 0 and 1")
 	atmarrays = []
 	pcsarrays = []
 	errarrays = []
@@ -591,6 +712,8 @@ def pcs_fit_error_bootstrap(initMetals, pcss, params, iterations,
 	if sumIndices is None:
 		sumIndices = sumarrays
 
+	sample_metals = []
+
 	for i in range(iterations):
 		datas_trunc = []
 		sumIndices_trunc = []
@@ -598,7 +721,7 @@ def pcs_fit_error_bootstrap(initMetals, pcss, params, iterations,
 			errarrays, sumarrays):
 			unique_idx = np.unique(idx)
 			chosen_idx = np.random.choice(unique_idx, 
-				int(len(unique_idx)*(1-fraction_removed)), replace=False)
+				int(len(unique_idx)*(fraction)), replace=False)
 			mask = np.isin(idx, chosen_idx)
 			idxs_trunc = idx[mask]
 			sumIndices_trunc.append(idxs_trunc)
@@ -606,12 +729,26 @@ def pcs_fit_error_bootstrap(initMetals, pcss, params, iterations,
 			datas_trunc.append(data_trunc.tolist())
 		metals, _, _ = nlr_fit_metal_from_pcs(initMetals, datas_trunc, params, 
 			sumIndices_trunc, userads, useracs, progress=None)
-		for metal, std in zip(metals, stds):
-			std.append(metal.get_params(params))
+		sample_metals.append(metals)
 		if progress:
 			progress.set(float(i+1)/iterations)
 
-	return [dict(zip(params, zip(*std))) for std in stds]
+	sample_metals = list(zip(*sample_metals))
+	std_metals = []
+	for metal_set in sample_metals:
+		all_param_values = []
+		for metal in metal_set:
+			all_param_values.append(metal.get_params(params))
+
+		std_params = {}
+		for param, values in zip(params, zip(*all_param_values)):
+			std_params[param] = np.std(values)
+
+		std_metal = metal.__class__(temperature=0.0, B0=0.0)
+		std_metal.set_params(std_params.items())
+		std_metals.append(std_metal)
+
+	return sample_metals, std_metals
 
 
 def qfactor(experiment, calculated, sumIndices=None):
