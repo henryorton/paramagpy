@@ -7,7 +7,6 @@ doctrees/
 *.aux
 *.fdb_latexmk
 *.fls
-*.tex
 *.log
 *.synctex.gz
 *.sublime-workspace
