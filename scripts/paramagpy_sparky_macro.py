@@ -4,6 +4,10 @@ import subprocess
 import sputil
 import tkutil
 import Tkinter
+import sparky
+
+BACK_CALC_PEAK_COLOUR = 'green'
+
 
 def read_write_pcs_files(session):
 	sputil.the_dialog(ReadWritePCSFiles, session).show_window(1)
@@ -37,6 +41,7 @@ class ReadWritePCSFiles(tkutil.Dialog):
 		br = tkutil.button_row(self.top,
 			('Write PCS', self.write_npc_cb),
 			('Read PCS', self.read_npc_cb),
+			('Clear PCS', self.clear_peaks_cb),
 			('Close', self.close_cb))
 		br.frame.pack(side = 'top', anchor = 'w')
 
@@ -123,3 +128,34 @@ class ReadWritePCSFiles(tkutil.Dialog):
 
 			peak.note = "PCS_backcalc"
 			peak.show_assignment_label()
+			peak.label.color = BACK_CALC_PEAK_COLOUR
+			peak.color = BACK_CALC_PEAK_COLOUR
+
+		self.message['text'] = "PCS values read from: \n{}".format(fileName)
+
+
+
+	def clear_peaks_cb(self):
+		paraSpec = self.para_menu.spectrum()
+
+		if not paraSpec:
+			raise IOError("You need to select a paramagnetic spectrum")
+
+		selected_ornaments = self.session.selected_ornaments()
+		self.session.unselect_all_ornaments()
+
+		for peak in paraSpec.peak_list():
+			if peak.note == "PCS_backcalc":
+				peak.selected = 1
+		self.session.command_characters("")
+
+		for ornament in selected_ornaments:
+			if sparky.object_exists(ornament):
+				ornament.selected = 1
+
+		self.message['text'] = "PCS peaks deleted from spectrum:\n{}".format(paraSpec.name)
+
+		
+
+
+
