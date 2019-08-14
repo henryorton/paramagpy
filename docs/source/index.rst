@@ -18,6 +18,7 @@ Contents
     install
     examples/index
     paramagpy_gui
+    nmr_software_macros/index
     reference/index
 
 Introduction

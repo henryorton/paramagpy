@@ -76,7 +76,6 @@ mets, stdm = fit.pcs_fit_error_monte_carlo(mFit, [parsedData], 50)
 
 
 
-
 # # Save the fitted tensor to file
 # mFit[0].save('calbindin_Er_HN_PCS_tensor_errors.txt')
 
