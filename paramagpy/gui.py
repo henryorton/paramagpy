@@ -847,13 +847,10 @@ class ErrorSimulationPopup(Popup):
 		self.axes.set_xlabel("theta")
 		self.axes.set_ylabel("phi")
 		self.axes.grid()
-
 		if points is not None:
 			for data, col, label in zip(points, ['r','g','b'], ['x','y','z']):
 				theta, phi = zip(*data)
-				self.axes.scatter(theta, phi, s=0.4, c=col, label=label)
-				# self.axes.plot(theta, phi, marker='x',
-					# lw=0, ms=3, label=label, color=col)
+				self.axes.scatter(theta, phi, s=0.4, c=col, label=label, zorder=10)
 			self.axes.legend()
 		self.canvas.draw()
 
