@@ -3,3 +3,4 @@ source /home/u5376227/.virtualenvs/paramagpyenv/bin/activate
 rm -rf build
 rm -r ./source/reference/generated/
 make html
+make latex

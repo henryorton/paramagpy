@@ -22,7 +22,7 @@ First the relevant modules are loaded, and the iron atom (paramagnetic centre) i
 .. literalinclude:: ../../../examples/ccr_calculate/ccr_calculate.py 
 	:lines: 1-6
 
-Two paramagnetic centres are defined for the high and low spin iron atom. The positions are set to that of the iron centre along with other relevant parameters. The measured isotropic :math:`{\Chi}`-tensor magnitudes are also set.
+Two paramagnetic centres are defined for the high and low spin iron atom. The positions are set to that of the iron centre along with other relevant parameters. The measured isotropic :math:`{\chi}`-tensor magnitudes are also set.
 
 .. literalinclude:: ../../../examples/ccr_calculate/ccr_calculate.py 
 	:lines: 9-15

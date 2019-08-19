@@ -131,6 +131,8 @@ latex_elements = {
     # Latex figure (float) alignment
     #
     'figure_align': 'htbp',
+
+    'extraclassoptions': 'openany,oneside'
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
@@ -159,7 +161,8 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'paramagpy', 'paramagpy Documentation',
-     author, 'paramagpy', 'One line description of project.',
+     author, 'paramagpy', 
+     'A software for calculating paramagnetic effects in NMR spectra of macromolecules',
      'Miscellaneous'),
 ]
 
