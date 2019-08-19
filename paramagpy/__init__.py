@@ -4,4 +4,4 @@ from . import protein
 from . import fit
 from . import gui
 
-__version__ = '0.42'
+__version__ = '0.43'
