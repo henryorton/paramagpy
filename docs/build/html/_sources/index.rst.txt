@@ -9,6 +9,23 @@ Welcome to paramagpy's documentation
 :Release: |version|
 :Date: |today|
 
+
+Introduction
+------------
+
+.. include:: ../../README.rst
+    :start-line: 3
+    :end-line: 4
+
+.. figure:: ../../paramagpy/icon.png
+    :align: center
+
+    *Please, not the eyes!* - Canberra cyclist
+
+.. include:: ../../README.rst
+    :start-line: 10
+
+
 Contents
 --------
 
@@ -20,18 +37,3 @@ Contents
     paramagpy_gui
     nmr_software_macros/index
     reference/index
-
-Introduction
-------------
-
-.. include:: ../../README.rst
-    :start-line: 3
-    :end-line: 4
-
-.. figure:: ../../paramagpy/icon.gif
-    :align: center
-
-    *Please, not the eyes!* - Canberra cyclist
-
-.. include:: ../../README.rst
-    :start-line: 10

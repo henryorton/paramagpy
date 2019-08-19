@@ -53,6 +53,46 @@
 </tr>
 </tbody>
 </table>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>paramagpy is a python module for calculating paramagnetic effects in NMR spectra of proteins. This currently includes fitting of paramagnetic susceptibility tensors to experimental data associated with pseudocontact shifts (PCS) residual dipolar couplings (RDC), paramagnetic relaxation enhancements (PRE) and cross-correlated relaxation (CCR). A GUI allows easy viewing of data and seamless transition between PCS/RDC/PR/CCR calculations.</p>
+<div class="figure align-center" id="id1">
+<img alt="_images/icon.png" src="_images/icon.png" />
+<p class="caption"><span class="caption-text"><em>Please, not the eyes!</em> - Canberra cyclist</span></p>
+</div>
+</div>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Support for PDB protein structures with models</li>
+<li>Combined SVD gridsearch and gradient descent algorithms for solving PCS tensors</li>
+<li>Optional fitting of reference offset parameter for PCS datasets</li>
+<li>Support for Residual Anisotropic Chemical Shielding (RACS) and Residual Anisotropic Dipolar Shielding (RADS) corrections to PCS</li>
+<li>Lanthanide parameter templates available</li>
+<li>Plotting of correlation between experiment/calculated values</li>
+<li>Plotting of tensor isosurfaces compatible with PyMol</li>
+<li>Q-factor calculations</li>
+<li>Error analysis of tensor fit quality Monte-Carlo or Bootstrap methods</li>
+<li>Optimisation of multiple PCS/PRE/CCR datasets to a common position</li>
+<li>Unique tensor representation compatible with Numbat (program)</li>
+<li>Fitting of RDC tensor by SVD algorithm</li>
+<li>PRE calculations by Solomon and Curie spin mechanisms</li>
+<li>CSA cross-correlation correction to PRE calculations</li>
+<li>Dipole-dipole/Curie spin cross-correlated relaxation calculations</li>
+<li>Fitting of tensor parameters to PRE/CCR data</li>
+<li>Macro scripts for integration with CCPNMR and Sparky</li>
+</ul>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="https://henryorton.github.io/paramagpy/">https://henryorton.github.io/paramagpy/</a></li>
+</ul>
+</div>
+<div class="section" id="citing-paramagpy">
+<h2>Citing paramagpy<a class="headerlink" href="#citing-paramagpy" title="Permalink to this headline">¶</a></h2>
+<p>Hopefully paramagpy will be published soon the journal of biomolecular NMR</p>
+</div>
 <div class="section" id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
@@ -91,46 +131,6 @@
 </ul>
 </div>
 </div>
-<div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>paramagpy is a python module for calculating paramagnetic effects in NMR spectra of proteins. This currently includes fitting of paramagnetic susceptibility tensors to experimental data associated with pseudocontact shifts (PCS) residual dipolar couplings (RDC), paramagnetic relaxation enhancements (PRE) and cross-correlated relaxation (CCR). A GUI allows easy viewing of data and seamless transition between PCS/RDC/PR/CCR calculations.</p>
-<div class="figure align-center" id="id1">
-<img alt="_images/icon.gif" src="_images/icon.gif" />
-<p class="caption"><span class="caption-text"><em>Please, not the eyes!</em> - Canberra cyclist</span></p>
-</div>
-</div>
-<div class="section" id="features">
-<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>Support for PDB protein structures with models</li>
-<li>Combined SVD gridsearch and gradient descent algorithms for solving PCS tensors</li>
-<li>Optional fitting of reference offset parameter for PCS datasets</li>
-<li>Support for Residual Anisotropic Chemical Shielding (RACS) and Residual Anisotropic Dipolar Shielding (RADS) corrections to PCS</li>
-<li>Lanthanide parameter templates available</li>
-<li>Plotting of correlation between experiment/calculated values</li>
-<li>Plotting of tensor isosurfaces compatible with PyMol</li>
-<li>Q-factor calculations</li>
-<li>Error analysis of tensor fit quality Monte-Carlo or Bootstrap methods</li>
-<li>Optimisation of multiple PCS/PRE/CCR datasets to a common position</li>
-<li>Unique tensor representation compatible with Numbat (program)</li>
-<li>Fitting of RDC tensor by SVD algorithm</li>
-<li>PRE calculations by Solomon and Curie spin mechanisms</li>
-<li>CSA cross-correlation correction to PRE calculations</li>
-<li>Dipole-dipole/Curie spin cross-correlated relaxation calculations</li>
-<li>Fitting of tensor parameters to PRE/CCR data</li>
-<li>Macro scripts for integration with CCPNMR and Sparky</li>
-</ul>
-</div>
-<div class="section" id="documentation">
-<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><a class="reference external" href="https://henryorton.github.io/paramagpy/">https://henryorton.github.io/paramagpy/</a></li>
-</ul>
-</div>
-<div class="section" id="citing-paramagpy">
-<h2>Citing paramagpy<a class="headerlink" href="#citing-paramagpy" title="Permalink to this headline">¶</a></h2>
-<p>Hopefully paramagpy will be published soon the journal of biomolecular NMR</p>
-</div>
 </div>
 
 
@@ -142,11 +142,11 @@
   <h3><a href="#">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome to paramagpy’s documentation</a><ul>
-<li><a class="reference internal" href="#contents">Contents</a></li>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#features">Features</a></li>
 <li><a class="reference internal" href="#documentation">Documentation</a></li>
 <li><a class="reference internal" href="#citing-paramagpy">Citing paramagpy</a></li>
+<li><a class="reference internal" href="#contents">Contents</a></li>
 </ul>
 </li>
 </ul>

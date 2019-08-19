@@ -49,7 +49,7 @@
 
 \setcounter{tocdepth}{1}
 
-
+\setcounter{tocdepth}{1}
 
 \title{paramagpy Documentation}
 \date{Aug 19, 2019}
@@ -75,6 +75,87 @@
 Aug 19, 2019
 
 \end{description}\end{quote}
+
+
+\chapter{Introduction}
+\label{\detokenize{index:introduction}}
+paramagpy is a python module for calculating paramagnetic effects in NMR spectra of proteins. This currently includes fitting of paramagnetic susceptibility tensors to experimental data associated with pseudocontact shifts (PCS) residual dipolar couplings (RDC), paramagnetic relaxation enhancements (PRE) and cross-correlated relaxation (CCR). A GUI allows easy viewing of data and seamless transition between PCS/RDC/PR/CCR calculations.
+
+\begin{figure}[htbp]
+\centering
+\capstart
+
+\noindent\sphinxincludegraphics{{icon}.png}
+\caption{\sphinxstyleemphasis{Please, not the eyes!} - Canberra cyclist}\label{\detokenize{index:id1}}\end{figure}
+
+
+\chapter{Features}
+\label{\detokenize{index:features}}\begin{itemize}
+\item {} 
+Support for PDB protein structures with models
+
+\item {} 
+Combined SVD gridsearch and gradient descent algorithms for solving PCS tensors
+
+\item {} 
+Optional fitting of reference offset parameter for PCS datasets
+
+\item {} 
+Support for Residual Anisotropic Chemical Shielding (RACS) and Residual Anisotropic Dipolar Shielding (RADS) corrections to PCS
+
+\item {} 
+Lanthanide parameter templates available
+
+\item {} 
+Plotting of correlation between experiment/calculated values
+
+\item {} 
+Plotting of tensor isosurfaces compatible with PyMol
+
+\item {} 
+Q-factor calculations
+
+\item {} 
+Error analysis of tensor fit quality Monte-Carlo or Bootstrap methods
+
+\item {} 
+Optimisation of multiple PCS/PRE/CCR datasets to a common position
+
+\item {} 
+Unique tensor representation compatible with Numbat (program)
+
+\item {} 
+Fitting of RDC tensor by SVD algorithm
+
+\item {} 
+PRE calculations by Solomon and Curie spin mechanisms
+
+\item {} 
+CSA cross-correlation correction to PRE calculations
+
+\item {} 
+Dipole-dipole/Curie spin cross-correlated relaxation calculations
+
+\item {} 
+Fitting of tensor parameters to PRE/CCR data
+
+\item {} 
+Macro scripts for integration with CCPNMR and Sparky
+
+\end{itemize}
+
+
+\chapter{Documentation}
+\label{\detokenize{index:documentation}}\begin{itemize}
+\item {} 
+\sphinxurl{https://henryorton.github.io/paramagpy/}
+
+\end{itemize}
+
+
+\chapter{Citing paramagpy}
+\label{\detokenize{index:citing-paramagpy}}
+Hopefully paramagpy will be published soon the journal of biomolecular NMR
 
 
 \chapter{Contents}
@@ -7165,87 +7246,6 @@ int
 
 \end{fulllineitems}
 
-
-
-\chapter{Introduction}
-\label{\detokenize{index:introduction}}
-paramagpy is a python module for calculating paramagnetic effects in NMR spectra of proteins. This currently includes fitting of paramagnetic susceptibility tensors to experimental data associated with pseudocontact shifts (PCS) residual dipolar couplings (RDC), paramagnetic relaxation enhancements (PRE) and cross-correlated relaxation (CCR). A GUI allows easy viewing of data and seamless transition between PCS/RDC/PR/CCR calculations.
-
-\begin{figure}[htbp]
-\centering
-\capstart
-
-\noindent\sphinxincludegraphics{{icon}.gif}
-\caption{\sphinxstyleemphasis{Please, not the eyes!} - Canberra cyclist}\label{\detokenize{index:id1}}\end{figure}
-
-
-\chapter{Features}
-\label{\detokenize{index:features}}\begin{itemize}
-\item {} 
-Support for PDB protein structures with models
-
-\item {} 
-Combined SVD gridsearch and gradient descent algorithms for solving PCS tensors
-
-\item {} 
-Optional fitting of reference offset parameter for PCS datasets
-
-\item {} 
-Support for Residual Anisotropic Chemical Shielding (RACS) and Residual Anisotropic Dipolar Shielding (RADS) corrections to PCS
-
-\item {} 
-Lanthanide parameter templates available
-
-\item {} 
-Plotting of correlation between experiment/calculated values
-
-\item {} 
-Plotting of tensor isosurfaces compatible with PyMol
-
-\item {} 
-Q-factor calculations
-
-\item {} 
-Error analysis of tensor fit quality Monte-Carlo or Bootstrap methods
-
-\item {} 
-Optimisation of multiple PCS/PRE/CCR datasets to a common position
-
-\item {} 
-Unique tensor representation compatible with Numbat (program)
-
-\item {} 
-Fitting of RDC tensor by SVD algorithm
-
-\item {} 
-PRE calculations by Solomon and Curie spin mechanisms
-
-\item {} 
-CSA cross-correlation correction to PRE calculations
-
-\item {} 
-Dipole-dipole/Curie spin cross-correlated relaxation calculations
-
-\item {} 
-Fitting of tensor parameters to PRE/CCR data
-
-\item {} 
-Macro scripts for integration with CCPNMR and Sparky
-
-\end{itemize}
-
-
-\chapter{Documentation}
-\label{\detokenize{index:documentation}}\begin{itemize}
-\item {} 
-\sphinxurl{https://henryorton.github.io/paramagpy/}
-
-\end{itemize}
-
-
-\chapter{Citing paramagpy}
-\label{\detokenize{index:citing-paramagpy}}
-Hopefully paramagpy will be published soon the journal of biomolecular NMR
 
 
 \renewcommand{\indexname}{Python Module Index}
