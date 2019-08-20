@@ -77,8 +77,10 @@ class ReadWritePCSFiles(tkutil.Dialog):
 		out = {}
 		for assig in pcs:
 			for (tmp, atom), value in zip(sputil.parse_assignment(assig), pcs[assig]):
-				seq = int(re.findall(r"\d+", tmp)[0])
-				out[(seq, atom)] = value
+				m = re.findall(r"\d+", tmp)
+				if m:
+					seq = int(m[0])
+					out[(seq, atom)] = value
 
 		with open(fileName, 'w') as f:
 			for key in sorted(out):
