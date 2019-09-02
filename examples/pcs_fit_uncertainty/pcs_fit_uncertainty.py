@@ -17,7 +17,7 @@ mStart.position = prot[0]['A'][56]['CA'].position
 
 # Calculate an initial tensor from an SVD gridsearch
 mGuess, calc, qfac = fit.svd_gridsearch_fit_metal_from_pcs(
-	[mStart],[parsedData], radius=10, points=10)
+    [mStart], [parsedData], radius=10, points=10)
 
 # Refine the tensor using non-linear regression
 mFit, calc, qfac = fit.nlr_fit_metal_from_pcs(mGuess, [parsedData])
@@ -25,8 +25,6 @@ mFit, calc, qfac = fit.nlr_fit_metal_from_pcs(mGuess, [parsedData])
 # mets, stdm = fit.pcs_fit_error_bootstrap(mFit, [parsedData], 10, 0.95)
 
 mets, stdm = fit.pcs_fit_error_monte_carlo(mFit, [parsedData], 50)
-
-
 
 # self.errorTensor.set_params(devs.items())
 # def transform(vector):
@@ -58,22 +56,6 @@ mets, stdm = fit.pcs_fit_error_monte_carlo(mFit, [parsedData], 50)
 # 			# lw=0, ms=3, label=label, color=col)
 # 	self.axes.legend()
 # self.canvas.draw()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # # Save the fitted tensor to file

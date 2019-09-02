@@ -1,4 +1,4 @@
-from paramagpy import protein, fit, dataparse, metal
+from paramagpy import protein, metal
 
 # Load the PDB file
 prot = protein.load_pdb('../data_files/4icbH_mut.pdb')

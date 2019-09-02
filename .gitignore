@@ -16,3 +16,4 @@ doctrees/
 /build/**
 /dist/**
 /paramagpy.egg-info/**
+/venv/
