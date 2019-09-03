@@ -1,7 +1,11 @@
+import copy as cp
+import heapq
 import warnings
 
 import numpy as np
 from scipy.optimize import fmin_bfgs
+
+from paramagpy.protein import CustomResidue
 
 
 def unique_pairing(a, b):
@@ -1190,3 +1194,194 @@ def ensemble_average(atoms, *values):
         out.append(vals)
 
     return list(zip(*out))
+
+
+class PCSToRotamer:
+
+    def __init__(self, model, metal, data):
+        """
+        A deep-copy of the model is taken, so no changes will be made by this class to the
+        instance of model object supplied. Use `self.model` to access the internal model.
+
+        Parameters
+        ----------
+        model : Bio.PDB.Model.Model
+            The model for which the rotamers are fit to the given experimental PCS values
+        metal : paramagpy.metal.Metal
+            The Metal object which is used to calculate the PCS values
+        data : list of (paramagpy.protein.CustomAtom, float, float)
+            The parsed data returned by :meth: paramagpy.protein.CustomStructure.parse
+
+        """
+        self.model = cp.deepcopy(model)
+        self.metal = metal
+        self.__init_data(data)
+        self.__init_rotation_params()
+
+    def __init_rotation_params(self):
+        self.rotation_params = {}
+        for chain in self.model:
+            _chain = self.rotation_params[chain.id] = {}
+            for res in chain:
+                _sc = CustomResidue.side_chain_lib.get(res.get_resname())
+                if _sc is not None:
+                    _chain[res.id[1]] = np.zeros((len(_sc), 3))
+
+    def __init_data(self, data):
+        temp_data, self.data = {}, {}
+        for idx, data_cp in enumerate(data):
+            _atom_id, _res_id, _chain_id = data_cp[0].id, data_cp[0].parent.id[1], data_cp[0].parent.parent.id
+            data[idx] = (self.model[_chain_id][_res_id][_atom_id], data[idx][1], data[idx][2])
+
+        for entry in data:
+            temp_data.setdefault(entry[0].parent, []).append(entry)
+
+        for entry in temp_data:
+            self.data.setdefault(entry.parent.id, {})[entry.id[1]] = temp_data[entry]
+
+    def set_rotation_parameter(self, chain, residue, rotation_parameter):
+        """
+        Set the rotation parameters which will be used for the required fitting algorithm
+
+        Parameters
+        ----------
+        chain : str
+            The str `id` of the `Bio.PDB.Chain.Chain` to which the residue belongs to
+        residue : int
+            The int `id` of the `paramagpy.protein.CustomResidue` whose rotation parameters are being set
+        rotation_parameter : numpy.ndarray
+            ndarray of shape (# bonds on side chain which are rotated, 3)
+            For each bond, 3 parameters are required. The starting dihedral angle, the ending dihedral angle
+            and the number of steps between start and finish (including the start and end angle)
+
+        """
+        self.rotation_params[chain][residue] = rotation_parameter
+
+    def run_grid_search(self, top_n=1):
+        """
+        Perform a grid search for all the residues whose rotation parameters are set
+
+        Parameters
+        ----------
+        top_n : int
+            Returns the top_n rotamers which fits best to the experimental PCS values
+
+        Returns
+        -------
+        result :  (dict of str : dict of int : (float, numpy.ndarray, numpy.ndarray))
+            A dictionary in which the grid search results can be accessed like the residue is
+            accessed from the model. The result contains a list of length top_n. Each list
+            entry is a tuple which contains the negative of Euclidean distance of PCS values
+            of the fit rotamer to the experimental data, the dihedral angle corresponding to
+            that rotamer and the calculated PCS values for the rotamer
+
+         """
+        ret = {}
+        for chain in self.rotation_params:
+            for res in self.rotation_params[chain]:
+                if self.data.get(chain) is not None and self.data[chain].get(res) is not None:
+                    # Set-up the grid search for each residue
+                    res_obj = self.model[chain][res]
+                    res_obj.pcs_data = list(zip(*self.data[chain][res]))
+                    res_obj._metal = self.metal
+                    result = res_obj.grid_search_rotamer(self.rotation_params[chain][res], fit_pcs=True, top_n=top_n)
+
+                    # Now, set the residue to the minimum euclidean distance conformation
+                    if result:
+                        # print(result)
+                        print(f"Fitting residue {res_obj} to the input pcs data")
+                        print(
+                            f"The euclidean distance of the calculated pcs from experimental pcs for this rotamer is"
+                            f" {-result[len(result) - 1][0]:.4f}")
+                        ret.setdefault(chain, {})[res] = result
+
+        return ret
+
+    def run_staggered_positions_search(self, chain, residue, delta=0.174533, steps=5):
+        """
+        Perform a grid search for all the residues whose rotation parameters are set
+
+        Parameters
+        ----------
+        chain : str
+            The str `id` of the `Bio.PDB.Chain.Chain` to which the residue belongs to
+        residue : int
+            The int `id` of the `paramagpy.protein.CustomResidue` whose rotation parameters are being set
+        delta : float
+            The angle (in radian) on each side of the staggered positions where the search takes
+            place. Is 0.174533 rad (or 10 degrees) by default
+        steps : int
+            The number of steps about each staggered position. For example, if delta=0.174533 & steps=5,
+            the search happens at dihedral angles of -70,-65,-60,-55,-50,50,55,60,65,70,-170,-175,
+            180,175,170 (All angles here are in degrees)
+
+        Returns
+        -------
+        result :  (dict of str : dict of int : (float, numpy.ndarray, numpy.ndarray))
+            A dictionary in which the grid search results can be accessed like the residue is
+            accessed from the model. The result is a tuple which contains the negative of
+            Eucledian distance of PCS values of the fit rotamer to the experimental data,
+            the dihedral angle corresponding to that rotamer and the calculated PCS values
+            for the rotamer
+
+         """
+
+        # FIXME The staggered search changes the rotation parameters, could infect future self.* calls
+
+        def rad(deg): return (deg / 180) * np.pi
+
+        n = len(CustomResidue.side_chain_lib.get(self.model[chain][residue].get_resname()))
+        stag_pos = np.array(
+            [[rad(60) - delta, rad(60) + delta, steps], [rad(180) - delta, rad(-180) + delta, steps],
+             [rad(-60) - delta, rad(-60) + delta, steps]])
+        min_pcs = (float('inf'), 0, None)
+        for i in range(3 ** n):
+            _i = np.array([int(c) for c in np.base_repr(i, 3, n)[-n:]])
+            rot_param = np.array(stag_pos[_i])
+            self.set_rotation_parameter(chain, residue, rot_param)
+            result = self.run_grid_search()
+            min_pcs = min((-result[chain][residue][0][0], min_pcs[1] + 1, result), min_pcs)
+
+        return min_pcs
+
+    def run_pairwise_grid_search(self, top_n=1):
+        """
+        Perform a grid search for all the residues whose rotation parameters are set
+
+        Parameters
+        ----------
+        top_n : int
+            Returns the top_n pair of rotamers whose average PCS fit best to the
+            experimental PCS values
+
+        Returns
+        -------
+        result :  (dict of str : dict of int : (float, numpy.ndarray, numpy.ndarray))
+            A dictionary in which the pairwise grid search results can be accessed like
+            the residue is accessed from the model. The result contains a list of length top_n.
+            Each list entry is a tuple which contains the negative of Euclidean distance
+            of PCS values of the pair of rotamers fit to the experimental data, the dihedral angle
+            corresponding to these rotamers and the calculated PCS values for the rotamers
+
+        """
+        # TODO C/C++ implementation of this method
+        result = self.run_grid_search(-1)
+        ret = {}
+        for chain in result:
+            for res in result[chain]:
+                _min_pcs = []
+                _result = result[chain][res]
+                for i in range(len(_result)):
+                    for j in range(i + 1, len(_result)):
+                        pcs_dist = np.linalg.norm(
+                            self.model[chain][res].pcs_data[1] - 0.5 * (_result[i][2] + _result[j][2]))
+                        if len(_min_pcs) == top_n and _min_pcs[0][0] > pcs_dist:
+                            heapq.heappop(_min_pcs)
+                            heapq.heappush(_min_pcs, (pcs_dist, _result[i], _result[j]))
+                        if len(_min_pcs) < top_n:
+                            heapq.heappush(_min_pcs, (pcs_dist, _result[i], _result[j]))
+
+                if _min_pcs:
+                    ret.setdefault(chain, {})[res] = _min_pcs
+
+        return ret

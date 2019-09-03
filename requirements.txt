@@ -1,3 +1,4 @@
+quaternion
 numpy
 scipy
 matplotlib
