@@ -167,13 +167,15 @@ class ReadWritePCSFiles(tkutil.Dialog):
 			edia = []
 			for i in range(diaSpec.dimension):
 				taq = float(self.dia_acqu.variables[i].get())
-				tmp = ((2./3.) * diaSpec.noise) / (pd.data_height * taq)
+				tmp = ((2./3.) * diaSpec.noise) / (
+					pd.data_height * taq * diaSpec.hz_per_ppm[i])
 				edia.append(tmp)
 
 			epara = []
 			for i in range(paraSpec.dimension):
 				taq = float(self.para_acqu.variables[i].get())
-				tmp = ((2./3.) * paraSpec.noise) / (pp.data_height * taq)
+				tmp = ((2./3.) * paraSpec.noise) / (
+					pp.data_height * taq * paraSpec.hz_per_ppm[i])
 				epara.append(tmp)
 
 			error = [(d**2 + p**2)**0.5 for d, p in zip(edia, epara)]
@@ -182,13 +184,13 @@ class ReadWritePCSFiles(tkutil.Dialog):
 		out = {}
 		for assig in pcs:
 			for (tmp, atom), value, error in zip(sputil.parse_assignment(assig), *pcs[assig]):
-				seq = int(re.findall(r"\d+", tmp)[0])
+				grp, seq = sputil.parse_group_name(tmp)
 				out[(seq, atom)] = value, error
 
 		with open(fileName, 'w') as f:
 			for key in sorted(out):
 				seq, atom = key
-				line = "{0:<3d} {1:<3s} {2:6.3f} {3:6.3f}\n".format(
+				line = "{0:<3d} {1:<3s} {2:6.3f} {3:8.6f}\n".format(
 					seq, atom, out[key][0], out[key][1])
 				f.write(line)
 
@@ -207,7 +209,7 @@ class ReadWritePCSFiles(tkutil.Dialog):
 			for line in f:
 				try:
 					seq, atom, value, error = line.split()
-					pcs[(seq, atom)] = float(value)
+					pcs[(int(seq), atom)] = float(value)
 				except ValueError:
 					print("Line ignored while reading npc file:\n{}".format(line))
 
@@ -215,7 +217,7 @@ class ReadWritePCSFiles(tkutil.Dialog):
 			new_freq = []
 			parsed_assig = sputil.parse_assignment(peak.assignment)
 			for (tmp, atom), value in zip(parsed_assig, peak.frequency):
-				seq = re.findall(r"\d+", tmp)[0]
+				grp, seq = sputil.parse_group_name(tmp)
 				key = seq, atom
 				if key in pcs:
 					new_freq.append(value + pcs[key])
