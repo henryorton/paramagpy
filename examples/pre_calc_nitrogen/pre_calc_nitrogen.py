@@ -20,13 +20,14 @@ exp = []
 cal = []
 cal_csa = []
 for atom, pre, err in data:
-	exp.append(pre)
-	cal.append(met.atom_pre(atom, rtype='r1'))
-	cal_csa.append(met.atom_pre(atom, rtype='r1', csa=atom.csa))
+    exp.append(pre)
+    cal.append(met.atom_pre(atom, rtype='r1'))
+    cal_csa.append(met.atom_pre(atom, rtype='r1', csa=atom.csa))
 
 #### Plot the correlation ####
 from matplotlib import pyplot as plt
-fig, ax = plt.subplots(figsize=(5,5))
+
+fig, ax = plt.subplots(figsize=(5, 5))
 
 # Plot the data
 ax.scatter(exp, cal, label="Standard Theory")
@@ -34,9 +35,9 @@ ax.scatter(exp, cal_csa, label="CSA x Curie spin")
 
 # Plot a diagonal
 l, h = ax.get_xlim()
-ax.plot([l,h],[l,h],'grey',zorder=0)
-ax.set_xlim(l,h)
-ax.set_ylim(l,h)
+ax.plot([l, h], [l, h], 'grey', zorder=0)
+ax.set_xlim(l, h)
+ax.set_ylim(l, h)
 
 # Make axis labels and save figure
 ax.set_xlabel("Experiment")
