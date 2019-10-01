@@ -622,7 +622,7 @@ class CustomResidue(Residue):
             self._dihedral_full[i] -= 2 * np.pi if self._dihedral_full[i] > np.pi else 0
             self.__rotate_atoms(atoms_position, i, q, rot_path[i].coord, fit_pcs, top_n)
 
-        if int(_param[2]) != 0:
+        if int(_param[2]) > 1:
             q_reset = CustomResidue.__rot_quat(2 * np.pi - (_param[1] - _param[0]),
                                                rot_path[i + 1].coord - rot_path[i].coord)
             self._dihedral_full[i] += 2 * np.pi - (_param[1] - _param[0])
@@ -633,7 +633,7 @@ class CustomResidue(Residue):
         _q = quat.as_quat_array(np.empty(4))
         _q.real = 0
         for atom in atoms_position:
-            if i > atoms_position[atom]:
+            if i > atoms_position[atom] or (fit_pcs and atom not in self.pcs_data[0]):
                 continue
             _q.imag = atom.coord - origin
             atom_coord_shifted = (q * _q * q.conj())
@@ -646,7 +646,16 @@ class CustomResidue(Residue):
                 coord_matrix[idx] = tup.position
 
             pcs_calc = self._metal.fast_pcs(coord_matrix)
-            pcs_dist = np.linalg.norm(self.pcs_data[1] - pcs_calc)
+
+            # TODO Discuss -
+            #  1) the best PDF to use and its impact
+            #  2) the 'noise' added to the experimental data should be at the start of each run instead?
+
+            # pcs_exp = self.pcs_data[1] + uniform(-1, 1) * np.array(self.pcs_data[2])
+            pcs_exp = np.random.normal(self.pcs_data[1], self.pcs_data[2])
+            # pcs_exp = self.pcs_data[1] + triangular(-2, 0, 2) * np.array(self.pcs_data[2])
+
+            pcs_dist = np.linalg.norm(pcs_exp - pcs_calc)
 
             try:
                 if len(self._min_pcs) < top_n or top_n == -1:

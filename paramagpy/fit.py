@@ -1326,9 +1326,10 @@ class PCSToRotamer:
 
          """
 
-        # FIXME The staggered search changes the rotation parameters, could infect future self.* calls
-
         def rad(deg): return (deg / 180) * np.pi
+
+        # Backup the existing parameters before running this search
+        _rot_p_bak = np.array(self.rotation_params[chain][residue])
 
         n = len(CustomResidue.side_chain_lib.get(self.model[chain][residue].get_resname()))
         stag_pos = np.array(
@@ -1341,6 +1342,9 @@ class PCSToRotamer:
             self.set_rotation_parameter(chain, residue, rot_param)
             result = self.run_grid_search()
             min_pcs = min((-result[chain][residue][0][0], min_pcs[1] + 1, result), min_pcs)
+
+        # Restore the backed up parameters
+        self.set_rotation_parameter(chain, residue, _rot_p_bak)
 
         return min_pcs
 
@@ -1371,10 +1375,11 @@ class PCSToRotamer:
             for res in result[chain]:
                 _min_pcs = []
                 _result = result[chain][res]
+                _pcs_data = self.model[chain][res].pcs_data[1]
                 for i in range(len(_result)):
                     for j in range(i + 1, len(_result)):
                         pcs_dist = np.linalg.norm(
-                            self.model[chain][res].pcs_data[1] - 0.5 * (_result[i][2] + _result[j][2]))
+                            _pcs_data - 0.5 * (_result[i][2] + _result[j][2]))
                         if len(_min_pcs) == top_n and _min_pcs[0][0] > pcs_dist:
                             heapq.heappop(_min_pcs)
                             heapq.heappush(_min_pcs, (pcs_dist, _result[i], _result[j]))

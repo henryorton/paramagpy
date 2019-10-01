@@ -10,15 +10,14 @@ class DataContainer(OrderedDict):
     """
 
     def __init__(self, *args, **kwargs):
-        dtype = kwargs.pop('dtype', None)
+        self.dtype = kwargs.pop('dtype', None)
         super().__init__(*args, **kwargs)
-        self.dtype = dtype
 
     def __str__(self):
         return pformat(self)
 
 
-def read_pcs(fileName):
+def read_pcs(fileName, filter=lambda x: True):
     """
     Read pseudo contact shift values from file.
     The returned object is a dicationary.
@@ -29,6 +28,9 @@ def read_pcs(fileName):
     ----------
     fileName : str
         the path to the file
+    filter : function
+        Function which takes in a tuple of (seq, name, value, error)
+        Values are added only if this results in True
 
     Returns
     -------
@@ -56,7 +58,8 @@ def read_pcs(fileName):
                     continue
                 seq, name, value, error = line.split()
                 key = int(seq), name
-                values[key] = float(value), float(error)
+                if filter((seq, name, value, error)):
+                    values[key] = float(value), float(error)
             except ValueError:
                 print("Line ignored while reading file: {}\n{}".format(
                     fileName, line))
