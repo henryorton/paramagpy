@@ -646,16 +646,21 @@ class CustomResidue(Residue):
                 coord_matrix[idx] = tup.position
 
             pcs_calc = self._metal.fast_pcs(coord_matrix)
+            pcs_calc_binned = np.bincount(self.pcs_data[3], weights=pcs_calc)
 
             # TODO Discuss -
             #  1) the best PDF to use and its impact
-            #  2) the 'noise' added to the experimental data should be at the start of each run instead?
+            #  2) the 'noise' added to the experimental data should be at the start of each run/inst. of fitter instead?
 
             # pcs_exp = self.pcs_data[1] + uniform(-1, 1) * np.array(self.pcs_data[2])
             pcs_exp = np.random.normal(self.pcs_data[1], self.pcs_data[2])
             # pcs_exp = self.pcs_data[1] + triangular(-2, 0, 2) * np.array(self.pcs_data[2])
+            pcs_exp_binned = np.bincount(self.pcs_data[3], weights=pcs_exp)
+            bin_count = np.bincount(self.pcs_data[3])
+            bin_count[bin_count == 0] = 1
 
-            pcs_dist = np.linalg.norm(pcs_exp - pcs_calc)
+            _x = (pcs_exp_binned - pcs_calc_binned) / bin_count
+            pcs_dist = np.linalg.norm(_x)
 
             try:
                 if len(self._min_pcs) < top_n or top_n == -1:

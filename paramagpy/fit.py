@@ -1239,7 +1239,7 @@ class PCSToRotamer:
         for entry in temp_data:
             self.data.setdefault(entry.parent.id, {})[entry.id[1]] = temp_data[entry]
 
-    def set_rotation_parameter(self, chain, residue, rotation_parameter):
+    def set_rotation_parameter(self, chain, residue, rotation_parameter, bins=None):
         """
         Set the rotation parameters which will be used for the required fitting algorithm
 
@@ -1253,9 +1253,20 @@ class PCSToRotamer:
             ndarray of shape (# bonds on side chain which are rotated, 3)
             For each bond, 3 parameters are required. The starting dihedral angle, the ending dihedral angle
             and the number of steps between start and finish (including the start and end angle)
+        bins : numpy.ndarray
+            ndarray of shape (# of atoms in residue)
+            For each atom, specify a bin. PCS values (both experimental and calculated) are averaged over each
+            bin for distance calculation. All atoms are in different bins by default.
 
         """
         self.rotation_params[chain][residue] = rotation_parameter
+        bins = bins if bins is not None else [x[0].get_serial_number() for x in self.data[chain][residue]]
+        if len(bins) != len(self.data[chain][residue]):
+            raise AttributeError(f"The bins ndarray has unexpected length. Expected: {len(self.data[chain][residue])}, "
+                                 f"Actual: {len(bins)}")
+        bins = bins - np.amin(bins)
+        for i in range(len(self.data[chain][residue])):
+            self.data[chain][residue][i] = (*self.data[chain][residue][i][:3], bins[i])
 
     def run_grid_search(self, top_n=1):
         """
@@ -1286,18 +1297,17 @@ class PCSToRotamer:
                     res_obj._metal = self.metal
                     result = res_obj.grid_search_rotamer(self.rotation_params[chain][res], fit_pcs=True, top_n=top_n)
 
-                    # Now, set the residue to the minimum euclidean distance conformation
                     if result:
                         # print(result)
-                        print(f"Fitting residue {res_obj} to the input pcs data")
-                        print(
-                            f"The euclidean distance of the calculated pcs from experimental pcs for this rotamer is"
-                            f" {-result[len(result) - 1][0]:.4f}")
+                        # print(f"Fitting residue {res_obj} to the input pcs data")
+                        # print(
+                        #     f"The euclidean distance of the calculated pcs from experimental pcs for this rotamer is"
+                        #     f" {-result[len(result) - 1][0]:.4f}")
                         ret.setdefault(chain, {})[res] = result
 
         return ret
 
-    def run_staggered_positions_search(self, chain, residue, delta=0.174533, steps=5):
+    def run_staggered_positions_search(self, chain, residue, delta=0.174533, steps=5, bins=None):
         """
         Perform a grid search for all the residues whose rotation parameters are set
 
@@ -1314,6 +1324,10 @@ class PCSToRotamer:
             The number of steps about each staggered position. For example, if delta=0.174533 & steps=5,
             the search happens at dihedral angles of -70,-65,-60,-55,-50,50,55,60,65,70,-170,-175,
             180,175,170 (All angles here are in degrees)
+        bins : numpy.ndarray
+            ndarray of shape (# of atoms in residue)
+            For each atom, specify a bin. PCS values (both experimental and calculated) are averaged over each
+            bin for distance calculation. All atoms are in different bins by default.
 
         Returns
         -------
@@ -1339,7 +1353,7 @@ class PCSToRotamer:
         for i in range(3 ** n):
             _i = np.array([int(c) for c in np.base_repr(i, 3, n)[-n:]])
             rot_param = np.array(stag_pos[_i])
-            self.set_rotation_parameter(chain, residue, rot_param)
+            self.set_rotation_parameter(chain, residue, rot_param, bins)
             result = self.run_grid_search()
             min_pcs = min((-result[chain][residue][0][0], min_pcs[1] + 1, result), min_pcs)
 
@@ -1348,7 +1362,7 @@ class PCSToRotamer:
 
         return min_pcs
 
-    def run_pairwise_grid_search(self, top_n=1):
+    def run_pairwise_grid_search(self, result=None, top_n=1):
         """
         Perform a grid search for all the residues whose rotation parameters are set
 
@@ -1369,17 +1383,28 @@ class PCSToRotamer:
 
         """
         # TODO C/C++ implementation of this method
-        result = self.run_grid_search(-1)
+        # TODO Add noise to experimental data (Only if we decide not to add during
+        #  self.set_rotation_parameter())
+        result = result if result else self.run_grid_search(-1)
         ret = {}
         for chain in result:
             for res in result[chain]:
                 _min_pcs = []
                 _result = result[chain][res]
-                _pcs_data = self.model[chain][res].pcs_data[1]
+                _res_obj = self.model[chain][res]
+
+                _pcs_data = np.bincount(_res_obj.pcs_data[3], weights=_res_obj.pcs_data[1])
+                bin_count = np.bincount(_res_obj.pcs_data[3])
+                bin_count[bin_count == 0] = 1
+
                 for i in range(len(_result)):
-                    for j in range(i + 1, len(_result)):
-                        pcs_dist = np.linalg.norm(
-                            _pcs_data - 0.5 * (_result[i][2] + _result[j][2]))
+                    for j in range(i, len(_result)):
+                        _pcs_exp1 = np.bincount(_res_obj.pcs_data[3], weights=_result[i][2])
+                        _pcs_exp2 = np.bincount(_res_obj.pcs_data[3], weights=_result[j][2])
+
+                        _x = (_pcs_data - 0.5 * (_pcs_exp1 + _pcs_exp2)) / bin_count
+                        pcs_dist = np.linalg.norm(_x)
+
                         if len(_min_pcs) == top_n and _min_pcs[0][0] > pcs_dist:
                             heapq.heappop(_min_pcs)
                             heapq.heappush(_min_pcs, (pcs_dist, _result[i], _result[j]))
@@ -1390,3 +1415,6 @@ class PCSToRotamer:
                     ret.setdefault(chain, {})[res] = _min_pcs
 
         return ret
+
+    def get_pcs_data(self, chain, res):
+        return self.data[chain][res]

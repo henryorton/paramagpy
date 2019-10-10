@@ -74,19 +74,15 @@ def fit_rotamer():
                   "eulers": (0.95579466, 1.05276515, 2.01690248)}
     mtl = metal.Metal(**chi_tensor)
 
-    pos_array = np.empty((len(parsed_data), 3))
-    for idx, data in enumerate(parsed_data):
-        pos_array[idx] = data[0].position
-
-    # pcs_data_calc = mtl.fast_pcs(pos_array)
-    # for idx, data in enumerate(parsed_data):
-    #     print(data[0], data[1], pcs_data_calc[idx])
-
     pcs_fitter = fit.PCSToRotamer(prot[0], mtl, parsed_data)
 
     trk = Tracker(pcs_fitter.model[' '][6])
     # trk.print_atom_linkage()
     trk.save_atom_coords()
+
+    bins = np.arange(0, 16)
+    bins[13] = 12
+    bins[15] = 13
 
     pr = cProfile.Profile()
 
@@ -94,7 +90,7 @@ def fit_rotamer():
         pr.clear()
         pr.enable()
         # Grid search 5 degrees about each staggered position
-        min_pcs = pcs_fitter.run_staggered_positions_search(' ', 6, 0.174533, 5)
+        min_pcs = pcs_fitter.run_staggered_positions_search(' ', 6, 3*0.174533, 7, bins)
         pr.disable()
         pr.print_stats(sort="cumtime")
         print(min_pcs)
@@ -103,7 +99,7 @@ def fit_rotamer():
         pr.clear()
         pr.enable()
         rot_param = np.array([[0, -2 / 9 * np.pi, 9]] * 4)
-        pcs_fitter.set_rotation_parameter(' ', 6, rot_param)
+        pcs_fitter.set_rotation_parameter(' ', 6, rot_param, bins)
         result1 = pcs_fitter.run_grid_search()
         pr.disable()
         pr.print_stats(sort="cumtime")
@@ -112,17 +108,16 @@ def fit_rotamer():
     def pairwise_grid_search():
         pr.clear()
         pr.enable()
-        # Don't rotate about the
         rot_param = np.array([[0, -2 / 6 * np.pi, 6]] * 4)
-        pcs_fitter.set_rotation_parameter(' ', 6, rot_param)
+        pcs_fitter.set_rotation_parameter(' ', 6, rot_param, bins)
         result2 = pcs_fitter.run_pairwise_grid_search()
         pr.disable()
         pr.print_stats(sort="cumtime")
         print(result2)
 
     staggered_positions_search()
-    grid_search()
-    pairwise_grid_search()
+    # grid_search()
+    # pairwise_grid_search()
 
     trk.save_atom_coords()
     trk.print_atom_coords()
