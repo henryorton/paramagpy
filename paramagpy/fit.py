@@ -4,8 +4,9 @@ import warnings
 
 import numpy as np
 from scipy.optimize import fmin_bfgs
+from scipy.stats import truncnorm
 
-from paramagpy.protein import CustomResidue
+from paramagpy.protein import CustomResidue, CustomStructure
 
 
 def unique_pairing(a, b):
@@ -1198,7 +1199,7 @@ def ensemble_average(atoms, *values):
 
 class PCSToRotamer:
 
-    def __init__(self, model, metal, data):
+    def __init__(self, model, metal, data, noise=False):
         """
         A deep-copy of the model is taken, so no changes will be made by this class to the
         instance of model object supplied. Use `self.model` to access the internal model.
@@ -1211,10 +1212,16 @@ class PCSToRotamer:
             The Metal object which is used to calculate the PCS values
         data : list of (paramagpy.protein.CustomAtom, float, float)
             The parsed data returned by :meth: paramagpy.protein.CustomStructure.parse
+        noise : Boolean
+            Boolean denoting whether noise should be added to the data or not. If True,
+            the pcs value chosen to fit is picked from a gaussian distributed pdf centred
+            at the pcs value and with a standard deviation equal to the error and truncated
+            to two SD on either side.
 
         """
         self.model = cp.deepcopy(model)
         self.metal = metal
+        self.noise = noise
         self.__init_data(data)
         self.__init_rotation_params()
 
@@ -1229,9 +1236,10 @@ class PCSToRotamer:
 
     def __init_data(self, data):
         temp_data, self.data = {}, {}
+        _r = truncnorm(-2, 2).rvs() if self.noise else 0
         for idx, data_cp in enumerate(data):
             _atom_id, _res_id, _chain_id = data_cp[0].id, data_cp[0].parent.id[1], data_cp[0].parent.parent.id
-            data[idx] = (self.model[_chain_id][_res_id][_atom_id], data[idx][1], data[idx][2])
+            data[idx] = (self.model[_chain_id][_res_id][_atom_id], data[idx][1] + _r * data[idx][2], data[idx][2])
 
         for entry in data:
             temp_data.setdefault(entry[0].parent, []).append(entry)
@@ -1268,7 +1276,7 @@ class PCSToRotamer:
         for i in range(len(self.data[chain][residue])):
             self.data[chain][residue][i] = (*self.data[chain][residue][i][:3], bins[i])
 
-    def run_grid_search(self, top_n=1):
+    def run_grid_search(self, top_n=1, structure=None):
         """
         Perform a grid search for all the residues whose rotation parameters are set
 
@@ -1276,18 +1284,27 @@ class PCSToRotamer:
         ----------
         top_n : int
             Returns the top_n rotamers which fits best to the experimental PCS values
+        structure : string
+            Returns a structure with this name containing top_n models, the ith model has the ith best
+            residue, if None - a structure is not returned
 
         Returns
         -------
-        result :  (dict of str : dict of int : (float, numpy.ndarray, numpy.ndarray))
+        result : (paramagpy.protein.CustomStructure,(dict of str : dict of int : (float, numpy.ndarray, numpy.ndarray)))
             A dictionary in which the grid search results can be accessed like the residue is
             accessed from the model. The result contains a list of length top_n. Each list
             entry is a tuple which contains the negative of Euclidean distance of PCS values
             of the fit rotamer to the experimental data, the dihedral angle corresponding to
-            that rotamer and the calculated PCS values for the rotamer
+            that rotamer and the calculated PCS values for the rotamer. Also a structure if the save_structure parameter
+            was set to true.
 
          """
         ret = {}
+        model_list, protein = None, None
+        save_structure = structure is not None
+        if save_structure:
+            model_list = [cp.deepcopy(self.model) for i in range(top_n)]
+
         for chain in self.rotation_params:
             for res in self.rotation_params[chain]:
                 if self.data.get(chain) is not None and self.data[chain].get(res) is not None:
@@ -1295,6 +1312,7 @@ class PCSToRotamer:
                     res_obj = self.model[chain][res]
                     res_obj.pcs_data = list(zip(*self.data[chain][res]))
                     res_obj._metal = self.metal
+                    res_obj._noise = self.noise
                     result = res_obj.grid_search_rotamer(self.rotation_params[chain][res], fit_pcs=True, top_n=top_n)
 
                     if result:
@@ -1303,11 +1321,21 @@ class PCSToRotamer:
                         # print(
                         #     f"The euclidean distance of the calculated pcs from experimental pcs for this rotamer is"
                         #     f" {-result[len(result) - 1][0]:.4f}")
+                        result.sort(key=lambda x: (-x[0], tuple(x[1])))
+                        if save_structure:
+                            for idx, _result in enumerate(result):
+                                model_list[idx][chain][res].set_dihedral(_result[1])
                         ret.setdefault(chain, {})[res] = result
 
-        return ret
+        if save_structure:
+            protein = CustomStructure(structure)
+            for idx, model in enumerate(model_list):
+                model.id = idx
+                protein.add(model)
 
-    def run_staggered_positions_search(self, chain, residue, delta=0.174533, steps=5, bins=None):
+        return (protein, ret) if save_structure else ret
+
+    def run_staggered_positions_search(self, chain, residue, delta=0.174533, steps=5, top_n=1, bins=None):
         """
         Perform a grid search for all the residues whose rotation parameters are set
 
@@ -1324,6 +1352,8 @@ class PCSToRotamer:
             The number of steps about each staggered position. For example, if delta=0.174533 & steps=5,
             the search happens at dihedral angles of -70,-65,-60,-55,-50,50,55,60,65,70,-170,-175,
             180,175,170 (All angles here are in degrees)
+        top_n : int
+            Returns the top_n rotamers which fits best to the experimental PCS values
         bins : numpy.ndarray
             ndarray of shape (# of atoms in residue)
             For each atom, specify a bin. PCS values (both experimental and calculated) are averaged over each
@@ -1340,7 +1370,8 @@ class PCSToRotamer:
 
          """
 
-        def rad(deg): return (deg / 180) * np.pi
+        def rad(deg):
+            return (deg / 180) * np.pi
 
         # Backup the existing parameters before running this search
         _rot_p_bak = np.array(self.rotation_params[chain][residue])
@@ -1349,28 +1380,36 @@ class PCSToRotamer:
         stag_pos = np.array(
             [[rad(60) - delta, rad(60) + delta, steps], [rad(180) - delta, rad(-180) + delta, steps],
              [rad(-60) - delta, rad(-60) + delta, steps]])
-        min_pcs = (float('inf'), 0, None)
+        ret = []
         for i in range(3 ** n):
             _i = np.array([int(c) for c in np.base_repr(i, 3, n)[-n:]])
             rot_param = np.array(stag_pos[_i])
             self.set_rotation_parameter(chain, residue, rot_param, bins)
-            result = self.run_grid_search()
-            min_pcs = min((-result[chain][residue][0][0], min_pcs[1] + 1, result), min_pcs)
+            ret = ret + self.run_grid_search(top_n)[chain][residue]
+            ret.sort(key=lambda x: (-x[0], tuple(x[1])))
+            if top_n != -1:
+                ret = ret[:top_n]
 
         # Restore the backed up parameters
         self.set_rotation_parameter(chain, residue, _rot_p_bak)
 
-        return min_pcs
+        return ret
 
-    def run_pairwise_grid_search(self, result=None, top_n=1):
+    def run_pairwise_grid_search(self, result=None, top_n=1, structure=None):
         """
         Perform a grid search for all the residues whose rotation parameters are set
 
         Parameters
         ----------
+        result : (dict of str : dict of int : (float, numpy.ndarray, numpy.ndarray))
+            The result on which the pairwise search is performed. If not supplied,
+            the result from a new grid search containing all results is used.
         top_n : int
             Returns the top_n pair of rotamers whose average PCS fit best to the
             experimental PCS values
+        structure : string
+            Returns a structure with this name containing 2*top_n models, the ith & (i+1)th model has the (i/2)th best
+            residue, if None - a structure is not returned
 
         Returns
         -------
@@ -1383,10 +1422,12 @@ class PCSToRotamer:
 
         """
         # TODO C/C++ implementation of this method
-        # TODO Add noise to experimental data (Only if we decide not to add during
-        #  self.set_rotation_parameter())
         result = result if result else self.run_grid_search(-1)
         ret = {}
+        model_list, protein = None, None
+        save_structure = structure is not None
+        if save_structure:
+            model_list = [cp.deepcopy(self.model) for i in range(2 * top_n)]
         for chain in result:
             for res in result[chain]:
                 _min_pcs = []
@@ -1398,7 +1439,7 @@ class PCSToRotamer:
                 bin_count[bin_count == 0] = 1
 
                 for i in range(len(_result)):
-                    for j in range(i, len(_result)):
+                    for j in range(i + 1, len(_result)):
                         _pcs_exp1 = np.bincount(_res_obj.pcs_data[3], weights=_result[i][2])
                         _pcs_exp2 = np.bincount(_res_obj.pcs_data[3], weights=_result[j][2])
 
@@ -1412,9 +1453,20 @@ class PCSToRotamer:
                             heapq.heappush(_min_pcs, (pcs_dist, _result[i], _result[j]))
 
                 if _min_pcs:
+                    _min_pcs.sort()
+                    if save_structure:
+                        for idx, _result in enumerate(_min_pcs):
+                            model_list[2 * idx][chain][res].set_dihedral(_result[1][1])
+                            model_list[2 * idx + 1][chain][res].set_dihedral(_result[2][1])
                     ret.setdefault(chain, {})[res] = _min_pcs
 
-        return ret
+        if save_structure:
+            protein = CustomStructure(structure)
+            for idx, model in enumerate(model_list):
+                model.id = idx
+                protein.add(model)
+
+        return (protein, ret) if save_structure else ret
 
     def get_pcs_data(self, chain, res):
         return self.data[chain][res]

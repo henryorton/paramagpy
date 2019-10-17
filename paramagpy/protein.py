@@ -312,6 +312,7 @@ class CustomResidue(Residue):
     def __init__(self, *arg, **kwargs):
         super().__init__(*arg, **kwargs)
         # These variables are set by fit.FitPCSToRotamer as and when required
+        self._noise = None
         self._dihedral_full = None
         self._metal = None
         self.pcs_data = None
@@ -648,18 +649,20 @@ class CustomResidue(Residue):
             pcs_calc = self._metal.fast_pcs(coord_matrix)
             pcs_calc_binned = np.bincount(self.pcs_data[3], weights=pcs_calc)
 
-            # TODO Discuss -
-            #  1) the best PDF to use and its impact
-            #  2) the 'noise' added to the experimental data should be at the start of each run/inst. of fitter instead?
-
-            # pcs_exp = self.pcs_data[1] + uniform(-1, 1) * np.array(self.pcs_data[2])
-            pcs_exp = np.random.normal(self.pcs_data[1], self.pcs_data[2])
-            # pcs_exp = self.pcs_data[1] + triangular(-2, 0, 2) * np.array(self.pcs_data[2])
-            pcs_exp_binned = np.bincount(self.pcs_data[3], weights=pcs_exp)
+            pcs_exp_binned = np.bincount(self.pcs_data[3], weights=self.pcs_data[1])
             bin_count = np.bincount(self.pcs_data[3])
             bin_count[bin_count == 0] = 1
 
             _x = (pcs_exp_binned - pcs_calc_binned) / bin_count
+            if not self._noise:
+                if not np.any(np.abs(self.pcs_data[2]) < 1E-6):
+                    pcs_err_binned = np.bincount(self.pcs_data[3], weights=self.pcs_data[2])
+                    _x = (pcs_exp_binned - pcs_calc_binned) / pcs_err_binned
+                else:
+                    warnings.warn(
+                        "Cannot calculate Mahalanobis distance because at least one of the PCS errors is zero."
+                        "Using Euclidean distance instead.")
+
             pcs_dist = np.linalg.norm(_x)
 
             try:

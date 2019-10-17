@@ -1,12 +1,21 @@
 import cProfile
 
 import numpy as np
+from Bio.PDB import PDBIO
 from bonded_to import Tracker
 
 from paramagpy import protein, metal, fit, dataparse
 
 
 def rad(deg): return (deg / 180) * np.pi
+
+
+def save_structure(structure, filename):
+    # Save structure in PDB format
+
+    io = PDBIO()
+    io.set_structure(structure)
+    io.save(filename)
 
 
 def fit_metal():
@@ -90,7 +99,7 @@ def fit_rotamer():
         pr.clear()
         pr.enable()
         # Grid search 5 degrees about each staggered position
-        min_pcs = pcs_fitter.run_staggered_positions_search(' ', 6, 3*0.174533, 7, bins)
+        min_pcs = pcs_fitter.run_staggered_positions_search(' ', 6, 3*0.174533, 7, bins=bins)
         pr.disable()
         pr.print_stats(sort="cumtime")
         print(min_pcs)
@@ -100,24 +109,26 @@ def fit_rotamer():
         pr.enable()
         rot_param = np.array([[0, -2 / 9 * np.pi, 9]] * 4)
         pcs_fitter.set_rotation_parameter(' ', 6, rot_param, bins)
-        result1 = pcs_fitter.run_grid_search()
+        prot, result1 = pcs_fitter.run_grid_search(top_n=2, structure='grid_search_struct')
         pr.disable()
         pr.print_stats(sort="cumtime")
         print(result1)
+        save_structure(prot, 'grid_search_result.pdb')
 
     def pairwise_grid_search():
         pr.clear()
         pr.enable()
         rot_param = np.array([[0, -2 / 6 * np.pi, 6]] * 4)
         pcs_fitter.set_rotation_parameter(' ', 6, rot_param, bins)
-        result2 = pcs_fitter.run_pairwise_grid_search()
+        prot, result2 = pcs_fitter.run_pairwise_grid_search(top_n=2, structure='pairwise_grid_search_struct')
         pr.disable()
         pr.print_stats(sort="cumtime")
         print(result2)
+        save_structure(prot, 'pairwise_grid_search_result.pdb')
 
-    staggered_positions_search()
+    # staggered_positions_search()
     # grid_search()
-    # pairwise_grid_search()
+    pairwise_grid_search()
 
     trk.save_atom_coords()
     trk.print_atom_coords()

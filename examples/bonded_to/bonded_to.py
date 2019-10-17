@@ -2,6 +2,7 @@ import cProfile
 import time
 
 import numpy as np
+from Bio.PDB import PDBIO
 from tabulate import tabulate
 
 from paramagpy import protein
@@ -33,10 +34,9 @@ def rad(deg): return (deg / 180) * np.pi
 
 
 def save_structure(structure, filename):
-    # Save structure in MMCIF format
-    from Bio.PDB.mmcifio import MMCIFIO
+    # Save structure in PDB format
 
-    io = MMCIFIO()
+    io = PDBIO()
     io.set_structure(structure)
     io.save(filename)
 
@@ -98,7 +98,7 @@ def main():
                      timer['end_set_delta_dihedral_full'] - timer['start_set_delta_dihedral_full']]],
                    headers=['Name', 'Duration (ms)'], tablefmt="fancy_grid"))
 
-    save_structure(prot, "lys_conformer.cif")
+    save_structure(prot, "lys_conformer.pdb")
 
 
 def _test():
@@ -113,7 +113,7 @@ def _test():
     res['CD'].position = np.array([2.61213267e-09, 3.88580137e-09, 1.08955993e-09])
     res['CE'].position = np.array([2.56654200e-09, 3.87964746e-09, 1.34237880e-09])
 
-    save_structure(prot, "1ubq_k6_conformer.cif")
+    save_structure(prot, "1ubq_k6_conformer.pdb")
 
 
 if __name__ == '__main__':
