@@ -32,9 +32,22 @@ gtensor = np.array([
 
 m.g_tensor = gtensor
 
-
+posarr = []
+gamarr = []
+values = []
 for atom, value, err in dip:
-	r1 = m.g_sbm_r1(atom.position, atom.gamma)
-	print(r1, value)
+	posarr.append(atom.position)
+	gamarr.append(atom.gamma)
+	values.append(value)
+
+posarr = np.array(posarr)
+gamarr = np.array(gamarr)
+values = np.array(values)
+
+r1 = m.fast_g_sbm_r1(posarr, gamarr)
+
+# for atom, value, err in dip:
+# 	r1 = m.g_sbm_r1(atom.position, atom.gamma)
+# 	print(r1, value)
 
 

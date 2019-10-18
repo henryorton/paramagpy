@@ -1409,6 +1409,35 @@ class Metal(object):
 		D = 3*np.kron(pos_unit,pos_unit).reshape(3,3) - np.identity(3)
 		return preFactor * (D.dot(D)).dot(self.g_tensor).trace()
 
+	def fast_g_sbm_r1(self, posarray, gammaarray):
+		"""
+		Vectorised version of :meth:`paramagpy.metal.Metal.g_sbm_r1`
+
+		This is generally used for speed in fitting PRE data
+
+		Parameters
+		----------
+		posarray : array with shape (n,3)
+			array of positions in meters
+		gammaarray : array with shape (n,3)
+			array of gyromagnetic ratios of the spins
+
+		Returns
+		-------
+		rates : array with shape (n,1)
+			The R1 relaxation rates in /s
+		"""
+		pos = posarray - self.position
+		distance = np.linalg.norm(pos-self.position, axis=1)
+		pos_unit = pos.T / distance
+		print(pos_unit)
+		preFactor = (2./3.) * (self.MU0 / (4*np.pi))**2
+		preFactor *= gammaarray**2 / distance**6
+		D = 3*np.einsum('ij,ik->ijk', pos_unit, pos_unit)
+		print(D)
+		# D = 3*np.kron(pos_unit,pos_unit).reshape(3,3) - np.identity(3)
+		# return preFactor * (D.dot(D)).dot(self.g_tensor).trace()
+
 	def pre(self, position, gamma, rtype, dsa=True, sbm=True, csa=0.0):
 		"""
 		Calculate the PRE for a set of spins using Curie and or SBM theory
