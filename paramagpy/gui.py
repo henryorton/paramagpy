@@ -539,6 +539,8 @@ class PlotCorrelationPopup(Popup):
 		self.axes.set_ylabel("Calculated")
 		self.axes.format_coord = self.format_coord
 
+		minig, maxig = None, None
+
 		for tab in self.frm_mff.get_chosen_tabs():
 			if tab.data is None:
 				continue
@@ -549,7 +551,14 @@ class PlotCorrelationPopup(Popup):
 			d = data[data['use'] & ~np.isnan(data['exp'])]
 			mini = min([np.min(d[i]) for i in ['exp','cal']])
 			maxi = max([np.max(d[i]) for i in ['exp','cal']])
-			self.axes.plot([mini,maxi], [mini,maxi], '-k', lw=0.5)
+			if minig is None:
+				minig = mini
+			if maxig is None:
+				maxig = maxi
+			if mini < minig:
+				minig = mini
+			if maxi < maxig:
+				maxig = maxi
 			self.axes.plot(d['exp'],d['cal'],marker='o', lw=0, ms=3,
 				label=tab.name, color=tab.colour.colour)
 
@@ -568,6 +577,13 @@ class PlotCorrelationPopup(Popup):
 					bbox={'facecolor':'white', 'pad':2},
 					transform=self.axes.transAxes, horizontalalignment='left', 
 					verticalalignment='top')
+
+			scale = 1.1
+			self.axes.plot([minig*scale,maxig*scale], 
+						   [minig*scale,maxig*scale], '-k', lw=0.5)
+			self.axes.set_xlim(minig*scale, maxig*scale)
+			self.axes.set_ylim(minig*scale, maxig*scale)
+			self.axes.set_aspect(1.0)
 
 		self.canvas.draw()
 
