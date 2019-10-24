@@ -11,6 +11,7 @@ doctrees/
 *.synctex.gz
 *.sublime-workspace
 .DS_Store
+.nfs*
 /gui_executables/**
 /icon/**
 /build/**

@@ -246,6 +246,8 @@ class Metal(object):
 		't1e': 1E12,
 		'taur': 1E9,
 		'mueff': 1./MUB,
+		'gax': 1E60,
+		'grh': 1E60
 	}
 
 	# J, g, T1e values for lanthanide series
@@ -289,7 +291,9 @@ class Metal(object):
 	lower_coords = ((0,1,1,2,2),(0,1,0,0,1))
 
 	def __init__(self, position=(0,0,0), eulers=(0,0,0), 
-		axrh=(0,0), mueff=0.0, shift=0.0, temperature=298.15, t1e=0.0,
+		axrh=(0,0), mueff=0.0, 
+		g_axrh=(0,0), t1e=0.0,
+		shift=0.0, temperature=298.15, 
 		B0=18.79, taur=0.0):
 		"""
 		Instantiate ChiTensor object
@@ -323,6 +327,7 @@ class Metal(object):
 		self.position = np.array(position, dtype=float)
 		self.eulers = np.array(eulers, dtype=float)
 		self.axrh = np.array(axrh, dtype=float)
+		self.g_axrh = np.array(g_axrh, dtype=float)
 		self.mueff = mueff
 		self.shift = shift
 		self.temperature = temperature
@@ -595,6 +600,20 @@ class Metal(object):
 	@B0_MHz.setter
 	def B0_MHz(self, value):
 		self.B0 = value / 42.57747892
+	@property
+	def gax(self):
+		"""axial componenet of spectral power density tensor"""
+		return self.g_axrh[0]
+	@gax.setter
+	def gax(self, value):
+		self.g_axrh[0] = value
+	@property
+	def grh(self):
+		"""axial componenet of spectral power density tensor"""
+		return self.g_axrh[1]
+	@gax.setter
+	def grh(self, value):
+		self.g_axrh[1] = value
 
 	@property
 	def eigenvalues(self):
@@ -617,6 +636,33 @@ class Metal(object):
 		if newIsotropy<0:
 			newIsotropy = 0.0
 		self.mueff = ((newIsotropy*3*self.K*self.temperature) / self.MU0)**0.5
+
+
+
+	@property
+	def g_eigenvalues(self):
+		"""The eigenvalues defining the magnitude of the principle axes"""
+		return anisotropy_to_eigenvalues(self.g_axrh) + self.g_isotropy
+
+	@g_eigenvalues.setter
+	def g_eigenvalues(self, newEigenvalues):
+		self.g_axrh = eigenvalues_to_anisotropy(newEigenvalues)
+		# self.isotropy = np.round(np.sum(newEigenvalues)/3., 40)
+		self.g_isotropy = np.sum(newEigenvalues)/3.
+
+	@property
+	def g_isotropy(self):
+		"""Estimate of the spectral power density tensor isotropy"""
+		return (self.t1e * self.isotropy * self.K * self.temperature) / self.MU0
+
+	@g_isotropy.setter
+	def g_isotropy(self, newIsotropy):
+		if newIsotropy<0:
+			newIsotropy = 0.0
+		self.t1e = (newIsotropy * self.MU0) / (
+			self.isotropy * self.K * self.temperature)
+
+
 
 	@property
 	def rotationMatrix(self):
@@ -725,6 +771,26 @@ class Metal(object):
 		newTensor[self.lower_coords] = elements
 		newTensor[2,2] = - elements[0] - elements[1]
 		self.tensor_saupe = newTensor
+
+
+	@property
+	def g_tensor(self):
+		"""The magnetic susceptibility tensor matrix representation"""
+		R = self.rotationMatrix
+		return R.dot(np.diag(self.g_eigenvalues)).dot(R.T)
+
+	@g_tensor.setter
+	def g_tensor(self, newTensor):
+		eigenvals, eigenvecs = np.linalg.eigh(newTensor)
+		eigs = zip(eigenvals, np.array(eigenvecs).T)
+		iso = np.sum(eigenvals)/3.
+		eigenvals, (x, y, z) = zip(*sorted(eigs, key=lambda x: abs(x[0]-iso)))
+		eigenvecs = x * z.dot(np.cross(x,y)), y, z
+		rotationMatrix = np.vstack(eigenvecs).T
+		eulers = unique_eulers(matrix_to_euler(rotationMatrix))
+		self.eulers = np.array(eulers, dtype=float)
+		self.g_eigenvalues = eigenvals
+
 
 	def set_utr(self):
 		"""
@@ -1334,7 +1400,65 @@ class Metal(object):
 			13*self.spec_dens(self.tauc, self.B0*self.GAMMA))
 		return rate
 
-	def pre(self, position, gamma, rtype, dsa=True, sbm=True, csa=0.0):
+	def g_sbm_r1(self, position, gamma):
+		"""
+		Calculate R1 relaxation due to Solomon-Bloembergen-Morgan theory
+		from anisotropic power spectral density tensor
+
+		Parameters
+		----------
+		position : array of floats
+			three coordinates (x,y,z)
+		gamma : float
+			the gyromagnetic ratio of the spin
+
+		Returns
+		-------
+		value : float
+			The R1 relaxation rate in /s
+		"""
+		pos = np.array(position, dtype=float) - self.position
+		distance = np.linalg.norm(pos)
+		pos_unit = pos / distance
+		preFactor = (2./3.) * (self.MU0 / (4*np.pi))**2
+		preFactor *= gamma**2 / distance**6
+		D = 3*np.kron(pos_unit,pos_unit).reshape(3,3) - np.identity(3)
+		return preFactor * (D.dot(D)).dot(self.g_tensor).trace()
+
+	def fast_g_sbm_r1(self, posarray, gammaarray):
+		"""
+		Vectorised version of :meth:`paramagpy.metal.Metal.g_sbm_r1`
+
+		This is generally used for speed in fitting PRE data
+
+		Parameters
+		----------
+		posarray : array with shape (n,3)
+			array of positions in meters
+		gammaarray : array with shape (n,3)
+			array of gyromagnetic ratios of the spins
+
+		Returns
+		-------
+		rates : array with shape (n,1)
+			The R1 relaxation rates in /s
+		"""
+		n = len(gammaarray)
+		pos = posarray - self.position
+		distance = np.linalg.norm(pos, axis=1)
+		pos_unit = (pos.T / distance).T
+		preFactor = (2./3.) * (self.MU0 / (4*np.pi))**2
+		preFactor *= gammaarray**2 / distance**6
+		D1 = np.einsum('ij,ik->ijk', pos_unit, pos_unit)
+		D2 = np.tile(np.identity(3), n).T.reshape(n,3,3)
+		D = 3*D1 - D2
+		D_squared = np.einsum('ijk,ilk->ijl', D,D)
+		tmp = np.einsum('ijk,lk->ijl', D_squared, self.g_tensor)
+		return preFactor * np.einsum('ijj->i', tmp)
+
+
+	def pre(self, position, gamma, rtype, dsa=True, sbm=True, 
+			gsbm=False, csa=0.0):
 		"""
 		Calculate the PRE for a set of spins using Curie and or SBM theory
 
@@ -1349,7 +1473,12 @@ class Metal(object):
 		dsa : bool (optional)
 			when True (defualt), DSA or Curie spin relaxation is included
 		sbm : bool (optional)
-			when True (defualt), SBM spin relaxation is included 
+			when True (defualt), SBM spin relaxation is included
+		gsbm : bool (optional)
+			when True (default=False), anisotropic dipolar relaxation is 
+			included using the spectral power density gensor <g_tensor>
+			NOTE: when true, ignores relaxation of type SBM
+			NOTE: only implemented for R1 relaxation calculations
 		csa : array with shape (3,3) (optional)
 			CSA tensor of the spin.
 			This defualts to 0.0, meaning CSAxDSA crosscorrelation is
@@ -1360,12 +1489,19 @@ class Metal(object):
 		rate : float
 			The PRE rate in /s
 		"""
+		if gsbm:
+			sbm = False
+			if rtype=='r2':
+				raise NotImplementedError(
+					"Anisotropic dipolar relaxation has not been implement for R2 caluculations yet.")
 		rate = 0.0
 		if rtype=='r1':
 			if dsa:
 				rate += self.dsa_r1(position, gamma, csa)
 			if sbm:
 				rate += self.sbm_r1(position, gamma)
+			if gsbm:
+				rate += self.g_sbm_r1(position, gamma)
 		elif rtype=='r2':
 			if dsa:
 				rate += self.dsa_r2(position, gamma, csa)
@@ -1374,7 +1510,7 @@ class Metal(object):
 		return rate
 
 	def fast_pre(self, posarray, gammaarray, rtype, 
-		dsa=True, sbm=True, csaarray=0.0):
+		dsa=True, sbm=True, gsbm=False, csaarray=0.0):
 		"""
 		Calculate the PRE for a set of spins using Curie and or SBM theory
 
@@ -1389,7 +1525,12 @@ class Metal(object):
 		dsa : bool (optional)
 			when True (defualt), DSA or Curie spin relaxation is included
 		sbm : bool (optional)
-			when True (defualt), SBM spin relaxation is included 
+			when True (defualt), SBM spin relaxation is included
+		gsbm : bool (optional)
+			when True (default=False), anisotropic dipolar relaxation is 
+			included using the spectral power density gensor <g_tensor>
+			NOTE: when true, ignores relaxation of type SBM
+			NOTE: only implemented for R1 relaxation calculations
 		csaarray : array with shape (m,3,3) (optional)
 			array of CSA tensors of the spins.
 			This defualts to 0.0, meaning CSAxDSA crosscorrelation is
@@ -1400,12 +1541,16 @@ class Metal(object):
 		rates : array with shape (n,1)
 			The PRE rates in /s
 		"""
+		if gsbm:
+			sbm = False
 		rates = 0.0
 		if rtype=='r1':
 			if dsa:
 				rates += self.fast_dsa_r1(posarray, gammaarray, csaarray)
 			if sbm:
 				rates += self.fast_sbm_r1(posarray, gammaarray)
+			if gsbm:
+				rates += self.fast_g_sbm_r1(posarray, gammaarray)
 		elif rtype=='r2':
 			if dsa:
 				rates += self.fast_dsa_r2(posarray, gammaarray, csaarray)
