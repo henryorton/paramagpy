@@ -1,5 +1,8 @@
+import sys
+sys.path.append('../..')
 from paramagpy import protein, metal, fit, dataparse
 import numpy as np
+import time
 
 prot = protein.load_pdb('Tb.pdb')
 # prot = protein.load_pdb('Dy.pdb')
@@ -44,10 +47,16 @@ posarr = np.array(posarr)
 gamarr = np.array(gamarr)
 values = np.array(values)
 
-r1 = m.fast_g_sbm_r1(posarr, gamarr)
+l = len(dip)
 
-# for atom, value, err in dip:
-# 	r1 = m.g_sbm_r1(atom.position, atom.gamma)
-# 	print(r1, value)
+t1 = time.time()
+for atom, value, err in dip[:l]:
+	r1 = m.g_sbm_r1(atom.position, atom.gamma)
 
+t2 = time.time()
+r1 = m.fast_g_sbm_r1(posarr[:l], gamarr[:l])
 
+t3 = time.time()
+
+print(t2-t1)
+print(t3-t2)

@@ -1427,16 +1427,19 @@ class Metal(object):
 		rates : array with shape (n,1)
 			The R1 relaxation rates in /s
 		"""
+		n = len(gammaarray)
 		pos = posarray - self.position
-		distance = np.linalg.norm(pos-self.position, axis=1)
-		pos_unit = pos.T / distance
-		print(pos_unit)
+		distance = np.linalg.norm(pos, axis=1)
+		pos_unit = (pos.T / distance).T
 		preFactor = (2./3.) * (self.MU0 / (4*np.pi))**2
 		preFactor *= gammaarray**2 / distance**6
-		D = 3*np.einsum('ij,ik->ijk', pos_unit, pos_unit)
-		print(D)
-		# D = 3*np.kron(pos_unit,pos_unit).reshape(3,3) - np.identity(3)
-		# return preFactor * (D.dot(D)).dot(self.g_tensor).trace()
+		D1 = np.einsum('ij,ik->ijk', pos_unit, pos_unit)
+		D2 = np.tile(np.identity(3), n).T.reshape(n,3,3)
+		D = 3*D1 - D2
+		D_squared = np.einsum('ijk,ilk->ijl', D,D)
+		tmp = np.einsum('ijk,lk->ijl', D_squared, self.g_tensor)
+		return preFactor * np.einsum('ijj->i', tmp)
+
 
 	def pre(self, position, gamma, rtype, dsa=True, sbm=True, csa=0.0):
 		"""
