@@ -246,6 +246,8 @@ class Metal(object):
 		't1e': 1E12,
 		'taur': 1E9,
 		'mueff': 1./MUB,
+		'gax': 1E60,
+		'grh': 1E60
 	}
 
 	# J, g, T1e values for lanthanide series
@@ -598,6 +600,20 @@ class Metal(object):
 	@B0_MHz.setter
 	def B0_MHz(self, value):
 		self.B0 = value / 42.57747892
+	@property
+	def gax(self):
+		"""axial componenet of spectral power density tensor"""
+		return self.g_axrh[0]
+	@gax.setter
+	def gax(self, value):
+		self.g_axrh[0] = value
+	@property
+	def grh(self):
+		"""axial componenet of spectral power density tensor"""
+		return self.g_axrh[1]
+	@gax.setter
+	def grh(self, value):
+		self.g_axrh[1] = value
 
 	@property
 	def eigenvalues(self):
@@ -1441,7 +1457,8 @@ class Metal(object):
 		return preFactor * np.einsum('ijj->i', tmp)
 
 
-	def pre(self, position, gamma, rtype, dsa=True, sbm=True, csa=0.0):
+	def pre(self, position, gamma, rtype, dsa=True, sbm=True, 
+			gsbm=False, csa=0.0):
 		"""
 		Calculate the PRE for a set of spins using Curie and or SBM theory
 
@@ -1456,7 +1473,12 @@ class Metal(object):
 		dsa : bool (optional)
 			when True (defualt), DSA or Curie spin relaxation is included
 		sbm : bool (optional)
-			when True (defualt), SBM spin relaxation is included 
+			when True (defualt), SBM spin relaxation is included
+		gsbm : bool (optional)
+			when True (default=False), anisotropic dipolar relaxation is 
+			included using the spectral power density gensor <g_tensor>
+			NOTE: when true, ignores relaxation of type SBM
+			NOTE: only implemented for R1 relaxation calculations
 		csa : array with shape (3,3) (optional)
 			CSA tensor of the spin.
 			This defualts to 0.0, meaning CSAxDSA crosscorrelation is
@@ -1467,12 +1489,19 @@ class Metal(object):
 		rate : float
 			The PRE rate in /s
 		"""
+		if gsbm:
+			sbm = False
+			if rtype=='r2':
+				raise NotImplementedError(
+					"Anisotropic dipolar relaxation has not been implement for R2 caluculations yet.")
 		rate = 0.0
 		if rtype=='r1':
 			if dsa:
 				rate += self.dsa_r1(position, gamma, csa)
 			if sbm:
 				rate += self.sbm_r1(position, gamma)
+			if gsbm:
+				rate += self.g_sbm_r1(position, gamma)
 		elif rtype=='r2':
 			if dsa:
 				rate += self.dsa_r2(position, gamma, csa)
@@ -1481,7 +1510,7 @@ class Metal(object):
 		return rate
 
 	def fast_pre(self, posarray, gammaarray, rtype, 
-		dsa=True, sbm=True, csaarray=0.0):
+		dsa=True, sbm=True, gsbm=False, csaarray=0.0):
 		"""
 		Calculate the PRE for a set of spins using Curie and or SBM theory
 
@@ -1496,7 +1525,12 @@ class Metal(object):
 		dsa : bool (optional)
 			when True (defualt), DSA or Curie spin relaxation is included
 		sbm : bool (optional)
-			when True (defualt), SBM spin relaxation is included 
+			when True (defualt), SBM spin relaxation is included
+		gsbm : bool (optional)
+			when True (default=False), anisotropic dipolar relaxation is 
+			included using the spectral power density gensor <g_tensor>
+			NOTE: when true, ignores relaxation of type SBM
+			NOTE: only implemented for R1 relaxation calculations
 		csaarray : array with shape (m,3,3) (optional)
 			array of CSA tensors of the spins.
 			This defualts to 0.0, meaning CSAxDSA crosscorrelation is
@@ -1507,12 +1541,16 @@ class Metal(object):
 		rates : array with shape (n,1)
 			The PRE rates in /s
 		"""
+		if gsbm:
+			sbm = False
 		rates = 0.0
 		if rtype=='r1':
 			if dsa:
 				rates += self.fast_dsa_r1(posarray, gammaarray, csaarray)
 			if sbm:
 				rates += self.fast_sbm_r1(posarray, gammaarray)
+			if gsbm:
+				rates += self.fast_g_sbm_r1(posarray, gammaarray)
 		elif rtype=='r2':
 			if dsa:
 				rates += self.fast_dsa_r2(posarray, gammaarray, csaarray)

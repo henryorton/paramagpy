@@ -801,8 +801,8 @@ def qfactor(experiment, calculated, sumIndices=None):
 
 
 def nlr_fit_metal_from_pre(initMetals, pres, params=('x','y','z'), 
-	sumIndices=None, rtypes=None, usesbm=True, usedsa=True, usecsa=False, 
-	progress=None):
+	sumIndices=None, rtypes=None, usesbm=True, usegsbm=False, usedsa=True, 
+	usecsa=False, progress=None):
 	"""
 	Fit deltaChi tensor to PRE values using non-linear regression.
 
@@ -836,6 +836,10 @@ def nlr_fit_metal_from_pre(initMetals, pres, params=('x','y','z'),
 	usesbm : bool, optional
 		include Solomon-Bloemenbergen-Morgan (Dipole-dipole) relaxation theory.
 		default is True
+	usegsbm : bool, optional
+		include anisotropic dipolar relaxation theory.
+		note that the g-tensor must be set for this 
+		default is False
 	usedsa : bool, optional
 		include Dipolar-Shielding-Anisotropy (Curie Spin) relaxation theory.
 		default is True
@@ -891,7 +895,7 @@ def nlr_fit_metal_from_pre(initMetals, pres, params=('x','y','z'),
 		zipped = zip(metals, posarrays, gamarrays, csaarrays, prearrays, idxarrays, errarrays, rtypes)
 		for metal, posarr, gamarr, csaarr, prearr, idxarr, errarr, rtype in zipped:
 			calcpre = metal.fast_pre(posarr, gamarr, rtype, 
-				dsa=usedsa, sbm=usesbm, csaarray=csaarr)
+				dsa=usedsa, sbm=usesbm, gsbm=usegsbm, csaarray=csaarr)
 			diff = (calcpre - prearr) / errarr
 			selectiveSum = np.bincount(idxarr, weights=diff)
 			score += np.sum(selectiveSum**2)
@@ -908,7 +912,7 @@ def nlr_fit_metal_from_pre(initMetals, pres, params=('x','y','z'),
 	for metal, posarr, gamarr, csaarr, prearr, idxarr, errarr, rtype in zipped:
 		metal.set_utr()
 		calculated = metal.fast_pre(posarr, gamarr, rtype, 
-			dsa=usedsa, sbm=usesbm, csaarray=csaarr)
+			dsa=usedsa, sbm=usesbm, gsbm=usegsbm, csaarray=csaarr)
 		calc_pres.append(calculated)
 		qfac = qfactor(prearr, calculated, idxarr)
 		qfactors.append(qfac)
