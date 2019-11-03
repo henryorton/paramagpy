@@ -10,8 +10,8 @@ doctrees/
 *.log
 *.synctex.gz
 *.sublime-workspace
-.DS_Store
-.nfs*
+*.DS_Store
+*.nfs*
 /gui_executables/**
 /icon/**
 /build/**
