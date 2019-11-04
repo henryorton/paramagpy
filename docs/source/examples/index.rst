@@ -36,6 +36,7 @@ PRE data
 
     pre_fit_proton.rst
     pre_calc_nitrogen.rst
+    pre_fit_aniso_dipolar.rst
 
 CCR data
 --------

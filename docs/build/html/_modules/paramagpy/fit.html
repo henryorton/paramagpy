@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>paramagpy.fit &#8212; paramagpy 0.43 documentation</title>
+    <title>paramagpy.fit &#8212; paramagpy 0.44 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.43 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -842,8 +842,8 @@
 
 
 <div class="viewcode-block" id="nlr_fit_metal_from_pre"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.nlr_fit_metal_from_pre.html#paramagpy.fit.nlr_fit_metal_from_pre">[docs]</a><span class="k">def</span> <span class="nf">nlr_fit_metal_from_pre</span><span class="p">(</span><span class="n">initMetals</span><span class="p">,</span> <span class="n">pres</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">),</span> 
-	<span class="n">sumIndices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rtypes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">usesbm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">usedsa</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">usecsa</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
-	<span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="n">sumIndices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rtypes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">usesbm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">usegsbm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">usedsa</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+	<span class="n">usecsa</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Fit deltaChi tensor to PRE values using non-linear regression.</span>
 
@@ -877,6 +877,10 @@
 <span class="sd">	usesbm : bool, optional</span>
 <span class="sd">		include Solomon-Bloemenbergen-Morgan (Dipole-dipole) relaxation theory.</span>
 <span class="sd">		default is True</span>
+<span class="sd">	usegsbm : bool, optional</span>
+<span class="sd">		include anisotropic dipolar relaxation theory.</span>
+<span class="sd">		note that the g-tensor must be set for this </span>
+<span class="sd">		default is False</span>
 <span class="sd">	usedsa : bool, optional</span>
 <span class="sd">		include Dipolar-Shielding-Anisotropy (Curie Spin) relaxation theory.</span>
 <span class="sd">		default is True</span>
@@ -932,7 +936,7 @@
 		<span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">posarrays</span><span class="p">,</span> <span class="n">gamarrays</span><span class="p">,</span> <span class="n">csaarrays</span><span class="p">,</span> <span class="n">prearrays</span><span class="p">,</span> <span class="n">idxarrays</span><span class="p">,</span> <span class="n">errarrays</span><span class="p">,</span> <span class="n">rtypes</span><span class="p">)</span>
 		<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">csaarr</span><span class="p">,</span> <span class="n">prearr</span><span class="p">,</span> <span class="n">idxarr</span><span class="p">,</span> <span class="n">errarr</span><span class="p">,</span> <span class="n">rtype</span> <span class="ow">in</span> <span class="n">zipped</span><span class="p">:</span>
 			<span class="n">calcpre</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">fast_pre</span><span class="p">(</span><span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">rtype</span><span class="p">,</span> 
-				<span class="n">dsa</span><span class="o">=</span><span class="n">usedsa</span><span class="p">,</span> <span class="n">sbm</span><span class="o">=</span><span class="n">usesbm</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="n">csaarr</span><span class="p">)</span>
+				<span class="n">dsa</span><span class="o">=</span><span class="n">usedsa</span><span class="p">,</span> <span class="n">sbm</span><span class="o">=</span><span class="n">usesbm</span><span class="p">,</span> <span class="n">gsbm</span><span class="o">=</span><span class="n">usegsbm</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="n">csaarr</span><span class="p">)</span>
 			<span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">calcpre</span> <span class="o">-</span> <span class="n">prearr</span><span class="p">)</span> <span class="o">/</span> <span class="n">errarr</span>
 			<span class="n">selectiveSum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">idxarr</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">diff</span><span class="p">)</span>
 			<span class="n">score</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">selectiveSum</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
@@ -949,7 +953,7 @@
 	<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">csaarr</span><span class="p">,</span> <span class="n">prearr</span><span class="p">,</span> <span class="n">idxarr</span><span class="p">,</span> <span class="n">errarr</span><span class="p">,</span> <span class="n">rtype</span> <span class="ow">in</span> <span class="n">zipped</span><span class="p">:</span>
 		<span class="n">metal</span><span class="o">.</span><span class="n">set_utr</span><span class="p">()</span>
 		<span class="n">calculated</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">fast_pre</span><span class="p">(</span><span class="n">posarr</span><span class="p">,</span> <span class="n">gamarr</span><span class="p">,</span> <span class="n">rtype</span><span class="p">,</span> 
-			<span class="n">dsa</span><span class="o">=</span><span class="n">usedsa</span><span class="p">,</span> <span class="n">sbm</span><span class="o">=</span><span class="n">usesbm</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="n">csaarr</span><span class="p">)</span>
+			<span class="n">dsa</span><span class="o">=</span><span class="n">usedsa</span><span class="p">,</span> <span class="n">sbm</span><span class="o">=</span><span class="n">usesbm</span><span class="p">,</span> <span class="n">gsbm</span><span class="o">=</span><span class="n">usegsbm</span><span class="p">,</span> <span class="n">csaarray</span><span class="o">=</span><span class="n">csaarr</span><span class="p">)</span>
 		<span class="n">calc_pres</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">calculated</span><span class="p">)</span>
 		<span class="n">qfac</span> <span class="o">=</span> <span class="n">qfactor</span><span class="p">(</span><span class="n">prearr</span><span class="p">,</span> <span class="n">calculated</span><span class="p">,</span> <span class="n">idxarr</span><span class="p">)</span>
 		<span class="n">qfactors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qfac</span><span class="p">)</span>
@@ -1270,7 +1274,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.43 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

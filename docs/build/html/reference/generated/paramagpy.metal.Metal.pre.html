@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>paramagpy.metal.Metal.pre &#8212; paramagpy 0.43 documentation</title>
+    <title>paramagpy.metal.Metal.pre &#8212; paramagpy 0.44 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="paramagpy.metal.Metal.pcs_mesh.html" title="paramagpy.metal.Metal.pcs_mesh"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.43 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../metal.html" >paramagpy.metal</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="paramagpy.metal.Metal.html" accesskey="U">paramagpy.metal.Metal</a> &#187;</li> 
@@ -52,7 +52,7 @@
 <h1>paramagpy.metal.Metal.pre<a class="headerlink" href="#paramagpy-metal-metal-pre" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="paramagpy.metal.Metal.pre">
-<code class="descclassname">Metal.</code><code class="descname">pre</code><span class="sig-paren">(</span><em>position</em>, <em>gamma</em>, <em>rtype</em>, <em>dsa=True</em>, <em>sbm=True</em>, <em>csa=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.pre"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.pre" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Metal.</code><code class="descname">pre</code><span class="sig-paren">(</span><em>position</em>, <em>gamma</em>, <em>rtype</em>, <em>dsa=True</em>, <em>sbm=True</em>, <em>gsbm=False</em>, <em>csa=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.pre"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.pre" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the PRE for a set of spins using Curie and or SBM theory</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -64,6 +64,10 @@
 <li><strong>rtype</strong> (<em>str</em>) – either ‘r1’ or ‘r2’, the relaxation type</li>
 <li><strong>dsa</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True (defualt), DSA or Curie spin relaxation is included</li>
 <li><strong>sbm</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True (defualt), SBM spin relaxation is included</li>
+<li><strong>gsbm</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True (default=False), anisotropic dipolar relaxation is
+included using the spectral power density gensor &lt;g_tensor&gt;
+NOTE: when true, ignores relaxation of type SBM
+NOTE: only implemented for R1 relaxation calculations</li>
 <li><strong>csa</strong> (<em>array with shape</em><em> (</em><em>3</em><em>,</em><em>3</em><em>) </em><em>(</em><em>optional</em><em>)</em>) – CSA tensor of the spin.
 This defualts to 0.0, meaning CSAxDSA crosscorrelation is
 not accounted for.</li>
@@ -132,7 +136,7 @@ not accounted for.</li>
         <li class="right" >
           <a href="paramagpy.metal.Metal.pcs_mesh.html" title="paramagpy.metal.Metal.pcs_mesh"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.43 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../metal.html" >paramagpy.metal</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="paramagpy.metal.Metal.html" >paramagpy.metal.Metal</a> &#187;</li> 

@@ -52,8 +52,8 @@
 \setcounter{tocdepth}{1}
 
 \title{paramagpy Documentation}
-\date{Aug 19, 2019}
-\release{0.43}
+\date{Nov 04, 2019}
+\release{0.44}
 \author{Henry Orton}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -69,17 +69,17 @@
 
 \begin{quote}\begin{description}
 \item[{Release}] \leavevmode
-0.43
+0.44
 
 \item[{Date}] \leavevmode
-Aug 19, 2019
+Nov 04, 2019
 
 \end{description}\end{quote}
 
 
 \chapter{Introduction}
 \label{\detokenize{index:introduction}}
-paramagpy is a python module for calculating paramagnetic effects in NMR spectra of proteins. This currently includes fitting of paramagnetic susceptibility tensors to experimental data associated with pseudocontact shifts (PCS) residual dipolar couplings (RDC), paramagnetic relaxation enhancements (PRE) and cross-correlated relaxation (CCR). A GUI allows easy viewing of data and seamless transition between PCS/RDC/PR/CCR calculations.
+paramagpy is a python module for calculating paramagnetic effects in NMR spectra of proteins. This currently includes fitting of paramagnetic susceptibility tensors to experimental data associated with pseudocontact shifts (PCS) residual dipolar couplings (RDC), paramagnetic relaxation enhancements (PRE) and cross-correlated relaxation (CCR). A GUI allows easy viewing of data and seamless transition between PCS/RDC/PRE/CCR calculations.
 
 \begin{figure}[htbp]
 \centering
@@ -1473,6 +1473,94 @@ Finally the data are plotted. Clearly CSA cross-correlation is a big effect for 
 \noindent\sphinxincludegraphics{{pre_calc_nitrogen}.png}
 
 
+\subsubsection{Fit spectral power density tensor}
+\label{\detokenize{examples/pre_fit_aniso_dipolar:fit-spectral-power-density-tensor}}\label{\detokenize{examples/pre_fit_aniso_dipolar:pre-fit-aniso-dipolar}}\label{\detokenize{examples/pre_fit_aniso_dipolar::doc}}
+This example shows how to fit the spectral power density tensor to anisotropic PREs. The data and theory are derived from \sphinxurl{https://doi.org/10.1039/C8CP01332B}.
+
+
+\paragraph{Downloads}
+\label{\detokenize{examples/pre_fit_aniso_dipolar:downloads}}\begin{itemize}
+\item {} 
+Download the data files \sphinxcode{\sphinxupquote{parashift\_Tb.pdb}} and \sphinxcode{\sphinxupquote{parashift\_Tb\_R1\_exp.pre}} from \sphinxhref{https://github.com/henryorton/paramagpy/tree/master/examples/data\_files/}{here}:
+
+\item {} 
+Download the script \sphinxcode{\sphinxupquote{pre\_fit\_aniso\_dipolar.py}}
+
+\end{itemize}
+
+
+\paragraph{Script + Explanation}
+\label{\detokenize{examples/pre_fit_aniso_dipolar:script-explanation}}
+Load the relevant modules, read the PDB coordinates and experimental PRE values. Parse the values.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{from} \PYG{n+nn}{paramagpy} \PYG{k}{import} \PYG{n}{protein}\PYG{p}{,} \PYG{n}{metal}\PYG{p}{,} \PYG{n}{fit}\PYG{p}{,} \PYG{n}{dataparse}
+\PYG{k+kn}{from} \PYG{n+nn}{matplotlib} \PYG{k}{import} \PYG{n}{pyplot} \PYG{k}{as} \PYG{n}{plt}
+\PYG{k+kn}{import} \PYG{n+nn}{numpy} \PYG{k}{as} \PYG{n+nn}{np}
+
+\PYG{n}{prot} \PYG{o}{=} \PYG{n}{protein}\PYG{o}{.}\PYG{n}{load\PYGZus{}pdb}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{../data\PYGZus{}files/parashift\PYGZus{}Tb.pdb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{pre\PYGZus{}exp} \PYG{o}{=} \PYG{n}{dataparse}\PYG{o}{.}\PYG{n}{read\PYGZus{}pre}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{../data\PYGZus{}files/parashift\PYGZus{}Tb\PYGZus{}R1\PYGZus{}exp.pre}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{exp} \PYG{o}{=} \PYG{n}{prot}\PYG{o}{.}\PYG{n}{parse}\PYG{p}{(}\PYG{n}{pre\PYGZus{}exp}\PYG{p}{)}
+\end{sphinxVerbatim}
+
+The spectral power density tensor is written here explicitly and set to the attribute \sphinxcode{\sphinxupquote{g\_tensor}}. The values here are sourced from the original paper, and arise from the robust linear fit to the experimental data. We will use this tensor for comparison to the fit achieved by paramagpy.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{m} \PYG{o}{=} \PYG{n}{metal}\PYG{o}{.}\PYG{n}{Metal}\PYG{p}{(}\PYG{n}{taur}\PYG{o}{=}\PYG{l+m+mf}{0.42E\PYGZhy{}9}\PYG{p}{,} \PYG{n}{B0}\PYG{o}{=}\PYG{l+m+mf}{1.0}\PYG{p}{,} \PYG{n}{temperature}\PYG{o}{=}\PYG{l+m+mf}{300.0}\PYG{p}{)}
+\PYG{n}{m}\PYG{o}{.}\PYG{n}{set\PYGZus{}lanthanide}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Tb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+
+\PYG{n}{m}\PYG{o}{.}\PYG{n}{g\PYGZus{}tensor} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}
+	\PYG{p}{[}\PYG{l+m+mf}{1754.0}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{859.0}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{207.0}\PYG{p}{]}\PYG{p}{,}
+	\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{859.0}\PYG{p}{,} \PYG{l+m+mf}{2285.0}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{351.0}\PYG{p}{]}\PYG{p}{,}
+	\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{207.0}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{351.0}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{196.0}\PYG{p}{]}\PYG{p}{]}\PYG{p}{)} \PYG{o}{*} \PYG{l+m+mf}{1E\PYGZhy{}60}
+\end{sphinxVerbatim}
+
+An starting tensor with no parameters is also initialised and will be used for fitting to the exerimental data with paramagpy.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{m0} \PYG{o}{=} \PYG{n}{metal}\PYG{o}{.}\PYG{n}{Metal}\PYG{p}{(}\PYG{n}{taur}\PYG{o}{=}\PYG{l+m+mf}{0.42E\PYGZhy{}9}\PYG{p}{,} \PYG{n}{B0}\PYG{o}{=}\PYG{l+m+mf}{1.0}\PYG{p}{,} \PYG{n}{temperature}\PYG{o}{=}\PYG{l+m+mf}{300.0}\PYG{p}{)}
+\PYG{n}{m0}\PYG{o}{.}\PYG{n}{set\PYGZus{}lanthanide}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Tb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\end{sphinxVerbatim}
+
+The fit is conducted by setting the \sphinxcode{\sphinxupquote{usegsbm}} flag to \sphinxcode{\sphinxupquote{True}}. This uses anisotropic SBM theory to fit the spectral power density tensor in place of the isotropic SBM theory. The relevant fitting parameters must be specified as \sphinxcode{\sphinxupquote{'t1e', 'gax', 'grh', 'a','b','g'}} which represent the electronic relaxation time, the axial and rhombic componenets of the power spectral density tensor and the 3 Euler angles alpha, beta and gamma respectively. Note that the fitted \sphinxcode{\sphinxupquote{t1e}} parameter is only an estimate of the electronic relaxation time.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{p}{[}\PYG{n}{mfit}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{calc}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{q}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pre}\PYG{p}{(}\PYG{p}{[}\PYG{n}{m0}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{exp}\PYG{p}{]}\PYG{p}{,} \PYG{n}{params}\PYG{o}{=}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{t1e}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{gax}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{grh}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{a}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{g}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,} 
+\end{sphinxVerbatim}
+
+Finally the results of the fit are plotted alongside the isotropic theory and the literature fit. Note that the difference in the fit from paramagpy is small, and probably arises because the original paper uses a \sphinxtitleref{Robust} linear fit, which may include weighting with experimental uncertainties. However paramagpy weights values evely here because the experimental uncertainties are unknown.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{atoms}\PYG{p}{,} \PYG{n}{r1}\PYG{p}{,} \PYG{n}{err} \PYG{o}{=} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{o}{*}\PYG{n}{exp}\PYG{p}{)}
+\PYG{n}{pos} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{n}{a}\PYG{o}{.}\PYG{n}{position} \PYG{k}{for} \PYG{n}{a} \PYG{o+ow}{in} \PYG{n}{atoms}\PYG{p}{]}\PYG{p}{)}
+\PYG{n}{gam} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{n}{a}\PYG{o}{.}\PYG{n}{gamma} \PYG{k}{for} \PYG{n}{a} \PYG{o+ow}{in} \PYG{n}{atoms}\PYG{p}{]}\PYG{p}{)}
+
+\PYG{n}{fig} \PYG{o}{=} \PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{)}\PYG{p}{)}
+\PYG{n}{ax} \PYG{o}{=} \PYG{n}{fig}\PYG{o}{.}\PYG{n}{add\PYGZus{}subplot}\PYG{p}{(}\PYG{l+m+mi}{111}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{3200}\PYG{p}{]}\PYG{p}{,}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{3200}\PYG{p}{]}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{\PYGZhy{}k}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{r1}\PYG{p}{,} \PYG{n}{mfit}\PYG{o}{.}\PYG{n}{fast\PYGZus{}sbm\PYGZus{}r1}\PYG{p}{(}\PYG{n}{pos}\PYG{p}{,} \PYG{n}{gam}\PYG{p}{)}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{iso}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{r1}\PYG{p}{,} \PYG{n}{mfit}\PYG{o}{.}\PYG{n}{fast\PYGZus{}g\PYGZus{}sbm\PYGZus{}r1}\PYG{p}{(}\PYG{n}{pos}\PYG{p}{,} \PYG{n}{gam}\PYG{p}{)}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{aniso}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{r1}\PYG{p}{,} \PYG{n}{m}\PYG{o}{.}\PYG{n}{fast\PYGZus{}g\PYGZus{}sbm\PYGZus{}r1}\PYG{p}{(}\PYG{n}{pos}\PYG{p}{,} \PYG{n}{gam}\PYG{p}{)}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{literature fit}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{set\PYGZus{}xlim}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{3200}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{set\PYGZus{}ylim}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{3200}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{set\PYGZus{}xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{R1 experimental /Hz}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{set\PYGZus{}ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{R1 calcualted /Hz}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{set\PYGZus{}title}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Tb parashift R1}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{(}\PYG{p}{)}
+\PYG{n}{fig}\PYG{o}{.}\PYG{n}{tight\PYGZus{}layout}\PYG{p}{(}\PYG{p}{)}
+\PYG{n}{fig}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{pre\PYGZus{}fit\PYGZus{}aniso\PYGZus{}dipolar.png}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{200}\PYG{p}{)}
+\end{sphinxVerbatim}
+
+\sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{pre\_fit\_aniso\_dipolar.png}}{]}
+
+\noindent\sphinxincludegraphics{{pre_fit_aniso_dipolar}.png}
+
+
 \subsection{CCR data}
 \label{\detokenize{examples/index:ccr-data}}
 
@@ -1937,7 +2025,7 @@ An object for paramagnetic chi tensors and delta-chi tensors.
 \label{\detokenize{reference/generated/paramagpy.metal.Metal:paramagpy-metal-metal}}\label{\detokenize{reference/generated/paramagpy.metal.Metal::doc}}\index{Metal (class in paramagpy.metal)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal:paramagpy.metal.Metal}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{class }}\sphinxcode{\sphinxupquote{paramagpy.metal.}}\sphinxbfcode{\sphinxupquote{Metal}}}{\emph{position=(0}, \emph{0}, \emph{0)}, \emph{eulers=(0}, \emph{0}, \emph{0)}, \emph{axrh=(0}, \emph{0)}, \emph{mueff=0.0}, \emph{shift=0.0}, \emph{temperature=298.15}, \emph{t1e=0.0}, \emph{B0=18.79}, \emph{taur=0.0}}{}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal:paramagpy.metal.Metal}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{class }}\sphinxcode{\sphinxupquote{paramagpy.metal.}}\sphinxbfcode{\sphinxupquote{Metal}}}{\emph{position=(0}, \emph{0}, \emph{0)}, \emph{eulers=(0}, \emph{0}, \emph{0)}, \emph{axrh=(0}, \emph{0)}, \emph{mueff=0.0}, \emph{g\_axrh=(0}, \emph{0)}, \emph{t1e=0.0}, \emph{shift=0.0}, \emph{temperature=298.15}, \emph{B0=18.79}, \emph{taur=0.0}}{}
 An object for paramagnetic chi tensors and delta-chi tensors.
 This class has basic attributes that specify position,
 axiality/rhombicity, isotropy and euler angles.
@@ -1945,7 +2033,7 @@ It also has methods for calculating PCS, RDC, PRE and CCR values.
 \index{\_\_init\_\_() (paramagpy.metal.Metal method)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal:paramagpy.metal.Metal.__init__}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_\_init\_\_}}}{\emph{position=(0}, \emph{0}, \emph{0)}, \emph{eulers=(0}, \emph{0}, \emph{0)}, \emph{axrh=(0}, \emph{0)}, \emph{mueff=0.0}, \emph{shift=0.0}, \emph{temperature=298.15}, \emph{t1e=0.0}, \emph{B0=18.79}, \emph{taur=0.0}}{}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal:paramagpy.metal.Metal.__init__}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_\_init\_\_}}}{\emph{position=(0}, \emph{0}, \emph{0)}, \emph{eulers=(0}, \emph{0}, \emph{0)}, \emph{axrh=(0}, \emph{0)}, \emph{mueff=0.0}, \emph{g\_axrh=(0}, \emph{0)}, \emph{t1e=0.0}, \emph{shift=0.0}, \emph{temperature=298.15}, \emph{B0=18.79}, \emph{taur=0.0}}{}
 Instantiate ChiTensor object
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
@@ -2079,6 +2167,11 @@ Vectorised version of {\hyperref[\detokenize{reference/generated/paramagpy.metal
 Vectorised version of {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.first_invariant_squared:paramagpy.metal.Metal.first_invariant_squared}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.metal.Metal.first\_invariant\_squared()}}}}}
 \\
 \hline
+{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.fast_g_sbm_r1:paramagpy.metal.Metal.fast_g_sbm_r1}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{fast\_g\_sbm\_r1}}}}}(posarray, gammaarray)
+&
+Vectorised version of {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.g_sbm_r1:paramagpy.metal.Metal.g_sbm_r1}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.metal.Metal.g\_sbm\_r1()}}}}}
+\\
+\hline
 {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.fast_pcs:paramagpy.metal.Metal.fast_pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{fast\_pcs}}}}}(posarray)
 &
 A vectorised version of {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.pcs:paramagpy.metal.Metal.pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.metal.Metal.pcs()}}}}}
@@ -2124,6 +2217,11 @@ Vectorised version of {\hyperref[\detokenize{reference/generated/paramagpy.metal
 Calculate the antisymmetric contribution to relaxation via the first invariant of a tensor.
 \\
 \hline
+{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.g_sbm_r1:paramagpy.metal.Metal.g_sbm_r1}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{g\_sbm\_r1}}}}}(position, gamma)
+&
+Calculate R1 relaxation due to Solomon-Bloembergen-Morgan theory from anisotropic power spectral density tensor
+\\
+\hline
 {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.get_params:paramagpy.metal.Metal.get_params}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{get\_params}}}}}(params)
 &
 Get tensor parameters that have been scaled appropriately
@@ -2154,7 +2252,7 @@ Calculate the psuedo-contact shift at the given postition
 Calculate a PCS value at each location of cubic grid of points
 \\
 \hline
-{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.pre:paramagpy.metal.Metal.pre}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{pre}}}}}(position, gamma, rtype{[}, dsa, sbm, csa{]})
+{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.pre:paramagpy.metal.Metal.pre}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{pre}}}}}(position, gamma, rtype{[}, dsa, sbm, …{]})
 &
 Calculate the PRE for a set of spins using Curie and or SBM theory
 \\
@@ -2697,6 +2795,36 @@ array with shape (n,1)
 
 
 
+\subparagraph{paramagpy.metal.Metal.fast\_g\_sbm\_r1}
+\label{\detokenize{reference/generated/paramagpy.metal.Metal.fast_g_sbm_r1:paramagpy-metal-metal-fast-g-sbm-r1}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.fast_g_sbm_r1::doc}}\index{fast\_g\_sbm\_r1() (paramagpy.metal.Metal method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.fast_g_sbm_r1:paramagpy.metal.Metal.fast_g_sbm_r1}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{fast\_g\_sbm\_r1}}}{\emph{posarray}, \emph{gammaarray}}{}
+Vectorised version of {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.g_sbm_r1:paramagpy.metal.Metal.g_sbm_r1}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.metal.Metal.g\_sbm\_r1()}}}}}
+
+This is generally used for speed in fitting PRE data
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{posarray}} (\sphinxstyleliteralemphasis{\sphinxupquote{array with shape}}\sphinxstyleliteralemphasis{\sphinxupquote{ (}}\sphinxstyleliteralemphasis{\sphinxupquote{n}}\sphinxstyleliteralemphasis{\sphinxupquote{,}}\sphinxstyleliteralemphasis{\sphinxupquote{3}}\sphinxstyleliteralemphasis{\sphinxupquote{)}}) \textendash{} array of positions in meters
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{gammaarray}} (\sphinxstyleliteralemphasis{\sphinxupquote{array with shape}}\sphinxstyleliteralemphasis{\sphinxupquote{ (}}\sphinxstyleliteralemphasis{\sphinxupquote{n}}\sphinxstyleliteralemphasis{\sphinxupquote{,}}\sphinxstyleliteralemphasis{\sphinxupquote{3}}\sphinxstyleliteralemphasis{\sphinxupquote{)}}) \textendash{} array of gyromagnetic ratios of the spins
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{rates} \textendash{} The R1 relaxation rates in /s
+
+\item[{Return type}] \leavevmode
+array with shape (n,1)
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
+
 \subparagraph{paramagpy.metal.Metal.fast\_pcs}
 \label{\detokenize{reference/generated/paramagpy.metal.Metal.fast_pcs:paramagpy-metal-metal-fast-pcs}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.fast_pcs::doc}}\index{fast\_pcs() (paramagpy.metal.Metal method)}
 
@@ -2726,7 +2854,7 @@ array of floats with shape (n,1)
 \label{\detokenize{reference/generated/paramagpy.metal.Metal.fast_pre:paramagpy-metal-metal-fast-pre}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.fast_pre::doc}}\index{fast\_pre() (paramagpy.metal.Metal method)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.fast_pre:paramagpy.metal.Metal.fast_pre}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{fast\_pre}}}{\emph{posarray}, \emph{gammaarray}, \emph{rtype}, \emph{dsa=True}, \emph{sbm=True}, \emph{csaarray=0.0}}{}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.fast_pre:paramagpy.metal.Metal.fast_pre}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{fast\_pre}}}{\emph{posarray}, \emph{gammaarray}, \emph{rtype}, \emph{dsa=True}, \emph{sbm=True}, \emph{gsbm=False}, \emph{csaarray=0.0}}{}
 Calculate the PRE for a set of spins using Curie and or SBM theory
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
@@ -2744,6 +2872,12 @@ Calculate the PRE for a set of spins using Curie and or SBM theory
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{sbm}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{ (}}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}\sphinxstyleliteralemphasis{\sphinxupquote{)}}) \textendash{} when True (defualt), SBM spin relaxation is included
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{gsbm}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{ (}}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}\sphinxstyleliteralemphasis{\sphinxupquote{)}}) \textendash{} when True (default=False), anisotropic dipolar relaxation is
+included using the spectral power density gensor \textless{}g\_tensor\textgreater{}
+NOTE: when true, ignores relaxation of type SBM
+NOTE: only implemented for R1 relaxation calculations
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{csaarray}} (\sphinxstyleliteralemphasis{\sphinxupquote{array with shape}}\sphinxstyleliteralemphasis{\sphinxupquote{ (}}\sphinxstyleliteralemphasis{\sphinxupquote{m}}\sphinxstyleliteralemphasis{\sphinxupquote{,}}\sphinxstyleliteralemphasis{\sphinxupquote{3}}\sphinxstyleliteralemphasis{\sphinxupquote{,}}\sphinxstyleliteralemphasis{\sphinxupquote{3}}\sphinxstyleliteralemphasis{\sphinxupquote{) }}\sphinxstyleliteralemphasis{\sphinxupquote{(}}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}\sphinxstyleliteralemphasis{\sphinxupquote{)}}) \textendash{} array of CSA tensors of the spins.
@@ -2953,6 +3087,35 @@ float
 
 
 
+\subparagraph{paramagpy.metal.Metal.g\_sbm\_r1}
+\label{\detokenize{reference/generated/paramagpy.metal.Metal.g_sbm_r1:paramagpy-metal-metal-g-sbm-r1}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.g_sbm_r1::doc}}\index{g\_sbm\_r1() (paramagpy.metal.Metal method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.g_sbm_r1:paramagpy.metal.Metal.g_sbm_r1}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{g\_sbm\_r1}}}{\emph{position}, \emph{gamma}}{}
+Calculate R1 relaxation due to Solomon-Bloembergen-Morgan theory
+from anisotropic power spectral density tensor
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{position}} (\sphinxstyleliteralemphasis{\sphinxupquote{array of floats}}) \textendash{} three coordinates (x,y,z)
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{gamma}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} the gyromagnetic ratio of the spin
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{value} \textendash{} The R1 relaxation rate in /s
+
+\item[{Return type}] \leavevmode
+float
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
+
 \subparagraph{paramagpy.metal.Metal.get\_params}
 \label{\detokenize{reference/generated/paramagpy.metal.Metal.get_params:paramagpy-metal-metal-get-params}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.get_params::doc}}\index{get\_params() (paramagpy.metal.Metal method)}
 
@@ -3149,7 +3312,7 @@ array with shape (n,n,n,1)
 \label{\detokenize{reference/generated/paramagpy.metal.Metal.pre:paramagpy-metal-metal-pre}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.pre::doc}}\index{pre() (paramagpy.metal.Metal method)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.pre:paramagpy.metal.Metal.pre}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{pre}}}{\emph{position}, \emph{gamma}, \emph{rtype}, \emph{dsa=True}, \emph{sbm=True}, \emph{csa=0.0}}{}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.pre:paramagpy.metal.Metal.pre}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{pre}}}{\emph{position}, \emph{gamma}, \emph{rtype}, \emph{dsa=True}, \emph{sbm=True}, \emph{gsbm=False}, \emph{csa=0.0}}{}
 Calculate the PRE for a set of spins using Curie and or SBM theory
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
@@ -3167,6 +3330,12 @@ Calculate the PRE for a set of spins using Curie and or SBM theory
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{sbm}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{ (}}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}\sphinxstyleliteralemphasis{\sphinxupquote{)}}) \textendash{} when True (defualt), SBM spin relaxation is included
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{gsbm}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{ (}}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}\sphinxstyleliteralemphasis{\sphinxupquote{)}}) \textendash{} when True (default=False), anisotropic dipolar relaxation is
+included using the spectral power density gensor \textless{}g\_tensor\textgreater{}
+NOTE: when true, ignores relaxation of type SBM
+NOTE: only implemented for R1 relaxation calculations
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{csa}} (\sphinxstyleliteralemphasis{\sphinxupquote{array with shape}}\sphinxstyleliteralemphasis{\sphinxupquote{ (}}\sphinxstyleliteralemphasis{\sphinxupquote{3}}\sphinxstyleliteralemphasis{\sphinxupquote{,}}\sphinxstyleliteralemphasis{\sphinxupquote{3}}\sphinxstyleliteralemphasis{\sphinxupquote{) }}\sphinxstyleliteralemphasis{\sphinxupquote{(}}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}\sphinxstyleliteralemphasis{\sphinxupquote{)}}) \textendash{} CSA tensor of the spin.
@@ -3668,6 +3837,31 @@ The eigenvalues defining the magnitude of the principle axes
 gamma euler anglue
 \\
 \hline
+{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.g_eigenvalues:paramagpy.metal.Metal.g_eigenvalues}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{g\_eigenvalues}}}}}
+&
+The eigenvalues defining the magnitude of the principle axes
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.g_isotropy:paramagpy.metal.Metal.g_isotropy}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{g\_isotropy}}}}}
+&
+Estimate of the spectral power density tensor isotropy
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.g_tensor:paramagpy.metal.Metal.g_tensor}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{g\_tensor}}}}}
+&
+The magnetic susceptibility tensor matrix representation
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.gax:paramagpy.metal.Metal.gax}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{gax}}}}}
+&
+axial componenet of spectral power density tensor
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.grh:paramagpy.metal.Metal.grh}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{grh}}}}}
+&
+axial componenet of spectral power density tensor
+\\
+\hline
 {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.iso:paramagpy.metal.Metal.iso}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{iso}}}}}
 &
 isotropy
@@ -3887,7 +4081,7 @@ The eigenvalues defining the magnitude of the principle axes
 \label{\detokenize{reference/generated/paramagpy.metal.Metal.fit_scaling:paramagpy-metal-metal-fit-scaling}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.fit_scaling::doc}}\index{fit\_scaling (paramagpy.metal.Metal attribute)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.fit_scaling:paramagpy.metal.Metal.fit_scaling}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{fit\_scaling}}\sphinxbfcode{\sphinxupquote{ = \{'a': 57.29577951308232, 'ax': 1e+32, 'b': 57.29577951308232, 'g': 57.29577951308232, 'iso': 1e+32, 'mueff': 1.0782833728703903e+23, 'rh': 1e+32, 't1e': 1000000000000.0, 'taur': 1000000000.0, 'x': 10000000000.0, 'y': 10000000000.0, 'z': 10000000000.0\}}}}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.fit_scaling:paramagpy.metal.Metal.fit_scaling}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{fit\_scaling}}\sphinxbfcode{\sphinxupquote{ = \{'a': 57.29577951308232, 'ax': 1e+32, 'b': 57.29577951308232, 'g': 57.29577951308232, 'gax': 1e+60, 'grh': 1e+60, 'iso': 1e+32, 'mueff': 1.0782833728703903e+23, 'rh': 1e+32, 't1e': 1000000000000.0, 'taur': 1000000000.0, 'x': 10000000000.0, 'y': 10000000000.0, 'z': 10000000000.0\}}}}
 \end{fulllineitems}
 
 
@@ -3898,6 +4092,61 @@ The eigenvalues defining the magnitude of the principle axes
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.g:paramagpy.metal.Metal.g}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{g}}}
 gamma euler anglue
+
+\end{fulllineitems}
+
+
+
+\subparagraph{paramagpy.metal.Metal.g\_eigenvalues}
+\label{\detokenize{reference/generated/paramagpy.metal.Metal.g_eigenvalues:paramagpy-metal-metal-g-eigenvalues}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.g_eigenvalues::doc}}\index{g\_eigenvalues (paramagpy.metal.Metal attribute)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.g_eigenvalues:paramagpy.metal.Metal.g_eigenvalues}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{g\_eigenvalues}}}
+The eigenvalues defining the magnitude of the principle axes
+
+\end{fulllineitems}
+
+
+
+\subparagraph{paramagpy.metal.Metal.g\_isotropy}
+\label{\detokenize{reference/generated/paramagpy.metal.Metal.g_isotropy:paramagpy-metal-metal-g-isotropy}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.g_isotropy::doc}}\index{g\_isotropy (paramagpy.metal.Metal attribute)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.g_isotropy:paramagpy.metal.Metal.g_isotropy}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{g\_isotropy}}}
+Estimate of the spectral power density tensor isotropy
+
+\end{fulllineitems}
+
+
+
+\subparagraph{paramagpy.metal.Metal.g\_tensor}
+\label{\detokenize{reference/generated/paramagpy.metal.Metal.g_tensor:paramagpy-metal-metal-g-tensor}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.g_tensor::doc}}\index{g\_tensor (paramagpy.metal.Metal attribute)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.g_tensor:paramagpy.metal.Metal.g_tensor}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{g\_tensor}}}
+The magnetic susceptibility tensor matrix representation
+
+\end{fulllineitems}
+
+
+
+\subparagraph{paramagpy.metal.Metal.gax}
+\label{\detokenize{reference/generated/paramagpy.metal.Metal.gax:paramagpy-metal-metal-gax}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.gax::doc}}\index{gax (paramagpy.metal.Metal attribute)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.gax:paramagpy.metal.Metal.gax}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{gax}}}
+axial componenet of spectral power density tensor
+
+\end{fulllineitems}
+
+
+
+\subparagraph{paramagpy.metal.Metal.grh}
+\label{\detokenize{reference/generated/paramagpy.metal.Metal.grh:paramagpy-metal-metal-grh}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.grh::doc}}\index{grh (paramagpy.metal.Metal attribute)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.grh:paramagpy.metal.Metal.grh}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{grh}}}
+axial componenet of spectral power density tensor
 
 \end{fulllineitems}
 
@@ -6630,7 +6879,7 @@ iteration and varies from 0.0 -\textgreater{} 1.0 when the calculation is comple
 \label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pre:paramagpy-fit-nlr-fit-metal-from-pre}}\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pre::doc}}\index{nlr\_fit\_metal\_from\_pre() (in module paramagpy.fit)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pre:paramagpy.fit.nlr_fit_metal_from_pre}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{nlr\_fit\_metal\_from\_pre}}}{\emph{initMetals}, \emph{pres}, \emph{params=('x'}, \emph{'y'}, \emph{'z')}, \emph{sumIndices=None}, \emph{rtypes=None}, \emph{usesbm=True}, \emph{usedsa=True}, \emph{usecsa=False}, \emph{progress=None}}{}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pre:paramagpy.fit.nlr_fit_metal_from_pre}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{nlr\_fit\_metal\_from\_pre}}}{\emph{initMetals}, \emph{pres}, \emph{params=('x'}, \emph{'y'}, \emph{'z')}, \emph{sumIndices=None}, \emph{rtypes=None}, \emph{usesbm=True}, \emph{usegsbm=False}, \emph{usedsa=True}, \emph{usecsa=False}, \emph{progress=None}}{}
 Fit deltaChi tensor to PRE values using non-linear regression.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
@@ -6667,6 +6916,11 @@ Defaults to ‘r2’ for all datasets of None is specified.
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{usesbm}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} include Solomon-Bloemenbergen-Morgan (Dipole-dipole) relaxation theory.
 default is True
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{usegsbm}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} include anisotropic dipolar relaxation theory.
+note that the g-tensor must be set for this
+default is False
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{usedsa}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} include Dipolar-Shielding-Anisotropy (Curie Spin) relaxation theory.

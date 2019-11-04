@@ -29,6 +29,7 @@ paramagpy.metal.Metal
                   ~Metal.fast_dsa_r1
                   ~Metal.fast_dsa_r2
                   ~Metal.fast_first_invariant_squared
+                  ~Metal.fast_g_sbm_r1
                   ~Metal.fast_pcs
                   ~Metal.fast_pre
                   ~Metal.fast_racs
@@ -38,6 +39,7 @@ paramagpy.metal.Metal
                   ~Metal.fast_sbm_r2
                   ~Metal.fast_second_invariant_squared
                   ~Metal.first_invariant_squared
+                  ~Metal.g_sbm_r1
                   ~Metal.get_params
                   ~Metal.info
                   ~Metal.isomap
@@ -83,6 +85,11 @@ paramagpy.metal.Metal
                ~Metal.eigenvalues
                ~Metal.fit_scaling
                ~Metal.g
+               ~Metal.g_eigenvalues
+               ~Metal.g_isotropy
+               ~Metal.g_tensor
+               ~Metal.gax
+               ~Metal.grh
                ~Metal.iso
                ~Metal.isotropy
                ~Metal.lanth_axrh
