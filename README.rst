@@ -19,11 +19,12 @@ Features
 * Plotting of correlation between experiment/calculated values
 * Plotting of tensor isosurfaces compatible with PyMol
 * Q-factor calculations
-* Error analysis of tensor fit quality Monte-Carlo or Bootstrap methods
+* Error analysis of tensor fit quality by Monte-Carlo or Bootstrap methods
 * Optimisation of multiple PCS/PRE/CCR datasets to a common position
 * Unique tensor representation compatible with Numbat (program)
 * Fitting of RDC tensor by SVD algorithm
 * PRE calculations by Solomon and Curie spin mechanisms
+* Spectral power density tensor fitting for anisotropic dipolar PREs
 * CSA cross-correlation correction to PRE calculations
 * Dipole-dipole/Curie spin cross-correlated relaxation calculations
 * Fitting of tensor parameters to PRE/CCR data
@@ -38,4 +39,4 @@ Documentation
 Citing paramagpy
 ----------------
 
-Hopefully paramagpy will be published soon the journal of biomolecular NMR
+The paramagpy preprint can be found on ChemArXiv https://doi.org/10.26434/chemrxiv.9643154.v1

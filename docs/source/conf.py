@@ -132,7 +132,9 @@ latex_elements = {
     #
     'figure_align': 'htbp',
 
-    'extraclassoptions': 'openany,oneside'
+    'extraclassoptions': 'openany,oneside',
+
+    'maxlistdepth' : '6'
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
