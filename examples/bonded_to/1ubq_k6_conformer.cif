@@ -1,0 +1,31 @@
+data_../data_files/1ubq_k6.pdb
+#
+loop_
+_atom_site.group_PDB
+_atom_site.id
+_atom_site.type_symbol
+_atom_site.label_atom_id
+_atom_site.label_alt_id
+_atom_site.label_comp_id
+_atom_site.label_asym_id
+_atom_site.label_entity_id
+_atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code
+_atom_site.Cartn_x
+_atom_site.Cartn_y
+_atom_site.Cartn_z
+_atom_site.occupancy
+_atom_site.B_iso_or_equiv
+_atom_site.auth_seq_id
+_atom_site.auth_asym_id
+_atom_site.pdbx_PDB_model_num
+ATOM 1 N N  . LYS A ? 1 ? 27.751 35.867 13.740 1.0 6.04  6 A 1 
+ATOM 2 C CA . LYS A ? 1 ? 27.691 37.315 14.143 1.0 6.12  6 A 1 
+ATOM 3 C C  . LYS A ? 1 ? 28.469 37.475 15.420 1.0 6.57  6 A 1 
+ATOM 4 O O  . LYS A ? 1 ? 28.213 36.753 16.411 1.0 5.76  6 A 1 
+ATOM 5 C CB . LYS A ? 1 ? 26.219 37.684 14.307 1.0 7.45  6 A 1 
+ATOM 6 C CG . LYS A ? 1 ? 25.359 38.211 12.028 1.0 11.12 6 A 1 
+ATOM 7 C CD . LYS A ? 1 ? 26.121 38.858 10.896 1.0 14.54 6 A 1 
+ATOM 8 C CE . LYS A ? 1 ? 25.665 38.796 13.424 1.0 18.84 6 A 1 
+ATOM 9 N NZ . LYS A ? 1 ? 22.375 40.720 14.907 1.0 20.55 6 A 1 
+#
