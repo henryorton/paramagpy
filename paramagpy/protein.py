@@ -58,7 +58,8 @@ class CustomAtom(Atom):
         'C': 4,
         'N': 3,
         'O': 2,
-        'S': 2
+        'S': 2,
+        'CA': 2
     }
 
     # Priority order for choosing the atom to measure the dihedral angle from
@@ -390,7 +391,7 @@ class CustomResidue(Residue):
         # Error handling
 
         # If source_atom is not part of the residue, raise an exception
-        if source_atom not in self.child_list:
+        if source_atom not in self.child_list and not source_atom.disordered_flag:
             raise ValueError("source_atom is not part of this residue, call this function with a valid source")
 
         # If valency isn't provided, use the CustomAtom instance's valency
@@ -492,7 +493,7 @@ class CustomResidue(Residue):
 
         """
         rot_path = self.__get_rot_path()
-        return [CustomResidue.get_dihedral(rot_path[i], rot_path[i + 1]) for i in range(len(rot_path) - 1)]
+        return np.array([CustomResidue.get_dihedral(rot_path[i], rot_path[i + 1]) for i in range(len(rot_path) - 1)])
 
     def set_delta_dihedral(self, delta_theta_vector):
         """
@@ -523,7 +524,7 @@ class CustomResidue(Residue):
         rot_path = self.__get_rot_path()
 
         atoms_to_rotate = set(atom for atom in self.get_atoms() if atom not in back_bone_atoms)
-        atoms_position = {}
+        atoms_position = {x: 999 for x in atoms_to_rotate}
         for i in range(len(rot_path) - 1):
             for atom in rot_path[i + 1].bonded_to():
                 if atom in atoms_to_rotate:
@@ -591,7 +592,7 @@ class CustomResidue(Residue):
             return None
 
         atoms_to_rotate = set(atom for atom in self.get_atoms() if atom not in back_bone_atoms)
-        atoms_position = {}
+        atoms_position = {x: 999 for x in atoms_to_rotate}
         for i in range(len(rot_path) - 1):
             for atom in rot_path[i + 1].bonded_to():
                 if atom in atoms_to_rotate:
@@ -621,24 +622,33 @@ class CustomResidue(Residue):
                                                   atoms_position, fit_pcs, top_n)
             self._dihedral_full[i] += CustomResidue.__get_angle_increment(_param[0], _param[1], _param[2])
             self._dihedral_full[i] -= 2 * np.pi if self._dihedral_full[i] > np.pi else 0
-            self.__rotate_atoms(atoms_position, i, q, rot_path[i].coord, fit_pcs, top_n)
+            self.__rotate_atoms(atoms_position, i, q, rot_path[i].coord, fit_pcs=i + 1 == len(rot_path) - 1,
+                                top_n=top_n)
 
-        if int(_param[2]) > 1:
+        if int(_param[2]) > 0:
+            if i + 1 < len(rot_path) - 1:
+                _param1 = rotation_param[i + 1]
+                q_next = CustomResidue.__rot_quat(
+                    CustomResidue.__get_angle_increment(_param1[0], _param1[1], _param1[2]),
+                    rot_path[i + 2].coord - rot_path[i + 1].coord)
+                self.__grid_search_rotamer_helper(q_next, i + 1, rotation_param, rot_path,
+                                                  atoms_position, fit_pcs, top_n)
             q_reset = CustomResidue.__rot_quat(2 * np.pi - (_param[1] - _param[0]),
                                                rot_path[i + 1].coord - rot_path[i].coord)
             self._dihedral_full[i] += 2 * np.pi - (_param[1] - _param[0])
             self._dihedral_full[i] -= 2 * np.pi if self._dihedral_full[i] > np.pi else 0
-            self.__rotate_atoms(atoms_position, i, q_reset, rot_path[i].coord, fit_pcs, top_n)
+            self.__rotate_atoms(atoms_position, i, q_reset, rot_path[i].coord, fit_pcs=i + 1 == len(rot_path) - 1,
+                                top_n=top_n)
 
     def __rotate_atoms(self, atoms_position, i, q, origin, fit_pcs=False, top_n=1):
         _q = quat.as_quat_array(np.empty(4))
         _q.real = 0
         for atom in atoms_position:
-            if i > atoms_position[atom] or (fit_pcs and atom not in self.pcs_data[0]):
+            if i > atoms_position[atom]:
                 continue
             _q.imag = atom.coord - origin
             atom_coord_shifted = (q * _q * q.conj())
-            atom.set_coord(atom_coord_shifted.vec + origin)
+            atom.set_coord(atom_coord_shifted.imag + origin)
 
         if fit_pcs:
             coord_matrix = np.empty((len(self.pcs_data[0]), 3))
@@ -660,10 +670,10 @@ class CustomResidue(Residue):
                     _x = (pcs_exp_binned - pcs_calc_binned) / pcs_err_binned
                 else:
                     warnings.warn(
-                        "Cannot calculate Mahalanobis distance because at least one of the PCS errors is zero."
-                        "Using Euclidean distance instead.")
+                        "Cannot calculate Mahalanobis distance because at least one of the PCS errors is zero. "
+                        "Using RMSD instead.")
 
-            pcs_dist = np.linalg.norm(_x)
+            pcs_dist = np.linalg.norm(_x)/len(pcs_calc_binned)
 
             try:
                 if len(self._min_pcs) < top_n or top_n == -1:
