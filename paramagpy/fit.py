@@ -1439,11 +1439,11 @@ class PCSToRotamer:
                 bin_count[bin_count == 0] = 1
 
                 for i in range(len(_result)):
-                    for j in range(i + 1, len(_result)):
-                        _pcs_exp1 = np.bincount(_res_obj.pcs_data[3], weights=_result[i][2])
-                        _pcs_exp2 = np.bincount(_res_obj.pcs_data[3], weights=_result[j][2])
+                    for j in range(i, len(_result)):
+                        _pcs_exp_dev1 = np.bincount(_res_obj.pcs_data[3], weights=_result[i][2])
+                        _pcs_exp_dev2 = np.bincount(_res_obj.pcs_data[3], weights=_result[j][2])
 
-                        _x = (_pcs_data - 0.5 * (_pcs_exp1 + _pcs_exp2)) / bin_count
+                        _x = 0.5 * (_pcs_exp_dev1 + _pcs_exp_dev2) / bin_count
                         pcs_dist = np.linalg.norm(_x)
 
                         if len(_min_pcs) == top_n and _min_pcs[0][0] > pcs_dist:
