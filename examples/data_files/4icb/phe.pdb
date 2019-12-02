@@ -1,0 +1,24 @@
+HEADER    NONAME 20-Nov-19                                              NONE   1
+TITLE                                                                   NONE   2
+COMPND    phe.sdf                                                       NONE   3
+AUTHOR    Apache                                                        NONE   4
+REVDAT   1  20-Nov-19     0                                             NONE   5
+ATOM      1  N   PHE     0      -1.076   1.444  -0.844  0.00  0.00           N+0
+ATOM      2  CA  PHE     0      -1.297   0.055  -0.419  0.00  0.00           C+0
+ATOM      3  CB  PHE     0      -0.431  -0.247   0.806  0.00  0.00           C+0
+ATOM      4  CG  PHE     0       1.024  -0.174   0.422  0.00  0.00           C+0
+ATOM      5  CD1 PHE     0       1.706   1.024   0.524  0.00  0.00           C+0
+ATOM      6  CE1 PHE     0       3.042   1.091   0.173  0.00  0.00           C+0
+ATOM      7  CZ  PHE     0       3.695  -0.040  -0.280  0.00  0.00           C+0
+ATOM      8  CE2 PHE     0       3.013  -1.238  -0.381  0.00  0.00           C+0
+ATOM      9  CD2 PHE     0       1.679  -1.306  -0.026  0.00  0.00           C+0
+ATOM     10  C   PHE     0      -2.750  -0.138  -0.068  0.00  0.00           C+0
+ATOM     11  HA  PHE     0      -1.027  -0.620  -1.231  0.00  0.00           H+0
+ATOM     12  HB2 PHE     0      -0.639   0.484   1.587  0.00  0.00           H+0
+ATOM     13  HB3 PHE     0      -0.660  -1.247   1.174  0.00  0.00           H+0
+ATOM     14  HD1 PHE     0       1.196   1.908   0.878  0.00  0.00           H+0
+ATOM     15  HE1 PHE     0       3.574   2.027   0.252  0.00  0.00           H+0
+ATOM     16  HZ  PHE     0       4.738   0.013  -0.555  0.00  0.00           H+0
+ATOM     17  HE2 PHE     0       3.523  -2.121  -0.735  0.00  0.00           H+0
+ATOM     18  HD2 PHE     0       1.146  -2.242  -0.104  0.00  0.00           H+0
+END                                                                     NONE  41

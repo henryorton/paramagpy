@@ -514,7 +514,8 @@ class CustomResidue(Residue):
             raise Exception("Residue is not an amino acid, could be a hetero atom")
 
         # If there is an amine-H, don't rotate it and make it a part of the backbone
-        back_bone_atoms = set(map(lambda x: self[x], self.back_bone))
+        back_bone_atoms = set(map(lambda x: self[x] if self.has_id(x) else None, self.back_bone))
+        back_bone_atoms.discard(None)
         iter_bb_atoms = set(back_bone_atoms)
 
         for atom in iter_bb_atoms:
@@ -579,7 +580,8 @@ class CustomResidue(Residue):
                     "The steps for rotation cannot be negative. Note: 0 steps denotes no rotation about that bond")
 
         # If there is an amine-H, don't rotate it and make it a part of the backbone
-        back_bone_atoms = set(map(lambda x: self[x], self.back_bone))
+        back_bone_atoms = set(map(lambda x: self[x] if self.has_id(x) else None, self.back_bone))
+        back_bone_atoms.discard(None)
         iter_bb_atoms = set(back_bone_atoms)  # Copy to a new set to iterate over this while changing
 
         for atom in iter_bb_atoms:
@@ -673,14 +675,23 @@ class CustomResidue(Residue):
                         "Cannot calculate Mahalanobis distance because at least one of the PCS errors is zero. "
                         "Using RMSD instead.")
 
-            pcs_dist = np.linalg.norm(_x)/len(pcs_calc_binned)
+            pcs_dist = np.linalg.norm(_x) / len(pcs_calc_binned)
+
+            _rdc_list = [(self['CE1'], self['HE1']), (self['CE2'], self['HE2']),
+                         (self['CD1'], self['HD1']), (self['CD2'], self['HD2']),
+                         (self['CZ'], self['HZ'])]
+            _rdc = np.empty(len(_rdc_list))
+            for idx, _pair in enumerate(_rdc_list):
+                _rdc[idx] = self._metal.atom_rdc(*_pair)
 
             try:
                 if len(self._min_pcs) < top_n or top_n == -1:
-                    heapq.heappush(self._min_pcs, (-pcs_dist, np.array(self._dihedral_full), pcs_calc))
+                    heapq.heappush(self._min_pcs,
+                                   (-pcs_dist, np.array(self._dihedral_full), (pcs_calc - self.pcs_data[1]), _rdc))
                 elif len(self._min_pcs) == top_n and -self._min_pcs[0][0] > pcs_dist:
                     heapq.heappop(self._min_pcs)
-                    heapq.heappush(self._min_pcs, (-pcs_dist, np.array(self._dihedral_full), pcs_calc))
+                    heapq.heappush(self._min_pcs,
+                                   (-pcs_dist, np.array(self._dihedral_full), (pcs_calc - self.pcs_data[1]), _rdc))
             except ValueError:
                 pass
 
