@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Bio.PDB import PDBIO
 from bonded_to import Tracker
-from matplotlib import gridspec, cycler
+from matplotlib import gridspec
 
 from paramagpy import protein, metal, fit, dataparse
 
@@ -38,7 +38,7 @@ def fit_metal():
     #                 ['H02'], ['H02'], ['H02'], ['H02']]
 
     # Load the PDB file
-    prot = protein.load_pdb('../data_files/4icb/mut_H.pdb')
+    prot = protein.load_pdb('../data_files/1ig5/mut_H.pdb')
 
     # Rename amide-H's to 'H'
     # for chain in prot[0]:
@@ -53,20 +53,22 @@ def fit_metal():
     #             res.child_dict['H'] = new_h
 
     # Reading PCS Values
-    pcs_data_exp = dataparse.read_pcs('../data_files/4icb/36Phe_Local_PCS.npc')
+    pcs_data_exp = dataparse.read_pcs('../data_files/4icb/obtained_pcs.npc',
+                                      lambda x: (1 <= int(x[0]) <= 41 or 58 <= int(x[0]) <= 70) and x[1][0] == 'H')
 
     # Associate PCS data with atoms of the PDB
     parsed_data = prot.parse(pcs_data_exp)
 
     # Set the starting position to an atom close to the metal
-    m_start = metal.Metal(position=prot[0]['A'][('H_ CA', 77, ' ')]['CA'].position)
+    m_start = metal.Metal(position=np.array((4.3785, 18.0035, 17.1465)) * 1E-10)
+    # m_start = metal.Metal(position=prot[0]['A'][('H_ CA', 77, ' ')]['CA'].position)
 
     # Calculate an initial tensor from an SVD grid search
-    m_guess, calc, q_fac = fit.svd_gridsearch_fit_metal_from_pcs([m_start], [parsed_data], radius=0.5, points=10)
+    m_guess, calc, q_fac = fit.svd_gridsearch_fit_metal_from_pcs([m_start], [parsed_data], radius=0.8, points=10)
 
     # Refine the tensor using non-linear regression
-    # m_fit, calc, q_fac = fit.nlr_fit_metal_from_pcs(m_guess, [parsed_data])
-    m_guess[0].save("../data_files/4icb/13Tyr_Local_Chi_Tensor.txt")
+    m_fit, calc, q_fac = fit.nlr_fit_metal_from_pcs(m_guess, [parsed_data])
+    m_guess[0].save("../data_files/1ig5/Global_Chi_Tensor_Metal.txt")
     print(m_guess, calc, q_fac)
 
 
@@ -79,9 +81,12 @@ def fit_rotamer(pdb, res_no, res_name, dev, bins, steps):
 
     # Reading PCS Values
     pcs_data_exp = dataparse.read_pcs('../data_files/' + pdb + '/' + res + '_pcsexp.npc')
+    pcs_data_exp_h = dataparse.read_pcs('../data_files/' + pdb + '/' + res + '_pcsexp.npc', lambda x: x[1][0] == 'H')
+    bins_h = bins[:int(len(bins) / 2)]
 
     # Associate PCS data with atoms of the PDB
     parsed_data = prot.parse(pcs_data_exp)
+    parsed_data_h = prot.parse(pcs_data_exp_h)
 
     # Define an initial tensor
     # chi_tensor = {"axrh": (9.777E-32, 5.653E-32),
@@ -91,8 +96,10 @@ def fit_rotamer(pdb, res_no, res_name, dev, bins, steps):
     # mtl.save('../data_files/1ig5/' + res + '_Local_Chi_Tensor.txt')
 
     mtl = metal.load_tensor('../data_files/' + pdb + '/' + res + '_Local_Chi_Tensor.txt')
+    # mtl = metal.load_tensor('../data_files/' + pdb + '/Global_Chi_Tensor_Metal.txt')
 
     pcs_fitter = fit.PCSToRotamer(prot[0], mtl, parsed_data)
+    pcs_fitter_h = fit.PCSToRotamer(prot[0], mtl, parsed_data_h)
 
     trk = Tracker(pcs_fitter.model['A'][res_no])
     # trk.print_atom_linkage()
@@ -121,9 +128,11 @@ def fit_rotamer(pdb, res_no, res_name, dev, bins, steps):
         rot_param = np.array(
             [[0, -(2 / x1) * np.pi, x1], [0, - (2 / x2) * np.pi, x2]])
         pcs_fitter.set_rotation_parameter('A', res_no, rot_param, bins)
+        pcs_fitter_h.set_rotation_parameter('A', res_no, rot_param, bins_h)
 
         # Run the grid search tool
         result1 = pcs_fitter.run_grid_search(top_n=-1)
+        result2 = pcs_fitter_h.run_grid_search(top_n=1)
         # prot1, result1 = pcs_fitter.run_grid_search(top_n=1, structure='grid_search_result.pdb')
 
         pr.disable()
@@ -139,6 +148,7 @@ def fit_rotamer(pdb, res_no, res_name, dev, bins, steps):
         chi_1 = np.linspace(-180, 180, x1 + 1)[1:]
         chi_2 = np.linspace(-180, 180, x2 + 1)[1:]
         x1_o, x2_o = result1['A'][res_no][0][1] * 180 / np.pi
+        x1_oh, x2_oh = result2['A'][res_no][0][1] * 180 / np.pi
         chi_60, chi_180, chi_300 = find_angle(chi_1, 60), find_angle(chi_1, 180), find_angle(chi_1, -60)
         chi_1_i, chi_1_o = find_angle(chi_1, x1_i), find_angle(chi_1, x1_o)
         chi_2_i, chi_2_o = find_angle(chi_2, x2_i), find_angle(chi_2, x2_o)
@@ -181,11 +191,9 @@ def fit_rotamer(pdb, res_no, res_name, dev, bins, steps):
         # ax.set_ylabel(r'$\chi_2 (\degree)$')
         # ax.set_title(r'$\chi_1, \chi_2$ vs CD* - HD* RDC values for ' + res)
 
-        result2 = pcs_fitter.run_pairwise_grid_search(result=result1, top_n=5)
-
         # PCS distance contour
-        fig, ax = plt.subplots(1, 3, figsize=(16.4, 6.5))
-        gs = gridspec.GridSpec(1, 3, width_ratios=[4, 0.2, 4])
+        fig, ax = plt.subplots(1, 2, figsize=(8.4, 6.5), dpi=300)
+        gs = gridspec.GridSpec(1, 2, width_ratios=[4, 0.2])
         ax = plt.subplot(gs[0], aspect=1)
         lvls = int((np.amax(z) - np.amin(z)) / dev)
         ax2 = ax.contourf(x, y, z, lvls, cmap='RdGy')
@@ -194,6 +202,7 @@ def fit_rotamer(pdb, res_no, res_name, dev, bins, steps):
         # zorder=1 ensures scatter plot is overlaid on top of contour, and not the other way
         ax.scatter(x1_i, x2_i, label='Crystal Structure', zorder=1)  # Mark the angles from the crystal structure
         # ax.annotate(f'{x1_i:.2f}, {x2_i:.2f} [{z[chi_1_i, chi_2_i]:.4f}]', (x1_i, x2_i))
+        ax.scatter(x1_oh, x2_oh, label='Optimum (H only)', zorder=1)  # Mark the optimized value
         ax.scatter(x1_o, x2_o, label='Optimum', zorder=1)  # Mark the optimized value
         # ax.annotate(f'{x1_o:.2f}, {x2_o:.2f} [{z[chi_1_o, chi_2_o]:.4f}]', (x1_o, x2_o))
 
@@ -214,21 +223,28 @@ def fit_rotamer(pdb, res_no, res_name, dev, bins, steps):
         # ax.plot_wireframe(x, y, z)
 
         # Slices at staggered X1
-        ax = plt.subplot(gs[2], aspect=360 / (np.amax(z) - np.amin(z)))
-
-        ax.set_prop_cycle(cycler(color=['#2ca02c', '#d62728', '#9467bd', '#1f77b4', '#ff7f0e']))
-        ax.plot(chi_2, z[chi_60], label=r'$\chi_1 = 60\degree$')
-        ax.plot(chi_2, z[chi_180], label=r'$\chi_1 = 180\degree$')
-        ax.plot(chi_2, z[chi_300], label=r'$\chi_1 = -60\degree$')
-        ax.plot(chi_2, z[chi_1_i], label=r'$\chi_1 = ' + str(int(x1_i)) + r'\degree$')
-        ax.plot(chi_2, z[chi_1_o], label=r'$\chi_1 = ' + str(int(x1_o)) + r'\degree$')
-
-        ax.set_ylim(np.amin(z), np.amax(z))
-        ax.set_xlim(-180, 180)
-        # ax.legend()
-        ax.set_xlabel(r'$\chi_2 (\degree)$')
-        ax.set_ylabel('RMSD (ppm)')
+        # ax = plt.subplot(gs[2], aspect=360 / (np.amax(z) - np.amin(z)))
+        #
+        # ax.set_prop_cycle(cycler(color=['#2ca02c', '#d62728', '#9467bd', '#1f77b4', '#ff7f0e']))
+        # ax.plot(chi_2, z[chi_60], label=r'$\chi_1 = 60\degree$')
+        # ax.plot(chi_2, z[chi_180], label=r'$\chi_1 = 180\degree$')
+        # ax.plot(chi_2, z[chi_300], label=r'$\chi_1 = -60\degree$')
+        # ax.plot(chi_2, z[chi_1_i], label=r'$\chi_1 = ' + str(int(x1_i)) + r'\degree$')
+        # ax.plot(chi_2, z[chi_1_o], label=r'$\chi_1 = ' + str(int(x1_o)) + r'\degree$')
+        #
+        # ax.set_ylim(np.amin(z), np.amax(z))
+        # ax.set_xlim(-180, 180)
+        # # ax.legend()
+        # ax.set_xlabel(r'$\chi_2 (\degree)$')
+        # ax.set_ylabel('RMSD (ppm)')
         # ax.set_title(r'$\chi_2$ vs RMSD of PCS values for ' + res)
+
+        # X2 effects averaged
+        # fig, ax = plt.subplots()
+        # ax.plot(chi_1, np.mean(z, axis=1))
+        # ax.axvline(x=x1_i)
+        # ax.set_xlabel(r'$\chi_1 (\degree)$')
+        # ax.set_ylabel('RMSD (ppm)')
 
         # Slices of individual deviations
         # H @ optimum
@@ -310,8 +326,8 @@ def fit_rotamer(pdb, res_no, res_name, dev, bins, steps):
         #     ax.clear()
 
         plt.tight_layout()
-        plt.show()
-        # plt.savefig('../data_files/' + pdb + '/plots/' + res + '.png')
+        # plt.show()
+        plt.savefig('../data_files/' + pdb + '/plots/' + res + '_with_C.png')
 
     def pairwise_grid_search():
         pr.clear()
@@ -361,15 +377,15 @@ def fit_rotamer(pdb, res_no, res_name, dev, bins, steps):
 
 if __name__ == '__main__':
     # fit_metal()
-    aroms = [('1ig5', 13, 'Tyr', 0.019, np.array([0, 0, 1, 1])),  # 0
-             ('1ig5', 36, 'Phe', 0.006, np.array([0, 0, 1, 1, 2])),  # 1
-             ('1ig5', 63, 'Phe', 0.008, np.array([0, 0, 1])),  # 2
-             ('1ig5', 66, 'Phe', 0.035, np.array([0, 0, 1, 1, 2])),  # 3
-             ('4icb', 13, 'Tyr', 0.018, np.array([0, 0, 1, 1])),  # 4
-             ('4icb', 36, 'Phe', 0.011, np.array([0, 0, 1, 1, 2])),  # 5
-             ('4icb', 63, 'Phe', 0.027, np.array([0, 0, 1])),  # 6
-             ('4icb', 66, 'Phe', 0.055, np.array([0, 0, 1, 1, 2]))]  # 7
-    run_for = np.arange(1, 2)
+    aroms = [('1ig5', 13, 'Tyr', 0.019, np.array([0, 0, 1, 1, 2, 2, 3, 3])),  # 0
+             ('1ig5', 36, 'Phe', 0.006, np.array([0, 0, 1, 1, 2, 3, 3, 4, 4, 5])),  # 1
+             ('1ig5', 63, 'Phe', 0.008, np.array([0, 0, 1, 2, 2, 3])),  # 2
+             ('1ig5', 66, 'Phe', 0.035, np.array([0, 0, 1, 1, 2, 3, 3, 4, 4, 5])),  # 3
+             ('4icb', 13, 'Tyr', 0.018, np.array([0, 0, 1, 1, 2, 2, 3, 3])),  # 4
+             ('4icb', 36, 'Phe', 0.011, np.array([0, 0, 1, 1, 2, 3, 3, 4, 4, 5])),  # 5
+             ('4icb', 63, 'Phe', 0.027, np.array([0, 0, 1, 2, 2, 3])),  # 6
+             ('4icb', 66, 'Phe', 0.055, np.array([0, 0, 1, 1, 2, 3, 3, 4, 4, 5]))]  # 7
+    run_for = np.arange(2)
     for _r in run_for:
         print(f"Fitting {aroms[_r]}")
-        fit_rotamer(*aroms[_r], 72)
+        fit_rotamer(*aroms[_r], 360)
