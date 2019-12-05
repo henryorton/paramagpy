@@ -38,7 +38,7 @@ def fit_metal():
     #                 ['H02'], ['H02'], ['H02'], ['H02']]
 
     # Load the PDB file
-    prot = protein.load_pdb('../data_files/1ig5/mut_H.pdb')
+    prot = protein.load_pdb('../data_files/1ig5/4icb_H_aligned.pdb')
 
     # Rename amide-H's to 'H'
     # for chain in prot[0]:
@@ -53,8 +53,8 @@ def fit_metal():
     #             res.child_dict['H'] = new_h
 
     # Reading PCS Values
-    pcs_data_exp = dataparse.read_pcs('../data_files/4icb/obtained_pcs.npc',
-                                      lambda x: (1 <= int(x[0]) <= 41 or 58 <= int(x[0]) <= 70) and x[1][0] == 'H')
+    pcs_data_exp = dataparse.read_pcs('../data_files/1ig5/obtained_pcs_Nov26_2019.npc',
+                                      lambda x: (2 <= int(x[0]) <= 41 or 58 <= int(x[0]) <= 70) and x[1][0] == 'H')
 
     # Associate PCS data with atoms of the PDB
     parsed_data = prot.parse(pcs_data_exp)
@@ -68,7 +68,7 @@ def fit_metal():
 
     # Refine the tensor using non-linear regression
     m_fit, calc, q_fac = fit.nlr_fit_metal_from_pcs(m_guess, [parsed_data])
-    m_guess[0].save("../data_files/1ig5/Global_Chi_Tensor_Metal.txt")
+    m_guess[0].save("../data_files/4icb/Global_Chi_Tensor_Metal.txt")
     print(m_guess, calc, q_fac)
 
 
@@ -80,8 +80,9 @@ def fit_rotamer(pdb, res_no, res_name, dev, bins, steps):
     prot = protein.load_pdb('../data_files/' + pdb + '/mut_H.pdb')
 
     # Reading PCS Values
-    pcs_data_exp = dataparse.read_pcs('../data_files/' + pdb + '/' + res + '_pcsexp.npc')
-    pcs_data_exp_h = dataparse.read_pcs('../data_files/' + pdb + '/' + res + '_pcsexp.npc', lambda x: x[1][0] == 'H')
+    pcs_data_exp = dataparse.read_pcs('../data_files/' + pdb + '/' + res + '_pcsexp.npc', err=False)
+    pcs_data_exp_h = dataparse.read_pcs('../data_files/' + pdb + '/' + res + '_pcsexp.npc', lambda x: x[1][0] == 'H',
+                                        err=False)
     bins_h = bins[:int(len(bins) / 2)]
 
     # Associate PCS data with atoms of the PDB
@@ -98,7 +99,7 @@ def fit_rotamer(pdb, res_no, res_name, dev, bins, steps):
     mtl = metal.load_tensor('../data_files/' + pdb + '/' + res + '_Local_Chi_Tensor.txt')
     # mtl = metal.load_tensor('../data_files/' + pdb + '/Global_Chi_Tensor_Metal.txt')
 
-    pcs_fitter = fit.PCSToRotamer(prot[0], mtl, parsed_data)
+    pcs_fitter = fit.PCSToRotamer(prot[0], mtl, parsed_data, )
     pcs_fitter_h = fit.PCSToRotamer(prot[0], mtl, parsed_data_h)
 
     trk = Tracker(pcs_fitter.model['A'][res_no])
@@ -192,7 +193,7 @@ def fit_rotamer(pdb, res_no, res_name, dev, bins, steps):
         # ax.set_title(r'$\chi_1, \chi_2$ vs CD* - HD* RDC values for ' + res)
 
         # PCS distance contour
-        fig, ax = plt.subplots(1, 2, figsize=(8.4, 6.5), dpi=300)
+        fig, ax = plt.subplots(1, 2, figsize=(8.4, 6.5))
         gs = gridspec.GridSpec(1, 2, width_ratios=[4, 0.2])
         ax = plt.subplot(gs[0], aspect=1)
         lvls = int((np.amax(z) - np.amin(z)) / dev)
@@ -326,8 +327,8 @@ def fit_rotamer(pdb, res_no, res_name, dev, bins, steps):
         #     ax.clear()
 
         plt.tight_layout()
-        # plt.show()
-        plt.savefig('../data_files/' + pdb + '/plots/' + res + '_with_C.png')
+        plt.show()
+        # plt.savefig('../data_files/' + pdb + '/plots/' + res + '_with_C.png')
 
     def pairwise_grid_search():
         pr.clear()
@@ -388,4 +389,4 @@ if __name__ == '__main__':
     run_for = np.arange(2)
     for _r in run_for:
         print(f"Fitting {aroms[_r]}")
-        fit_rotamer(*aroms[_r], 360)
+        fit_rotamer(*aroms[_r], 72)
