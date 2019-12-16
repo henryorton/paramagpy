@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 def unique_pairing(a, b):
 	"""
-	Bijectively map two integers to a single integer.
+	Bijectively  map two integers to a single integer.
 	The mapped space is minimum size.
 	The input is symmetric.
 	see `Bijective mapping f:ZxZ->N <https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/>`_.
