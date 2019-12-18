@@ -5,7 +5,42 @@ from Bio.PDB.StructureBuilder import StructureBuilder
 from Bio.PDB.Polypeptide import standard_aa_names
 import numpy as np
 
-
+# Datatypes for numpy structured arrays after parsing 
+structdtype = {
+	'PCS':np.dtype([
+				('mdl', int   ),
+				('use', bool  ),
+				('atm', object),
+				('exp', float ),
+				('cal', float ),
+				('err', float ),
+				('idx', int   )]),
+	'RDC':np.dtype([
+				('mdl',  int   ),
+				('use',  bool  ),
+				('atm',  object),
+				('atx',  object),
+				('exp',  float ),
+				('cal',  float ),
+				('err',  float ),
+				('idx',  int   )]),
+	'PRE':np.dtype([
+				('mdl', int   ),
+				('use', bool  ),
+				('atm', object),
+				('exp', float ),
+				('cal', float ),
+				('err', float ),
+				('idx', int   )]),
+	'CCR':np.dtype([
+				('mdl',  int   ),
+				('use',  bool  ),
+				('atm',  object),
+				('atx',  object),
+				('exp',  float ),
+				('cal',  float ),
+				('err',  float ),
+				('idx',  int   )])}
 
 def rotation_matrix(axis, theta):
 	"""Return the rotation matrix associated with counterclockwise 
@@ -30,6 +65,67 @@ def rotation_matrix(axis, theta):
 	return np.array([[aa+bb-cc-dd, 2*(bc+ad), 2*(bd-ac)],
 					 [2*(bc-ad), aa+cc-bb-dd, 2*(cd+ab)],
 					 [2*(bd+ac), 2*(cd-ab), aa+dd-bb-cc]])
+
+
+def unique_pairing(a, b):
+	"""
+	Bijectively map two integers to a single integer.
+	The mapped space is minimum size.
+	The input is symmetric.
+	see `Bijective mapping f:ZxZ->N <https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/>`_.
+
+	Parameters
+	----------
+	a : int
+	b : int
+
+	Returns
+	-------
+	c : int
+		bijective symmetric mapping (a, b) | (b, a) -> c
+	"""
+	c = a * b + (abs(a - b) - 1)**2 // 4
+	return c
+
+def cantor_pairing(a, b):
+	"""
+	Map two integers to a single integer.
+	The mapped space is minimum size.
+	Ordering matters in this case.
+	see `Bijective mapping f:ZxZ->N <https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/>`_.
+
+	Parameters
+	----------
+	a : int
+	b : int
+
+	Returns
+	-------
+	c : int
+		bijective mapping (a, b) -> c
+	"""
+	c = (a + b)*(a + b + 1)//2 + b
+	return c
+
+def clean_indices(indices):
+	"""
+	Uniquely map a list of integers to their smallest size.
+	For example: [7,4,7,9,9,10,1] -> [4 2 4 0 0 1 3]
+
+	Parameters
+	----------
+	indices : array-like integers
+		a list of integers
+
+	Returns
+	-------
+	new_indices : array-like integers
+		the mapped integers with smallest size
+	"""
+	translation = {idx:i for i, idx in enumerate(set(indices))}
+	new_indices = [translation[idx] for idx in indices]
+	return np.array(new_indices)
+
 
 
 class CustomAtom(Atom):
@@ -182,48 +278,61 @@ class CustomStructure(Structure):
 		super().__init__(*arg, **kwargs)
 
 	def parse(self, dataValues, models=None):
-		used = set([])
-		data = []
-
 		if type(models)==int:
-			chains = self[models].get_chains()
+			mods = [self[models]]
 		elif type(models) in (list, tuple):
-			chains = []
-			for m in models:
-				chains += self[m].get_chains()
+			mods = (self[m] for m in models)
 		else:
-			chains = self.get_chains()
+			mods = self.get_models()
+
+		data = []
+		used = set([])
 
 		if dataValues.dtype in ('PCS', 'PRE'):
-			for chain in chains:
-				for key in dataValues:
-					seq, name = key
-					if seq in chain:
-						resi = chain[seq]
-						if name in resi:
-							atom = resi[name]
-							data.append((atom, *dataValues[key]))
-							used.add(key)
+			for m in mods:
+				for chain in m:
+					for key in dataValues:
+						seq, name = key
+						if seq in chain:
+							resi = chain[seq]
+							if name in resi:
+								a = resi[name]
+								exp, err = dataValues[key]
+								idx = a.serial_number
+								tmp = (m.id, True, a, exp, np.nan, err, idx)
+								data.append(tmp)
+								used.add(key)
 
-		elif dataValues.dtype in ('RDC', 'CCR'):
-			for chain in chains:
-				for key in dataValues:
-					(seq1, name1), (seq2, name2) = key
-					if seq1 in chain and seq2 in chain:
-						resi1 = chain[seq1]
-						resi2 = chain[seq2]
-						if name1 in resi1 and name2 in resi2:
-							atom1 = resi1[name1]
-							atom2 = resi2[name2]
-							data.append((atom1, atom2, *dataValues[key]))
-							used.add(key)
+		if dataValues.dtype in ('RDC', 'CCR'):
+			for m in mods:
+				for chain in m:
+					for key in dataValues:
+						(seq1, name1), (seq2, name2) = key
+						if seq1 in chain and seq2 in chain:
+							resi1 = chain[seq1]
+							resi2 = chain[seq2]
+							if name1 in resi1 and name2 in resi2:
+								a1 = resi1[name1]
+								a2 = resi2[name2]
+								exp, err = dataValues[key]
+								idx1 = a1.serial_number
+								idx2 = a2.serial_number
+								if dataValues.dtype=='RDC':
+									idx = unique_pairing(idx1, idx2)
+								elif dataValues.dtype=='CCR':
+									idx = cantor_pairing(idx1, idx2)
+								tmp = (m.id, True, a1, a2, exp, np.nan, err, idx)
+								data.append(tmp)
+								used.add(key)
 
 		unused = set(dataValues) - used
 		if unused:
 			message = "WARNING: Some values were not parsed to {}:"
 			print(message.format(self.id))
 			print(list(unused))
-		return data
+		arr = np.array(data, dtype=structdtype.get(dataValues.dtype))
+		arr['idx'] = clean_indices(arr['idx'])
+		return arr
 			
 
 

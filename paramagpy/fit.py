@@ -4,192 +4,113 @@ from pprint import pprint
 import warnings
 from collections import OrderedDict
 
-def unique_pairing(a, b):
-	"""
-	Bijectively  map two integers to a single integer.
-	The mapped space is minimum size.
-	The input is symmetric.
-	see `Bijective mapping f:ZxZ->N <https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/>`_.
+structdtype = np.dtype([
+	('mdl', int          ),
+	('atm', object       ),
+	('pos', float,  3    ),
+	('exp', float        ),
+	('cal', float        ),
+	('err', float        ),
+	('idx', int          ),
+	('gam', float        ),
+	('xsa', float, (3,3) ),
+	('msc', float        )])
 
-	Parameters
-	----------
-	a : int
-	b : int
-
-	Returns
-	-------
-	c : int
-		bijective symmetric mapping (a, b) | (b, a) -> c
-	"""
-	c = a * b + (abs(a - b) - 1)**2 // 4
-	return c
-
-def cantor_pairing(a, b):
-	"""
-	Map two integers to a single integer.
-	The mapped space is minimum size.
-	Ordering matters in this case.
-	see `Bijective mapping f:ZxZ->N <https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/>`_.
-
-	Parameters
-	----------
-	a : int
-	b : int
-
-	Returns
-	-------
-	c : int
-		bijective mapping (a, b) -> c
-	"""
-	c = (a + b)*(a + b + 1)//2 + b
-	return c
-
-def clean_indices(indices):
-	"""
-	Uniquely map a list of integers to their smallest size.
-	For example: [7,4,7,9,9,10,1] -> [4 2 4 0 0 1 3]
-
-	Parameters
-	----------
-	indices : array-like integers
-		a list of integers
-
-	Returns
-	-------
-	new_indices : array-like integers
-		the mapped integers with smallest size
-	"""
-	translation = {idx:i for i, idx in enumerate(set(indices))}
-	new_indices = [translation[idx] for idx in indices]
-	return np.array(new_indices)
-
-def extract_pcs(data):
+def extract_atom_data(data, csa=False, separateModels=True):
 	"""
 	Extract values required for PCS calculations
 
 	Parameters
 	----------
-	data : list of lists
-		A list with elements [Atom, value, error], where Atom is 
-		an Atom object, value is the PCS value, and error is the uncertainty
+	data : 
 
 	Returns
 	-------
-	tuple : (atom coordinates, PCS values, PCS errors, atom indices)
-		all information required for PCS calculations
+	
 	"""
-	atoms, values, errors = zip(*data)
-	coords = np.array([i.position for i in atoms])
-	values = np.array(values)
-	errors = np.array(errors)
-	if 0.0 in errors:
-		errors = np.ones(len(errors))
-		warnings.warn("0.0 value uncertainty. All values weighted evenly")
-	idxs = clean_indices([i.serial_number for i in atoms])
-	return (coords, values, errors, idxs)
+	arr = np.empty(len(data), dtype=structdtype)
 
-def extract_pre(data):
+	for name in ('mdl', 'atm', 'exp', 'cal', 'idx'):
+		arr[name] = data[name]
+
+	if 0.0 in data['err']:
+		arr['err'] = np.ones(len(data['err']))
+		warnings.warn("0.0 value uncertainty. All values weighted evenly")
+	else:
+		arr['err'] = data['err']
+
+	arr['pos'] = [a.position for a in data['atm']]
+	arr['gam'] = [a.gamma for a in data['atm']]
+	if csa:
+		arr['xsa'] = [a.csa for a in data['atm']]
+
+	if separateModels:
+		return [arr[arr['mdl']==m] for m in np.unique(arr['mdl'])]
+	else:
+		return [arr]
+
+def extract_rdc_data(data, separateModels=True):
 	"""
-	Extract values required for PRE calculations
+	Extract values required for PCS calculations
 
 	Parameters
 	----------
-	data : list of lists
-		A list with elements [Atom, value, error], where Atom is 
-		an Atom object, value is the PRE value, and error is the uncertainty
+	data : 
 
 	Returns
 	-------
-	tuple : (atom coordinates, PRE values, PRE errors, atom indices)
-		all information required for PRE calculations
+	
 	"""
-	atoms, values, errors = zip(*data)
-	coords = np.array([i.position for i in atoms])
-	gammas = np.array([i.gamma for i in atoms])
-	values = np.array(values)
-	errors = np.array(errors)
-	if 0.0 in errors:
-		errors = np.ones(len(errors))
-		warnings.warn("0.0 value uncertainty. All values weighted evenly")
-	idxs = clean_indices([i.serial_number for i in atoms])
-	return (coords, gammas, values, errors, idxs)
+	arr = np.empty(len(data), dtype=structdtype)
 
-def extract_csa(data):
+	for name in ('mdl', 'atm', 'exp', 'cal', 'idx'):
+		arr[name] = data[name]
+
+	if 0.0 in data['err']:
+		arr['err'] = np.ones(len(data['err']))
+		warnings.warn("0.0 value uncertainty. All values weighted evenly")
+	else:
+		arr['err'] = data['err']
+
+	arr['pos'] = [a2.position - a1.position for a1, a2 in data[['atm','atx']]]
+	arr['gam'] = [a1.gamma * a2.gamma for a1, a2 in data[['atm','atx']]]
+
+	if separateModels:
+		return [arr[arr['mdl']==m] for m in np.unique(arr['mdl'])]
+	else:
+		return [arr]
+
+def extract_ccr_data(data, separateModels=True):
 	"""
-	Extract CSA tensors from atoms
+	Extract values required for PCS calculations
 
 	Parameters
 	----------
-	data : list of lists
-		A list with elements [Atom, value, error], where Atom is 
-		an Atom object, value is the PCS/RDC/PRE value, 
-		and error is the uncertainty
+	data : 
 
 	Returns
 	-------
-	csas : array of 3x3 arrays
-		an array of each CSA tensor
+	
 	"""
-	atoms, values, errors = zip(*data)
-	return np.array([i.csa for i in atoms])
+	arr = np.empty(len(data), dtype=structdtype)
 
-def extract_rdc(data):
-	"""
-	Extract values required for RDC calculations
+	for name in ('mdl', 'atm', 'exp', 'cal', 'idx'):
+		arr[name] = data[name]
 
-	Parameters
-	----------
-	data : list of lists
-		A list with elements [Atom1, Atom2, value, error], where Atom is 
-		an Atom object, value is the RDC value, and error is the uncertainty
-
-	Returns
-	-------
-	tuple : (inter-atomic vector, gamma values, RDC values, 
-			RDC errors, atom indices)
-		all information required for RDC calculations and fitting
-	"""
-	atoms1, atoms2, values, errors = zip(*data)
-	vectors = [j.position - i.position for i, j in zip(atoms1, atoms2)]
-	gammas = [i.gamma * j.gamma for i, j in zip(atoms1, atoms2)]
-	if 0.0 in errors:
-		errors = np.ones(len(errors))
+	if 0.0 in data['err']:
+		arr['err'] = np.ones(len(data['err']))
 		warnings.warn("0.0 value uncertainty. All values weighted evenly")
-	idxs = clean_indices([unique_pairing(i.serial_number, 
-		j.serial_number) for i, j in zip(atoms1, atoms2)])
-	return map(np.array, [vectors, gammas, values, errors, idxs])
+	else:
+		arr['err'] = data['err']
 
-def extract_ccr(data):
-	"""
-	Extract values required for CCR calculations
+	arr['pos'] = [a.position for a in data['atm']]
+	arr['gam'] = [a.gamma for a in data['atm']]
+	arr['xsa'] = [p.dipole_shift_tensor(a.position) for a,p in data[['atm','atx']]]
 
-	Parameters
-	----------
-	data : list of lists
-		A list with elements [Atom1, Atom2, value, error], where Atom is 
-		an Atom object, value is the CCR value, and error is the uncertainty
-
-	Returns
-	-------
-	tuple : dict
-		all information required for CCR calculations
-	"""
-	atoms, atomsPartner, values, errors = zip(*data)
-	if 0.0 in errors:
-		errors = np.ones(len(errors))
-		warnings.warn("0.0 value uncertainty. All values weighted evenly")
-
-	d = {
-		'pos':np.array([i.position for i in atoms]),
-		'gam':np.array([i.gamma for i in atoms]),
-		'dst':np.array([j.dipole_shift_tensor(i.position) 
-						for i, j in zip(atoms, atomsPartner)]),
-		'val':np.array(values),
-		'err':np.array(errors),
-		'idx':clean_indices([cantor_pairing(i.serial_number, j.serial_number) 
-							 for i, j in zip(atoms, atomsPartner)])
-	}
-	return d
+	if separateModels:
+		return [arr[arr['mdl']==m] for m in np.unique(arr['mdl'])]
+	else:
+		return [arr]
 
 def sphere_grid(origin, radius, points):
 	"""
@@ -366,24 +287,17 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 	else:
 		svd_func = svd_calc_metal_from_pcs
 
-	posarrays = []
-	pcsarrays = []
-	errarrays = []
-	idxarrays = []
-	for pcs in pcss:
-		posarray, pcsarray, errarray, idxarray = extract_pcs(pcs)
-		posarrays.append(posarray)
-		pcsarrays.append(pcsarray)
-		errarrays.append(errarray)
-		idxarrays.append(idxarray)
+	data = [extract_data(pcs) for pcs in pcss]
+
 	sphere = sphere_grid(origin, radius, points)*1E-10
 
 	if sumIndices is not None:
-		idxarrays = sumIndices
+		for s, d in zip(sumIndices, data):
+			d['idx'] = s
 
-	pcsarrays_eavg = []
-	for pcsarray, idxarray, errarray in zip(pcsarrays, idxarrays, errarrays):
-		pcsarrays_eavg.append(np.bincount(idxarray, weights=pcsarray/errarray))
+	# Ensemble average weights for SVD
+	for d in data:
+		d['msc'] = np.bincount(d['idx'], weights=d['val']/d['err'])
 
 	minscore = 1E308
 	print("SVD search started in {} points".format(len(sphere)))
@@ -397,13 +311,10 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 			progress.set(prog/tot)
 		score = 0.0
 		sols = []
-		zipped = zip(pcsarrays_eavg, posarrays, idxarrays, errarrays)
-		for pcsarray_eavg, posarray, idxarray, errarray in zipped:
-			coords = posarray - pos
-			calculated, solution = svd_func(coords, 
-				pcsarray_eavg, idxarray, errarray)
+		for d in data:
+			calculated, solution = svd_func(d['pos'], d['msc'], d['idx'], d['err'])
 			sols.append(solution)
-			score += np.sum((calculated - pcsarray_eavg)**2)
+			score += np.sum((calculated - d['msc'])**2)
 		if score<minscore:
 			minscore = score
 			minpos = pos
@@ -412,16 +323,16 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 	minmetals = [m.copy() for m in metals]
 	calc_pcss = []
 	qfactors = []
-	for pcsarray, posarray, idxarray, metal, sol in zip(pcsarrays, posarrays, idxarrays, minmetals, minsols):
+	for d, metal, sol in zip(data, minmetals, minsols):
 		metal.position = minpos
 		if offsetShift:
 			metal.upper_triang = sol[:-1]
 			metal.shift = sol[-1]*1E6
 		else:
 			metal.upper_triang = sol
-		calculated = metal.fast_pcs(posarray)
+		calculated = metal.fast_pcs(d['pos'])
 		calc_pcss.append(calculated)
-		qfac = qfactor(pcsarray, calculated, idxarray)
+		qfac = qfactor(d['val'], calculated, d['idx'])
 		qfactors.append(qfac)
 
 	return minmetals, calc_pcss, qfactors
@@ -472,29 +383,15 @@ def nlr_fit_metal_from_pcs(initMetals, pcss,
 	calc_pcss : list of lists of floats
 		the calculated PCS values
 	"""
-	posarrays = []
-	csaarrays = []
-	pcsarrays = []
-	errarrays = []
-	idxarrays = []
-	for pcs in pcss:
-		posarray, pcsarray, errarray, idxarray = extract_pcs(pcs)
-		posarrays.append(posarray)
-		pcsarrays.append(pcsarray)
-		errarrays.append(errarray)
-		idxarrays.append(idxarray)
-		if useracs:
-			csas = extract_csa(pcs)
-			csaarrays.append(csas)
-		else:
-			csaarrays.append(None)
+	data = [extract_data(pcs, csa=useracs) for pcs in pcss]
 
 	metals = [metal.copy() for metal in initMetals]
 	pospars = [param for param in params if param in ['x','y','z']]
 	otherpars = [param for param in params if param not in ['x','y','z']]
 
 	if sumIndices is not None:
-		idxarrays = sumIndices
+		for s, d in zip(sumIndices, data):
+			d['idx'] = s
 
 	def cost(args):
 		pos = args[:len(pospars)]
@@ -504,16 +401,15 @@ def nlr_fit_metal_from_pcs(initMetals, pcss,
 			metal.set_params(zip(pospars, pos))
 			metal.set_params(zip(otherpars, other))
 		score = 0.0
-		zipped = zip(metals, posarrays, csaarrays, pcsarrays, 
-			idxarrays, errarrays)
-		for metal, posarray, csaarray, pcsarray, idxarray, errarray in zipped:
-			calcpcs = metal.fast_pcs(posarray)
+
+		for metal, d in zip(metals, data):
+			calcpcs = metal.fast_pcs(d['pos'])
 			if userads:
-				calcpcs += metal.fast_rads(posarray)
+				calcpcs += metal.fast_rads(d['pos'])
 			if useracs:
-				calcpcs += metal.fast_racs(csaarray)
-			diff = (calcpcs - pcsarray) / errarray
-			selectiveSum = np.bincount(idxarray, weights=diff)
+				calcpcs += metal.fast_racs(d['xsa'])
+			diff = (calcpcs - d['val']) / d['err']
+			selectiveSum = np.bincount(d['idx'], weights=diff)
 			score += np.sum(selectiveSum**2)
 		return score
 
@@ -525,16 +421,15 @@ def nlr_fit_metal_from_pcs(initMetals, pcss,
 	fmin_bfgs(cost, startpars, disp=False)
 	calc_pcss = []
 	qfactors = []
-	zipped = zip(metals, posarrays, csaarrays, pcsarrays, idxarrays)
-	for metal, posarray, csaarray, pcsarray, idxarray in zipped:
+	for metal, d in zip(metals, data):
 		metal.set_utr()
-		calculated = metal.fast_pcs(posarray)
+		calculated = metal.fast_pcs(d['pos'])
 		if userads:
-			calculated += metal.fast_rads(posarray)
+			calculated += metal.fast_rads(d['pos'])
 		if useracs:
-			calculated += metal.fast_racs(csaarray)
+			calculated += metal.fast_racs(d['xsa'])
 		calc_pcss.append(calculated)
-		qfac = qfactor(pcsarray, calculated, idxarray)
+		qfac = qfactor(d['val'], calculated, d['idx'])
 		qfactors.append(qfac)
 
 	if progress:
@@ -595,25 +490,22 @@ def pcs_fit_error_monte_carlo(initMetals, pcss, iterations,
 		These are stored within the metal object. All unfitted parameters 
 		are zero.
 	"""
-	atmarrays = []
-	pcsarrays = []
-	errarrays = []
-	for data in pcss:
-		atmarray, pcsarray, errarray = zip(*data)
-		atmarrays.append(atmarray)
-		pcsarrays.append(pcsarray)
-		errarrays.append(errarray)
+	data = [extract_data(pcs, csa=useracs) for pcs in pcss]
+
+	if sumIndices is not None:
+		for s, d in zip(sumIndices, datas):
+			d['idx'] = s
 
 	sample_metals = []
 
 	for i in range(iterations):
-		data = []
-		for atm, pcs, err in zip(atmarrays, pcsarrays, errarrays):
-			noisey = pcs + (np.random.uniform(low=-1, high=1, 
-				size=len(err)))*err
-			tmp = zip(atm, noisey, err)
-			data.append(list(tmp))
-		metals, _, _ = nlr_fit_metal_from_pcs(initMetals, data, params, 
+		pcss_noisy = []
+		for d in data:
+			noisey = d['val'] + (np.random.uniform(low=-1, high=1, 
+				size=len(d['err'])))*d['err']
+			tmp = zip(d['atm'], noisey, d['err'])
+			pcss_noisy.append(list(tmp))
+		metals, _, _ = nlr_fit_metal_from_pcs(initMetals, pcss_noisy, params, 
 			sumIndices, userads, useracs, progress=None)
 		
 		sample_metals.append(metals)
@@ -698,36 +590,28 @@ def pcs_fit_error_bootstrap(initMetals, pcss, iterations, fraction,
 	"""
 	if not (0.0<fraction<1.0):
 		raise ValueError("The bootstrap sample fraction must be between 0 and 1")
-	atmarrays = []
-	pcsarrays = []
-	errarrays = []
-	sumarrays = []
-	for data in pcss:
-		atmarray, pcsarray, errarray = zip(*data)
-		atmarrays.append(atmarray)
-		pcsarrays.append(pcsarray)
-		errarrays.append(errarray)
-		sumarrays.append(clean_indices([a.serial_number for a in atmarray]))
+	
+	data = [extract_data(pcs, csa=useracs) for pcs in pcss]
 
-	if sumIndices is None:
-		sumIndices = sumarrays
+	if sumIndices is not None:
+		for s, d in zip(sumIndices, datas):
+			d['idx'] = s
 
 	sample_metals = []
 
 	for i in range(iterations):
-		datas_trunc = []
+		pcss_trunc = []
 		sumIndices_trunc = []
-		for atm, pcs, err, idx in zip(atmarrays, pcsarrays, 
-			errarrays, sumarrays):
-			unique_idx = np.unique(idx)
+		for d in data:
+			unique_idx = np.unique(d['idx'])
 			chosen_idx = np.random.choice(unique_idx, 
 				int(len(unique_idx)*(fraction)), replace=False)
-			mask = np.isin(idx, chosen_idx)
-			idxs_trunc = idx[mask]
+			mask = np.isin(d['idx'], chosen_idx)
+			idxs_trunc = d['idx'][mask]
 			sumIndices_trunc.append(idxs_trunc)
-			data_trunc = np.array(list(zip(atm, pcs, err)))[mask]
-			datas_trunc.append(data_trunc.tolist())
-		metals, _, _ = nlr_fit_metal_from_pcs(initMetals, datas_trunc, params, 
+			pcs_trunc = np.array(list(zip(d['atm'], d['val'], d['err'])))[mask]
+			pcss_trunc.append(pcs_trunc.tolist())
+		metals, _, _ = nlr_fit_metal_from_pcs(initMetals, pcss_trunc, params, 
 			sumIndices_trunc, userads, useracs, progress=None)
 		sample_metals.append(metals)
 		if progress:
@@ -858,31 +742,15 @@ def nlr_fit_metal_from_pre(initMetals, pres, params=('x','y','z'),
 	if rtypes is None:
 		rtypes = ['r2']*len(initMetals)
 
-	posarrays = []
-	csaarrays = []
-	prearrays = []
-	gamarrays = []
-	idxarrays = []
-	errarrays = []
-	for pre in pres:
-		posarray, gamarray, prearray, errarray, idxarray = extract_pre(pre)
-		posarrays.append(posarray)
-		gamarrays.append(gamarray)
-		prearrays.append(prearray)
-		idxarrays.append(idxarray)
-		errarrays.append(errarray)
-		if usecsa:
-			csas = extract_csa(pre)
-			csaarrays.append(csas)
-		else:
-			csaarrays.append(0.0)
+	data = [extract_data(pcs, csa=useracs) for pcs in pcss]
+
+	if sumIndices is not None:
+		for s, d in zip(sumIndices, data):
+			d['idx'] = s
 
 	metals = [metal.copy() for metal in initMetals]
 	pospars = [param for param in params if param in ['x','y','z']]
 	otherpars = [param for param in params if param not in ['x','y','z']]
-
-	if sumIndices is not None:
-		idxarrays = sumIndices
 
 	def cost(args):
 		pos = args[:len(pospars)]
@@ -892,12 +760,11 @@ def nlr_fit_metal_from_pre(initMetals, pres, params=('x','y','z'),
 			metal.set_params(zip(pospars, pos))
 			metal.set_params(zip(otherpars, other))
 		score = 0.0
-		zipped = zip(metals, posarrays, gamarrays, csaarrays, prearrays, idxarrays, errarrays, rtypes)
-		for metal, posarr, gamarr, csaarr, prearr, idxarr, errarr, rtype in zipped:
-			calcpre = metal.fast_pre(posarr, gamarr, rtype, 
-				dsa=usedsa, sbm=usesbm, gsbm=usegsbm, csaarray=csaarr)
-			diff = (calcpre - prearr) / errarr
-			selectiveSum = np.bincount(idxarr, weights=diff)
+		for metal, rtype, d in zip(metals, rtypes, data):
+			calcpre = metal.fast_pre(d['pos'], d['gam'], rtype, 
+				dsa=usedsa, sbm=usesbm, gsbm=usegsbm, csaarray=d['xsa'])
+			diff = (calcpre - d['val']) / d['err']
+			selectiveSum = np.bincount(d['idx'], weights=diff)
 			score += np.sum(selectiveSum**2)
 		return score
 
@@ -908,13 +775,12 @@ def nlr_fit_metal_from_pre(initMetals, pres, params=('x','y','z'),
 	fmin_bfgs(cost, startpars, disp=False)
 	calc_pres = []
 	qfactors = []
-	zipped = zip(metals, posarrays, gamarrays, csaarrays, prearrays, idxarrays, errarrays, rtypes)
-	for metal, posarr, gamarr, csaarr, prearr, idxarr, errarr, rtype in zipped:
+	for metal, rtype, d in zip(metals, rtypes, data):
 		metal.set_utr()
-		calculated = metal.fast_pre(posarr, gamarr, rtype, 
-			dsa=usedsa, sbm=usesbm, gsbm=usegsbm, csaarray=csaarr)
+		calculated = metal.fast_pre(d['pos'], d['gam'], rtype, 
+			dsa=usedsa, sbm=usesbm, gsbm=usegsbm, csaarray=d['xsa'])
 		calc_pres.append(calculated)
-		qfac = qfactor(prearr, calculated, idxarr)
+		qfac = qfactor(d['val'], calculated, d['idx'])
 		qfactors.append(qfac)
 
 	if progress:
@@ -994,18 +860,18 @@ def svd_fit_metal_from_rdc(metal, rdc, sumIndices=None):
 	qfac : float
 		the qfactor judging the fit quality
 	"""
-	vecarray, gamarray, rdcarray, errarray, idxarray = extract_rdc(rdc)
-	if sumIndices is None:
-		sumIndices = idxarray
-	pfarray = -3*(metal.MU0 * gamarray * metal.HBAR) / (8 * np.pi**2)
-	rdc_parameterised = np.bincount(idxarray, 
-		weights=rdcarray / (pfarray * errarray))
+	d = extract_rdc(rdc)
+	if sumIndices is not None:
+		d['idx'] = sumIndices
+	pfarray = -3*(metal.MU0 * d['gam'] * metal.HBAR) / (8 * np.pi**2)
+	rdc_parameterised = np.bincount(d['idx'], 
+		weights=d['val'] / (pfarray * d['err']))
 	fitMetal = metal.copy()
-	_, sol = svd_calc_metal_from_rdc(vecarray, rdc_parameterised, 
-		idxarray, errarray)
+	_, sol = svd_calc_metal_from_rdc(d['pos'], rdc_parameterised, 
+		d['idx'], d['err'])
 	fitMetal.upper_triang_alignment = sol
-	calculated = fitMetal.fast_rdc(vecarray, gamarray)
-	qfac = qfactor(rdcarray, calculated, idxarray)
+	calculated = fitMetal.fast_rdc(d['pos'], d['gam'])
+	qfac = qfactor(d['val'], calculated, d['idx'])
 	return fitMetal, calculated, qfac
 
 
@@ -1044,24 +910,24 @@ def nlr_fit_metal_from_rdc(metal, rdc, params=('ax','rh','a','b','g'),
 	qfac : float
 		the qfactor judging the fit quality
 	"""
-	vecarray, gamarray, rdcarray, errarray, idxarray = extract_rdc(rdc)
-	if sumIndices is None:
-		sumIndices = idxarray
+	d = extract_rdc(rdc)
+	if sumIndices is not None:
+		d['idx'] = sumIndices
 	fitMetal = metal.copy()
 
 	def cost(args):
 		fitMetal.set_params(zip(params, args))
-		calrdc = fitMetal.fast_rdc(vecarray, gamarray)
-		diff = (calrdc - rdcarray) / errarray
-		selectiveSum = np.bincount(idxarray, weights=diff)
+		calrdc = fitMetal.fast_rdc(d['pos'], d['gam'])
+		diff = (calrdc - d['val']) / d['err']
+		selectiveSum = np.bincount(d['idx'], weights=diff)
 		score = np.sum(selectiveSum**2)
 		return score
 
 	startpars = fitMetal.get_params(params)
 	fmin_bfgs(cost, startpars, disp=False)
 	fitMetal.set_utr()
-	calculated = fitMetal.fast_rdc(vecarray, gamarray)
-	qfac = qfactor(rdcarray, calculated, idxarray)
+	calculated = fitMetal.fast_rdc(d['pos'], d['gam'])
+	qfac = qfactor(d['val'], calculated, d['idx'])
 
 	if progress:
 		progress.set(1.0)
@@ -1113,26 +979,26 @@ def nlr_fit_metal_from_ccr(initMetals, ccrs, params=('x','y','z'),
 	datas = []
 	for metal, ccr in zip(initMetals, ccrs):
 		d = extract_ccr(ccr)
-		d['met'] = metal.copy()
-		datas.append(d)
+		datas.append(({'met':metal.copy()}, d))
 
 	params = set(params)
 	pospars = tuple(params & set(['x','y','z']))
 	otherpars = tuple(params - set(['x','y','z']))
 
 	startpars = initMetals[0].get_params(pospars)
-	for i, d in enumerate(datas):
-		d['pospars'] = slice(0, len(pospars))
-		d['othpars'] = slice(len(pospars) + i*len(otherpars), 
+	for i, (pars, d) in enumerate(datas):
+		pars['pospars'] = slice(0, len(pospars))
+		pars['othpars'] = slice(len(pospars) + i*len(otherpars), 
 						  len(pospars) + (i+1)*len(otherpars))
-		startpars += d['met'].get_params(otherpars)
+		startpars += pars['met'].get_params(otherpars)
 
 	if sumIndices is not None:
-		idxarrays = sumIndices
+		for s, (pars, d) in zip(sumIndices, datas):
+			d['idx'] = s
 
 	def cost(args):
 		score = 0.0
-		for d in datas:
+		for pars, d in datas:
 			d['met'].set_params(zip(pospars, args[d['pospars']]))
 			d['met'].set_params(zip(otherpars, args[d['othpars']]))
 			d['cal'] = d['met'].fast_ccr(d['pos'], d['gam'], d['dst'])

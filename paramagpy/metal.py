@@ -286,6 +286,9 @@ class Metal(object):
 		('Yb', ( -8.3, -5.8))]
 	)
 
+	# A dictionary of volatile parameters used during fitting
+	par = {}
+
 	# Indices defining 5 unique elements of 3x3 tensor anisotropy
 	upper_coords = ((0,1,0,0,1),(0,1,1,2,2))
 	lower_coords = ((0,1,1,2,2),(0,1,0,0,1))
