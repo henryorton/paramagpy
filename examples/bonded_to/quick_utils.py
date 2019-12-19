@@ -166,7 +166,7 @@ def fit_compare():
 
     _ye, _yc1, _yc2 = [], [], []
     for i, k in enumerate(pcs_data_exp):
-        if 42 <= k[0] <= 57:
+        if 71 <= k[0] <= 75:
             _ye += [pcs_data_exp[k][0]]
             _yc1 += [mtl1.atom_pcs(prot1[0]['A'][k[0]]['H'])]
             _yc2 += [mtl2.atom_pcs(prot2[0]['A'][k[0]]['H'])]

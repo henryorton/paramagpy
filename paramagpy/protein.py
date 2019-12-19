@@ -317,7 +317,7 @@ class CustomResidue(Residue):
         self._dihedral_full = None
         self._metal = None
         self.pcs_data = None
-        self._min_pcs = None
+        self._min_fit = None
         self._rot_path = None
 
     def bonded_to(self, source_atom, valency=None, recompute=False):
@@ -548,7 +548,7 @@ class CustomResidue(Residue):
 
             self.__rotate_atoms(atoms_position, i, q, rot_path[i].coord)
 
-    def grid_search_rotamer(self, rotation_param, fit_pcs=False, top_n=1):
+    def grid_search_rotamer(self, rotation_param, fit_func=None, top_n=1, **kwargs):
         """
         Perform a grid search generating rotamers using the parameters given by rotation_param
 
@@ -602,17 +602,18 @@ class CustomResidue(Residue):
                 atoms_to_rotate.discard(atom)
 
         self.set_dihedral(rotation_param[:, 0])
-        self._min_pcs = []
+        self._min_fit = []
         self._dihedral_full = np.array(rotation_param[:, 0])
 
         _param1 = rotation_param[0]
         q1 = CustomResidue.__rot_quat(CustomResidue.__get_angle_increment(_param1[0], _param1[1], _param1[2]),
                                       rot_path[1].coord - rot_path[0].coord)
-        self.__grid_search_rotamer_helper(q1, 0, rotation_param, rot_path, atoms_position, fit_pcs, top_n)
+        self.__grid_search_rotamer_helper(q1, 0, rotation_param, rot_path, atoms_position, fit_func, top_n, **kwargs)
 
-        return self._min_pcs if fit_pcs and len(self._min_pcs) > 0 else None
+        return self._min_fit if fit_func and len(self._min_fit) > 0 else None
 
-    def __grid_search_rotamer_helper(self, q, i, rotation_param, rot_path, atoms_position, fit_pcs=False, top_n=1):
+    def __grid_search_rotamer_helper(self, q, i, rotation_param, rot_path, atoms_position, fit_func=None, top_n=1,
+                                     **kwargs):
         _param = rotation_param[i]
         for j in range(1, int(_param[2])):
             if i + 1 < len(rot_path) - 1:
@@ -621,11 +622,12 @@ class CustomResidue(Residue):
                     CustomResidue.__get_angle_increment(_param1[0], _param1[1], _param1[2]),
                     rot_path[i + 2].coord - rot_path[i + 1].coord)
                 self.__grid_search_rotamer_helper(q_next, i + 1, rotation_param, rot_path,
-                                                  atoms_position, fit_pcs, top_n)
+                                                  atoms_position, fit_func, top_n, **kwargs)
             self._dihedral_full[i] += CustomResidue.__get_angle_increment(_param[0], _param[1], _param[2])
             self._dihedral_full[i] -= 2 * np.pi if self._dihedral_full[i] > np.pi else 0
-            self.__rotate_atoms(atoms_position, i, q, rot_path[i].coord, fit_pcs=i + 1 == len(rot_path) - 1,
-                                top_n=top_n)
+            self.__rotate_atoms(atoms_position, i, q, rot_path[i].coord,
+                                fit_func=fit_func if i + 1 == len(rot_path) - 1 else None,
+                                top_n=top_n, **kwargs)
 
         if int(_param[2]) > 0:
             if i + 1 < len(rot_path) - 1:
@@ -634,15 +636,16 @@ class CustomResidue(Residue):
                     CustomResidue.__get_angle_increment(_param1[0], _param1[1], _param1[2]),
                     rot_path[i + 2].coord - rot_path[i + 1].coord)
                 self.__grid_search_rotamer_helper(q_next, i + 1, rotation_param, rot_path,
-                                                  atoms_position, fit_pcs, top_n)
+                                                  atoms_position, fit_func, top_n, **kwargs)
             q_reset = CustomResidue.__rot_quat(2 * np.pi - (_param[1] - _param[0]),
                                                rot_path[i + 1].coord - rot_path[i].coord)
             self._dihedral_full[i] += 2 * np.pi - (_param[1] - _param[0])
             self._dihedral_full[i] -= 2 * np.pi if self._dihedral_full[i] > np.pi else 0
-            self.__rotate_atoms(atoms_position, i, q_reset, rot_path[i].coord, fit_pcs=i + 1 == len(rot_path) - 1,
-                                top_n=top_n)
+            self.__rotate_atoms(atoms_position, i, q_reset, rot_path[i].coord,
+                                fit_func=fit_func if i + 1 == len(rot_path) - 1 else None,
+                                top_n=top_n, **kwargs)
 
-    def __rotate_atoms(self, atoms_position, i, q, origin, fit_pcs=False, top_n=1):
+    def __rotate_atoms(self, atoms_position, i, q, origin, fit_func=None, top_n=1, **kwargs):
         _q = quat.as_quat_array(np.empty(4))
         _q.real = 0
         for atom in atoms_position:
@@ -652,46 +655,15 @@ class CustomResidue(Residue):
             atom_coord_shifted = (q * _q * q.conj())
             atom.set_coord(atom_coord_shifted.imag + origin)
 
-        if fit_pcs:
-            coord_matrix = np.empty((len(self.pcs_data[0]), 3))
-
-            for idx, tup in enumerate(self.pcs_data[0]):
-                coord_matrix[idx] = tup.position
-
-            pcs_calc = self._metal.fast_pcs(coord_matrix)
-            pcs_calc_binned = np.bincount(self.pcs_data[3], weights=pcs_calc)
-
-            pcs_exp_binned = np.bincount(self.pcs_data[3], weights=self.pcs_data[1])
-            bin_count = np.bincount(self.pcs_data[3])
-            bin_count[bin_count == 0] = 1
-
-            _x = (pcs_exp_binned - pcs_calc_binned) / bin_count
-            if not self._noise:
-                if not np.any(np.abs(self.pcs_data[2]) < 1E-6):
-                    pcs_err_binned = np.bincount(self.pcs_data[3], weights=self.pcs_data[2])
-                    _x = (pcs_exp_binned - pcs_calc_binned) / pcs_err_binned
-                else:
-                    warnings.warn(
-                        "Cannot calculate Mahalanobis distance because at least one of the PCS errors is zero. "
-                        "Using RMSD instead.")
-
-            pcs_dist = np.linalg.norm(_x) / len(pcs_calc_binned)
-
-            _rdc_list = [(self['CE1'], self['HE1']), (self['CE2'], self['HE2']),
-                         (self['CD1'], self['HD1']), (self['CD2'], self['HD2']),
-                         (self['CZ'], self['HZ'])]
-            _rdc = np.empty(len(_rdc_list))
-            for idx, _pair in enumerate(_rdc_list):
-                _rdc[idx] = self._metal.atom_rdc(*_pair)
+        if fit_func:
+            fit_func_tup = fit_func(self, **kwargs)
 
             try:
-                if len(self._min_pcs) < top_n or top_n == -1:
-                    heapq.heappush(self._min_pcs,
-                                   (-pcs_dist, np.array(self._dihedral_full), (pcs_calc - self.pcs_data[1]), _rdc))
-                elif len(self._min_pcs) == top_n and -self._min_pcs[0][0] > pcs_dist:
-                    heapq.heappop(self._min_pcs)
-                    heapq.heappush(self._min_pcs,
-                                   (-pcs_dist, np.array(self._dihedral_full), (pcs_calc - self.pcs_data[1]), _rdc))
+                if len(self._min_fit) < top_n or top_n == -1:
+                    heapq.heappush(self._min_fit, fit_func_tup)
+                elif len(self._min_fit) == top_n and self._min_fit[0] > fit_func_tup:
+                    heapq.heappop(self._min_fit)
+                    heapq.heappush(self._min_fit, fit_func_tup)
             except ValueError:
                 pass
 
@@ -700,6 +672,28 @@ class CustomResidue(Residue):
             self._rot_path = [self['CA']] + list(
                 map(lambda x: self[x], CustomResidue.side_chain_lib[self.get_resname()]))
         return self._rot_path
+
+    def get_racs(self):
+        csa_tensors = np.zeros((len(self.pcs_data[0]), 3, 3))
+        carbons = [self['CG'], self['CD1'], self['CE1'], self['CZ'], self['CE2'], self['CD2']]
+        protons = [self['CB'], self['HD1'], self['HE1'], self['HZ'], self['HE2'], self['HD2']]
+        for idx, carbon in enumerate(carbons):
+            v1, v2 = carbons[(idx + 1) % len(carbons)].position - carbon.position, carbon.position - carbons[
+                idx - 1].position
+            zz = np.cross(v1, v2)
+            xx = protons[idx].position - carbons[idx].position
+            yy = np.cross(zz, xx)
+
+            def norm(vec):
+                return vec / np.linalg.norm(vec)
+
+            xx, yy, zz = norm(xx), norm(yy), norm(zz)
+            R = np.vstack([xx, yy, zz]).T
+            if carbon in self.pcs_data[0]:
+                _i = self.pcs_data[0].index(carbon)
+                csa_tensors[_i] = R.dot(np.diag([95.3333, 19.3333, -114.6667]) * 1E-6).dot(R.T)
+
+        return self._metal.fast_racs(csa_tensors)
 
     @staticmethod
     def __get_angle_increment(start, stop, steps):

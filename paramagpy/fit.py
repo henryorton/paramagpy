@@ -1276,7 +1276,7 @@ class PCSToRotamer:
         for i in range(len(self.data[chain][residue])):
             self.data[chain][residue][i] = (*self.data[chain][residue][i][:3], bins[i])
 
-    def run_grid_search(self, top_n=1, structure=None):
+    def run_grid_search(self, top_n=1, structure=None, fit_func=None, **kwargs):
         """
         Perform a grid search for all the residues whose rotation parameters are set
 
@@ -1305,6 +1305,9 @@ class PCSToRotamer:
         if save_structure:
             model_list = [cp.deepcopy(self.model) for i in range(top_n)]
 
+        if not fit_func:
+            fit_func = PCSToRotamer.pcs_fit_func
+
         for chain in self.rotation_params:
             for res in self.rotation_params[chain]:
                 if self.data.get(chain) is not None and self.data[chain].get(res) is not None:
@@ -1313,7 +1316,8 @@ class PCSToRotamer:
                     res_obj.pcs_data = list(zip(*self.data[chain][res]))
                     res_obj._metal = self.metal
                     res_obj._noise = self.noise
-                    result = res_obj.grid_search_rotamer(self.rotation_params[chain][res], fit_pcs=True, top_n=top_n)
+                    result = res_obj.grid_search_rotamer(self.rotation_params[chain][res],
+                                                         fit_func=fit_func, top_n=top_n, **kwargs)
 
                     if result:
                         # print(result)
@@ -1335,7 +1339,7 @@ class PCSToRotamer:
 
         return (protein, ret) if save_structure else ret
 
-    def run_staggered_positions_search(self, chain, residue, delta=0.174533, steps=5, top_n=1, bins=None):
+    def run_staggered_positions_search(self, chain, residue, delta=0.174533, steps=5, top_n=1, bins=None, **kwargs):
         """
         Perform a grid search for all the residues whose rotation parameters are set
 
@@ -1470,3 +1474,32 @@ class PCSToRotamer:
 
     def get_pcs_data(self, chain, res):
         return self.data[chain][res]
+
+    @staticmethod
+    def pcs_fit_func(residue, racs=True):
+        coord_matrix = np.empty((len(residue.pcs_data[0]), 3))
+
+        for idx, tup in enumerate(residue.pcs_data[0]):
+            coord_matrix[idx] = tup.position
+
+        _racs = residue.get_racs() if residue.resname in ['PHE', 'TYR'] and racs else np.zeros(len(residue.pcs_data[0]))
+        pcs_calc = residue._metal.fast_pcs(coord_matrix) + _racs
+        pcs_calc_binned = np.bincount(residue.pcs_data[3], weights=pcs_calc)
+
+        pcs_exp_binned = np.bincount(residue.pcs_data[3], weights=residue.pcs_data[1])
+        bin_count = np.bincount(residue.pcs_data[3])
+        bin_count[bin_count == 0] = 1
+
+        _x = (pcs_exp_binned - pcs_calc_binned) / bin_count
+        if not residue._noise:
+            if not np.any(np.abs(residue.pcs_data[2]) < 1E-6):
+                pcs_err_binned = np.bincount(residue.pcs_data[3], weights=residue.pcs_data[2])
+                _x = (pcs_exp_binned - pcs_calc_binned) / pcs_err_binned
+            else:
+                warnings.warn(
+                    "Cannot calculate Mahalanobis distance because at least one of the PCS errors is zero. "
+                    "Using RMSD instead.")
+
+        pcs_dist = np.linalg.norm(_x) / len(pcs_calc_binned)
+
+        return -pcs_dist, np.array(residue._dihedral_full), pcs_calc
