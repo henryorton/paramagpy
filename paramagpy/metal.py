@@ -369,7 +369,8 @@ class Metal(object):
 		return self.__class__(
 			position=tuple(self.position), 
 			eulers=tuple(self.eulers),
-			axrh=tuple(self.axrh), 
+			axrh=tuple(self.axrh),
+			g_axrh=tuple(self.g_axrh),
 			mueff=self.mueff, 
 			shift=self.shift, 
 			temperature=self.temperature, 

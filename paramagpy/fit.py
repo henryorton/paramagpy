@@ -935,8 +935,8 @@ def nlr_fit_metal_from_rdc(metal, rdc, params=('ax','rh','a','b','g'),
 	return fitMetal, calculated, qfac
 
 
-def nlr_fit_metal_from_ccr(initMetals, ccrs, params=('x','y','z'), 
-	sumIndices=None, progress=None):
+def nlr_fit_metal_from_ccr(initMetals, dataArrays, params=('x','y','z'), 
+	ensembleAverage=False, progress=None):
 	"""
 	Fit deltaChi tensor to CCR values using non-linear regression.
 
@@ -976,6 +976,21 @@ def nlr_fit_metal_from_ccr(initMetals, ccrs, params=('x','y','z'),
 		the calculated CCR values
 	qfactors : list
 	"""
+	if len(initMetals)!=len(dataArrays):
+		raise ValueError("initMetals and dataArrays must have same length")
+
+	datas = []
+	for metal, dataArray in zip(initMetals, dataArrays):
+		if ensembleAverage:
+			tmp = extract_ccr(dataArray, separateModels=False)
+			datas.append((metal.copy(), tmp))
+		else:
+
+
+
+
+
+
 	datas = []
 	for metal, ccr in zip(initMetals, ccrs):
 		d = extract_ccr(ccr)
@@ -991,10 +1006,6 @@ def nlr_fit_metal_from_ccr(initMetals, ccrs, params=('x','y','z'),
 		pars['othpars'] = slice(len(pospars) + i*len(otherpars), 
 						  len(pospars) + (i+1)*len(otherpars))
 		startpars += pars['met'].get_params(otherpars)
-
-	if sumIndices is not None:
-		for s, (pars, d) in zip(sumIndices, datas):
-			d['idx'] = s
 
 	def cost(args):
 		score = 0.0
