@@ -830,13 +830,15 @@ class Metal(object):
 		Set the attributes of the current instance to the average
 		of a list of provided tensor objects
 
+		WARNING: averging is unstable for spectral power density <g_tensor>
+
 		Parameters
 		----------
 		metals : a list of Metal objects
 			the average of attributes of this list will be taken
 		"""
+		self.g_tensor = sum([m.g_tensor for m in metals])/len(metals)
 		self.tensor = sum([m.tensor for m in metals])/len(metals)
-		self.g_tensor = sum(m.g_tensor for m in metals)/len(metals)
 		self.position = sum(m.position for m in metals)/len(metals)
 		self.taur = sum([m.taur for m in metals])/len(metals)
 

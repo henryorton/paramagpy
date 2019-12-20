@@ -379,16 +379,18 @@ def nlr_fit_metal_from_pcs(initMetals, dataArrays,
 	if len(initMetals)!=len(dataArrays):
 		raise ValueError("initMetals and dataArrays must have same length")
 
-	datas = {0:[]}
+	datas = {}
 	metalAvgs = []
 	for metal, dataArray in zip(initMetals, dataArrays):
 		metalAvg = []
 		if ensembleAverage:
-			tmp = extract_atom_data(dataArray, csa=useracs, 
+			d = extract_atom_data(dataArray, csa=useracs, 
 				separateModels=False)[0]
 			m = metal.copy()
 			metalAvg.append(m)
-			datas[0].append((m, tmp))
+			if 0 not in datas:
+				datas[0] = []
+			datas[0].append((m, d))
 		else:
 			for d in extract_atom_data(dataArray, csa=useracs, 
 				separateModels=True):
@@ -404,36 +406,36 @@ def nlr_fit_metal_from_pcs(initMetals, dataArrays,
 	pospars = tuple(params & set(['x','y','z']))
 	otherpars = tuple(params - set(['x','y','z']))
 
-	startpars = initMetals[0].get_params(pospars)
 	for mdl in datas:
 		data = datas[mdl]
 		for i, (m, d) in enumerate(data):
 			m.par['pos'] = slice(0, len(pospars))
 			m.par['oth'] = slice(len(pospars) + i*len(otherpars), 
 								  len(pospars) + (i+1)*len(otherpars))
+
+	for mdl in datas:
+		data = datas[mdl]
+		startpars = data[0][0].get_params(pospars)
+		for m, _ in data:
 			startpars += m.get_params(otherpars)
 
-
-	#NEED A FOR LOOP OVER THIS COST FUNC AND BFGS
-	def cost(args):
-		score = 0.0
-		for mdl in datas:
-			data = datas[mdl]
+		def cost(args):
+			score = 0.0
 			for m, d in data:
 				m.set_params(zip(pospars, args[m.par['pos']]))
 				m.set_params(zip(otherpars, args[m.par['oth']]))
-				d['cal'] = m.fast_pcs(d['pos'])
+				cal = m.fast_pcs(d['pos'])
 				if userads:
-					d['cal'] += m.fast_rads(d['pos'])
+					cal += m.fast_rads(d['pos'])
 				if useracs:
-					d['cal'] += m.fast_racs(d['xsa'])
-				diff = (d['cal'] - d['exp']) / d['err']
+					cal += m.fast_racs(d['xsa'])
+				diff = (cal - d['exp']) / d['err']
 				selectiveSum = np.bincount(d['idx'], weights=diff)
 				score += np.sum(selectiveSum**2)
 
-		return score
+			return score
 
-	fmin_bfgs(cost, startpars, disp=False)
+		fmin_bfgs(cost, startpars, disp=False)
 
 	fitMetals = []
 	for metalAvg in metalAvgs:
@@ -442,12 +444,14 @@ def nlr_fit_metal_from_pcs(initMetals, dataArrays,
 		mAvg.set_utr()
 		fitMetals.append(mAvg)
 
-	for m, d in zip(fitMetals, dataArrays):
-		d['cal'] = m.fast_pcs(d['pos'])
+	for m, data in zip(fitMetals, dataArrays):
+
+		d = extract_atom_data(dataArray, csa=useracs, separateModels=False)[0]
+		data['cal'] = m.fast_pcs(d['pos'])
 		if userads:
-			d['cal'] += m.fast_rads(d['pos'])
+			data['cal'] += m.fast_rads(d['pos'])
 		if useracs:
-			d['cal'] += m.fast_racs(d['xsa'])
+			data['cal'] += m.fast_racs(d['xsa'])
 
 	if progress:
 		progress.set(1.0)
@@ -459,58 +463,58 @@ def nlr_fit_metal_from_pcs(initMetals, dataArrays,
 #########################
 
 
-	data = [extract_data(pcs, csa=useracs) for pcs in pcss]
+	# data = [extract_data(pcs, csa=useracs) for pcs in pcss]
 
-	metals = [metal.copy() for metal in initMetals]
-	pospars = [param for param in params if param in ['x','y','z']]
-	otherpars = [param for param in params if param not in ['x','y','z']]
+	# metals = [metal.copy() for metal in initMetals]
+	# pospars = [param for param in params if param in ['x','y','z']]
+	# otherpars = [param for param in params if param not in ['x','y','z']]
 
-	if sumIndices is not None:
-		for s, d in zip(sumIndices, data):
-			d['idx'] = s
+	# if sumIndices is not None:
+	# 	for s, d in zip(sumIndices, data):
+	# 		d['idx'] = s
 
-	def cost(args):
-		pos = args[:len(pospars)]
-		allother = args[len(pospars):]
-		for i, metal in enumerate(metals):
-			other = allother[len(otherpars)*i:len(otherpars)*(i+1)]
-			metal.set_params(zip(pospars, pos))
-			metal.set_params(zip(otherpars, other))
-		score = 0.0
+	# def cost(args):
+	# 	pos = args[:len(pospars)]
+	# 	allother = args[len(pospars):]
+	# 	for i, metal in enumerate(metals):
+	# 		other = allother[len(otherpars)*i:len(otherpars)*(i+1)]
+	# 		metal.set_params(zip(pospars, pos))
+	# 		metal.set_params(zip(otherpars, other))
+	# 	score = 0.0
 
-		for metal, d in zip(metals, data):
-			calcpcs = metal.fast_pcs(d['pos'])
-			if userads:
-				calcpcs += metal.fast_rads(d['pos'])
-			if useracs:
-				calcpcs += metal.fast_racs(d['xsa'])
-			diff = (calcpcs - d['val']) / d['err']
-			selectiveSum = np.bincount(d['idx'], weights=diff)
-			score += np.sum(selectiveSum**2)
-		return score
+	# 	for metal, d in zip(metals, data):
+	# 		calcpcs = metal.fast_pcs(d['pos'])
+	# 		if userads:
+	# 			calcpcs += metal.fast_rads(d['pos'])
+	# 		if useracs:
+	# 			calcpcs += metal.fast_racs(d['xsa'])
+	# 		diff = (calcpcs - d['val']) / d['err']
+	# 		selectiveSum = np.bincount(d['idx'], weights=diff)
+	# 		score += np.sum(selectiveSum**2)
+	# 	return score
 
-	startpars = metals[0].get_params(pospars)
+	# startpars = metals[0].get_params(pospars)
 
-	for metal in metals:
-		pars = metal.get_params(otherpars)
-		startpars += pars
-	fmin_bfgs(cost, startpars, disp=False)
-	calc_pcss = []
-	qfactors = []
-	for metal, d in zip(metals, data):
-		metal.set_utr()
-		calculated = metal.fast_pcs(d['pos'])
-		if userads:
-			calculated += metal.fast_rads(d['pos'])
-		if useracs:
-			calculated += metal.fast_racs(d['xsa'])
-		calc_pcss.append(calculated)
-		qfac = qfactor(d['val'], calculated, d['idx'])
-		qfactors.append(qfac)
+	# for metal in metals:
+	# 	pars = metal.get_params(otherpars)
+	# 	startpars += pars
+	# fmin_bfgs(cost, startpars, disp=False)
+	# calc_pcss = []
+	# qfactors = []
+	# for metal, d in zip(metals, data):
+	# 	metal.set_utr()
+	# 	calculated = metal.fast_pcs(d['pos'])
+	# 	if userads:
+	# 		calculated += metal.fast_rads(d['pos'])
+	# 	if useracs:
+	# 		calculated += metal.fast_racs(d['xsa'])
+	# 	calc_pcss.append(calculated)
+	# 	qfac = qfactor(d['val'], calculated, d['idx'])
+	# 	qfactors.append(qfac)
 
-	if progress:
-		progress.set(1.0)
-	return metals, calc_pcss, qfactors
+	# if progress:
+	# 	progress.set(1.0)
+	# return metals, calc_pcss, qfactors
 
 
 def pcs_fit_error_monte_carlo(initMetals, pcss, iterations,

@@ -9,7 +9,6 @@ import numpy as np
 structdtype = {
 	'PCS':np.dtype([
 				('mdl', int   ),
-				('use', bool  ),
 				('atm', object),
 				('exp', float ),
 				('cal', float ),
@@ -17,7 +16,6 @@ structdtype = {
 				('idx', int   )]),
 	'RDC':np.dtype([
 				('mdl',  int   ),
-				('use',  bool  ),
 				('atm',  object),
 				('atx',  object),
 				('exp',  float ),
@@ -26,7 +24,6 @@ structdtype = {
 				('idx',  int   )]),
 	'PRE':np.dtype([
 				('mdl', int   ),
-				('use', bool  ),
 				('atm', object),
 				('exp', float ),
 				('cal', float ),
@@ -34,7 +31,6 @@ structdtype = {
 				('idx', int   )]),
 	'CCR':np.dtype([
 				('mdl',  int   ),
-				('use',  bool  ),
 				('atm',  object),
 				('atx',  object),
 				('exp',  float ),
@@ -299,7 +295,7 @@ class CustomStructure(Structure):
 								a = resi[name]
 								exp, err = dataValues[key]
 								idx = a.serial_number
-								tmp = (m.id, True, a, exp, np.nan, err, idx)
+								tmp = (m.id, a, exp, np.nan, err, idx)
 								data.append(tmp)
 								used.add(key)
 
@@ -321,7 +317,7 @@ class CustomStructure(Structure):
 									idx = unique_pairing(idx1, idx2)
 								elif dataValues.dtype=='CCR':
 									idx = cantor_pairing(idx1, idx2)
-								tmp = (m.id, True, a1, a2, exp, np.nan, err, idx)
+								tmp = (m.id, a1, a2, exp, np.nan, err, idx)
 								data.append(tmp)
 								used.add(key)
 
