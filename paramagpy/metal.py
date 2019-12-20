@@ -286,6 +286,19 @@ class Metal(object):
 		('Yb', ( -8.3, -5.8))]
 	)
 
+	fundamental_attributes = (
+		'position', 
+		'eulers', 
+		'axrh', 
+		'mueff', 
+		'g_axrh', 
+		't1e',
+		'shift', 
+		'temperature', 
+		'B0', 
+		'taur'
+		)
+
 	# A dictionary of volatile parameters used during fitting
 	par = {}
 
@@ -641,8 +654,6 @@ class Metal(object):
 			newIsotropy = 0.0
 		self.mueff = ((newIsotropy*3*self.K*self.temperature) / self.MU0)**0.5
 
-
-
 	@property
 	def g_eigenvalues(self):
 		"""The eigenvalues defining the magnitude of the principle axes"""
@@ -665,8 +676,6 @@ class Metal(object):
 			newIsotropy = 0.0
 		self.t1e = (newIsotropy * self.MU0) / (
 			self.isotropy * self.K * self.temperature)
-
-
 
 	@property
 	def rotationMatrix(self):
@@ -776,7 +785,6 @@ class Metal(object):
 		newTensor[2,2] = - elements[0] - elements[1]
 		self.tensor_saupe = newTensor
 
-
 	@property
 	def g_tensor(self):
 		"""The magnetic susceptibility tensor matrix representation"""
@@ -794,7 +802,6 @@ class Metal(object):
 		eulers = unique_eulers(matrix_to_euler(rotationMatrix))
 		self.eulers = np.array(eulers, dtype=float)
 		self.g_eigenvalues = eigenvals
-
 
 	def set_utr(self):
 		"""
@@ -817,6 +824,21 @@ class Metal(object):
 			must have 'position' attribute
 		"""
 		self.position = atom.position
+
+	def average(self, metals):
+		"""
+		Set the attributes of the current instance to the average
+		of a list of provided tensor objects
+
+		Parameters
+		----------
+		metals : a list of Metal objects
+			the average of attributes of this list will be taken
+		"""
+		self.tensor = sum([m.tensor for m in metals])/len(metals)
+		self.g_tensor = sum(m.g_tensor for m in metals)/len(metals)
+		self.position = sum(m.position for m in metals)/len(metals)
+		self.taur = sum([m.taur for m in metals])/len(metals)
 
 	################################
 	# Methods for PCS calculations #

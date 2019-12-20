@@ -338,9 +338,9 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 	return minmetals, calc_pcss, qfactors
 
 
-def nlr_fit_metal_from_pcs(initMetals, pcss, 
-	params=('x','y','z','ax','rh','a','b','g'), 
-	sumIndices=None, userads=False, useracs=False, progress=None):
+def nlr_fit_metal_from_pcs(initMetals, dataArrays, 
+	params=('x','y','z','ax','rh','a','b','g'), ensembleAverage=False,
+	userads=False, useracs=False, progress=None):
 	"""
 	Fit deltaChi tensor to PCS values using non-linear regression.
 
@@ -360,13 +360,6 @@ def nlr_fit_metal_from_pcs(initMetals, pcss,
 	params : list of str
 		the parameters to be fit. 
 		For example ['x','y','z','ax','rh','a','b','g','shift']
-	sumIndices : list of arrays of ints, optional
-		each index list must correspond to an associated pcs dataset.
-		each index list contains an index assigned to each atom. 
-		Common indices determine summation between models 
-		for ensemble averaging.
-		If None, defaults to atom serial number to determine summation 
-		between models.
 	userads : bool, optional
 		include residual anisotropic dipolar shielding (RADS) during fitting
 	useracs : bool, optional
@@ -383,6 +376,89 @@ def nlr_fit_metal_from_pcs(initMetals, pcss,
 	calc_pcss : list of lists of floats
 		the calculated PCS values
 	"""
+	if len(initMetals)!=len(dataArrays):
+		raise ValueError("initMetals and dataArrays must have same length")
+
+	datas = {0:[]}
+	metalAvgs = []
+	for metal, dataArray in zip(initMetals, dataArrays):
+		metalAvg = []
+		if ensembleAverage:
+			tmp = extract_atom_data(dataArray, csa=useracs, 
+				separateModels=False)[0]
+			m = metal.copy()
+			metalAvg.append(m)
+			datas[0].append((m, tmp))
+		else:
+			for d in extract_atom_data(dataArray, csa=useracs, 
+				separateModels=True):
+				mdl = d['mdl'][0]				
+				if mdl not in datas:
+					datas[mdl] = []
+				m = metal.copy()
+				metalAvg.append(m)
+				datas[mdl].append((m, d))
+		metalAvgs.append(metalAvg)
+
+	params = set(params)
+	pospars = tuple(params & set(['x','y','z']))
+	otherpars = tuple(params - set(['x','y','z']))
+
+	startpars = initMetals[0].get_params(pospars)
+	for mdl in datas:
+		data = datas[mdl]
+		for i, (m, d) in enumerate(data):
+			m.par['pos'] = slice(0, len(pospars))
+			m.par['oth'] = slice(len(pospars) + i*len(otherpars), 
+								  len(pospars) + (i+1)*len(otherpars))
+			startpars += m.get_params(otherpars)
+
+
+	#NEED A FOR LOOP OVER THIS COST FUNC AND BFGS
+	def cost(args):
+		score = 0.0
+		for mdl in datas:
+			data = datas[mdl]
+			for m, d in data:
+				m.set_params(zip(pospars, args[m.par['pos']]))
+				m.set_params(zip(otherpars, args[m.par['oth']]))
+				d['cal'] = m.fast_pcs(d['pos'])
+				if userads:
+					d['cal'] += m.fast_rads(d['pos'])
+				if useracs:
+					d['cal'] += m.fast_racs(d['xsa'])
+				diff = (d['cal'] - d['exp']) / d['err']
+				selectiveSum = np.bincount(d['idx'], weights=diff)
+				score += np.sum(selectiveSum**2)
+
+		return score
+
+	fmin_bfgs(cost, startpars, disp=False)
+
+	fitMetals = []
+	for metalAvg in metalAvgs:
+		mAvg = metalAvg[0].copy()
+		mAvg.average(metalAvg)
+		mAvg.set_utr()
+		fitMetals.append(mAvg)
+
+	for m, d in zip(fitMetals, dataArrays):
+		d['cal'] = m.fast_pcs(d['pos'])
+		if userads:
+			d['cal'] += m.fast_rads(d['pos'])
+		if useracs:
+			d['cal'] += m.fast_racs(d['xsa'])
+
+	if progress:
+		progress.set(1.0)
+
+	return fitMetals, dataArrays
+
+
+
+#########################
+
+
 	data = [extract_data(pcs, csa=useracs) for pcs in pcss]
 
 	metals = [metal.copy() for metal in initMetals]
@@ -948,7 +1024,7 @@ def nlr_fit_metal_from_ccr(initMetals, dataArrays, params=('x','y','z'),
 		only one element. If multiple metals are provided, each metal
 		is fitted to their respective CCR dataset by index, but all are 
 		fitted to a common position.
-	ccrs : list of CCR datasets
+	dataArrays : list of CCR datasets
 		each CCR dataset must correspond to an associated metal for fitting.
 		each CCR dataset has structure [Atom, value, error], where Atom is 
 		an Atom object, value is the PCS/RDC/PRE/CCR value
@@ -979,60 +1055,67 @@ def nlr_fit_metal_from_ccr(initMetals, dataArrays, params=('x','y','z'),
 	if len(initMetals)!=len(dataArrays):
 		raise ValueError("initMetals and dataArrays must have same length")
 
-	datas = []
+	datas = {0:[]}
+	metalAvgs = []
 	for metal, dataArray in zip(initMetals, dataArrays):
+		metalAvg = []
 		if ensembleAverage:
-			tmp = extract_ccr(dataArray, separateModels=False)
-			datas.append((metal.copy(), tmp))
+			tmp = fit.extract_ccr_data(dataArray, separateModels=False)[0]
+			m = metal.copy()
+			metalAvg.append(m)
+			datas[0].append((m, tmp))
 		else:
-
-
-
-
-
-
-	datas = []
-	for metal, ccr in zip(initMetals, ccrs):
-		d = extract_ccr(ccr)
-		datas.append(({'met':metal.copy()}, d))
+			for d in fit.extract_ccr_data(dataArray, separateModels=True):
+				mdl = d['mdl'][0]				
+				if mdl not in datas:
+					datas[mdl] = []
+				m = metal.copy()
+				metalAvg.append(m)
+				datas[mdl].append((m, d))
+		metalAvgs.append(metalAvg)
 
 	params = set(params)
 	pospars = tuple(params & set(['x','y','z']))
 	otherpars = tuple(params - set(['x','y','z']))
 
 	startpars = initMetals[0].get_params(pospars)
-	for i, (pars, d) in enumerate(datas):
-		pars['pospars'] = slice(0, len(pospars))
-		pars['othpars'] = slice(len(pospars) + i*len(otherpars), 
-						  len(pospars) + (i+1)*len(otherpars))
-		startpars += pars['met'].get_params(otherpars)
+	for mdl in datas:
+		data = datas[mdl]
+		for i, (m, d) in enumerate(data):
+			m.par['pos'] = slice(0, len(pospars))
+			m.par['oth'] = slice(len(pospars) + i*len(otherpars), 
+								  len(pospars) + (i+1)*len(otherpars))
+			startpars += m.get_params(otherpars)
 
 	def cost(args):
 		score = 0.0
-		for pars, d in datas:
-			d['met'].set_params(zip(pospars, args[d['pospars']]))
-			d['met'].set_params(zip(otherpars, args[d['othpars']]))
-			d['cal'] = d['met'].fast_ccr(d['pos'], d['gam'], d['dst'])
-			diff = (d['cal'] - d['val']) / d['err']
-			selectiveSum = np.bincount(d['idx'], weights=diff)
-			score += np.sum(selectiveSum**2)
+		for mdl in datas:
+			data = datas[mdl]
+			for m, d in data:
+				m.set_params(zip(pospars, args[m.par['pos']]))
+				m.set_params(zip(otherpars, args[m.par['oth']]))
+				d['cal'] = m.fast_ccr(d['pos'], d['gam'], d['xsa'])
+				diff = (d['cal'] - d['exp']) / d['err']
+				selectiveSum = np.bincount(d['idx'], weights=diff)
+				score += np.sum(selectiveSum**2)
 
 		return score
 
 	fmin_bfgs(cost, startpars, disp=False)
-	fitmetals = []
-	calc_ccrs = []
-	qfactors = []
-	for d in datas:
-		d['met'].set_utr()
-		fitmetals.append(d['met'])
-		calc_ccrs.append(d['cal'])
-		qfac = qfactor(d['val'], d['cal'], d['idx'])
-		qfactors.append(qfac)
+
+	fitMetals = []
+	for metalAvg in metalAvgs:
+		mAvg = metalAvg[0].copy()
+		mAvg.average(metalAvg)
+		mAvg.set_utr()
+		fitMetals.append(mAvg)
 
 	if progress:
 		progress.set(1.0)
-	return fitmetals, calc_ccrs, qfactors
+
+	return fitMetals, dataArrays
+
+
 
 
 
