@@ -559,8 +559,9 @@ class PlotCorrelationPopup(Popup):
 				minig = mini
 			if maxi < maxig:
 				maxig = maxi
-			self.axes.plot(d['exp'],d['cal'],marker='o', lw=0, ms=3,
-				label=tab.name, color=tab.colour.colour)
+				
+			self.axes.errorbar(d['exp'],d['cal'],xerr=d['err'],marker='o', 
+				lw=0, elinewidth=1, ms=3, label=tab.name, color=tab.colour.colour)
 
 			if self.params['ann'].get():
 				for atom, exp, cal in d[['atm','exp','cal']]:
@@ -580,7 +581,7 @@ class PlotCorrelationPopup(Popup):
 
 			scale = 1.1
 			self.axes.plot([minig*scale,maxig*scale], 
-						   [minig*scale,maxig*scale], '-k', lw=0.5)
+						   [minig*scale,maxig*scale], '-k', lw=0.5, zorder=0)
 			self.axes.set_xlim(minig*scale, maxig*scale)
 			self.axes.set_ylim(minig*scale, maxig*scale)
 			self.axes.set_aspect(1.0)
