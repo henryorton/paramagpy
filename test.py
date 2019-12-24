@@ -8,7 +8,7 @@ ubi = protein.load_pdb('./examples/data_files/1ubqH.pdb')
 myo = protein.load_pdb('./examples/data_files/1bzrH.pdb')
 
 # Load the PCS data
-rawDataPCS = dataparse.read_pcs('./examples/data_files/calbindin_Er_HN_PCS_errors.npc')
+rawDataPCS = dataparse.read_pcs('./examples/data_files/calbindin_Er_HN_PCS.npc')
 rawDataPRE = dataparse.read_pre('./examples/data_files/calbindin_Er_H_R2_600.pre')
 rawDataRDC = dataparse.read_rdc('./examples/data_files/ubiquitin_s57c_c1_Tb_HN.rdc')
 rawDataCCR = dataparse.read_ccr('./examples/data_files/myoglobin_cn.ccr')
@@ -19,13 +19,49 @@ pre = calb.parse(rawDataPRE)
 rdc = ubi.parse(rawDataRDC)
 ccr = myo.parse(rawDataCCR)
 
-m0 = metal.Metal(position=[8.669E-10, 9.074E-10, -5.494E-10])
+m0 = metal.Metal(position=[6.48348859e-10,  7.19131407e-10, -3.56399432e-10])
+# m0 = metal.Metal(position=[25.786E-10,   9.515E-10,   6.558E-10])
 
-initMetals = [m0, m0]
-dataArrays = [pcs, pcs]
+initMetals = [m0]
+dataArrays = [pcs]
 ensembleAverage = False
 
-mfit, cal = fit.nlr_fit_metal_from_pcs(initMetals, dataArrays, ensembleAverage=False)
+[mfit], [cal] = fit.svd_gridsearch_fit_metal_from_pcs(initMetals, dataArrays, points=1, radius=0.0, ensembleAverage=ensembleAverage)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

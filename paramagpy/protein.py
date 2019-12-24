@@ -106,7 +106,7 @@ def cantor_pairing(a, b):
 def clean_indices(indices):
 	"""
 	Uniquely map a list of integers to their smallest size.
-	For example: [7,4,7,9,9,10,1] -> [4 2 4 0 0 1 3]
+	For example: [7,4,7,9,9,10,1] -> [2,1,2,3,3,4,0]
 
 	Parameters
 	----------
@@ -118,9 +118,8 @@ def clean_indices(indices):
 	new_indices : array-like integers
 		the mapped integers with smallest size
 	"""
-	translation = {idx:i for i, idx in enumerate(set(indices))}
-	new_indices = [translation[idx] for idx in indices]
-	return np.array(new_indices)
+	_, new_indices = np.unique(indices, return_inverse=True)
+	return new_indices
 
 
 

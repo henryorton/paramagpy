@@ -13,8 +13,7 @@ structdtype = np.dtype([
 	('err', float        ),
 	('idx', int          ),
 	('gam', float        ),
-	('xsa', float, (3,3) ),
-	('msc', float        )])
+	('xsa', float, (3,3) )])
 
 def extract_atom_data(data, csa=False, separateModels=True):
 	"""
@@ -30,8 +29,9 @@ def extract_atom_data(data, csa=False, separateModels=True):
 	"""
 	arr = np.empty(len(data), dtype=structdtype)
 
-	for name in ('mdl', 'atm', 'exp', 'cal', 'idx'):
+	for name in ('mdl', 'atm', 'exp', 'cal'):
 		arr[name] = data[name]
+	_, arr['idx'] = np.unique(data['idx'], return_inverse=True)
 
 	if 0.0 in data['err']:
 		arr['err'] = np.ones(len(data['err']))
@@ -63,8 +63,9 @@ def extract_rdc_data(data, separateModels=True):
 	"""
 	arr = np.empty(len(data), dtype=structdtype)
 
-	for name in ('mdl', 'atm', 'exp', 'cal', 'idx'):
+	for name in ('mdl', 'atm', 'exp', 'cal'):
 		arr[name] = data[name]
+	_, arr['idx'] = np.unique(data['idx'], return_inverse=True)
 
 	if 0.0 in data['err']:
 		arr['err'] = np.ones(len(data['err']))
@@ -94,8 +95,9 @@ def extract_ccr_data(data, separateModels=True):
 	"""
 	arr = np.empty(len(data), dtype=structdtype)
 
-	for name in ('mdl', 'atm', 'exp', 'cal', 'idx'):
+	for name in ('mdl', 'atm', 'exp', 'cal'):
 		arr[name] = data[name]
+	_, arr['idx'] = np.unique(data['idx'], return_inverse=True)
 
 	if 0.0 in data['err']:
 		arr['err'] = np.ones(len(data['err']))
@@ -226,7 +228,7 @@ def svd_calc_metal_from_pcs_offset(pos, pcs, idx, errors):
 	return calc, sol
 
 
-def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
+def svd_gridsearch_fit_metal_from_pcs(initMetals, dataArrays, ensembleAverage=False,
 	origin=None, radius=20.0, points=16, offsetShift=False, progress=None):
 	"""
 	Fit deltaChi tensor to PCS values using Single Value Decomposition over
@@ -277,65 +279,87 @@ def svd_gridsearch_fit_metal_from_pcs(metals, pcss, sumIndices=None,
 	minmetals : list of metals
 		the metals fitted by SVD to the PCS data provided
 	"""
-	assert len(metals)==len(pcss)
-
-	if origin is None:
-		origin = metals[0].position*1E10
+	if len(initMetals)!=len(dataArrays):
+		raise ValueError("<metals> and <dataArrays> must have same length")
 
 	if offsetShift:
 		svd_func = svd_calc_metal_from_pcs_offset
 	else:
 		svd_func = svd_calc_metal_from_pcs
 
-	data = [extract_data(pcs) for pcs in pcss]
+	datas = {}
+	metalAvgs = []
+	for metal, dataArray in zip(initMetals, dataArrays):
+		metalAvg = []
+		if ensembleAverage:
+			d = extract_atom_data(dataArray, csa=False, 
+				separateModels=False)[0]
+			m = metal.copy()
+			m.par['weightSum'] = np.bincount(d['idx'], weights=d['exp']/d['err'])
+			metalAvg.append(m)
+			if 0 not in datas:
+				datas[0] = []
+			datas[0].append((m, d))
+		else:
+			for d in extract_atom_data(dataArray, csa=False, 
+				separateModels=True):
+				mdl = d['mdl'][0]
+				if mdl not in datas:
+					datas[mdl] = []
+				m = metal.copy()
+				m.par['weightSum'] = np.bincount(d['idx'], weights=d['exp']/d['err'])
+				metalAvg.append(m)
+				datas[mdl].append((m, d))
+		metalAvgs.append(metalAvg)
+
+	if origin is None:
+		origin = initMetals[0].position*1E10
 
 	sphere = sphere_grid(origin, radius, points)*1E-10
-
-	if sumIndices is not None:
-		for s, d in zip(sumIndices, data):
-			d['idx'] = s
-
-	# Ensemble average weights for SVD
-	for d in data:
-		d['msc'] = np.bincount(d['idx'], weights=d['val']/d['err'])
-
-	minscore = 1E308
-	print("SVD search started in {} points".format(len(sphere)))
-	tot = len(sphere)
+	tot = len(sphere)*len(datas)
+	prog = 0.0
 	if tot<1:
 		raise ValueError("Zero grid points selected for SVD search")
-	prog = 0.0
-	for pos in sphere:
-		if progress:
-			prog += 1
-			progress.set(prog/tot)
-		score = 0.0
-		sols = []
-		for d in data:
-			calculated, solution = svd_func(d['pos'], d['msc'], d['idx'], d['err'])
-			sols.append(solution)
-			score += np.sum((calculated - d['msc'])**2)
-		if score<minscore:
-			minscore = score
-			minpos = pos
-			minsols = sols
+	print("SVD gridsearch started in {} points".format(len(sphere)))
 
-	minmetals = [m.copy() for m in metals]
-	calc_pcss = []
-	qfactors = []
-	for d, metal, sol in zip(data, minmetals, minsols):
-		metal.position = minpos
-		if offsetShift:
-			metal.upper_triang = sol[:-1]
-			metal.shift = sol[-1]*1E6
-		else:
-			metal.upper_triang = sol
-		calculated = metal.fast_pcs(d['pos'])
-		calc_pcss.append(calculated)
-		qfac = qfactor(d['val'], calculated, d['idx'])
-		qfactors.append(qfac)
+	for mdl in datas:
+		minscore = 1E308
+		data = datas[mdl]
+		for pos in sphere:
+			if progress:
+				prog += 1
+				progress.set(prog/tot)
+			score = 0.0
+			sols = []
+			for m, d in data:
+				calculated, solution = svd_func(d['pos']-pos, m.par['weightSum'], d['idx'], d['err'])
+				sols.append(solution)
+				score += np.sum((calculated - m.par['weightSum'])**2)
+			if score<minscore:
+				minscore = score
+				for sol, (m, _) in zip(sols, data):
+					m.position = pos
+					if offsetShift:
+						m.upper_triang = sol[:-1]
+						m.shift = sol[-1]*1E6
+					else:
+						m.upper_triang = sol
 
-	return minmetals, calc_pcss, qfactors
+	fitMetals = []
+	for metalAvg in metalAvgs:
+		mAvg = metalAvg[0].copy()
+		mAvg.average(metalAvg)
+		mAvg.set_utr()
+		fitMetals.append(mAvg)
+
+	for m, data in zip(fitMetals, dataArrays):
+		d = extract_atom_data(dataArray, csa=False, separateModels=False)[0]
+		data['cal'] = m.fast_pcs(d['pos'])
+
+	if progress:
+		progress.set(1.0)
+
+	return fitMetals, dataArrays
 
 
 def nlr_fit_metal_from_pcs(initMetals, dataArrays, 
@@ -445,7 +469,6 @@ def nlr_fit_metal_from_pcs(initMetals, dataArrays,
 		fitMetals.append(mAvg)
 
 	for m, data in zip(fitMetals, dataArrays):
-
 		d = extract_atom_data(dataArray, csa=useracs, separateModels=False)[0]
 		data['cal'] = m.fast_pcs(d['pos'])
 		if userads:
@@ -457,64 +480,6 @@ def nlr_fit_metal_from_pcs(initMetals, dataArrays,
 		progress.set(1.0)
 
 	return fitMetals, dataArrays
-
-
-
-#########################
-
-
-	# data = [extract_data(pcs, csa=useracs) for pcs in pcss]
-
-	# metals = [metal.copy() for metal in initMetals]
-	# pospars = [param for param in params if param in ['x','y','z']]
-	# otherpars = [param for param in params if param not in ['x','y','z']]
-
-	# if sumIndices is not None:
-	# 	for s, d in zip(sumIndices, data):
-	# 		d['idx'] = s
-
-	# def cost(args):
-	# 	pos = args[:len(pospars)]
-	# 	allother = args[len(pospars):]
-	# 	for i, metal in enumerate(metals):
-	# 		other = allother[len(otherpars)*i:len(otherpars)*(i+1)]
-	# 		metal.set_params(zip(pospars, pos))
-	# 		metal.set_params(zip(otherpars, other))
-	# 	score = 0.0
-
-	# 	for metal, d in zip(metals, data):
-	# 		calcpcs = metal.fast_pcs(d['pos'])
-	# 		if userads:
-	# 			calcpcs += metal.fast_rads(d['pos'])
-	# 		if useracs:
-	# 			calcpcs += metal.fast_racs(d['xsa'])
-	# 		diff = (calcpcs - d['val']) / d['err']
-	# 		selectiveSum = np.bincount(d['idx'], weights=diff)
-	# 		score += np.sum(selectiveSum**2)
-	# 	return score
-
-	# startpars = metals[0].get_params(pospars)
-
-	# for metal in metals:
-	# 	pars = metal.get_params(otherpars)
-	# 	startpars += pars
-	# fmin_bfgs(cost, startpars, disp=False)
-	# calc_pcss = []
-	# qfactors = []
-	# for metal, d in zip(metals, data):
-	# 	metal.set_utr()
-	# 	calculated = metal.fast_pcs(d['pos'])
-	# 	if userads:
-	# 		calculated += metal.fast_rads(d['pos'])
-	# 	if useracs:
-	# 		calculated += metal.fast_racs(d['xsa'])
-	# 	calc_pcss.append(calculated)
-	# 	qfac = qfactor(d['val'], calculated, d['idx'])
-	# 	qfactors.append(qfac)
-
-	# if progress:
-	# 	progress.set(1.0)
-	# return metals, calc_pcss, qfactors
 
 
 def pcs_fit_error_monte_carlo(initMetals, pcss, iterations,
