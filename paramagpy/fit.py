@@ -726,9 +726,9 @@ def qfactor(dataArray, ensembleAverage=False):
 	return (numer/denom)**0.5
 
 
-def nlr_fit_metal_from_pre(initMetals, pres, params=('x','y','z'), 
-	sumIndices=None, rtypes=None, usesbm=True, usegsbm=False, usedsa=True, 
-	usecsa=False, progress=None):
+def nlr_fit_metal_from_pre(initMetals, dataArrays, rtypes, params=('x','y','z'), 
+	usesbm=True, usegsbm=False, usedsa=True, 
+	usecsa=False, ensembleAverage=False, progress=None):
 	"""
 	Fit deltaChi tensor to PRE values using non-linear regression.
 
@@ -781,53 +781,91 @@ def nlr_fit_metal_from_pre(initMetals, pres, params=('x','y','z'),
 	metals : list of metals
 		the metals fitted by NLR to the PRE data provided
 	"""
-	if rtypes is None:
-		rtypes = ['r2']*len(initMetals)
 
-	data = [extract_data(pcs, csa=useracs) for pcs in pcss]
+	if len(initMetals)!=len(dataArrays)!=len(rtypes):
+		raise ValueError("initMetals, dataArrays and rtypes must have same length")
 
-	if sumIndices is not None:
-		for s, d in zip(sumIndices, data):
-			d['idx'] = s
+	if len(set(rtypes) | set(['r1','r2']))>2:
+		raise TypeError("rtype must be a list with values 'r1' and 'r2' only")
 
-	metals = [metal.copy() for metal in initMetals]
-	pospars = [param for param in params if param in ['x','y','z']]
-	otherpars = [param for param in params if param not in ['x','y','z']]
+	datas = {}
+	metalAvgs = []
+	for metal, dataArray, rtype in zip(initMetals, dataArrays, rtypes):
+		metalAvg = []
+		if ensembleAverage:
+			d = extract_atom_data(dataArray, csa=usecsa, 
+				separateModels=False)[0]
+			m = metal.copy()
+			m.par['rtp'] = rtype
+			metalAvg.append(m)
+			if 0 not in datas:
+				datas[0] = []
+			datas[0].append((m, d))
+		else:
+			for d in extract_atom_data(dataArray, csa=usecsa, 
+				separateModels=True):
+				mdl = d['mdl'][0]				
+				if mdl not in datas:
+					datas[mdl] = []
+				m = metal.copy()
+				m.par['rtp'] = rtype
+				metalAvg.append(m)
+				datas[mdl].append((m, d))
+		metalAvgs.append(metalAvg)
 
-	def cost(args):
-		pos = args[:len(pospars)]
-		allother = args[len(pospars):]
-		for i, metal in enumerate(metals):
-			other = allother[len(otherpars)*i:len(otherpars)*(i+1)]
-			metal.set_params(zip(pospars, pos))
-			metal.set_params(zip(otherpars, other))
-		score = 0.0
-		for metal, rtype, d in zip(metals, rtypes, data):
-			calcpre = metal.fast_pre(d['pos'], d['gam'], rtype, 
+	params = set(params)
+	pospars = tuple(params & set(['x','y','z']))
+	otherpars = tuple(params - set(['x','y','z']))
+
+	for mdl in datas:
+		data = datas[mdl]
+		for i, (m, d) in enumerate(data):
+			m.par['pos'] = slice(0, len(pospars))
+			m.par['oth'] = slice(len(pospars) + i*len(otherpars), 
+								  len(pospars) + (i+1)*len(otherpars))
+
+	for mdl in datas:
+		data = datas[mdl]
+		startpars = data[0][0].get_params(pospars)
+		for m, _ in data:
+			startpars += m.get_params(otherpars)
+
+		def cost(args):
+			score = 0.0
+			for m, d in data:
+				m.set_params(zip(pospars, args[m.par['pos']]))
+				m.set_params(zip(otherpars, args[m.par['oth']]))
+				cal = m.fast_pre(d['pos'], d['gam'], m.par['rtp'], 
 				dsa=usedsa, sbm=usesbm, gsbm=usegsbm, csaarray=d['xsa'])
-			diff = (calcpre - d['val']) / d['err']
-			selectiveSum = np.bincount(d['idx'], weights=diff)
-			score += np.sum(selectiveSum**2)
-		return score
+				diff = (cal - d['exp']) / d['err']
+				selectiveSum = np.bincount(d['idx'], weights=diff)
+				score += np.sum(selectiveSum**2)
+			return score
 
-	startpars = metals[0].get_params(pospars)
-	for metal in metals:
-		pars = metal.get_params(otherpars)
-		startpars += pars
-	fmin_bfgs(cost, startpars, disp=False)
-	calc_pres = []
-	qfactors = []
-	for metal, rtype, d in zip(metals, rtypes, data):
-		metal.set_utr()
-		calculated = metal.fast_pre(d['pos'], d['gam'], rtype, 
-			dsa=usedsa, sbm=usesbm, gsbm=usegsbm, csaarray=d['xsa'])
-		calc_pres.append(calculated)
-		qfac = qfactor(d['val'], calculated, d['idx'])
-		qfactors.append(qfac)
+		fmin_bfgs(cost, startpars, disp=False)
+
+	fitMetals = []
+	for metalAvg in metalAvgs:
+		mAvg = metalAvg[0].copy()
+		mAvg.average(metalAvg)
+		mAvg.set_utr()
+		mAvg.metalAvg = metalAvg
+		fitMetals.append(mAvg)
+
+	for m, data in zip(fitMetals, dataArrays):
+		d = extract_atom_data(dataArray, csa=usecsa, separateModels=False)[0]
+		data['cal'] = m.fast_pre(d['pos'], d['gam'], m.par['rtp'], 
+				dsa=usedsa, sbm=usesbm, gsbm=usegsbm, csaarray=d['xsa'])
 
 	if progress:
 		progress.set(1.0)
-	return metals, calc_pres, qfactors
+
+	return fitMetals, dataArrays
+
+
+
+
+
 
 def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx, errors):
 	"""
