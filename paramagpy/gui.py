@@ -1655,11 +1655,8 @@ class DataTab(tk.Frame):
 						df.append(row)
 			self.data = np.array(df, dtype=dtype)
 
-	def get_fit_data(self, model=None):
-		filt = self.data[self.data['use']]
-		if model is not None:
-			filt = filt[filt['mdl']==model]
-		return filt
+	def get_fit_data(self):
+		return self.data[self.data['use']]
 
 	def back_calc(self):
 		if self.dtype=='PCS':
@@ -1713,15 +1710,9 @@ class DataTab(tk.Frame):
 		self.set_qfactor()
 		self.update(1)
 
-	def set_qfactor(self, model=None):
-		sqfac = 0.0
+	def set_qfactor(self):
 		filt = self.data[self.data['use']]
-		if model is not None:
-			filt = filt[filt['mdl']==model]
-		exp = filt['exp']
-		cal = filt['cal']
-		idx = filt['idx']
-		qfac = fit.qfactor(exp, cal, idx)
+		qfac = fit.qfactor(filt, ensembleAverage=self.fopts.params['eav'].get())
 		self.viewData.set_qfac(qfac)
 		return qfac
 
@@ -1836,7 +1827,7 @@ class FittingOptionsFrame(tk.LabelFrame):
 	'pos':'Fit Position',
 	'rad':'SVD Radius/\u00c5',
 	'den':'SVD Grid Spacing/\u00c5',
-	'mod':'Fit Separate Models',
+	'eav':'Ensemble Average',
 	'racs':'Use RACS',
 	'rads':'Use RADS',
 	'taur':'Fit \u03c4r',
@@ -1858,7 +1849,7 @@ class FittingOptionsFrame(tk.LabelFrame):
 		if self.dtype=='PCS':
 			self.set_checkbox('ref', 0, 0, 1, 0)
 			self.set_checkbox('pos', 1, 0, 1)
-			self.set_checkbox('mod', 2, 0, 1, 0)
+			self.set_checkbox('eav', 2, 0, 1, 0)
 			ttk.Separator(self,orient='vertical').grid(
 				row=0,column=1,rowspan=3,sticky='ns')
 			self.set_checkbox('svd', 0, 2, 2)
@@ -1871,12 +1862,12 @@ class FittingOptionsFrame(tk.LabelFrame):
 			self.set_checkbox('rads', 2, 5, 1, 0)
 
 		elif self.dtype=='RDC':
-			self.set_checkbox('mod', 0, 0, 1, 0)
+			self.set_checkbox('eav', 0, 0, 1, 0)
 
 		elif self.dtype=='PRE':
 			self.set_checkbox('iso', 0, 0, 1, 0)
 			self.set_checkbox('pos', 1, 0, 1)
-			self.set_checkbox('mod', 2, 0, 1, 0)
+			self.set_checkbox('eav', 2, 0, 1, 0)
 
 			self.set_checkbox('dchi', 0, 1, 1, 0)
 			self.set_checkbox('taur', 1, 1, 1, 0)
@@ -1889,7 +1880,7 @@ class FittingOptionsFrame(tk.LabelFrame):
 		elif self.dtype=='CCR':
 			self.set_checkbox('iso', 0, 0, 1, 0)
 			self.set_checkbox('pos', 1, 0, 1)
-			self.set_checkbox('mod', 2, 0, 1, 0)
+			self.set_checkbox('eav', 2, 0, 1, 0)
 
 			self.set_checkbox('dchi', 0, 1, 1, 0)
 			self.set_checkbox('taur', 1, 1, 1, 0)
@@ -1960,20 +1951,9 @@ class FittingOptionsFrame(tk.LabelFrame):
 		if self.dtype=='CCR':
 			self.fit_ccr(dataTabs)
 
-
-	def get_data(self, dataTabs, seperateModels=False):
-		if seperateModels:
-			models = self.frm_pdb.models
-		else:
-			models = [None]
-		modeldata = []
+	def get_data(self, dataTabs):
 		if self.dtype in ['PCS','PRE']:
-			for model in models:
-				fitdata = [tab.get_fit_data(model) for tab in dataTabs]
-				data = [d[['atm','exp','err']] for d in fitdata]
-				tmp = model, data
-				modeldata.append(tmp)
-			return modeldata
+			return [tab.get_fit_data() for tab in dataTabs]
 		elif self.dtype=='RDC':
 			for model in models:
 				fitdata = dataTabs.get_fit_data(model)
@@ -2039,62 +2019,55 @@ class FittingOptionsFrame(tk.LabelFrame):
 	def fit_pcs(self, dataTabs):
 		if not self.check_data(dataTabs):
 			return
-		metals = [tab.tensorStart.tensor.copy() for tab in dataTabs]
-		modeldata = self.get_data(dataTabs, 
-			seperateModels=self.params['mod'].get())
 
-		minqfac = 1E50
-		minmod = None
-		minmetal = None
+		metals = [tab.tensorStart.tensor for tab in dataTabs]
+		datas = self.get_data(dataTabs)
+
 		progVar = tk.DoubleVar(value=0.0)
 		progbar = ProgressPopup(self, progVar, "", auto_close=False)
-		for model, data in modeldata:
-			if model is not None:
-				svdline = "Model: {}\nSVD Gridsearch . . .".format(model)
-				nlrline = "Model: {}\nNLR Fitting . . .".format(model)
-			else:
-				svdline = "SVD Gridsearch . . ."
-				nlrline = "NLR Fitting . . ."
 
-			if self.params['svd'].get():
-				progbar.set_label(svdline)
-				progVar.set(0.0)
-				radius = float(self.fields['rad'].get())
-				points = int(radius/float(self.fields['den'].get()))
-				if points<1:
-					points = 1
-				ref = self.params['ref'].get()
-				metals, calc, qfacs = fit.svd_gridsearch_fit_metal_from_pcs(
-					metals, data, origin=None, radius=radius, points=points, 
-					offsetShift=ref, progress=progVar)
+		svdline = "SVD Gridsearch . . ."
+		nlrline = "NLR Fitting . . ."
 
-			if self.params['nlr'].get():
-				progbar.set_label(nlrline)
-				progVar.set(1.0)
-				pars = self.get_params()
-				metals, calc, qfacs = fit.nlr_fit_metal_from_pcs(
-					metals, data, pars,
-					userads=self.params['rads'].get(), 
-					useracs=self.params['racs'].get())
+		if self.params['svd'].get():
+			progbar.set_label(svdline)
+			progVar.set(0.0)
+			radius = float(self.fields['rad'].get())
+			points = int(radius/float(self.fields['den'].get()))
+			if points<1:
+				points = 1
+			ref = self.params['ref'].get()
+			metals, calcs = fit.svd_gridsearch_fit_metal_from_pcs(
+				metals, datas, 
+				radius=radius, 
+				points=points, 
+				offsetShift=ref, 
+				ensembleAverage=self.params['eav'].get(),
+				progress=progVar)
 
-			if self.params['mod'].get():
-				qfac = np.mean(qfacs)
-				if qfac<minqfac:
-					minmod = model
-					minmetals = [m.copy() for m in metals]
-					minqfac = qfac
+		if self.params['nlr'].get():
+			progbar.set_label(nlrline)
+			progVar.set(0.0)
+			pars = self.get_params()
+			metals, calcs = fit.nlr_fit_metal_from_pcs(
+				metals, datas, pars,
+				userads=self.params['rads'].get(), 
+				useracs=self.params['racs'].get(),
+				ensembleAverage=self.params['eav'].get(),
+				progress=progVar)
 
 		progbar.death()
-		if self.params['mod'].get():
-			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
-			messagebox.showinfo("Model with best fit found", 
-				line.format(minmod, minqfac))
-			metals = minmetals
+
+		# if self.params['mod'].get():
+			# line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
+			# messagebox.showinfo("Model with best fit found", 
+				# line.format(minmod, minqfac))
+			# metals = minmetals
 
 		for tab, metal in zip(dataTabs, metals):
 			tab.tensorFit.tensor = metal.copy()
-			if minmod is not None:
-				tab.viewData.set_current_model(minmod)
+			# if minmod is not None:
+				# tab.viewData.set_current_model(minmod)
 			tab.update(0)
 			tab.back_calc()
 
@@ -2672,7 +2645,7 @@ ref : Allows fitting of an offset that shifts the entire PCS list by a given val
 pos : Option to disable fitting of the tensor position. Note that the SVD grid search for PCS will collapse to a single point if the position is constrained.
 rad : Radius of the SVD grid search sphere. This is taken with origin about the initial tensor position
 den : The points per Angstrom to be taken in the SVD grid search sphere.
-mod : When selected, fitting is conducted separately for each model specified. The best fitting tensor of a given model is then taken.
+eav : When selected, calculations and fitting are performed with ensemble averaging between models of the PDB file.
 racs : Residual anisotropic chemical shifts are included in the calculation. Fitting with RACS is only achieved with the NLR algorithm.
 rads : Residual anisotropic dipolar shifts are included in the calculation. Fitting with RADS is only achieved with the NLR algorithm.
 taur : The rotational correlation time is included as a parameter for fitting during the calculation.

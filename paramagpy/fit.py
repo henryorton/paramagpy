@@ -174,11 +174,11 @@ def svd_calc_metal_from_pcs(pos, pcs, idx, errors):
 	d = 2 * x * z
 	e = 2 * y * z
 	mat = (1./(4.*np.pi*dist**5)) * np.array([a,b,c,d,e]) / errors
-	mat = np.array([np.bincount(idx, weights=col) for col in mat])*1E-24
+	mat = np.array([np.bincount(idx, weights=col) for col in mat])*floatscale
 	matinv = np.linalg.pinv(mat)
-	sol = matinv.T.dot(pcs*1E-6)*1E-24
-	calc = mat.T.dot(sol)
-	return calc, sol
+	sol = matinv.T.dot(pcs*1E-6)
+	calc = mat.T.dot(sol)*1E6
+	return calc, sol*floatscale
 
 
 def svd_calc_metal_from_pcs_offset(pos, pcs, idx, errors):
@@ -211,6 +211,7 @@ def svd_calc_metal_from_pcs_offset(pos, pcs, idx, errors):
 		sol is the solution to the linearised PCS equation and 
 		consists of the tensor matrix elements and offset
 	"""
+	floatscale = 1E-24
 	dist = np.linalg.norm(pos, axis=1)
 	x, y, z = pos.T
 	a = x**2 - z**2
@@ -220,12 +221,12 @@ def svd_calc_metal_from_pcs_offset(pos, pcs, idx, errors):
 	e = 2 * y * z
 	scale = 1./(4.*np.pi*dist**5)
 	mat = scale * np.array([a,b,c,d,e,1E26/scale]) / errors
-	mat = np.array([np.bincount(idx, weights=col) for col in mat])*1E-24
+	mat = np.array([np.bincount(idx, weights=col) for col in mat])*floatscale
 	matinv = np.linalg.pinv(mat)
-	sol = matinv.T.dot(pcs*1E-6)*1E-24
+	sol = matinv.T.dot(pcs*1E-6)
+	calc = mat.T.dot(sol)*1E6
 	sol[-1] *= 1E26
-	calc = mat.T.dot(sol)
-	return calc, sol
+	return calc, sol*floatscale
 
 
 def svd_gridsearch_fit_metal_from_pcs(initMetals, dataArrays, ensembleAverage=False,
@@ -353,7 +354,7 @@ def svd_gridsearch_fit_metal_from_pcs(initMetals, dataArrays, ensembleAverage=Fa
 		fitMetals.append(mAvg)
 
 	for m, data in zip(fitMetals, dataArrays):
-		d = extract_atom_data(dataArray, csa=False, separateModels=False)[0]
+		d = extract_atom_data(data, csa=False, separateModels=False)[0]
 		data['cal'] = m.fast_pcs(d['pos'])
 
 	if progress:
@@ -437,12 +438,13 @@ def nlr_fit_metal_from_pcs(initMetals, dataArrays,
 			m.par['oth'] = slice(len(pospars) + i*len(otherpars), 
 								  len(pospars) + (i+1)*len(otherpars))
 
+	tot = len(datas)
+	prog = 0.0
 	for mdl in datas:
 		data = datas[mdl]
 		startpars = data[0][0].get_params(pospars)
 		for m, _ in data:
 			startpars += m.get_params(otherpars)
-
 		def cost(args):
 			score = 0.0
 			for m, d in data:
@@ -460,6 +462,9 @@ def nlr_fit_metal_from_pcs(initMetals, dataArrays,
 			return score
 
 		fmin_bfgs(cost, startpars, disp=False)
+		if progress:
+			prog += 1
+			progress.set(prog/tot)
 
 	fitMetals = []
 	for metalAvg in metalAvgs:
@@ -469,7 +474,7 @@ def nlr_fit_metal_from_pcs(initMetals, dataArrays,
 		fitMetals.append(mAvg)
 
 	for m, data in zip(fitMetals, dataArrays):
-		d = extract_atom_data(dataArray, csa=useracs, separateModels=False)[0]
+		d = extract_atom_data(data, csa=useracs, separateModels=False)[0]
 		data['cal'] = m.fast_pcs(d['pos'])
 		if userads:
 			data['cal'] += m.fast_rads(d['pos'])
@@ -482,9 +487,44 @@ def nlr_fit_metal_from_pcs(initMetals, dataArrays,
 	return fitMetals, dataArrays
 
 
-def pcs_fit_error_monte_carlo(initMetals, pcss, iterations,
+def metal_standard_deviation(metals, params):
+	"""
+	Calculate the standard deviation in parameters <params> for a
+	list of metal objects <metals>.
+
+	Parameters
+	----------
+	metals : list of Metal objects
+		the metals for which the standard deviation in parameters
+		will be calculated
+	params : list of str
+		the parameters for the standard deviation calculation. 
+		For example ['x','y','z','ax','rh','a','b','g','shift']
+
+	Returns
+	-------
+	std_metal : metal object
+		the returned metal object has attributes equal to the
+		standard deviation in the given parameter.
+		All other attributes are zero.
+	"""
+	std_metals = []
+	all_param_values = []
+	for metal in metals:
+		all_param_values.append(metal.get_params(params))
+
+	std_params = {}
+	for param, values in zip(params, zip(*all_param_values)):
+		std_params[param] = np.std(values)
+
+	std_metal = metal.__class__(temperature=0.0, B0=0.0)
+	std_metal.set_params(std_params.items())
+	return std_metal
+
+
+def pcs_fit_error_monte_carlo(initMetals, dataArrays, iterations,
 	params=('x','y','z','ax','rh','a','b','g'),
-	sumIndices=None, userads=False, useracs=False, progress=None):
+	ensembleAverage=False, userads=False, useracs=False, progress=None):
 	"""
 	Analyse uncertainty of PCS fit by Monte-Carlo simulation
 	This repeatedly adds noise to experimental PCS data and fits the tensor.
@@ -535,45 +575,30 @@ def pcs_fit_error_monte_carlo(initMetals, pcss, iterations,
 		These are stored within the metal object. All unfitted parameters 
 		are zero.
 	"""
-	data = [extract_data(pcs, csa=useracs) for pcs in pcss]
 
-	if sumIndices is not None:
-		for s, d in zip(sumIndices, datas):
-			d['idx'] = s
-
-	sample_metals = []
-
+	sampleMetals = []
 	for i in range(iterations):
-		pcss_noisy = []
-		for d in data:
-			noisey = d['val'] + (np.random.uniform(low=-1, high=1, 
-				size=len(d['err'])))*d['err']
-			tmp = zip(d['atm'], noisey, d['err'])
-			pcss_noisy.append(list(tmp))
-		metals, _, _ = nlr_fit_metal_from_pcs(initMetals, pcss_noisy, params, 
-			sumIndices, userads, useracs, progress=None)
-		
-		sample_metals.append(metals)
+		newInitMetals = []
+		newDataArrays = []
+		for m, d in zip(initMetals, dataArrays):
+			newInitMetals.append(m.copy())
+			d['exp'] += d['err'] * np.random.uniform(low=-1, high=1, size=len(d))
+			newDataArrays.append(d)
+
+		metals, _ = nlr_fit_metal_from_pcs(newInitMetals, newDataArrays, params=params, 
+			ensembleAverage=ensembleAverage, userads=userads, useracs=useracs)
+
+		sampleMetals.append(metals)
 
 		if progress:
 			progress.set(float(i+1)/iterations)
 
-	sample_metals = list(zip(*sample_metals))
-	std_metals = []
-	for metal_set in sample_metals:
-		all_param_values = []
-		for metal in metal_set:
-			all_param_values.append(metal.get_params(params))
+	sampleMetals = list(zip(*sampleMetals))
+	stdMetals = []
+	for metals in sampleMetals:
+		stdMetals.append(metal_standard_deviation(metals, params))
 
-		std_params = {}
-		for param, values in zip(params, zip(*all_param_values)):
-			std_params[param] = np.std(values)
-
-		std_metal = metal.__class__(temperature=0.0, B0=0.0)
-		std_metal.set_params(std_params.items())
-		std_metals.append(std_metal)
-
-	return sample_metals, std_metals
+	return sampleMetals, stdMetals
 
 
 def pcs_fit_error_bootstrap(initMetals, pcss, iterations, fraction,
@@ -853,7 +878,7 @@ def nlr_fit_metal_from_pre(initMetals, dataArrays, rtypes, params=('x','y','z'),
 		fitMetals.append(mAvg)
 
 	for m, data in zip(fitMetals, dataArrays):
-		d = extract_atom_data(dataArray, csa=usecsa, separateModels=False)[0]
+		d = extract_atom_data(data, csa=usecsa, separateModels=False)[0]
 		data['cal'] = m.fast_pre(d['pos'], d['gam'], m.par['rtp'], 
 				dsa=usedsa, sbm=usesbm, gsbm=usegsbm, csaarray=d['xsa'])
 
@@ -909,7 +934,7 @@ def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx, errors):
 	return calc, sol
 
 
-def svd_fit_metal_from_rdc(metal, rdc, sumIndices=None):
+def svd_fit_metal_from_rdc(initMetal, dataArray, ensembleAverage=False):
 	"""
 	Fit deltaChi tensor to RDC values using SVD algorithm.
 	Note this is a weighted SVD calculation which takes into account
@@ -940,79 +965,35 @@ def svd_fit_metal_from_rdc(metal, rdc, sumIndices=None):
 	qfac : float
 		the qfactor judging the fit quality
 	"""
-	d = extract_rdc(rdc)
-	if sumIndices is not None:
-		d['idx'] = sumIndices
-	pfarray = -3*(metal.MU0 * d['gam'] * metal.HBAR) / (8 * np.pi**2)
-	rdc_parameterised = np.bincount(d['idx'], 
-		weights=d['val'] / (pfarray * d['err']))
-	fitMetal = metal.copy()
-	_, sol = svd_calc_metal_from_rdc(d['pos'], rdc_parameterised, 
-		d['idx'], d['err'])
-	fitMetal.upper_triang_alignment = sol
-	calculated = fitMetal.fast_rdc(d['pos'], d['gam'])
-	qfac = qfactor(d['val'], calculated, d['idx'])
-	return fitMetal, calculated, qfac
+	datas = {}
+	metalAvgs = []
+	if ensembleAverage:
+		d = extract_rdc_data(dataArray, separateModels=False)[0]
+		m = initMetal.copy()
+		metalAvgs.append(m)
+		datas[0] = m, d
+	else:
+		for d in extract_rdc_data(dataArray, separateModels=True):
+			mdl = d['mdl'][0]
+			m = initMetal.copy()
+			metalAvgs.append(m)
+			datas[mdl] = m, d
 
+	for mdl in datas:
+		m, d = datas[mdl]
+		pfarray = -3*(m.MU0 * d['gam'] * m.HBAR) / (8 * np.pi**2)
+		rdc_parameterised = np.bincount(d['idx'], weights=d['exp'] / (pfarray * d['err']))
+		calculated, solution = svd_calc_metal_from_rdc(d['pos'], rdc_parameterised, d['idx'], d['err'])
+		m.upper_triang_alignment = solution
 
-def nlr_fit_metal_from_rdc(metal, rdc, params=('ax','rh','a','b','g'), 
-	sumIndices=None, progress=None):
-	"""
-	Fit deltaChi tensor to RDC values using non-linear regression.
-
-	Parameters
-	----------
-	metal : Metal object
-		the starting metal for fitting
-	rdc : the RDC dataset
-		each RDC dataset has structure [Atom, value, error], where Atom is 
-		an Atom object, value is the PCS/RDC/PRE value
-		and error is the uncertainty
-	params : list of str, optional
-		the parameters to be fit. 
-		this defaults to ['ax','rh','a','b','g']
-	sumIndices : array of ints, optional
-		the list contains an index assigned to each atom. 
-		Common indices determine summation between models 
-		for ensemble averaging.
-		If None, defaults to atom serial number to determine summation 
-		between models.
-	progress : object, optional
-		to keep track of the calculation, progress.set(x) is called each
-		iteration and varies from 0.0 -> 1.0 when the calculation is complete.
-
-	Returns
-	-------
-	fitMetal : Metal object
-		the fitted metal by NLR to the RDC data provided
-	calculated : array of floats
-		the calculated RDC values
-	qfac : float
-		the qfactor judging the fit quality
-	"""
-	d = extract_rdc(rdc)
-	if sumIndices is not None:
-		d['idx'] = sumIndices
-	fitMetal = metal.copy()
-
-	def cost(args):
-		fitMetal.set_params(zip(params, args))
-		calrdc = fitMetal.fast_rdc(d['pos'], d['gam'])
-		diff = (calrdc - d['val']) / d['err']
-		selectiveSum = np.bincount(d['idx'], weights=diff)
-		score = np.sum(selectiveSum**2)
-		return score
-
-	startpars = fitMetal.get_params(params)
-	fmin_bfgs(cost, startpars, disp=False)
+	fitMetal = metalAvgs[0].copy()
+	fitMetal.average(metalAvgs)
 	fitMetal.set_utr()
-	calculated = fitMetal.fast_rdc(d['pos'], d['gam'])
-	qfac = qfactor(d['val'], calculated, d['idx'])
 
-	if progress:
-		progress.set(1.0)
+	d = extract_rdc_data(dataArray, separateModels=False)[0]
+	dataArray['cal'] = m.fast_rdc(d['pos'], d['gam'])
 
-	return fitMetal, calculated, qfac
+	return fitMetal, dataArray
 
 
 def nlr_fit_metal_from_ccr(initMetals, dataArrays, params=('x','y','z'), 
@@ -1059,7 +1040,7 @@ def nlr_fit_metal_from_ccr(initMetals, dataArrays, params=('x','y','z'),
 	if len(initMetals)!=len(dataArrays):
 		raise ValueError("initMetals and dataArrays must have same length")
 
-	datas = {0:[]}
+	datas = {}
 	metalAvgs = []
 	for metal, dataArray in zip(initMetals, dataArrays):
 		metalAvg = []
@@ -1067,9 +1048,11 @@ def nlr_fit_metal_from_ccr(initMetals, dataArrays, params=('x','y','z'),
 			tmp = fit.extract_ccr_data(dataArray, separateModels=False)[0]
 			m = metal.copy()
 			metalAvg.append(m)
-			datas[0].append((m, tmp))
+			if 0 not in datas:
+				datas[0] = []
+			datas[0].append((m, d))
 		else:
-			for d in fit.extract_ccr_data(dataArray, separateModels=True):
+			for d in extract_ccr_data(dataArray, separateModels=True):
 				mdl = d['mdl'][0]				
 				if mdl not in datas:
 					datas[mdl] = []

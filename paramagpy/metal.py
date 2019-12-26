@@ -256,10 +256,10 @@ class Metal(object):
 		('Ce', ( 5./2., 6./7. , 0.133E-12)),
 		('Pr', ( 4./1., 4./5. , 0.054E-12)),
 		('Nd', ( 9./2., 8./11., 0.210E-12)),
-		('Pm', ( 4./1., 3./5. , np.nan   )),
+		('Pm', ( 4./1., 3./5. , 0.0      )),
 		('Sm', ( 5./2., 2./7. , 0.074E-12)),
 		('Eu', ( 2./1., 3./2. , 0.015E-12)),
-		('Gd', ( 7./2., 2./1. , np.nan   )),
+		('Gd', ( 7./2., 2./1. , 0.0      )),
 		('Tb', ( 6./1., 3./2. , 0.251E-12)),
 		('Dy', (15./2., 4./3. , 0.240E-12)),
 		('Ho', ( 8./1., 5./4. , 0.209E-12)),
@@ -298,9 +298,6 @@ class Metal(object):
 		'B0', 
 		'taur'
 		)
-
-	# A dictionary of volatile parameters used during fitting
-	par = {}
 
 	# Indices defining 5 unique elements of 3x3 tensor anisotropy
 	upper_coords = ((0,1,0,0,1),(0,1,1,2,2))
@@ -351,6 +348,9 @@ class Metal(object):
 		self.B0 = B0
 		self.taur = taur
 
+		# A dictionary of volatile parameters used during fitting
+		self.par = {}
+
 	def __str__(self):
 		return str(self.tensor)
 
@@ -368,6 +368,8 @@ class Metal(object):
 		.. math::
 			\\tau_c = \\frac{1}{\\frac{1}{\\tau_r}+\\frac{1}{T_{1e}}}
 		"""
+		if self.taur==0.0 or self.t1e==0.0:
+			raise ValueError("You need to set both taur and t1e attributes")
 		return 1./(1./self.taur + 1./self.t1e)
 
 	def copy(self):
@@ -650,7 +652,7 @@ class Metal(object):
 
 	@isotropy.setter
 	def isotropy(self, newIsotropy):
-		if newIsotropy<0:
+		if newIsotropy<=0:
 			newIsotropy = 0.0
 		self.mueff = ((newIsotropy*3*self.K*self.temperature) / self.MU0)**0.5
 
@@ -672,10 +674,11 @@ class Metal(object):
 
 	@g_isotropy.setter
 	def g_isotropy(self, newIsotropy):
-		if newIsotropy<0:
-			newIsotropy = 0.0
-		self.t1e = (newIsotropy * self.MU0) / (
-			self.isotropy * self.K * self.temperature)
+		if newIsotropy<=0 or self.isotropy<=0:
+			self.t1e = 0.0
+		else:	
+			self.t1e = (newIsotropy * self.MU0) / (
+				self.isotropy * self.K * self.temperature)
 
 	@property
 	def rotationMatrix(self):
@@ -1963,10 +1966,6 @@ class Metal(object):
 	def save(self, fileName='tensor.txt'):
 		with open(fileName, 'w') as o:
 			o.write(self.info(comment=False))
-
-
-
-
 
 
 def make_tensor(x, y, z, axial, rhombic, 
