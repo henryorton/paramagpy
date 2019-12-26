@@ -21,15 +21,9 @@ pre = calb.parse(rawDataPRE)
 rdc = ubi.parse(rawDataRDC)
 ccr = myo.parse(rawDataCCR)
 
-
-
-
-
-
-
 # m0 = metal.Metal(position=[6.48348859e-10,  7.19131407e-10, -3.56399432e-10])
-# m0 = metal.Metal(position=[25.786E-10,   9.515E-10,   6.558E-10])
-m0 = metal.Metal()
+m0 = metal.Metal(position=[25.786E-10,   9.515E-10,   6.558E-10])
+# m0 = metal.Metal()
 
 # m0 = metal.load_tensor('./examples/pre_fit_proton/calbindin_Er_H_R2_600_tensor.txt')
 # m0.position = np.array([6.48348859e-10,  7.19131407e-10, -3.56399432e-10])
@@ -44,16 +38,23 @@ ensembleAverage = False
 # print(mfit.info())
 # print(mfit.metalAvg)
 
+# print(np.random.choice(pcs, 10, replace=False))
 
-mfit, dat = fit.svd_gridsearch_fit_metal_from_pcs(initMetals, dataArrays, points=10, radius=30, ensembleAverage=ensembleAverage, offsetShift=True)
+# mfit, dat = fit.svd_gridsearch_fit_metal_from_pcs(initMetals, dataArrays, points=10, radius=30, ensembleAverage=ensembleAverage, offsetShift=True)
 
-for m in mfit:
-	print(m.info())
+# for m in mfit:
+# 	print(m.info())
 
-# [mfit], [cal] = fit.nlr_fit_metal_from_pcs(initMetals, dataArrays, ensembleAverage=True)
+# [mfit, m], [cal, c] = fit.nlr_fit_metal_from_pcs(initMetals, dataArrays, ensembleAverage=False)
+
+# print(mfit.info())
+# print(fit.qfactor(cal, calDenominator=True))
 
 # met, std = fit.pcs_fit_error_monte_carlo(initMetals, dataArrays, 100)
+# met, std = fit.pcs_fit_error_bootstrap(initMetals, dataArrays, 10, 0.4)
 
+# for m in std:
+# 	print(m.info())
 
 # print(std[0].info())
 

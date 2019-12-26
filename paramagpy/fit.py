@@ -601,9 +601,9 @@ def pcs_fit_error_monte_carlo(initMetals, dataArrays, iterations,
 	return sampleMetals, stdMetals
 
 
-def pcs_fit_error_bootstrap(initMetals, pcss, iterations, fraction,
+def pcs_fit_error_bootstrap(initMetals, dataArrays, iterations, fraction,
 	params=('x','y','z','ax','rh','a','b','g'), 
-	sumIndices=None, userads=False, useracs=False, progress=None):
+	ensembleAverage=False, userads=False, useracs=False, progress=None):
 	"""
 	Analyse uncertainty of PCS fit by Bootstrap methods.
 	This repeats the tensor fitting, but each time samples a fraction
@@ -660,52 +660,33 @@ def pcs_fit_error_bootstrap(initMetals, pcss, iterations, fraction,
 	"""
 	if not (0.0<fraction<1.0):
 		raise ValueError("The bootstrap sample fraction must be between 0 and 1")
-	
-	data = [extract_data(pcs, csa=useracs) for pcs in pcss]
 
-	if sumIndices is not None:
-		for s, d in zip(sumIndices, datas):
-			d['idx'] = s
-
-	sample_metals = []
-
+	sampleMetals = []
 	for i in range(iterations):
-		pcss_trunc = []
-		sumIndices_trunc = []
-		for d in data:
-			unique_idx = np.unique(d['idx'])
-			chosen_idx = np.random.choice(unique_idx, 
-				int(len(unique_idx)*(fraction)), replace=False)
-			mask = np.isin(d['idx'], chosen_idx)
-			idxs_trunc = d['idx'][mask]
-			sumIndices_trunc.append(idxs_trunc)
-			pcs_trunc = np.array(list(zip(d['atm'], d['val'], d['err'])))[mask]
-			pcss_trunc.append(pcs_trunc.tolist())
-		metals, _, _ = nlr_fit_metal_from_pcs(initMetals, pcss_trunc, params, 
-			sumIndices_trunc, userads, useracs, progress=None)
-		sample_metals.append(metals)
+		newInitMetals = []
+		newDataArrays = []
+		for m, d in zip(initMetals, dataArrays):
+			newInitMetals.append(m.copy())
+			d = np.random.choice(d, int(fraction*len(d)), replace=False)
+			newDataArrays.append(d)
+
+		metals, _ = nlr_fit_metal_from_pcs(newInitMetals, newDataArrays, params=params, 
+			ensembleAverage=ensembleAverage, userads=userads, useracs=useracs)
+
+		sampleMetals.append(metals)
+
 		if progress:
 			progress.set(float(i+1)/iterations)
 
-	sample_metals = list(zip(*sample_metals))
-	std_metals = []
-	for metal_set in sample_metals:
-		all_param_values = []
-		for metal in metal_set:
-			all_param_values.append(metal.get_params(params))
+	sampleMetals = list(zip(*sampleMetals))
+	stdMetals = []
+	for metals in sampleMetals:
+		stdMetals.append(metal_standard_deviation(metals, params))
 
-		std_params = {}
-		for param, values in zip(params, zip(*all_param_values)):
-			std_params[param] = np.std(values)
-
-		std_metal = metal.__class__(temperature=0.0, B0=0.0)
-		std_metal.set_params(std_params.items())
-		std_metals.append(std_metal)
-
-	return sample_metals, std_metals
+	return sampleMetals, stdMetals
 
 
-def qfactor(dataArray, ensembleAverage=False):
+def qfactor(dataArray, ensembleAverage=False, calDenominator=False):
 	"""
 	Calculate the Q-factor to judge tensor fit quality
 
@@ -744,10 +725,18 @@ def qfactor(dataArray, ensembleAverage=False):
 	diff = dataArray['exp'] - dataArray['cal']
 	if ensembleAverage:
 		numer = np.sum(np.bincount(dataArray['idx'], weights=diff)**2)
-		denom = np.sum(np.bincount(dataArray['idx'], weights=dataArray['exp'])**2)
+		if calDenominator:
+			tmp = np.abs(dataArray['exp']) + np.abs(dataArray['cal'])
+		else:
+			tmp = dataArray['exp']
+		denom = np.sum(np.bincount(dataArray['idx'], weights=tmp)**2)
 	else:
 		numer = np.sum(diff**2)
-		denom = np.sum(dataArray['exp']**2)
+		if calDenominator:
+			tmp = np.abs(dataArray['exp']) + np.abs(dataArray['cal'])
+		else:
+			tmp = dataArray['exp']
+		denom = np.sum(np.bincount(dataArray['idx'], weights=tmp)**2)
 	return (numer/denom)**0.5
 
 
