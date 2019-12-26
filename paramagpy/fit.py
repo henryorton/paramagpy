@@ -680,7 +680,7 @@ def pcs_fit_error_bootstrap(initMetals, pcss, iterations, fraction,
 	return sample_metals, std_metals
 
 
-def qfactor(experiment, calculated, sumIndices=None):
+def qfactor(dataArray, ensembleAverage=False):
 	"""
 	Calculate the Q-factor to judge tensor fit quality
 
@@ -714,18 +714,15 @@ def qfactor(experiment, calculated, sumIndices=None):
 	qfactor : float
 		the Q-factor
 	"""
-	experiment = np.array(experiment)
-	calculated = np.array(calculated)
-
-	if len(experiment)==0:
+	if len(dataArray)==0:
 		return np.nan
-	if sumIndices is None:
-		idxs = np.arange(len(experiment))
+	diff = dataArray['exp'] - dataArray['cal']
+	if ensembleAverage:
+		numer = np.sum(np.bincount(dataArray['idx'], weights=diff)**2)
+		denom = np.sum(np.bincount(dataArray['idx'], weights=dataArray['exp'])**2)
 	else:
-		idxs = clean_indices(sumIndices)
-	diff = experiment - calculated
-	numer = np.sum(np.bincount(idxs, weights=diff)**2)
-	denom = np.sum(np.bincount(idxs, weights=experiment)**2)
+		numer = np.sum(diff**2)
+		denom = np.sum(dataArray['exp']**2)
 	return (numer/denom)**0.5
 
 
@@ -1087,36 +1084,6 @@ def nlr_fit_metal_from_ccr(initMetals, dataArrays, params=('x','y','z'),
 
 
 
-
-
-
-def ensemble_average(atoms, *values):
-	if type(atoms[0]) in (list, tuple):
-		dtype = 'RDC'
-	else:
-		dtype = 'other'
-
-	d = {}
-	if dtype=='RDC':
-		for x in zip(atoms, *values):
-			key = unique_pairing(x[0][0].serial_number, x[0][1].serial_number)
-			if key not in d:
-				d[key] = []
-			d[key].append(x[1:])
-
-	else:
-		for x in zip(atoms, *values):
-			key = x[0].serial_number
-			if key not in d:
-				d[key] = []
-			d[key].append(x[1:])
-
-	out = []
-	for x in d.values():
-		vals = [sum(i)/float(len(i)) for i in zip(*x)]
-		out.append(vals)
-
-	return list(zip(*out))
 
 
 

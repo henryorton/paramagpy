@@ -26,8 +26,13 @@ initMetals = [m0]
 dataArrays = [pcs]
 ensembleAverage = False
 
-[mfit], [cal] = fit.svd_gridsearch_fit_metal_from_pcs(initMetals, dataArrays, points=1, radius=0.0, ensembleAverage=ensembleAverage)
+# [mfit], [cal] = fit.svd_gridsearch_fit_metal_from_pcs(initMetals, dataArrays, points=1, radius=0.0, ensembleAverage=ensembleAverage)
+# [mfit], [cal] = fit.nlr_fit_metal_from_pcs(initMetals, dataArrays, ensembleAverage=True)
 
+# print(mfit.info())
+
+
+# print(fit.qfactor(cal, ensembleAverage=ensembleAverage))
 
 
 
