@@ -724,7 +724,7 @@ class ErrorSimulationPopup(Popup):
 		except ImportError:
 			print("You need to install matplotlib module for this function")
 			raise
-		title = "Monte Carlo Uncertianty Simulation"
+		title = "Uncertianty Analysis"
 		super().__init__(parent, title)
 
 		self.frm_left = tk.Frame(self)
@@ -751,54 +751,47 @@ class ErrorSimulationPopup(Popup):
 		ttk.Separator(self.frm_opt, orient='vertical').grid(
 			row=0,column=1,rowspan=3,sticky='ns')
 
-		self.varAverage = tk.BooleanVar(value=True)
-		tk.Label(self.frm_opt, text='Models:').grid(
+		tk.Label(self.frm_opt, text='Noise Source:').grid(
 			row=0,column=2,sticky='W')
-		ttk.Radiobutton(self.frm_opt, text='Ensemble Average', 
-			variable=self.varAverage, 
-			value=True).grid(row=1,column=2, sticky='W')
-		ttk.Radiobutton(self.frm_opt, text='Use Current Model', 
-			variable=self.varAverage, 
-			value=False).grid(row=2,column=2, sticky='W')
-
-		ttk.Separator(self.frm_opt, orient='vertical').grid(
-			row=0,column=3,rowspan=3,sticky='ns')
-
+		
 		self.var_error_method = tk.StringVar(value='mc')
+		self.var_error_method.trace("w", self.error_method_changed)
 
-		tk.Label(self.frm_opt, text="Method:").grid(
-			row=0,column=4,sticky='W')
-		ttk.Radiobutton(self.frm_opt, text='Monte Carlo', 
+		but_mdl = ttk.Radiobutton(self.frm_opt, text='Structure Models', 
 			variable=self.var_error_method, 
-			value='mc').grid(row=1,column=4, sticky='W')
-		ttk.Radiobutton(self.frm_opt, text='Bootstrap', 
+			value='md')
+		but_mdl.grid(row=1,column=2, sticky='W')
+		ttk.Radiobutton(self.frm_opt, text='Experimental Uncertainty', 
 			variable=self.var_error_method, 
-			value='bs').grid(row=2,column=4, sticky='W')
+			value='mc').grid(row=2,column=2, sticky='W')
+		ttk.Radiobutton(self.frm_opt, text='Data Fraction', 
+			variable=self.var_error_method, 
+			value='bs').grid(row=3,column=2, sticky='W')
 
 		ttk.Separator(self.frm_opt, orient='vertical').grid(
-			row=0,column=5,rowspan=3,sticky='ns')
+			row=0,column=4,rowspan=3,sticky='ns')
 
 		tk.Label(self.frm_opt, text="Parameters:").grid(
-			row=0,column=6,columnspan=2,sticky='W')
-		tk.Label(self.frm_opt, text="Iterations:").grid(
-			row=1,column=6,sticky='W')
+			row=0,column=5,columnspan=2,sticky='W')
+		lab_iter = tk.Label(self.frm_opt, text="Iterations:")
+		lab_iter.grid(row=1,column=5,sticky='W')
 		self.iterations = NumericEntry(self.frm_opt, None, 200, 
-			formatter="{:d}", dtype=int, onlyPositive=True)
-		self.iterations.grid(row=1,column=7, sticky='W')
-		tk.Label(self.frm_opt, text="Sample Fraction:").grid(
-			row=2,column=6,sticky='W')
+			formatter="{:d}", dtype=int, onlyPositive=True, label=lab_iter)
+		self.iterations.grid(row=1,column=6, sticky='W')
+		lab_frac = tk.Label(self.frm_opt, text="Sample Fraction:")
+		lab_frac.grid(row=2,column=5,sticky='W')
 		self.bootfrac = NumericEntry(self.frm_opt, None, 0.9, 
-			formatter="{:.3f}", dtype=float, onlyPositive=True)
-		self.bootfrac.grid(row=2,column=7, sticky='W')
+			formatter="{:.3f}", dtype=float, onlyPositive=True, label=lab_frac)
+		self.bootfrac.grid(row=2,column=6, sticky='W')
 		
 		ttk.Separator(self.frm_opt, orient='horizontal').grid(
-			row=3,column=0,columnspan=8,sticky='ew')
+			row=4,column=0,columnspan=8,sticky='ew')
 
 		ttk.Button(self.frm_opt, text='Run', 
-			command=self.run).grid(row=4,column=0,columnspan=8,sticky='EW')
+			command=self.run).grid(row=5,column=0,columnspan=8,sticky='EW')
 
 		self.textbox = tk.Text(self, state="disabled", 
-			width=29, height=29)
+			width=29, height=32)
 		self.textbox.pack(side='right')
 
 		self.fig = Figure(figsize=(5, 3), dpi=100)#, tight_layout=True)
@@ -809,9 +802,25 @@ class ErrorSimulationPopup(Popup):
 		self.toolbar = NavigationToolbar2Tk(self.canvas, self.frm_disp)
 		self.toolbar.update()
 
+		if not self.parent.fopts.frm_pdb.has_models():
+			but_mdl.config(state='disabled')
+
 		self.update()
+		self.error_method_changed()
 		self.plot()
 		self.type_tensors()
+
+	def error_method_changed(self, *args):
+		method = self.var_error_method.get()
+		if method=='md':
+			self.iterations.disable()
+			self.bootfrac.disable()
+		elif method=='mc':
+			self.iterations.enable()
+			self.bootfrac.disable()
+		elif method=='bs':
+			self.iterations.enable()
+			self.bootfrac.enable()
 
 	def type_tensors(self, *args):
 		s = "Fitted Tensor:\n"
@@ -828,10 +837,6 @@ class ErrorSimulationPopup(Popup):
 			dataTabs = self.parent.parent.parent.parent.frm_fmul.get_chosen_tabs()
 		else:
 			dataTabs = [self.parent.parent]
-		if self.varAverage.get():
-			model = None
-		else:
-			model = self.parent.parent.viewData.currentModel.get()
 
 		method = self.var_error_method.get()
 		iters = int(self.iterations.floatVar.get())
@@ -839,7 +844,7 @@ class ErrorSimulationPopup(Popup):
 
 		if self.parent.dtype=='PCS':
 			all_metals, std_metal = self.parent.fopts.error_pcs(dataTabs, method, iters, 
-				bsfrac=bsfrac, singleModel=model)
+				bsfrac=bsfrac)
 			self.errorTensor = std_metal
 		elif self.parent.dtype=='PRE':
 			pass
@@ -2058,60 +2063,75 @@ class FittingOptionsFrame(tk.LabelFrame):
 
 		progbar.death()
 
-		# if self.params['mod'].get():
-			# line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
-			# messagebox.showinfo("Model with best fit found", 
-				# line.format(minmod, minqfac))
-			# metals = minmetals
-
 		for tab, metal in zip(dataTabs, metals):
 			tab.tensorFit.tensor = metal.copy()
-			# if minmod is not None:
-				# tab.viewData.set_current_model(minmod)
 			tab.update(0)
 			tab.back_calc()
+
+		if self.frm_pdb.has_models():
+			qs = {mdl:0.0 for mdl in self.frm_pdb.models}
+			for mdl in qs:
+				for calc in calcs:
+					filt = calc[calc['use']]
+					filt = filt[filt['mdl']==mdl]
+					q = fit.qfactor(filt, ensembleAverage=self.params['eav'].get())
+					qs[mdl] += q / len(calcs)
+			qsort = sorted(qs.items(), key=lambda x: x[1])
+			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
+			messagebox.showinfo("Model with best fit found", 
+				line.format(qsort[0][0], qsort[0][1]))
+			tab.viewData.set_current_model(qsort[0][0])
 
 	def error_pcs(self, dataTabs, method, iters, bsfrac=None, singleModel=None):
 		if not self.check_data(dataTabs):
 			return
-		metals = [tab.tensorFit.tensor.copy() for tab in dataTabs]
-		if singleModel is None:
-			modeldata = self.get_data(dataTabs)[0]
-		else:
-			modeldata = self.get_data(dataTabs, seperateModels=True)
-			tmp = filter(lambda x: x[0]==singleModel, modeldata)
-			modeldata = list(tmp)[0]
+		
+		metals = [tab.tensorStart.tensor for tab in dataTabs]
+		datas = self.get_data(dataTabs)
 
+		if method=='md':
+			title = "Structure Sourced Uncertainty Analysis"
 		if method=='mc':
-			title = "Monte Calro Simulation"
+			title = "Experimental Error Sourced Uncertainty Analysis"
 		elif method=='bs':
-			title = "Bootstrapping Simulation"
+			title = "Sample Fractions Sourced Uncertainty Analysis"
 
 		progVar = tk.DoubleVar(value=0.0)
 		progbar = ProgressPopup(self, progVar, 
-			"Repeating NLR with noise . . .",
+			"Repeating NLR fit . . .",
 			title=title, auto_close=False)
 		pars = self.get_params()
-		model, data = modeldata
+		print(pars)
 
-		if method=='mc':
-			all_metals, std_metals = fit.pcs_fit_error_monte_carlo(
-				metals, data, iters,
-				params=pars, 
+		if method=='md':
+			all_metals, std_metals = fit.pcs_fit_error_models(
+				metals, datas,
+				params=pars,
+				ensembleAverage=self.params['eav'].get(),
 				userads=self.params['rads'].get(), 
 				useracs=self.params['racs'].get(), 
 				progress=progVar)
+
+		elif method=='mc':
+			all_metals, std_metals = fit.pcs_fit_error_monte_carlo(
+				metals, datas, iters,
+				params=pars,
+				ensembleAverage=self.params['eav'].get(),
+				userads=self.params['rads'].get(), 
+				useracs=self.params['racs'].get(), 
+				progress=progVar)
+
 		elif method=='bs':
 			all_metals, std_metals = fit.pcs_fit_error_bootstrap(
-				metals, data, iters, bsfrac, 
+				metals, datas, iters, bsfrac, 
 				params=pars,
+				ensembleAverage=self.params['eav'].get(),
 				userads=self.params['rads'].get(), 
 				useracs=self.params['racs'].get(), 
 				progress=progVar)
 
 		progbar.death()
 
-		deviations = {}
 		for tab, am, sm in zip(dataTabs, all_metals, std_metals):
 			if tab.is_current():
 				return am, sm
@@ -2508,6 +2528,12 @@ class PDBFrame(tk.LabelFrame):
 		b = ttk.Button(self, text='Set CSA',command=self.set_csa)
 		# Tooltip(b, tt['selection'])
 		b.grid(row=1,column=4,sticky='EW')
+
+	def has_models(self):
+		if len(self.models)>1:
+			return True
+		else:
+			return False
 
 	def update_views(self, strength=2):
 		"""

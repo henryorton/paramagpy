@@ -471,6 +471,7 @@ def nlr_fit_metal_from_pcs(initMetals, dataArrays,
 		mAvg = metalAvg[0].copy()
 		mAvg.average(metalAvg)
 		mAvg.set_utr()
+		mAvg.par['mav'] = metalAvg
 		fitMetals.append(mAvg)
 
 	for m, data in zip(fitMetals, dataArrays):
@@ -520,6 +521,68 @@ def metal_standard_deviation(metals, params):
 	std_metal = metal.__class__(temperature=0.0, B0=0.0)
 	std_metal.set_params(std_params.items())
 	return std_metal
+
+def pcs_fit_error_models(initMetals, dataArrays,
+	params=('x','y','z','ax','rh','a','b','g'),
+	ensembleAverage=False, userads=False, useracs=False, progress=None):
+	"""
+	
+	The standard deviation of the fitted parameters across each iteration
+	is then reported.
+
+	Parameters
+	----------
+	initMetals : list of Metal objects
+		a list of metals used as starting points for fitting. 
+		a list must always be provided, but may also contain 
+		only one element. If multiple metals are provided, each metal
+		is fitted to their respective PCS dataset by index, but all are 
+		fitted to a common position.
+	pcss : list of PCS datasets
+		each PCS dataset must correspond to an associated metal for fitting.
+		each PCS dataset has structure [Atom, value, error], where Atom is 
+		an Atom object, value is the PCS/RDC/PRE value
+		and error is the uncertainty
+	params : list of str
+		the parameters to be fit. 
+		For example ['x','y','z','ax','rh','a','b','g','shift']
+	sumIndices : list of arrays of ints, optional
+		each index list must correspond to an associated pcs dataset.
+		each index list contains an index assigned to each atom. 
+		Common indices determine summation between models 
+		for ensemble averaging.
+		If None, defaults to atom serial number to determine summation 
+		between models.
+	userads : bool, optional
+		include residual anisotropic dipolar shielding (RADS) during fitting
+	useracs : bool, optional
+		include residual anisotropic chemical shielding (RACS) during fitting.
+		CSA tensors are taken using the <csa> method of atoms.
+	progress : object, optional
+		to keep track of the calculation, progress.set(x) is called each
+		iteration and varies from 0.0 -> 1.0 when the calculation is complete.
+
+	Returns
+	-------
+	sample_metals : list of list of metals
+		the metals fitted by NLR to the PCS data with noise at each iteration
+	std_metals : list of metals
+		the standard deviation in fitted parameters over all iterations of the
+		Monte Carlo simulation.
+		These are stored within the metal object. All unfitted parameters 
+		are zero.
+	"""
+
+	fitMetals, _ = nlr_fit_metal_from_pcs(initMetals, dataArrays, params=params, 
+			ensembleAverage=ensembleAverage, userads=userads, useracs=useracs)
+
+	sampleMetals = [m.par['mav'] for m in fitMetals]
+	stdMetals = []
+	for metals in sampleMetals:
+		stdMetals.append(metal_standard_deviation(metals, params))
+
+	return sampleMetals, stdMetals
+
 
 
 def pcs_fit_error_monte_carlo(initMetals, dataArrays, iterations,
@@ -736,7 +799,7 @@ def qfactor(dataArray, ensembleAverage=False, calDenominator=False):
 			tmp = np.abs(dataArray['exp']) + np.abs(dataArray['cal'])
 		else:
 			tmp = dataArray['exp']
-		denom = np.sum(np.bincount(dataArray['idx'], weights=tmp)**2)
+		denom = np.sum(tmp**2)
 	return (numer/denom)**0.5
 
 
