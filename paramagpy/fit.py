@@ -576,6 +576,9 @@ def pcs_fit_error_models(initMetals, dataArrays,
 	fitMetals, _ = nlr_fit_metal_from_pcs(initMetals, dataArrays, params=params, 
 			ensembleAverage=ensembleAverage, userads=userads, useracs=useracs)
 
+	if progress:
+		progress.set(1.0)
+
 	sampleMetals = [m.par['mav'] for m in fitMetals]
 	stdMetals = []
 	for metals in sampleMetals:
@@ -924,6 +927,8 @@ def nlr_fit_metal_from_pre(initMetals, dataArrays, rtypes, params=('x','y','z'),
 	fitMetals = []
 	for metalAvg in metalAvgs:
 		mAvg = metalAvg[0].copy()
+		mAvg.par['rtp'] = metalAvg[0].par['rtp']
+		mAvg.par['mav'] = metalAvg
 		mAvg.average(metalAvg)
 		mAvg.set_utr()
 		mAvg.metalAvg = metalAvg
@@ -986,7 +991,8 @@ def svd_calc_metal_from_rdc(vec, rdc_parameterised, idx, errors):
 	return calc, sol
 
 
-def svd_fit_metal_from_rdc(initMetal, dataArray, ensembleAverage=False):
+def svd_fit_metal_from_rdc(initMetals, dataArrays,
+	params=('ax','rh','a','b','g'), ensembleAverage=False, progress=None):
 	"""
 	Fit deltaChi tensor to RDC values using SVD algorithm.
 	Note this is a weighted SVD calculation which takes into account
@@ -1017,6 +1023,8 @@ def svd_fit_metal_from_rdc(initMetal, dataArray, ensembleAverage=False):
 	qfac : float
 		the qfactor judging the fit quality
 	"""
+	initMetal = initMetals[0]
+	dataArray = dataArrays[0]
 	datas = {}
 	metalAvgs = []
 	if ensembleAverage:
@@ -1038,14 +1046,19 @@ def svd_fit_metal_from_rdc(initMetal, dataArray, ensembleAverage=False):
 		calculated, solution = svd_calc_metal_from_rdc(d['pos'], rdc_parameterised, d['idx'], d['err'])
 		m.upper_triang_alignment = solution
 
+	if progress:
+		progress.set(1.0)
+
 	fitMetal = metalAvgs[0].copy()
 	fitMetal.average(metalAvgs)
+	fitMetal.par['mav'] = metalAvgs
 	fitMetal.set_utr()
 
 	d = extract_rdc_data(dataArray, separateModels=False)[0]
+	dataArray = dataArray.copy()
 	dataArray['cal'] = m.fast_rdc(d['pos'], d['gam'])
 
-	return fitMetal, dataArray
+	return [fitMetal], [dataArray]
 
 
 def nlr_fit_metal_from_ccr(initMetals, dataArrays, params=('x','y','z'), 
@@ -1145,6 +1158,7 @@ def nlr_fit_metal_from_ccr(initMetals, dataArrays, params=('x','y','z'),
 	fitMetals = []
 	for metalAvg in metalAvgs:
 		mAvg = metalAvg[0].copy()
+		mAvg.par['mav'] = metalAvg
 		mAvg.average(metalAvg)
 		mAvg.set_utr()
 		fitMetals.append(mAvg)
@@ -1158,7 +1172,102 @@ def nlr_fit_metal_from_ccr(initMetals, dataArrays, params=('x','y','z'),
 
 
 
+def fit_error_models(fittingFunction, **kwargs):
+	"""
 
+	"""
+
+	fitMetals, _ = fittingFunction(**kwargs)
+
+	if kwargs.get('progress'):
+			kwargs['progress'].set(1.0)
+
+	if 'params' not in kwargs:
+		kwargs['params'] = fittingFunction.__defaults__[0]
+
+	sampleMetals = [m.par['mav'] for m in fitMetals]
+	stdMetals = []
+	for metals in sampleMetals:
+		stdMetals.append(metal_standard_deviation(metals, kwargs['params']))
+
+	return sampleMetals, stdMetals
+
+
+
+def fit_error_monte_carlo(fittingFunction, iterations, **kwargs):
+	"""
+
+	"""
+	initMetals = kwargs['initMetals']
+	dataArrays = kwargs['dataArrays']
+	sampleMetals = []
+	for i in range(iterations):
+		newInitMetals = []
+		newDataArrays = []
+		for m, d in zip(initMetals, dataArrays):
+			newInitMetals.append(m.copy())
+			d['exp'] += d['err'] * np.random.uniform(low=-1, high=1, size=len(d))
+			newDataArrays.append(d)
+
+		kwargs['initMetals'] = newInitMetals
+		kwargs['dataArrays'] = newDataArrays
+
+		metals, _ = fittingFunction(**kwargs)
+
+		sampleMetals.append(metals)
+
+		if kwargs.get('progress'):
+			kwargs['progress'].set(float(i+1)/iterations)
+
+	sampleMetals = list(zip(*sampleMetals))
+	stdMetals = []
+
+	if 'params' not in kwargs:
+		kwargs['params'] = fittingFunction.__defaults__[0]
+
+	for metals in sampleMetals:
+		stdMetals.append(metal_standard_deviation(metals, kwargs['params']))
+
+	return sampleMetals, stdMetals
+
+
+def fit_error_bootstrap(fittingFunction, iterations, fraction, **kwargs):
+	"""
+
+	"""
+	if not (0.0<fraction<1.0):
+		raise ValueError("The bootstrap sample fraction must be between 0 and 1")
+
+	initMetals = kwargs['initMetals']
+	dataArrays = kwargs['dataArrays']
+	sampleMetals = []
+	for i in range(iterations):
+		newInitMetals = []
+		newDataArrays = []
+		for m, d in zip(initMetals, dataArrays):
+			newInitMetals.append(m.copy())
+			d = np.random.choice(d, int(fraction*len(d)), replace=False)
+			newDataArrays.append(d)
+
+		kwargs['initMetals'] = newInitMetals
+		kwargs['dataArrays'] = newDataArrays
+
+		metals, _ = fittingFunction(**kwargs)
+
+		sampleMetals.append(metals)
+
+		if kwargs.get('progress'):
+			kwargs['progress'].set(float(i+1)/iterations)
+
+	if 'params' not in kwargs:
+		kwargs['params'] = fittingFunction.__defaults__[0]
+
+	sampleMetals = list(zip(*sampleMetals))
+	stdMetals = []
+	for metals in sampleMetals:
+		stdMetals.append(metal_standard_deviation(metals, kwargs['params']))
+
+	return sampleMetals, stdMetals
 
 
 

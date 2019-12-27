@@ -8,7 +8,7 @@ ubi = protein.load_pdb('./examples/data_files/1ubqH.pdb')
 myo = protein.load_pdb('./examples/data_files/1bzrH.pdb')
 
 # Load the PCS data
-rawDataPCS = dataparse.read_pcs('./examples/data_files/calbindin_Er_HN_PCS.npc')
+rawDataPCS = dataparse.read_pcs('./examples/data_files/calbindin_Er_HN_PCS_errors.npc')
 rawDataPCS2 = dataparse.read_pcs('./examples/data_files/calbindin_Tb_HN_PCS.npc')
 rawDataPRE = dataparse.read_pre('./examples/data_files/calbindin_Er_H_R2_600.pre')
 rawDataRDC = dataparse.read_rdc('./examples/data_files/ubiquitin_s57c_c1_Tb_HN.rdc')
@@ -21,7 +21,25 @@ pre = calb.parse(rawDataPRE)
 rdc = ubi.parse(rawDataRDC)
 ccr = myo.parse(rawDataCCR)
 
-m0 = metal.Metal(position=[6.48348859e-10,  7.19131407e-10, -3.56399432e-10])
+
+
+# m0 = metal.Metal(B0=18.8, temperature=308.0)
+
+# m, s = fit.fit_error_bootstrap(fit.nlr_fit_metal_from_pcs, 5, 0.8, initMetals=[m0], dataArrays=[pcs])
+
+# print(s[0].info())
+
+# f = fit.svd_fit_metal_from_rdc
+
+# print(dir(f))
+# print(f.__defaults__)
+
+
+
+
+
+
+# m0 = metal.Metal(position=[6.48348859e-10,  7.19131407e-10, -3.56399432e-10])
 # m0 = metal.Metal(position=[25.786E-10,   9.515E-10,   6.558E-10])
 # m0 = metal.Metal()
 
@@ -29,9 +47,9 @@ m0 = metal.Metal(position=[6.48348859e-10,  7.19131407e-10, -3.56399432e-10])
 # m0.position = np.array([6.48348859e-10,  7.19131407e-10, -3.56399432e-10])
 # m0.taur = 4.2E-9
 
-initMetals = [m0, m0]
-dataArrays = [pcs, pcs2]
-ensembleAverage = False
+# initMetals = [m0, m0]
+# dataArrays = [pcs, pcs2]
+# ensembleAverage = False
 
 
 # met, std = fit.pcs_fit_error_models(initMetals, dataArrays, params=['ax','rh','a','b','g'])
