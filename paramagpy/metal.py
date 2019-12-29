@@ -404,8 +404,8 @@ class Metal(object):
 		Parameters
 		----------
 		lanthanide : str
-			one of ['Ce','Pr','Nd','Pm','Sm','Eu','Gd',
-			        'Tb','Dy','Ho','Er','Tm','Yb']
+			one of 'Ce','Pr','Nd','Pm','Sm','Eu','Gd','Tb',
+			'Dy','Ho','Er','Tm','Yb'
 		set_dichi : bool (optional)
 			if True (default), the tensor anisotropy is set.
 			Otherwise only the isotropy and T1e values are set 
