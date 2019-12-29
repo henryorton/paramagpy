@@ -1,9 +1,8 @@
 Paramagpy 
 =========
 
-
-[![DOI:10.5281/zenodo.3594568 ](https://zenodo.org/badge/130321289.svg)](https://zenodo.org/badge/latestdoi/130321289)
-
+.. image:: https://zenodo.org/badge/130321289.svg
+   :target: https://zenodo.org/badge/latestdoi/130321289
 
 paramagpy is a python module for calculating paramagnetic effects in NMR spectra of proteins. This currently includes fitting of paramagnetic susceptibility tensors to experimental data associated with pseudocontact shifts (PCS) residual dipolar couplings (RDC), paramagnetic relaxation enhancements (PRE) and cross-correlated relaxation (CCR). A GUI allows easy viewing of data and seamless transition between PCS/RDC/PRE/CCR calculations.
 
