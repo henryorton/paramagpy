@@ -1802,18 +1802,14 @@ class Metal(object):
 		mesh : cubic grid array
 			This has shape (n,n,n,3) where n is the number of points
 			along one edge of the grid. Units are meters
-		bounds : tuple (origin, low, high, points)
-			This tuple has information about the bounding box
-
-			origin : array of floats, the (x,y,z) location of mesh vertex
-
-			low : array of ints, the integer location of the first 
-				point in each dimension
-
-			high : array of ints, the integer location of the last 
-				point in each dimension
-
-			points : array of ints, the number of points along each dimension
+		origin : array of floats, 
+			the (x,y,z) location of mesh vertex
+		low : array of ints, the integer location of the first 
+			point in each dimension
+		high : array of ints, the integer location of the last 
+			point in each dimension
+		points : array of ints, 
+			the number of points along each dimension
 
 		"""
 		origin = np.asarray(density * (self.position*1E10 - size/2.0), 
