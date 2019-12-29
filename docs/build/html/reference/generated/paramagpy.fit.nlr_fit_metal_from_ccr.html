@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="paramagpy.fit.nlr_fit_metal_from_pcs" href="paramagpy.fit.nlr_fit_metal_from_pcs.html" />
-    <link rel="prev" title="paramagpy.fit.extract_rdc" href="paramagpy.fit.extract_rdc.html" /> 
+    <link rel="prev" title="paramagpy.fit.metal_standard_deviation" href="paramagpy.fit.metal_standard_deviation.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -34,7 +34,7 @@
           <a href="paramagpy.fit.nlr_fit_metal_from_pcs.html" title="paramagpy.fit.nlr_fit_metal_from_pcs"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="paramagpy.fit.extract_rdc.html" title="paramagpy.fit.extract_rdc"
+          <a href="paramagpy.fit.metal_standard_deviation.html" title="paramagpy.fit.metal_standard_deviation"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
@@ -51,8 +51,10 @@
 <h1>paramagpy.fit.nlr_fit_metal_from_ccr<a class="headerlink" href="#paramagpy-fit-nlr-fit-metal-from-ccr" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="paramagpy.fit.nlr_fit_metal_from_ccr">
-<code class="descclassname">paramagpy.fit.</code><code class="descname">nlr_fit_metal_from_ccr</code><span class="sig-paren">(</span><em>initMetals</em>, <em>ccrs</em>, <em>params=('x'</em>, <em>'y'</em>, <em>'z')</em>, <em>sumIndices=None</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#nlr_fit_metal_from_ccr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.nlr_fit_metal_from_ccr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit deltaChi tensor to CCR values using non-linear regression.</p>
+<code class="descclassname">paramagpy.fit.</code><code class="descname">nlr_fit_metal_from_ccr</code><span class="sig-paren">(</span><em>initMetals</em>, <em>dataArrays</em>, <em>params=('x'</em>, <em>'y'</em>, <em>'z')</em>, <em>ensembleAverage=False</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#nlr_fit_metal_from_ccr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.nlr_fit_metal_from_ccr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit Chi tensor to CCR values using non-linear regression.
+This algorithm applies to CSA/Curie spin cross-correlated relaxation
+for R2 differential line broadening.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -61,30 +63,32 @@
 <li><strong>initMetals</strong> (<em>list of Metal objects</em>) – a list of metals used as starting points for fitting.
 a list must always be provided, but may also contain
 only one element. If multiple metals are provided, each metal
-is fitted to their respective CCR dataset by index, but all are
-fitted to a common position.</li>
-<li><strong>ccrs</strong> (<em>list of CCR datasets</em>) – each CCR dataset must correspond to an associated metal for fitting.
-each CCR dataset has structure [Atom, value, error], where Atom is
-an Atom object, value is the PCS/RDC/PRE/CCR value
-and error is the uncertainty</li>
+is fitted to their respective PRE dataset by index in &lt;dataArrays,
+but all are fitted to a common position.</li>
+<li><strong>dataArrays</strong> (<em>list of PRE dataArray</em>) – each PRE dataArray must correspond to an associated metal for fitting.
+each PRE dataArray has structure determined by
+<a class="reference internal" href="paramagpy.protein.CustomStructure.parse.html#paramagpy.protein.CustomStructure.parse" title="paramagpy.protein.CustomStructure.parse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.protein.CustomStructure.parse()</span></code></a>.</li>
 <li><strong>params</strong> (<em>list of str</em>) – the parameters to be fit.
-For example [‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’,’shift’]
-This defaults to [‘x’,’y’,’z’]</li>
-<li><strong>sumIndices</strong> (<em>list of arrays of ints</em><em>, </em><em>optional</em>) – each index list must correspond to an associated ccr dataset.
-each index list contains an index assigned to each atom.
-Common indices determine summation between models
-for ensemble averaging.
-If None, defaults to atom serial number to determine summation
-between models.</li>
+For example [‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’]</li>
+<li><strong>ensembleAverage</strong> (<em>bool</em><em>, </em><em>optional</em>) – when False, each model of the structure is fit independently.
+The parameters for each fitted tensor are then averaged before
+returning the final averaged tensor.
+When True, the structure models are treated as an ensemble and
+ensemble averaging of calculated PCS/PRE/RDC/CCR values is
+conducted at all stages of fitting to fit a single tensor to all
+models simultaneously. The ‘idx’ column of the dataArray
+determines the ensemble averaging behaviour with common indices
+for atoms between models resulting in their summation.</li>
 <li><strong>progress</strong> (<em>object</em><em>, </em><em>optional</em>) – to keep track of the calculation, progress.set(x) is called each
 iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>metals</strong> (<em>list of metals</em>) – the metals fitted by NLR to the CCR data provided</li>
-<li><strong>calc_ccrs</strong> (<em>list of lists of floats</em>) – the calculated CCR values</li>
-<li><strong>qfactors</strong> (<em>list</em>)</li>
+<li><strong>fitMetals</strong> (<em>list of metals</em>) – a list of the fitted tensors.</li>
+<li><strong>dataArrays</strong> (<em>list of dataArray</em>) – each dataArray is copy of the original dataArray with
+the ‘cal’ column populated with back-calculated values from the
+fitted tensor.</li>
 </ul>
 </p>
 </td>
@@ -102,8 +106,8 @@ iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</li>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="paramagpy.fit.extract_rdc.html"
-                        title="previous chapter">paramagpy.fit.extract_rdc</a></p>
+  <p class="topless"><a href="paramagpy.fit.metal_standard_deviation.html"
+                        title="previous chapter">paramagpy.fit.metal_standard_deviation</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="paramagpy.fit.nlr_fit_metal_from_pcs.html"
                         title="next chapter">paramagpy.fit.nlr_fit_metal_from_pcs</a></p>
@@ -143,7 +147,7 @@ iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</li>
           <a href="paramagpy.fit.nlr_fit_metal_from_pcs.html" title="paramagpy.fit.nlr_fit_metal_from_pcs"
              >next</a> |</li>
         <li class="right" >
-          <a href="paramagpy.fit.extract_rdc.html" title="paramagpy.fit.extract_rdc"
+          <a href="paramagpy.fit.metal_standard_deviation.html" title="paramagpy.fit.metal_standard_deviation"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>

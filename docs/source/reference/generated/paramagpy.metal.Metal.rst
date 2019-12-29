@@ -19,6 +19,7 @@ paramagpy.metal.Metal
                   ~Metal.atom_pre
                   ~Metal.atom_rdc
                   ~Metal.atom_set_position
+                  ~Metal.average
                   ~Metal.ccr
                   ~Metal.copy
                   ~Metal.dipole_shift_tensor
@@ -84,6 +85,7 @@ paramagpy.metal.Metal
                ~Metal.b
                ~Metal.eigenvalues
                ~Metal.fit_scaling
+               ~Metal.fundamental_attributes
                ~Metal.g
                ~Metal.g_eigenvalues
                ~Metal.g_isotropy

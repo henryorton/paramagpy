@@ -64,7 +64,8 @@ This function is generally called by higher methods like
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>pos</strong> (<em>array of</em><em> [</em><em>x</em><em>,</em><em>y</em><em>,</em><em>z</em><em>] </em><em>floats</em>) – the atomic positions in meters</li>
-<li><strong>pcs</strong> (<em>array of floats</em>) – the PCS values in ppm</li>
+<li><strong>pcs</strong> (<em>array of floats</em>) – the PCS values in ppm. Note these should be weighted by the
+experimental uncertainties.</li>
 <li><strong>idx</strong> (<em>array of ints</em>) – an index assigned to each atom. Common indices determine summation
 between models for ensemble averaging.</li>
 <li><strong>errors</strong> (<em>array of floats</em>) – the standard deviation representing experimental uncertainty
@@ -72,12 +73,12 @@ in the measured value</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>tuple</strong> – calc are the calculated PCS values from the fitted tensor
-sol is the solution to the linearised PCS equation and
-consists of the tensor matrix elements and offset</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(calc, sol)</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>calc</strong> (<em>array of floats</em>) – the calculated PCS values from the fitted tensor</li>
+<li><strong>sol</strong> (<em>array of floats</em>) – solution to the linearised PCS equation and
+consists of the tensor 5 matrix elements and offset values</li>
+</ul>
+</p>
 </td>
 </tr>
 </tbody>

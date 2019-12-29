@@ -52,7 +52,7 @@
 \setcounter{tocdepth}{1}
 
 \title{paramagpy Documentation}
-\date{Nov 04, 2019}
+\date{Dec 29, 2019}
 \release{0.44}
 \author{Henry Orton}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -72,7 +72,7 @@
 0.44
 
 \item[{Date}] \leavevmode
-Nov 04, 2019
+Dec 29, 2019
 
 \end{description}\end{quote}
 
@@ -262,7 +262,7 @@ The PCS data is then loaded from a \sphinxcode{\sphinxupquote{.npc}} file using 
 \PYG{n}{rawData} \PYG{o}{=} \PYG{n}{dataparse}\PYG{o}{.}\PYG{n}{read\PYGZus{}pcs}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{../data\PYGZus{}files/calbindin\PYGZus{}Er\PYGZus{}HN\PYGZus{}PCS.npc}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
 \end{sphinxVerbatim}
 
-To associate the experimental PCS value with atoms of the PDB structure, the method {\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.protein.CustomStructure.parse()}}}}} is called on \sphinxcode{\sphinxupquote{rawData}}. The new list \sphinxcode{\sphinxupquote{parsedData}} contains elements \sphinxcode{\sphinxupquote{{[}atom, PCS, Error{]}}}, where \sphinxcode{\sphinxupquote{atom}} is now an atom object from the PDB.
+To associate the experimental PCS value with atoms of the PDB structure, the method {\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.protein.CustomStructure.parse()}}}}} is called on \sphinxcode{\sphinxupquote{rawData}}. The returned array \sphinxcode{\sphinxupquote{parsedData}} has a row for each atom with columns \sphinxcode{\sphinxupquote{{[}mdl,atm,exp,cal,err,idx{]}}}, where \sphinxcode{\sphinxupquote{mdl}} is the model number from the PDB file, \sphinxcode{\sphinxupquote{atm}} is an atom object from the BioPython PDB structure, \sphinxcode{\sphinxupquote{exp}} and \sphinxcode{\sphinxupquote{cal}} are the experimental and calculated values, \sphinxcode{\sphinxupquote{err}} is the experimental uncertainty and \sphinxcode{\sphinxupquote{idx}} is the atom index, used to define ensemble averaging behaviour.
 
 \fvset{hllines={, ,}}%
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
@@ -281,12 +281,12 @@ An initial \({\Delta\chi}\)-tensor is defined by initialising a {\hyperref[\deto
 \PYG{n}{mStart}\PYG{o}{.}\PYG{n}{position} \PYG{o}{=} \PYG{n}{prot}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{A}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{56}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{CA}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{position}
 \end{sphinxVerbatim}
 
-A quick gridsearch is conducted in a sphere of 10 Angstrom with 10 points per radius using the function {\hyperref[\detokenize{reference/generated/paramagpy.fit.svd_gridsearch_fit_metal_from_pcs:paramagpy.fit.svd_gridsearch_fit_metal_from_pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.fit.svd\_gridsearch\_fit\_metal\_from\_pcs()}}}}}. This requires two lists containing the starting metals \sphinxcode{\sphinxupquote{mStart}} and parsed experimental data \sphinxcode{\sphinxupquote{parsedData}}. This function return lists containing a new fitted metal object, the calculated PCS values from the fitted model, and the Q-factor.
+A quick gridsearch is conducted in a sphere of 10 Angstrom with 10 points per radius using the function {\hyperref[\detokenize{reference/generated/paramagpy.fit.svd_gridsearch_fit_metal_from_pcs:paramagpy.fit.svd_gridsearch_fit_metal_from_pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.fit.svd\_gridsearch\_fit\_metal\_from\_pcs()}}}}}. This requires two lists containing the starting metals \sphinxcode{\sphinxupquote{mStart}} and parsed experimental dataArray \sphinxcode{\sphinxupquote{parsedData}}. This function returns lists containing a new fitted metal object, the calculated PCS values from the fitted model.
 
 \fvset{hllines={, ,}}%
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{} Calculate an initial tensor from an SVD gridsearch}
-\PYG{n}{mGuess}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{,} \PYG{n}{qfac} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}gridsearch\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
+\PYG{p}{[}\PYG{n}{mGuess}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}gridsearch\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
 	\PYG{p}{[}\PYG{n}{mStart}\PYG{p}{]}\PYG{p}{,}\PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{,} \PYG{n}{radius}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{n}{points}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{)}
 \end{sphinxVerbatim}
 
@@ -295,15 +295,23 @@ This is then refined using a non-linear regression gradient descent with the fun
 \fvset{hllines={, ,}}%
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{} Refine the tensor using non\PYGZhy{}linear regression}
-\PYG{n}{mFit}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{,} \PYG{n}{qfac} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}\PYG{n}{mGuess}\PYG{p}{,} \PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{)}
+\PYG{p}{[}\PYG{n}{mFit}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}\PYG{p}{[}\PYG{n}{mGuess}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{)}
 \end{sphinxVerbatim}
 
-The fitted tensor parameters are saved by calling the method {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.save:paramagpy.metal.Metal.save}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.metal.Metal.save()}}}}}. Alterntaively they may be displayed using \sphinxcode{\sphinxupquote{print(mFit{[}0{]}.info())}}
+The Q-factor is then calculated using the function :py:func{}`paramagpy.fit.qfactor{}`.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Calculate the Q\PYGZhy{}factor}
+\PYG{n}{qfac} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{qfactor}\PYG{p}{(}\PYG{n}{data}\PYG{p}{)}
+\end{sphinxVerbatim}
+
+The fitted tensor parameters are saved by calling the method {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.save:paramagpy.metal.Metal.save}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.metal.Metal.save()}}}}}. Alterntaively they may be displayed using \sphinxcode{\sphinxupquote{print(mFit.info())}}
 
 \fvset{hllines={, ,}}%
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{} Save the fitted tensor to file}
-\PYG{n}{mFit}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{calbindin\PYGZus{}Er\PYGZus{}HN\PYGZus{}PCS\PYGZus{}tensor.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{mFit}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{calbindin\PYGZus{}Er\PYGZus{}HN\PYGZus{}PCS\PYGZus{}tensor.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
 \end{sphinxVerbatim}
 
 \sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{calbindin\_Er\_HN\_PCS\_tensor.txt}}{]}
@@ -334,12 +342,9 @@ These experimental/calculated PCS values are then plotted in a correlation plot 
 \PYG{k+kn}{from} \PYG{n+nn}{matplotlib} \PYG{k}{import} \PYG{n}{pyplot} \PYG{k}{as} \PYG{n}{plt}
 \PYG{n}{fig}\PYG{p}{,} \PYG{n}{ax} \PYG{o}{=} \PYG{n}{plt}\PYG{o}{.}\PYG{n}{subplots}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{)}\PYG{p}{)}
 
-\PYG{c+c1}{\PYGZsh{} Unpack the experimental values}
-\PYG{n}{atoms}\PYG{p}{,} \PYG{n}{experiment}\PYG{p}{,} \PYG{n}{errors} \PYG{o}{=} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{o}{*}\PYG{n}{parsedData}\PYG{p}{)}
-
 \PYG{c+c1}{\PYGZsh{} Plot the data}
-\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{experiment}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
-	\PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Q\PYGZhy{}factor = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfac}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{cal}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
+	\PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Q\PYGZhy{}factor = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfac}\PYG{p}{)}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Plot a diagonal}
 \PYG{n}{l}\PYG{p}{,} \PYG{n}{h} \PYG{o}{=} \PYG{n}{ax}\PYG{o}{.}\PYG{n}{get\PYGZus{}xlim}\PYG{p}{(}\PYG{p}{)}
@@ -475,37 +480,25 @@ After fitting, a list of fitted metals is returned. The fitted tensor are then w
 \PYG{n}{mStart}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{position} \PYG{o}{=} \PYG{n}{prot}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{A}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{56}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{CA}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{position}
 
 \PYG{c+c1}{\PYGZsh{} Calculate initial tensors from an SVD gridsearch}
-\PYG{n}{mGuess} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}gridsearch\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
+\PYG{n}{mGuess}\PYG{p}{,} \PYG{n}{datas} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}gridsearch\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
 	\PYG{n}{mStart}\PYG{p}{,} \PYG{n}{parsedData}\PYG{p}{,} \PYG{n}{radius}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{n}{points}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Refine the tensors using non\PYGZhy{}linear regression}
 \PYG{n}{fitParameters} \PYG{o}{=} \PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{x}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{y}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{z}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{ax}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{rh}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{a}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{g}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}
-\PYG{n}{mFit} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}\PYG{n}{mGuess}\PYG{p}{,} \PYG{n}{parsedData}\PYG{p}{,} \PYG{n}{fitParameters}\PYG{p}{)}
+\PYG{n}{mFit}\PYG{p}{,} \PYG{n}{datas} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}\PYG{n}{mGuess}\PYG{p}{,} \PYG{n}{parsedData}\PYG{p}{,} \PYG{n}{fitParameters}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Save the fitted tensors to files}
 \PYG{k}{for} \PYG{n}{name}\PYG{p}{,} \PYG{n}{metal} \PYG{o+ow}{in} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Tb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Er}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Yb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{mFit}\PYG{p}{)}\PYG{p}{:}
 	\PYG{n}{metal}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{tensor\PYGZus{}}\PYG{l+s+si}{\PYGZob{}\PYGZcb{}}\PYG{l+s+s2}{.txt}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{name}\PYG{p}{)}\PYG{p}{)}
-
-\PYG{c+c1}{\PYGZsh{} Make experimental and calculated PCS lists}
-\PYG{n}{exp} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
-\PYG{n}{cal} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
-\PYG{k}{for} \PYG{n}{metal}\PYG{p}{,} \PYG{n}{data} \PYG{o+ow}{in} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{n}{mFit}\PYG{p}{,} \PYG{n}{parsedData}\PYG{p}{)}\PYG{p}{:}
-	\PYG{n}{ex} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
-	\PYG{n}{ca} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
-	\PYG{k}{for} \PYG{n}{atom}\PYG{p}{,} \PYG{n}{exp\PYGZus{}pcs}\PYG{p}{,} \PYG{n}{error} \PYG{o+ow}{in} \PYG{n}{data}\PYG{p}{:}
-		\PYG{n}{ex}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{exp\PYGZus{}pcs}\PYG{p}{)}
-		\PYG{n}{ca}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{metal}\PYG{o}{.}\PYG{n}{atom\PYGZus{}pcs}\PYG{p}{(}\PYG{n}{atom}\PYG{p}{)}\PYG{p}{)}
-	\PYG{n}{exp}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{ex}\PYG{p}{)}
-	\PYG{n}{cal}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{ca}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} Plot the correlation \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
 \PYG{k+kn}{from} \PYG{n+nn}{matplotlib} \PYG{k}{import} \PYG{n}{pyplot} \PYG{k}{as} \PYG{n}{plt}
 \PYG{n}{fig}\PYG{p}{,} \PYG{n}{ax} \PYG{o}{=} \PYG{n}{plt}\PYG{o}{.}\PYG{n}{subplots}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{)}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Plot the data}
-\PYG{k}{for} \PYG{n}{e}\PYG{p}{,} \PYG{n}{c}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{n}{colour} \PYG{o+ow}{in} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{n}{exp}\PYG{p}{,} \PYG{n}{cal}\PYG{p}{,} \PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Tb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Er}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Yb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{g}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:}
-	\PYG{n}{qfactor} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{qfactor}\PYG{p}{(}\PYG{n}{e}\PYG{p}{,}\PYG{n}{c}\PYG{p}{)}
-	\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{e}\PYG{p}{,} \PYG{n}{c}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{n}{colour}\PYG{p}{,}
+\PYG{k}{for} \PYG{n}{d}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{n}{colour} \PYG{o+ow}{in} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{n}{datas}\PYG{p}{,} \PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Tb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Er}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Yb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{g}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:}
+	\PYG{n}{qfactor} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{qfactor}\PYG{p}{(}\PYG{n}{d}\PYG{p}{)}
+	\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{d}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{d}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{cal}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{n}{colour}\PYG{p}{,}
 		\PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+si}{\PYGZob{}0:\PYGZcb{}}\PYG{l+s+s2}{ \PYGZhy{} }\PYG{l+s+si}{\PYGZob{}1:5.3f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{name}\PYG{p}{,} \PYG{n}{qfactor}\PYG{p}{)}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Plot a diagonal}
@@ -543,6 +536,7 @@ After fitting, a list of fitted metals is returned. The fitted tensor are then w
 \PYG{n}{B0}    \PYG{o}{\textbar{}}         \PYG{n}{T} \PYG{p}{:}    \PYG{l+m+mf}{18.790}
 \PYG{n}{temp}  \PYG{o}{\textbar{}}         \PYG{n}{K} \PYG{p}{:}   \PYG{l+m+mf}{298.150}
 \PYG{n}{t1e}   \PYG{o}{\textbar{}}        \PYG{n}{ps} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{taur}  \PYG{o}{\textbar{}}        \PYG{n}{ns} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
 \end{sphinxVerbatim}
 
 \sphinxstyleemphasis{Er fitted tensor}
@@ -551,19 +545,20 @@ After fitting, a list of fitted metals is returned. The fitted tensor are then w
 
 \fvset{hllines={, ,}}%
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYG{n}{ax}    \PYG{o}{\textbar{}} \PYG{l+m+mf}{1E\PYGZhy{}32} \PYG{n}{m}\PYG{o}{\PYGZca{}}\PYG{l+m+mi}{3} \PYG{p}{:}    \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{8.421}
+\PYG{n}{ax}    \PYG{o}{\textbar{}} \PYG{l+m+mf}{1E\PYGZhy{}32} \PYG{n}{m}\PYG{o}{\PYGZca{}}\PYG{l+m+mi}{3} \PYG{p}{:}    \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{8.422}
 \PYG{n}{rh}    \PYG{o}{\textbar{}} \PYG{l+m+mf}{1E\PYGZhy{}32} \PYG{n}{m}\PYG{o}{\PYGZca{}}\PYG{l+m+mi}{3} \PYG{p}{:}    \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{4.886}
 \PYG{n}{x}     \PYG{o}{\textbar{}}   \PYG{l+m+mf}{1E\PYGZhy{}10} \PYG{n}{m} \PYG{p}{:}    \PYG{l+m+mf}{25.937}
 \PYG{n}{y}     \PYG{o}{\textbar{}}   \PYG{l+m+mf}{1E\PYGZhy{}10} \PYG{n}{m} \PYG{p}{:}     \PYG{l+m+mf}{9.481}
 \PYG{n}{z}     \PYG{o}{\textbar{}}   \PYG{l+m+mf}{1E\PYGZhy{}10} \PYG{n}{m} \PYG{p}{:}     \PYG{l+m+mf}{6.597}
 \PYG{n}{a}     \PYG{o}{\textbar{}}       \PYG{n}{deg} \PYG{p}{:}   \PYG{l+m+mf}{126.015}
 \PYG{n}{b}     \PYG{o}{\textbar{}}       \PYG{n}{deg} \PYG{p}{:}   \PYG{l+m+mf}{142.899}
-\PYG{n}{g}     \PYG{o}{\textbar{}}       \PYG{n}{deg} \PYG{p}{:}    \PYG{l+m+mf}{41.040}
+\PYG{n}{g}     \PYG{o}{\textbar{}}       \PYG{n}{deg} \PYG{p}{:}    \PYG{l+m+mf}{41.039}
 \PYG{n}{mueff} \PYG{o}{\textbar{}}        \PYG{n}{Bm} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
 \PYG{n}{shift} \PYG{o}{\textbar{}}       \PYG{n}{ppm} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
 \PYG{n}{B0}    \PYG{o}{\textbar{}}         \PYG{n}{T} \PYG{p}{:}    \PYG{l+m+mf}{18.790}
 \PYG{n}{temp}  \PYG{o}{\textbar{}}         \PYG{n}{K} \PYG{p}{:}   \PYG{l+m+mf}{298.150}
 \PYG{n}{t1e}   \PYG{o}{\textbar{}}        \PYG{n}{ps} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{taur}  \PYG{o}{\textbar{}}        \PYG{n}{ns} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
 \end{sphinxVerbatim}
 
 \sphinxstyleemphasis{Yb fitted tensor}
@@ -585,6 +580,7 @@ After fitting, a list of fitted metals is returned. The fitted tensor are then w
 \PYG{n}{B0}    \PYG{o}{\textbar{}}         \PYG{n}{T} \PYG{p}{:}    \PYG{l+m+mf}{18.790}
 \PYG{n}{temp}  \PYG{o}{\textbar{}}         \PYG{n}{K} \PYG{p}{:}   \PYG{l+m+mf}{298.150}
 \PYG{n}{t1e}   \PYG{o}{\textbar{}}        \PYG{n}{ps} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{taur}  \PYG{o}{\textbar{}}        \PYG{n}{ns} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
 \end{sphinxVerbatim}
 
 \sphinxstyleemphasis{Correlation Plot}
@@ -627,35 +623,35 @@ Firstly, the standard preamble and loading of data.
 \PYG{n}{mStart}\PYG{o}{.}\PYG{n}{position} \PYG{o}{=} \PYG{n}{prot}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{A}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{56}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{CA}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{position}
 \end{sphinxVerbatim}
 
-The default method of fitting is to minimise the difference to the experimental values of the ensemble average of the calculated values. The default behaviour is to average atoms with the same serial number in the PDB file. To manipulate ensemble averaging, you can specify the \sphinxcode{\sphinxupquote{sumIndices}} argument of any fitting function such as {\hyperref[\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pcs:paramagpy.fit.nlr_fit_metal_from_pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.fit.nlr\_fit\_metal\_from\_pcs()}}}}}. This array contains common integers for corresponding atoms to be averaged. To remove ensemble averaging completely, just specify a list of unique integers with length equal to the data such as \sphinxcode{\sphinxupquote{sumIndices=list(range(len(parsedData)))}}.
+The default method of fitting is to fit the tensor independently to each model of the PDB file. To achieve ensemble averaging behaviour, this requires setting the argument \sphinxcode{\sphinxupquote{ensembleAverage}} to true within the fitting function. The default ensemble averaging behaviour is to average atoms with the same serial number in the PDB file. To manipulate ensemble averaging, you can specify the \sphinxcode{\sphinxupquote{idx}} column of the input dataArray for {\hyperref[\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pcs:paramagpy.fit.nlr_fit_metal_from_pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.fit.nlr\_fit\_metal\_from\_pcs()}}}}}. The \sphinxcode{\sphinxupquote{idx}} array contains common integers for corresponding atoms to be averaged. After fitting the Q-factor is calculated (with the ensembleAverage argument set to True), and ensemble averaging of the calculated data values is achieved with the function {\hyperref[\detokenize{reference/generated/paramagpy.fit.ensemble_average:paramagpy.fit.ensemble_average}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.fit.ensemble\_average()}}}}}
 
 \fvset{hllines={, ,}}%
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} Ensemble average fitting \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
 \PYG{n}{parsedData} \PYG{o}{=} \PYG{n}{prot}\PYG{o}{.}\PYG{n}{parse}\PYG{p}{(}\PYG{n}{rawData}\PYG{p}{)}
-\PYG{n}{mGuess}\PYG{p}{,} \PYG{n}{\PYGZus{}}\PYG{p}{,} \PYG{n}{\PYGZus{}} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}gridsearch\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
-	\PYG{p}{[}\PYG{n}{mStart}\PYG{p}{]}\PYG{p}{,}\PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{,} \PYG{n}{radius}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{n}{points}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{)}
-\PYG{n}{mFit}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{,} \PYG{n}{qfac} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}\PYG{n}{mGuess}\PYG{p}{,} \PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{)}
-\PYG{n}{mFit}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{calbindin\PYGZus{}Er\PYGZus{}HN\PYGZus{}PCS\PYGZus{}tensor\PYGZus{}ensemble.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{p}{[}\PYG{n}{mGuess}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}gridsearch\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
+	\PYG{p}{[}\PYG{n}{mStart}\PYG{p}{]}\PYG{p}{,}\PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{,} \PYG{n}{radius}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{n}{points}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{n}{ensembleAverage}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{)}
+\PYG{p}{[}\PYG{n}{mFit}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}\PYG{p}{[}\PYG{n}{mGuess}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{,} \PYG{n}{ensembleAverage}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{)}
+
+\PYG{n}{qfac} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{qfactor}\PYG{p}{(}\PYG{n}{data}\PYG{p}{,} \PYG{n}{ensembleAverage}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{)}
+\PYG{n}{dataEAv} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{ensemble\PYGZus{}average}\PYG{p}{(}\PYG{n}{data}\PYG{p}{)}
+
+\PYG{n}{mFit}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{calbindin\PYGZus{}Er\PYGZus{}HN\PYGZus{}PCS\PYGZus{}tensor\PYGZus{}ensemble.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
 \end{sphinxVerbatim}
 
-If desired, you can also fit a separate tensor to each model of the PDB and the compare them. In this case, we loop over each model, fit a tensor, then keep the one with the smallest Q-factor. Selected models can be parsed by specifying the \sphinxcode{\sphinxupquote{models}} argument of {\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.protein.CustomStructure.parse()}}}}}.
+Fitting a separate tensor to each model of the PDB is the default behaviour of the fitting functions, the average of all fitted tensors is then returned. The model with the minimum Q-factor is then found by looping over the calculated data and sorting them by the calculated Q-factor.
 
 \fvset{hllines={, ,}}%
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} Single model fitting \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
-\PYG{c+c1}{\PYGZsh{} Loop over models, fit tensor and keep one with best Q\PYGZhy{}factor}
-\PYG{n}{minQfacMod} \PYG{o}{=} \PYG{l+m+mf}{1E50}
-\PYG{k}{for} \PYG{n}{model} \PYG{o+ow}{in} \PYG{n}{prot}\PYG{p}{:}
-	\PYG{n}{parsedDataMod} \PYG{o}{=} \PYG{n}{prot}\PYG{o}{.}\PYG{n}{parse}\PYG{p}{(}\PYG{n}{rawData}\PYG{p}{,} \PYG{n}{models}\PYG{o}{=}\PYG{n}{model}\PYG{o}{.}\PYG{n}{id}\PYG{p}{)}
-	\PYG{n}{mFitMod}\PYG{p}{,} \PYG{n}{calcMod}\PYG{p}{,} \PYG{n}{qfacMod} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
-		\PYG{n}{mGuess}\PYG{p}{,} \PYG{p}{[}\PYG{n}{parsedDataMod}\PYG{p}{]}\PYG{p}{)}
-	\PYG{k}{if} \PYG{n}{qfacMod}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{\PYGZlt{}} \PYG{n}{minQfacMod}\PYG{p}{:}
-		\PYG{n}{minMod} \PYG{o}{=} \PYG{n}{model}\PYG{o}{.}\PYG{n}{id}
-		\PYG{n}{minParsedDataMod} \PYG{o}{=} \PYG{n}{parsedDataMod}
-		\PYG{n}{minmFitMod} \PYG{o}{=} \PYG{n}{mFitMod}
-		\PYG{n}{mincalcMod} \PYG{o}{=} \PYG{n}{calcMod}
-		\PYG{n}{minQfacMod} \PYG{o}{=} \PYG{n}{qfacMod}
+\PYG{p}{[}\PYG{n}{mFitMod}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{dataMod}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
+	\PYG{p}{[}\PYG{n}{mGuess}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{)}
+\PYG{n}{qs} \PYG{o}{=} \PYG{p}{\PYGZob{}}\PYG{p}{\PYGZcb{}}
+\PYG{k}{for} \PYG{n}{mdl} \PYG{o+ow}{in} \PYG{n+nb}{set}\PYG{p}{(}\PYG{n}{dataMod}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{mdl}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:}
+	\PYG{n}{qs}\PYG{p}{[}\PYG{n}{mdl}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{qfactor}\PYG{p}{(}\PYG{n}{dataMod}\PYG{p}{[}\PYG{n}{dataMod}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{mdl}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{o}{==}\PYG{n}{mdl}\PYG{p}{]}\PYG{p}{)}
+
+\PYG{n}{minModel}\PYG{p}{,} \PYG{n}{minQfac} \PYG{o}{=} \PYG{n+nb}{sorted}\PYG{p}{(}\PYG{n}{qs}\PYG{o}{.}\PYG{n}{items}\PYG{p}{(}\PYG{p}{)}\PYG{p}{,} \PYG{n}{key}\PYG{o}{=}\PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{)}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+\PYG{n}{minData} \PYG{o}{=} \PYG{n}{dataMod}\PYG{p}{[}\PYG{n}{dataMod}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{mdl}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{o}{==}\PYG{n}{minModel}\PYG{p}{]}
 \end{sphinxVerbatim}
 
 Finally we plot three sets of data:
@@ -679,23 +675,18 @@ Note that to calculate the ensemble average of the calculated values we use the 
 \PYG{k+kn}{from} \PYG{n+nn}{matplotlib} \PYG{k}{import} \PYG{n}{pyplot} \PYG{k}{as} \PYG{n}{plt}
 \PYG{n}{fig}\PYG{p}{,} \PYG{n}{ax} \PYG{o}{=} \PYG{n}{plt}\PYG{o}{.}\PYG{n}{subplots}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{)}\PYG{p}{)}
 
-\PYG{c+c1}{\PYGZsh{} Unpack the experimental values}
-\PYG{n}{atoms}\PYG{p}{,} \PYG{n}{exp}\PYG{p}{,} \PYG{n}{err} \PYG{o}{=} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{o}{*}\PYG{n}{parsedData}\PYG{p}{)}
-\PYG{n}{expEnsemble}\PYG{p}{,} \PYG{n}{calcEnsemble} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{ensemble\PYGZus{}average}\PYG{p}{(}\PYG{n}{atoms}\PYG{p}{,} \PYG{n}{exp}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}
-\PYG{n}{atomsMod}\PYG{p}{,} \PYG{n}{expMod}\PYG{p}{,} \PYG{n}{errMod} \PYG{o}{=} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{o}{*}\PYG{n}{minParsedDataMod}\PYG{p}{)}
-
 \PYG{c+c1}{\PYGZsh{} Plot all models}
-\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{exp}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{g}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
-	\PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.5}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{All models: Q = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfac}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{cal}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{g}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
+	\PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.5}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{All models: Q = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfac}\PYG{p}{)}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Plot the ensemble average}
-\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{expEnsemble}\PYG{p}{,} \PYG{n}{calcEnsemble}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
-	\PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.5}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Ensemble Average: Q = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfac}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{dataEAv}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{dataEAv}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{cal}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
+	\PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.5}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Ensemble Average: Q = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfac}\PYG{p}{)}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Plot the model with minimum Q\PYGZhy{}factor}
-\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{expMod}\PYG{p}{,} \PYG{n}{mincalcMod}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{minData}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{minData}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{cal}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
 	\PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.5}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Best Model (}\PYG{l+s+si}{\PYGZob{}0:\PYGZcb{}}\PYG{l+s+s2}{): Q = }\PYG{l+s+si}{\PYGZob{}1:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}
-		\PYG{n}{minMod}\PYG{p}{,} \PYG{n}{minQfacMod}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{p}{)}
+		\PYG{n}{minModel}\PYG{p}{,} \PYG{n}{minQfac}\PYG{p}{)}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Plot a diagonal}
 \PYG{n}{l}\PYG{p}{,} \PYG{n}{h} \PYG{o}{=} \PYG{n}{ax}\PYG{o}{.}\PYG{n}{get\PYGZus{}xlim}\PYG{p}{(}\PYG{p}{)}
@@ -754,15 +745,17 @@ The calcium ion from the X-ray structure is contained in a heteroatom of the PDB
 \PYG{n}{mStart}\PYG{o}{.}\PYG{n}{position} \PYG{o}{=} \PYG{n}{prot}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{A}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{[}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{H\PYGZus{} CA}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+m+mi}{77}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{ }\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{CA}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{position}
 \end{sphinxVerbatim}
 
-To fit the the anisotropy and orientation without position, the linear PCS equation can be solved analytically by the SVD gridsearch method but using only one point with a radius of zero. This tensor is then saved.
+To fit the the anisotropy and orientation without position, the linear PCS equation can be solved analytically by the SVD gridsearch method but using only one point with a radius of zero. The Q-factor is then calculated and the tensor is saved.
 
 \fvset{hllines={, ,}}%
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{} Calculate tensor by SVD}
-\PYG{n}{mFit}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{,} \PYG{n}{qfac} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}gridsearch\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
+\PYG{p}{[}\PYG{n}{mFit}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}gridsearch\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
 	\PYG{p}{[}\PYG{n}{mStart}\PYG{p}{]}\PYG{p}{,}\PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{,} \PYG{n}{radius}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{points}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{)}
 
-\PYG{n}{mFit}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{calbindin\PYGZus{}Er\PYGZus{}HN\PYGZus{}PCS\PYGZus{}tensor\PYGZus{}position\PYGZus{}constrained.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{qfac} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{qfactor}\PYG{p}{(}\PYG{n}{data}\PYG{p}{)}
+
+\PYG{n}{mFit}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{calbindin\PYGZus{}Er\PYGZus{}HN\PYGZus{}PCS\PYGZus{}tensor\PYGZus{}position\PYGZus{}constrained.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
 \end{sphinxVerbatim}
 
 \sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{pcs\_fit\_constrained.png}}{]}
@@ -782,6 +775,7 @@ To fit the the anisotropy and orientation without position, the linear PCS equat
 \PYG{n}{B0}    \PYG{o}{\textbar{}}         \PYG{n}{T} \PYG{p}{:}    \PYG{l+m+mf}{18.790}
 \PYG{n}{temp}  \PYG{o}{\textbar{}}         \PYG{n}{K} \PYG{p}{:}   \PYG{l+m+mf}{298.150}
 \PYG{n}{t1e}   \PYG{o}{\textbar{}}        \PYG{n}{ps} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{taur}  \PYG{o}{\textbar{}}        \PYG{n}{ns} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
 \end{sphinxVerbatim}
 
 To fit an axially symmetric tensor, we can used the Non-linear regression method and specify exactly which parameters we want to fit. This will be the axiality \sphinxcode{\sphinxupquote{ax}}, two Euler angles \sphinxcode{\sphinxupquote{b}} and \sphinxcode{\sphinxupquote{g}} and the position coordinates. Note that in the output, the rhombic \sphinxcode{\sphinxupquote{rh}} and alpha \sphinxcode{\sphinxupquote{a}} parameters are redundant.
@@ -789,10 +783,12 @@ To fit an axially symmetric tensor, we can used the Non-linear regression method
 \fvset{hllines={, ,}}%
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{} Calculate axially symmetric tensor by NRL}
-\PYG{n}{mFitAx}\PYG{p}{,} \PYG{n}{calcAx}\PYG{p}{,} \PYG{n}{qfacAx} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
+\PYG{p}{[}\PYG{n}{mFitAx}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{dataAx}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
 	\PYG{p}{[}\PYG{n}{mStart}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{,} \PYG{n}{params}\PYG{o}{=}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{ax}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{g}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{x}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{y}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{z}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{)}
 
-\PYG{n}{mFitAx}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{calbindin\PYGZus{}Er\PYGZus{}HN\PYGZus{}PCS\PYGZus{}tensor\PYGZus{}axially\PYGZus{}symmetric.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{qfacAx} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{qfactor}\PYG{p}{(}\PYG{n}{dataAx}\PYG{p}{)}
+
+\PYG{n}{mFitAx}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{calbindin\PYGZus{}Er\PYGZus{}HN\PYGZus{}PCS\PYGZus{}tensor\PYGZus{}axially\PYGZus{}symmetric.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
 \end{sphinxVerbatim}
 
 \sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{pcs\_fit\_constrained.png}}{]}
@@ -812,6 +808,7 @@ To fit an axially symmetric tensor, we can used the Non-linear regression method
 \PYG{n}{B0}    \PYG{o}{\textbar{}}         \PYG{n}{T} \PYG{p}{:}    \PYG{l+m+mf}{18.790}
 \PYG{n}{temp}  \PYG{o}{\textbar{}}         \PYG{n}{K} \PYG{p}{:}   \PYG{l+m+mf}{298.150}
 \PYG{n}{t1e}   \PYG{o}{\textbar{}}        \PYG{n}{ps} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{taur}  \PYG{o}{\textbar{}}        \PYG{n}{ns} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
 \end{sphinxVerbatim}
 
 Finally we plot the data.
@@ -822,15 +819,12 @@ Finally we plot the data.
 \PYG{k+kn}{from} \PYG{n+nn}{matplotlib} \PYG{k}{import} \PYG{n}{pyplot} \PYG{k}{as} \PYG{n}{plt}
 \PYG{n}{fig}\PYG{p}{,} \PYG{n}{ax} \PYG{o}{=} \PYG{n}{plt}\PYG{o}{.}\PYG{n}{subplots}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{)}\PYG{p}{)}
 
-\PYG{c+c1}{\PYGZsh{} Unpack the experimental values}
-\PYG{n}{atoms}\PYG{p}{,} \PYG{n}{experiment}\PYG{p}{,} \PYG{n}{errors} \PYG{o}{=} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{o}{*}\PYG{n}{parsedData}\PYG{p}{)}
-
 \PYG{c+c1}{\PYGZsh{} Plot the data}
-\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{experiment}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
-	\PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Position constrained: Q = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfac}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{cal}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
+	\PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Position constrained: Q = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfac}\PYG{p}{)}\PYG{p}{)}
 
-\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{experiment}\PYG{p}{,} \PYG{n}{calcAx}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
-	\PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Axially symmetric: Q = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfacAx}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{dataAx}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{dataAx}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{cal}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
+	\PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Axially symmetric: Q = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfacAx}\PYG{p}{)}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Plot a diagonal}
 \PYG{n}{l}\PYG{p}{,} \PYG{n}{h} \PYG{o}{=} \PYG{n}{ax}\PYG{o}{.}\PYG{n}{get\PYGZus{}xlim}\PYG{p}{(}\PYG{p}{)}
@@ -890,25 +884,24 @@ This script follows very closely the script {\hyperref[\detokenize{examples/pcs_
 \PYG{n}{mStart}\PYG{o}{.}\PYG{n}{position} \PYG{o}{=} \PYG{n}{prot}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{A}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{56}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{CA}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{position}
 
 \PYG{c+c1}{\PYGZsh{} Calculate an initial tensor from an SVD gridsearch}
-\PYG{n}{mGuess}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{,} \PYG{n}{qfac} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}gridsearch\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
+\PYG{p}{[}\PYG{n}{mGuess}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}gridsearch\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
 	\PYG{p}{[}\PYG{n}{mStart}\PYG{p}{]}\PYG{p}{,}\PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{,} \PYG{n}{radius}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{n}{points}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Refine the tensor using non\PYGZhy{}linear regression}
-\PYG{n}{mFit}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{,} \PYG{n}{qfac} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}\PYG{n}{mGuess}\PYG{p}{,} \PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{)}
+\PYG{p}{[}\PYG{n}{mFit}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}\PYG{p}{[}\PYG{n}{mGuess}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{)}
+
+\PYG{n}{qfac} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{qfactor}\PYG{p}{(}\PYG{n}{data}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Save the fitted tensor to file}
-\PYG{n}{mFit}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{calbindin\PYGZus{}Er\PYGZus{}HN\PYGZus{}PCS\PYGZus{}tensor\PYGZus{}errors.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{mFit}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{calbindin\PYGZus{}Er\PYGZus{}HN\PYGZus{}PCS\PYGZus{}tensor\PYGZus{}errors.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} Plot the correlation \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
 \PYG{k+kn}{from} \PYG{n+nn}{matplotlib} \PYG{k}{import} \PYG{n}{pyplot} \PYG{k}{as} \PYG{n}{plt}
 \PYG{n}{fig}\PYG{p}{,} \PYG{n}{ax} \PYG{o}{=} \PYG{n}{plt}\PYG{o}{.}\PYG{n}{subplots}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{)}\PYG{p}{)}
 
-\PYG{c+c1}{\PYGZsh{} Unpack the experimental values}
-\PYG{n}{atoms}\PYG{p}{,} \PYG{n}{experiment}\PYG{p}{,} \PYG{n}{errors} \PYG{o}{=} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{o}{*}\PYG{n}{parsedData}\PYG{p}{)}
-
 \PYG{c+c1}{\PYGZsh{} Plot the data}
-\PYG{n}{ax}\PYG{o}{.}\PYG{n}{errorbar}\PYG{p}{(}\PYG{n}{experiment}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{,} \PYG{n}{xerr}\PYG{o}{=}\PYG{n}{errors}\PYG{p}{,} \PYG{n}{fmt}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} 
-	\PYG{n}{ecolor}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{k}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{capsize}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Q\PYGZhy{}factor = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfac}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{errorbar}\PYG{p}{(}\PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{cal}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{xerr}\PYG{o}{=}\PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{err}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{fmt}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} 
+	\PYG{n}{ecolor}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{k}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{capsize}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Q\PYGZhy{}factor = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfac}\PYG{p}{)}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Plot a diagonal}
 \PYG{n}{l}\PYG{p}{,} \PYG{n}{h} \PYG{o}{=} \PYG{n}{ax}\PYG{o}{.}\PYG{n}{get\PYGZus{}xlim}\PYG{p}{(}\PYG{p}{)}
@@ -950,6 +943,200 @@ And correlation plot:
 \sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{pcs\_fit\_error.png}}{]}
 
 \noindent\sphinxincludegraphics{{pcs_fit_error}.png}
+
+
+\subsubsection{Propagate Uncertainty to Fitted Tensor Parameters}
+\label{\detokenize{examples/pcs_fit_uncertainty:propagate-uncertainty-to-fitted-tensor-parameters}}\label{\detokenize{examples/pcs_fit_uncertainty:pcs-fit-uncertainty}}\label{\detokenize{examples/pcs_fit_uncertainty::doc}}
+This example shows the various error analysis functions available in paramagpy for estimating the unceratinty in fitted parameters for a paramagnetic center.
+
+
+\paragraph{Downloads}
+\label{\detokenize{examples/pcs_fit_uncertainty:downloads}}\begin{itemize}
+\item {} 
+Download the data files \sphinxcode{\sphinxupquote{2bcb.pdb}} and \sphinxcode{\sphinxupquote{calbindin\_Er\_HN\_PCS\_errors.npc}} from \sphinxhref{https://github.com/henryorton/paramagpy/tree/master/examples/data\_files/}{here}:
+
+\item {} 
+Download the script \sphinxcode{\sphinxupquote{pcs\_fit\_uncertainty.py}}
+
+\end{itemize}
+
+
+\paragraph{Script + Explanation}
+\label{\detokenize{examples/pcs_fit_uncertainty:script-explanation}}
+This start of this script follows the script {\hyperref[\detokenize{examples/pcs_fit:pcs-fit}]{\sphinxcrossref{\DUrole{std,std-ref}{Fit Tensor to PCS Data}}}} to fit the tensor.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{from} \PYG{n+nn}{paramagpy} \PYG{k}{import} \PYG{n}{protein}\PYG{p}{,} \PYG{n}{fit}\PYG{p}{,} \PYG{n}{dataparse}\PYG{p}{,} \PYG{n}{metal}
+\PYG{k+kn}{import} \PYG{n+nn}{numpy} \PYG{k}{as} \PYG{n+nn}{np}
+
+\PYG{c+c1}{\PYGZsh{} Load the PDB file}
+\PYG{n}{prot} \PYG{o}{=} \PYG{n}{protein}\PYG{o}{.}\PYG{n}{load\PYGZus{}pdb}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{../data\PYGZus{}files/2bcb.pdb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Load the PCS data}
+\PYG{n}{rawData} \PYG{o}{=} \PYG{n}{dataparse}\PYG{o}{.}\PYG{n}{read\PYGZus{}pcs}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{../data\PYGZus{}files/calbindin\PYGZus{}Er\PYGZus{}HN\PYGZus{}PCS\PYGZus{}errors.npc}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Associate PCS data with atoms of the PDB}
+\PYG{n}{parsedData} \PYG{o}{=} \PYG{n}{prot}\PYG{o}{.}\PYG{n}{parse}\PYG{p}{(}\PYG{n}{rawData}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Define an initial tensor}
+\PYG{n}{mStart} \PYG{o}{=} \PYG{n}{metal}\PYG{o}{.}\PYG{n}{Metal}\PYG{p}{(}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Set the starting position to an atom close to the metal}
+\PYG{n}{mStart}\PYG{o}{.}\PYG{n}{position} \PYG{o}{=} \PYG{n}{prot}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{A}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{56}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{CA}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{position}
+
+\PYG{c+c1}{\PYGZsh{} Calculate an initial tensor from an SVD gridsearch}
+\PYG{p}{[}\PYG{n}{mGuess}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}gridsearch\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}
+	\PYG{p}{[}\PYG{n}{mStart}\PYG{p}{]}\PYG{p}{,}\PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{,} \PYG{n}{radius}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{n}{points}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Refine the tensor using non\PYGZhy{}linear regression}
+\PYG{p}{[}\PYG{n}{mFit}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}\PYG{p}{[}\PYG{n}{mGuess}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{)}
+\end{sphinxVerbatim}
+
+\#\#\# Uncertainty from structure models
+
+The PDB file contains models that capture uncertainty in the structure of the protein. This can be propagated to estimate uncertainty in the fitted tensor parameters using the fnction \sphinxcode{\sphinxupquote{paramagpy.fit.fit\_error\_model()}}. This fits a separate tensor to each model and returns all fitted tensors as well as the standard deviation in the fitted parameters.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Estimate uncertainty sourcing noise from the models of the PDB}
+\PYG{p}{[}\PYG{n}{mod\PYGZus{}all}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{mod\PYGZus{}std}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{fit\PYGZus{}error\PYGZus{}models}\PYG{p}{(}\PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{,} 
+	\PYG{n}{initMetals}\PYG{o}{=}\PYG{p}{[}\PYG{n}{mFit}\PYG{p}{]}\PYG{p}{,} \PYG{n}{dataArrays}\PYG{o}{=}\PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{)}
+
+\PYG{n}{mod\PYGZus{}std}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{error\PYGZus{}tensor\PYGZus{}models.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\end{sphinxVerbatim}
+
+The standard deviation in the fitted tensor parameters is found in the variable \sphinxcode{\sphinxupquote{mod\_std}}. This variation in tensor principle axes can be viewed by a Sanson-Flamsteed plot.
+
+\sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{error\_tensor\_models.txt}}{]}
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{ax}    \PYG{o}{\textbar{}} \PYG{l+m+mf}{1E\PYGZhy{}32} \PYG{n}{m}\PYG{o}{\PYGZca{}}\PYG{l+m+mi}{3} \PYG{p}{:}     \PYG{l+m+mf}{0.556}
+\PYG{n}{rh}    \PYG{o}{\textbar{}} \PYG{l+m+mf}{1E\PYGZhy{}32} \PYG{n}{m}\PYG{o}{\PYGZca{}}\PYG{l+m+mi}{3} \PYG{p}{:}     \PYG{l+m+mf}{0.525}
+\PYG{n}{x}     \PYG{o}{\textbar{}}   \PYG{l+m+mf}{1E\PYGZhy{}10} \PYG{n}{m} \PYG{p}{:}     \PYG{l+m+mf}{0.756}
+\PYG{n}{y}     \PYG{o}{\textbar{}}   \PYG{l+m+mf}{1E\PYGZhy{}10} \PYG{n}{m} \PYG{p}{:}     \PYG{l+m+mf}{0.695}
+\PYG{n}{z}     \PYG{o}{\textbar{}}   \PYG{l+m+mf}{1E\PYGZhy{}10} \PYG{n}{m} \PYG{p}{:}     \PYG{l+m+mf}{0.957}
+\PYG{n}{a}     \PYG{o}{\textbar{}}       \PYG{n}{deg} \PYG{p}{:}     \PYG{l+m+mf}{7.466}
+\PYG{n}{b}     \PYG{o}{\textbar{}}       \PYG{n}{deg} \PYG{p}{:}     \PYG{l+m+mf}{9.948}
+\PYG{n}{g}     \PYG{o}{\textbar{}}       \PYG{n}{deg} \PYG{p}{:}    \PYG{l+m+mf}{19.294}
+\PYG{n}{mueff} \PYG{o}{\textbar{}}        \PYG{n}{Bm} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{shift} \PYG{o}{\textbar{}}       \PYG{n}{ppm} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{B0}    \PYG{o}{\textbar{}}         \PYG{n}{T} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{temp}  \PYG{o}{\textbar{}}         \PYG{n}{K} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{t1e}   \PYG{o}{\textbar{}}        \PYG{n}{ps} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{taur}  \PYG{o}{\textbar{}}        \PYG{n}{ns} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\end{sphinxVerbatim}
+
+\sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{models.png}}{]}
+
+\noindent\sphinxincludegraphics{{models}.png}
+
+\#\#\# Uncertainty from experimental uncertainties
+
+Experimental uncertainties can be measured. This may arise due to spectral noise in peak heights for PREs, or spectral noise as uncertainties in chemical shifts for PCSs, as is the case here. The function {\hyperref[\detokenize{reference/generated/paramagpy.fit.fit_error_monte_carlo:paramagpy.fit.fit_error_monte_carlo}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.fit.fit\_error\_monte\_carlo()}}}}} will repeat the fit for many iterations, each time adding random noise from a uniform distribution scaled by the experimental errors present in the \sphinxcode{\sphinxupquote{err}} column of the dataArray \sphinxcode{\sphinxupquote{parsedData}}.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Estimate uncertainty sourcing noise from experimental uncertainties}
+\PYG{p}{[}\PYG{n}{mc\PYGZus{}all}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{mc\PYGZus{}std}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{fit\PYGZus{}error\PYGZus{}monte\PYGZus{}carlo}\PYG{p}{(}\PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{,} 
+	\PYG{l+m+mi}{50}\PYG{p}{,} \PYG{n}{initMetals}\PYG{o}{=}\PYG{p}{[}\PYG{n}{mFit}\PYG{p}{]}\PYG{p}{,} \PYG{n}{dataArrays}\PYG{o}{=}\PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{)}
+
+\PYG{n}{mod\PYGZus{}std}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{error\PYGZus{}tensor\PYGZus{}monte\PYGZus{}carlo.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\end{sphinxVerbatim}
+
+\sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{error\_tensor\_monte\_carlo.txt}}{]}
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{ax}    \PYG{o}{\textbar{}} \PYG{l+m+mf}{1E\PYGZhy{}32} \PYG{n}{m}\PYG{o}{\PYGZca{}}\PYG{l+m+mi}{3} \PYG{p}{:}     \PYG{l+m+mf}{0.556}
+\PYG{n}{rh}    \PYG{o}{\textbar{}} \PYG{l+m+mf}{1E\PYGZhy{}32} \PYG{n}{m}\PYG{o}{\PYGZca{}}\PYG{l+m+mi}{3} \PYG{p}{:}     \PYG{l+m+mf}{0.525}
+\PYG{n}{x}     \PYG{o}{\textbar{}}   \PYG{l+m+mf}{1E\PYGZhy{}10} \PYG{n}{m} \PYG{p}{:}     \PYG{l+m+mf}{0.756}
+\PYG{n}{y}     \PYG{o}{\textbar{}}   \PYG{l+m+mf}{1E\PYGZhy{}10} \PYG{n}{m} \PYG{p}{:}     \PYG{l+m+mf}{0.695}
+\PYG{n}{z}     \PYG{o}{\textbar{}}   \PYG{l+m+mf}{1E\PYGZhy{}10} \PYG{n}{m} \PYG{p}{:}     \PYG{l+m+mf}{0.957}
+\PYG{n}{a}     \PYG{o}{\textbar{}}       \PYG{n}{deg} \PYG{p}{:}     \PYG{l+m+mf}{7.466}
+\PYG{n}{b}     \PYG{o}{\textbar{}}       \PYG{n}{deg} \PYG{p}{:}     \PYG{l+m+mf}{9.948}
+\PYG{n}{g}     \PYG{o}{\textbar{}}       \PYG{n}{deg} \PYG{p}{:}    \PYG{l+m+mf}{19.294}
+\PYG{n}{mueff} \PYG{o}{\textbar{}}        \PYG{n}{Bm} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{shift} \PYG{o}{\textbar{}}       \PYG{n}{ppm} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{B0}    \PYG{o}{\textbar{}}         \PYG{n}{T} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{temp}  \PYG{o}{\textbar{}}         \PYG{n}{K} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{t1e}   \PYG{o}{\textbar{}}        \PYG{n}{ps} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{taur}  \PYG{o}{\textbar{}}        \PYG{n}{ns} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\end{sphinxVerbatim}
+
+\sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{monte\_carlo.png}}{]}
+
+\noindent\sphinxincludegraphics{{monte_carlo}.png}
+
+\#\#\# Uncertainty from sample fraction
+
+A final, but generally not recommended method is to source noise from taking a random fraction of the data and conducting the fit for many iterations to then view the deviation in fitted parameters. This method is often called bootstrapping and is desirable if the experimental uncertainties are unknown and the PDB file does not contain models that capture structural unceratinty. The function {\hyperref[\detokenize{reference/generated/paramagpy.fit.fit_error_bootstrap:paramagpy.fit.fit_error_bootstrap}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.fit.fit\_error\_bootstrap()}}}}} will repeat the fit for many iterations, each time sampling the desired amount of the experimental data randomly.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Estimate uncertainty sourcing noise from sample fractions}
+\PYG{p}{[}\PYG{n}{bs\PYGZus{}all}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{bs\PYGZus{}std}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{fit\PYGZus{}error\PYGZus{}bootstrap}\PYG{p}{(}\PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{,} 
+	\PYG{l+m+mi}{50}\PYG{p}{,} \PYG{l+m+mf}{0.8}\PYG{p}{,} \PYG{n}{initMetals}\PYG{o}{=}\PYG{p}{[}\PYG{n}{mFit}\PYG{p}{]}\PYG{p}{,} \PYG{n}{dataArrays}\PYG{o}{=}\PYG{p}{[}\PYG{n}{parsedData}\PYG{p}{]}\PYG{p}{)}
+
+\PYG{n}{mod\PYGZus{}std}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{error\PYGZus{}tensor\PYGZus{}bootstrap.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\end{sphinxVerbatim}
+
+\sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{error\_tensor\_bootstrap.txt}}{]}
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{ax}    \PYG{o}{\textbar{}} \PYG{l+m+mf}{1E\PYGZhy{}32} \PYG{n}{m}\PYG{o}{\PYGZca{}}\PYG{l+m+mi}{3} \PYG{p}{:}     \PYG{l+m+mf}{0.556}
+\PYG{n}{rh}    \PYG{o}{\textbar{}} \PYG{l+m+mf}{1E\PYGZhy{}32} \PYG{n}{m}\PYG{o}{\PYGZca{}}\PYG{l+m+mi}{3} \PYG{p}{:}     \PYG{l+m+mf}{0.525}
+\PYG{n}{x}     \PYG{o}{\textbar{}}   \PYG{l+m+mf}{1E\PYGZhy{}10} \PYG{n}{m} \PYG{p}{:}     \PYG{l+m+mf}{0.756}
+\PYG{n}{y}     \PYG{o}{\textbar{}}   \PYG{l+m+mf}{1E\PYGZhy{}10} \PYG{n}{m} \PYG{p}{:}     \PYG{l+m+mf}{0.695}
+\PYG{n}{z}     \PYG{o}{\textbar{}}   \PYG{l+m+mf}{1E\PYGZhy{}10} \PYG{n}{m} \PYG{p}{:}     \PYG{l+m+mf}{0.957}
+\PYG{n}{a}     \PYG{o}{\textbar{}}       \PYG{n}{deg} \PYG{p}{:}     \PYG{l+m+mf}{7.466}
+\PYG{n}{b}     \PYG{o}{\textbar{}}       \PYG{n}{deg} \PYG{p}{:}     \PYG{l+m+mf}{9.948}
+\PYG{n}{g}     \PYG{o}{\textbar{}}       \PYG{n}{deg} \PYG{p}{:}    \PYG{l+m+mf}{19.294}
+\PYG{n}{mueff} \PYG{o}{\textbar{}}        \PYG{n}{Bm} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{shift} \PYG{o}{\textbar{}}       \PYG{n}{ppm} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{B0}    \PYG{o}{\textbar{}}         \PYG{n}{T} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{temp}  \PYG{o}{\textbar{}}         \PYG{n}{K} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{t1e}   \PYG{o}{\textbar{}}        \PYG{n}{ps} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\PYG{n}{taur}  \PYG{o}{\textbar{}}        \PYG{n}{ns} \PYG{p}{:}     \PYG{l+m+mf}{0.000}
+\end{sphinxVerbatim}
+
+\sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{bootstrap.png}}{]}
+
+\noindent\sphinxincludegraphics{{bootstrap}.png}
+
+This piece of code is used to generate the Sanson-Flamsteed projection plots
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} Plot Sanson\PYGZhy{}Flamsteed \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{k+kn}{from} \PYG{n+nn}{matplotlib} \PYG{k}{import} \PYG{n}{pyplot} \PYG{k}{as} \PYG{n}{plt}
+
+\PYG{k}{def} \PYG{n+nf}{transform}\PYG{p}{(}\PYG{n}{vector}\PYG{p}{)}\PYG{p}{:}
+	\PYG{n}{x}\PYG{p}{,} \PYG{n}{y}\PYG{p}{,} \PYG{n}{z} \PYG{o}{=} \PYG{n}{vector}
+	\PYG{n}{theta} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{arctan2}\PYG{p}{(}\PYG{n}{y}\PYG{p}{,} \PYG{n}{x}\PYG{p}{)}
+	\PYG{n}{phi} \PYG{o}{=} \PYG{o}{\PYGZhy{}}\PYG{n}{np}\PYG{o}{.}\PYG{n}{arccos}\PYG{p}{(}\PYG{n}{z}\PYG{p}{)} \PYG{o}{+} \PYG{n}{np}\PYG{o}{.}\PYG{n}{pi}\PYG{o}{/}\PYG{l+m+mf}{2.}
+	\PYG{k}{return} \PYG{n}{theta}\PYG{p}{,} \PYG{n}{phi}
+
+\PYG{k}{for} \PYG{n}{name}\PYG{p}{,} \PYG{n}{mset} \PYG{o+ow}{in} \PYG{p}{[}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{models}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{n}{mod\PYGZus{}all}\PYG{p}{)}\PYG{p}{,} \PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{monte\PYGZus{}carlo}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{n}{mc\PYGZus{}all}\PYG{p}{)}\PYG{p}{,} \PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{bootstrap}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{n}{bs\PYGZus{}all}\PYG{p}{)}\PYG{p}{]}\PYG{p}{:}
+	\PYG{n}{spcoords} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
+	\PYG{k}{for} \PYG{n}{m} \PYG{o+ow}{in} \PYG{n}{mset}\PYG{p}{:}
+		\PYG{n}{x}\PYG{p}{,} \PYG{n}{y}\PYG{p}{,} \PYG{n}{z} \PYG{o}{=} \PYG{n}{m}\PYG{o}{.}\PYG{n}{rotationMatrix}\PYG{o}{.}\PYG{n}{T}
+		\PYG{n}{spcoords}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n+nb}{tuple}\PYG{p}{(}\PYG{n+nb}{map}\PYG{p}{(}\PYG{n}{transform}\PYG{p}{,} \PYG{p}{[}\PYG{n}{x}\PYG{p}{,}\PYG{n}{y}\PYG{p}{,}\PYG{n}{z}\PYG{p}{]}\PYG{p}{)}\PYG{p}{)}\PYG{p}{)}
+	\PYG{n}{points} \PYG{o}{=} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{o}{*}\PYG{n}{spcoords}\PYG{p}{)}
+	\PYG{n}{fig} \PYG{o}{=} \PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{3}\PYG{p}{)}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{100}\PYG{p}{)}
+	\PYG{n}{ax} \PYG{o}{=} \PYG{n}{fig}\PYG{o}{.}\PYG{n}{add\PYGZus{}subplot}\PYG{p}{(}\PYG{l+m+mi}{111}\PYG{p}{,} \PYG{n}{projection}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{hammer}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+	\PYG{n}{ax}\PYG{o}{.}\PYG{n}{set\PYGZus{}xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{theta}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+	\PYG{n}{ax}\PYG{o}{.}\PYG{n}{set\PYGZus{}ylabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{phi}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+	\PYG{n}{ax}\PYG{o}{.}\PYG{n}{set\PYGZus{}title}\PYG{p}{(}\PYG{n}{name}\PYG{p}{)}
+	\PYG{n}{ax}\PYG{o}{.}\PYG{n}{grid}\PYG{p}{(}\PYG{p}{)}
+	\PYG{k}{for} \PYG{n}{data}\PYG{p}{,} \PYG{n}{col}\PYG{p}{,} \PYG{n}{label} \PYG{o+ow}{in} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{n}{points}\PYG{p}{,} \PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{g}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{x}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{y}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{z}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:}
+		\PYG{n}{theta}\PYG{p}{,} \PYG{n}{phi} \PYG{o}{=} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{o}{*}\PYG{n}{data}\PYG{p}{)}
+		\PYG{n}{ax}\PYG{o}{.}\PYG{n}{scatter}\PYG{p}{(}\PYG{n}{theta}\PYG{p}{,} \PYG{n}{phi}\PYG{p}{,} \PYG{n}{s}\PYG{o}{=}\PYG{l+m+mf}{0.4}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{n}{col}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{n}{label}\PYG{p}{,} \PYG{n}{zorder}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{)}
+	\PYG{n}{ax}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{(}\PYG{p}{)}
+	\PYG{n}{fig}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+si}{\PYGZob{}\PYGZcb{}}\PYG{l+s+s2}{.png}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{name}\PYG{p}{)}\PYG{p}{)}
+\end{sphinxVerbatim}
 
 
 \subsubsection{Fit to PCS data with offset, RACS and RADS corrections}
@@ -1005,17 +1192,17 @@ Two starting metals are initialised. It is important here to set the magnetic fi
 \PYG{n}{mStart2} \PYG{o}{=} \PYG{n}{metal}\PYG{o}{.}\PYG{n}{Metal}\PYG{p}{(}\PYG{n}{B0}\PYG{o}{=}\PYG{l+m+mf}{18.8}\PYG{p}{,} \PYG{n}{temperature}\PYG{o}{=}\PYG{l+m+mf}{308.0}\PYG{p}{)}
 \end{sphinxVerbatim}
 
-The alignment tensor is solved using the function {\hyperref[\detokenize{reference/generated/paramagpy.fit.svd_fit_metal_from_rdc:paramagpy.fit.svd_fit_metal_from_rdc}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.fit.svd\_fit\_metal\_from\_rdc()}}}}} which return a tuple of \sphinxcode{\sphinxupquote{(metal, calculated, qfactor)}}, where metal is the fitted metal, calculated is the calculated RDC values. These tensor are then saved.
+The alignment tensor is solved using the function {\hyperref[\detokenize{reference/generated/paramagpy.fit.svd_fit_metal_from_rdc:paramagpy.fit.svd_fit_metal_from_rdc}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.fit.svd\_fit\_metal\_from\_rdc()}}}}} which return a tuple of \sphinxcode{\sphinxupquote{(metal, calculated)}}, where metal is the fitted metal, calculated is the calculated RDC values. The tensors are then saved. Note that we set the argument \sphinxcode{\sphinxupquote{ensembleAverage}} to \sphinxcode{\sphinxupquote{True}}. This is important because the PDB structure represents and MD simulation. If set to False, a much smaller tensor would be fit.
 
 \fvset{hllines={, ,}}%
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{} Calculate the tensor using SVD}
-\PYG{n}{sol1} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}rdc}\PYG{p}{(}\PYG{n}{mStart1}\PYG{p}{,} \PYG{n}{parsedData1}\PYG{p}{)}
-\PYG{n}{sol2} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}rdc}\PYG{p}{(}\PYG{n}{mStart2}\PYG{p}{,} \PYG{n}{parsedData2}\PYG{p}{)}
+\PYG{p}{[}\PYG{n}{sol1}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data1}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}rdc}\PYG{p}{(}\PYG{p}{[}\PYG{n}{mStart1}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{parsedData1}\PYG{p}{]}\PYG{p}{,} \PYG{n}{ensembleAverage}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{)}
+\PYG{p}{[}\PYG{n}{sol2}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data2}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}rdc}\PYG{p}{(}\PYG{p}{[}\PYG{n}{mStart2}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{parsedData2}\PYG{p}{]}\PYG{p}{,} \PYG{n}{ensembleAverage}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Save the fitted tensor to file}
-\PYG{n}{sol1}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{ubiquitin\PYGZus{}a28c\PYGZus{}c1\PYGZus{}Tb\PYGZus{}tensor.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
-\PYG{n}{sol2}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{ubiquitin\PYGZus{}s57c\PYGZus{}c1\PYGZus{}Tb\PYGZus{}tensor.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{sol1}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{ubiquitin\PYGZus{}a28c\PYGZus{}c1\PYGZus{}Tb\PYGZus{}tensor.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{sol2}\PYG{o}{.}\PYG{n}{save}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{ubiquitin\PYGZus{}s57c\PYGZus{}c1\PYGZus{}Tb\PYGZus{}tensor.txt}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
 \end{sphinxVerbatim}
 
 \sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{ubiquitin\_a28c\_c1\_Tb\_tensor.txt}}{]}
@@ -1070,21 +1257,20 @@ The experimental/calculated correlations are then plotted. The tensor is by defa
 \PYG{n}{ax1}\PYG{o}{.}\PYG{n}{set\PYGZus{}title}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{A28C\PYGZhy{}C1\PYGZhy{}Tb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
 \PYG{n}{ax2}\PYG{o}{.}\PYG{n}{set\PYGZus{}title}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{S57C\PYGZhy{}C1\PYGZhy{}Tb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
 
-\PYG{k}{for} \PYG{n}{sol}\PYG{p}{,} \PYG{n}{ax}\PYG{p}{,} \PYG{n}{pdata} \PYG{o+ow}{in} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{p}{[}\PYG{n}{sol1}\PYG{p}{,}\PYG{n}{sol2}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{ax1}\PYG{p}{,}\PYG{n}{ax2}\PYG{p}{]}\PYG{p}{,} 
-	\PYG{p}{[}\PYG{n}{parsedData1}\PYG{p}{,}\PYG{n}{parsedData2}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:}
+\PYG{k}{for} \PYG{n}{sol}\PYG{p}{,} \PYG{n}{ax}\PYG{p}{,} \PYG{n}{data} \PYG{o+ow}{in} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{p}{[}\PYG{n}{sol1}\PYG{p}{,}\PYG{n}{sol2}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{ax1}\PYG{p}{,}\PYG{n}{ax2}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data1}\PYG{p}{,}\PYG{n}{data2}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:}
 
-	\PYG{c+c1}{\PYGZsh{} Unpack the experimental values}
-	\PYG{n}{atoms1}\PYG{p}{,} \PYG{n}{atoms2}\PYG{p}{,} \PYG{n}{exp}\PYG{p}{,} \PYG{n}{err} \PYG{o}{=} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{o}{*}\PYG{n}{pdata}\PYG{p}{)}
-	\PYG{n}{atoms} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n+nb}{zip}\PYG{p}{(}\PYG{n}{atoms1}\PYG{p}{,} \PYG{n}{atoms2}\PYG{p}{)}\PYG{p}{)}
-	\PYG{n}{metal}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{,} \PYG{n}{qfac} \PYG{o}{=} \PYG{n}{sol}
-	\PYG{n}{expEnsemble}\PYG{p}{,} \PYG{n}{calcEnsemble} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{ensemble\PYGZus{}average}\PYG{p}{(}\PYG{n}{atoms}\PYG{p}{,} \PYG{n}{exp}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{)}
+	\PYG{c+c1}{\PYGZsh{} Calculate ensemble averages}
+	\PYG{n}{dataEAv} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{ensemble\PYGZus{}average}\PYG{p}{(}\PYG{n}{data}\PYG{p}{)}
+
+	\PYG{c+c1}{\PYGZsh{} Calculate the Q\PYGZhy{}factor}
+	\PYG{n}{qfac} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{qfactor}\PYG{p}{(}\PYG{n}{data}\PYG{p}{,} \PYG{n}{ensembleAverage}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{)}
 
 	\PYG{c+c1}{\PYGZsh{} Plot all models}
-	\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{exp}\PYG{p}{,} \PYG{n}{calc}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
+	\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{cal}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
 		\PYG{n}{alpha}\PYG{o}{=}\PYG{l+m+mf}{0.5}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{All models: Q = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfac}\PYG{p}{)}\PYG{p}{)}
 
 	\PYG{c+c1}{\PYGZsh{} Plot the ensemble average}
-	\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{expEnsemble}\PYG{p}{,} \PYG{n}{calcEnsemble}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
+	\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{dataEAv}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{dataEAv}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{cal}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} 
 		\PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Ensemble Average: Q = }\PYG{l+s+si}{\PYGZob{}:5.4f\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{qfac}\PYG{p}{)}\PYG{p}{)}
 
 	\PYG{c+c1}{\PYGZsh{} Plot a diagonal}
@@ -1303,9 +1489,9 @@ Fitting of the rotational correlation time is done with the function {\hyperref[
 
 \fvset{hllines={, ,}}%
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYG{p}{(}\PYG{n}{m\PYGZus{}er}\PYG{p}{,}\PYG{p}{)}\PYG{p}{,} \PYG{p}{(}\PYG{n}{cal\PYGZus{}er}\PYG{p}{,}\PYG{p}{)}\PYG{p}{,} \PYG{n}{qfac} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pre}\PYG{p}{(}
+\PYG{p}{(}\PYG{n}{m\PYGZus{}er}\PYG{p}{,}\PYG{p}{)}\PYG{p}{,} \PYG{p}{(}\PYG{n}{cal\PYGZus{}er}\PYG{p}{,}\PYG{p}{)} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pre}\PYG{p}{(}
 	\PYG{p}{[}\PYG{n}{mStart\PYGZus{}er}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data\PYGZus{}er}\PYG{p}{]}\PYG{p}{,} \PYG{n}{params}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{taur}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{rtypes}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r2}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}
-\PYG{p}{(}\PYG{n}{m\PYGZus{}tb}\PYG{p}{,}\PYG{p}{)}\PYG{p}{,} \PYG{p}{(}\PYG{n}{cal\PYGZus{}tb}\PYG{p}{,}\PYG{p}{)}\PYG{p}{,} \PYG{n}{qfac} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pre}\PYG{p}{(}
+\PYG{p}{(}\PYG{n}{m\PYGZus{}tb}\PYG{p}{,}\PYG{p}{)}\PYG{p}{,} \PYG{p}{(}\PYG{n}{cal\PYGZus{}tb}\PYG{p}{,}\PYG{p}{)} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pre}\PYG{p}{(}
 	\PYG{p}{[}\PYG{n}{mStart\PYGZus{}tb}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data\PYGZus{}tb}\PYG{p}{]}\PYG{p}{,} \PYG{n}{params}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{taur}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{rtypes}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r2}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}
 \end{sphinxVerbatim}
 
@@ -1364,14 +1550,10 @@ And the results are plotted.
 \PYG{k+kn}{from} \PYG{n+nn}{matplotlib} \PYG{k}{import} \PYG{n}{pyplot} \PYG{k}{as} \PYG{n}{plt}
 \PYG{n}{fig}\PYG{p}{,} \PYG{n}{ax} \PYG{o}{=} \PYG{n}{plt}\PYG{o}{.}\PYG{n}{subplots}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{)}\PYG{p}{)}
 
-\PYG{c+c1}{\PYGZsh{} Unpack the experimental values}
-\PYG{n}{atm\PYGZus{}er}\PYG{p}{,} \PYG{n}{exp\PYGZus{}er}\PYG{p}{,} \PYG{n}{err\PYGZus{}er} \PYG{o}{=} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{o}{*}\PYG{n}{data\PYGZus{}er}\PYG{p}{)}
-\PYG{n}{atm\PYGZus{}tb}\PYG{p}{,} \PYG{n}{exp\PYGZus{}tb}\PYG{p}{,} \PYG{n}{err\PYGZus{}tb} \PYG{o}{=} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{o}{*}\PYG{n}{data\PYGZus{}tb}\PYG{p}{)}
-
 \PYG{c+c1}{\PYGZsh{} Plot the data}
-\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{exp\PYGZus{}er}\PYG{p}{,} \PYG{n}{cal\PYGZus{}er}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{cal\PYGZus{}er}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{cal\PYGZus{}er}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{cal}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
 	\PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Er: taur = }\PYG{l+s+si}{\PYGZob{}:3.1f\PYGZcb{}}\PYG{l+s+s2}{ ns}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{l+m+mf}{1E9}\PYG{o}{*}\PYG{n}{m\PYGZus{}er}\PYG{o}{.}\PYG{n}{taur}\PYG{p}{)}\PYG{p}{)}
-\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{exp\PYGZus{}tb}\PYG{p}{,} \PYG{n}{cal\PYGZus{}tb}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{g}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{cal\PYGZus{}tb}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{cal\PYGZus{}tb}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{cal}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{ms}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{g}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
 	\PYG{n}{label}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Tb: taur = }\PYG{l+s+si}{\PYGZob{}:3.1f\PYGZcb{}}\PYG{l+s+s2}{ ns}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{l+m+mf}{1E9}\PYG{o}{*}\PYG{n}{m\PYGZus{}tb}\PYG{o}{.}\PYG{n}{taur}\PYG{p}{)}\PYG{p}{)}
 
 \PYG{c+c1}{\PYGZsh{} Plot a diagonal}
@@ -1441,7 +1623,7 @@ A loop is conducted over the nitrogen atoms that are present in the experimental
 \PYG{n}{exp} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
 \PYG{n}{cal} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
 \PYG{n}{cal\PYGZus{}csa} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
-\PYG{k}{for} \PYG{n}{atom}\PYG{p}{,} \PYG{n}{pre}\PYG{p}{,} \PYG{n}{err} \PYG{o+ow}{in} \PYG{n}{data}\PYG{p}{:}
+\PYG{k}{for} \PYG{n}{atom}\PYG{p}{,} \PYG{n}{pre}\PYG{p}{,} \PYG{n}{err} \PYG{o+ow}{in} \PYG{n}{data}\PYG{p}{[}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{atm}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{err}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{]}\PYG{p}{:}
 	\PYG{n}{exp}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{pre}\PYG{p}{)}
 	\PYG{n}{cal}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{met}\PYG{o}{.}\PYG{n}{atom\PYGZus{}pre}\PYG{p}{(}\PYG{n}{atom}\PYG{p}{,} \PYG{n}{rtype}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r1}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{)}
 	\PYG{n}{cal\PYGZus{}csa}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{met}\PYG{o}{.}\PYG{n}{atom\PYGZus{}pre}\PYG{p}{(}\PYG{n}{atom}\PYG{p}{,} \PYG{n}{rtype}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{r1}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{csa}\PYG{o}{=}\PYG{n}{atom}\PYG{o}{.}\PYG{n}{csa}\PYG{p}{)}\PYG{p}{)}
@@ -1532,23 +1714,22 @@ The fit is conducted by setting the \sphinxcode{\sphinxupquote{usegsbm}} flag to
 
 \fvset{hllines={, ,}}%
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYG{p}{[}\PYG{n}{mfit}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{calc}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{q}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pre}\PYG{p}{(}\PYG{p}{[}\PYG{n}{m0}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{exp}\PYG{p}{]}\PYG{p}{,} \PYG{n}{params}\PYG{o}{=}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{t1e}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{gax}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{grh}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{a}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{g}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,} 
+\PYG{p}{[}\PYG{n}{mfit}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{data}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pre}\PYG{p}{(}\PYG{p}{[}\PYG{n}{m0}\PYG{p}{]}\PYG{p}{,} \PYG{p}{[}\PYG{n}{exp}\PYG{p}{]}\PYG{p}{,} \PYG{n}{params}\PYG{o}{=}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{t1e}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{gax}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{grh}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{a}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{b}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{g}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,} 
 \end{sphinxVerbatim}
 
 Finally the results of the fit are plotted alongside the isotropic theory and the literature fit. Note that the difference in the fit from paramagpy is small, and probably arises because the original paper uses a \sphinxtitleref{Robust} linear fit, which may include weighting with experimental uncertainties. However paramagpy weights values evely here because the experimental uncertainties are unknown.
 
 \fvset{hllines={, ,}}%
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYG{n}{atoms}\PYG{p}{,} \PYG{n}{r1}\PYG{p}{,} \PYG{n}{err} \PYG{o}{=} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{o}{*}\PYG{n}{exp}\PYG{p}{)}
-\PYG{n}{pos} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{n}{a}\PYG{o}{.}\PYG{n}{position} \PYG{k}{for} \PYG{n}{a} \PYG{o+ow}{in} \PYG{n}{atoms}\PYG{p}{]}\PYG{p}{)}
-\PYG{n}{gam} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{n}{a}\PYG{o}{.}\PYG{n}{gamma} \PYG{k}{for} \PYG{n}{a} \PYG{o+ow}{in} \PYG{n}{atoms}\PYG{p}{]}\PYG{p}{)}
+\PYG{n}{pos} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{n}{a}\PYG{o}{.}\PYG{n}{position} \PYG{k}{for} \PYG{n}{a} \PYG{o+ow}{in} \PYG{n}{exp}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{atm}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{]}\PYG{p}{)}
+\PYG{n}{gam} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{n}{a}\PYG{o}{.}\PYG{n}{gamma} \PYG{k}{for} \PYG{n}{a} \PYG{o+ow}{in} \PYG{n}{exp}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{atm}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{]}\PYG{p}{)}
 
 \PYG{n}{fig} \PYG{o}{=} \PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{(}\PYG{n}{figsize}\PYG{o}{=}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{)}\PYG{p}{)}
 \PYG{n}{ax} \PYG{o}{=} \PYG{n}{fig}\PYG{o}{.}\PYG{n}{add\PYGZus{}subplot}\PYG{p}{(}\PYG{l+m+mi}{111}\PYG{p}{)}
 \PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{3200}\PYG{p}{]}\PYG{p}{,}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{3200}\PYG{p}{]}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{\PYGZhy{}k}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
-\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{r1}\PYG{p}{,} \PYG{n}{mfit}\PYG{o}{.}\PYG{n}{fast\PYGZus{}sbm\PYGZus{}r1}\PYG{p}{(}\PYG{n}{pos}\PYG{p}{,} \PYG{n}{gam}\PYG{p}{)}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{iso}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
-\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{r1}\PYG{p}{,} \PYG{n}{mfit}\PYG{o}{.}\PYG{n}{fast\PYGZus{}g\PYGZus{}sbm\PYGZus{}r1}\PYG{p}{(}\PYG{n}{pos}\PYG{p}{,} \PYG{n}{gam}\PYG{p}{)}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{aniso}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
-\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{r1}\PYG{p}{,} \PYG{n}{m}\PYG{o}{.}\PYG{n}{fast\PYGZus{}g\PYGZus{}sbm\PYGZus{}r1}\PYG{p}{(}\PYG{n}{pos}\PYG{p}{,} \PYG{n}{gam}\PYG{p}{)}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{literature fit}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{exp}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{mfit}\PYG{o}{.}\PYG{n}{fast\PYGZus{}sbm\PYGZus{}r1}\PYG{p}{(}\PYG{n}{pos}\PYG{p}{,} \PYG{n}{gam}\PYG{p}{)}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{iso}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{exp}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{mfit}\PYG{o}{.}\PYG{n}{fast\PYGZus{}g\PYGZus{}sbm\PYGZus{}r1}\PYG{p}{(}\PYG{n}{pos}\PYG{p}{,} \PYG{n}{gam}\PYG{p}{)}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{aniso}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{ax}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{exp}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{,} \PYG{n}{m}\PYG{o}{.}\PYG{n}{fast\PYGZus{}g\PYGZus{}sbm\PYGZus{}r1}\PYG{p}{(}\PYG{n}{pos}\PYG{p}{,} \PYG{n}{gam}\PYG{p}{)}\PYG{p}{,} \PYG{n}{marker}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{o}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{lw}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{literature fit}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
 \PYG{n}{ax}\PYG{o}{.}\PYG{n}{set\PYGZus{}xlim}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{3200}\PYG{p}{)}
 \PYG{n}{ax}\PYG{o}{.}\PYG{n}{set\PYGZus{}ylim}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{3200}\PYG{p}{)}
 \PYG{n}{ax}\PYG{o}{.}\PYG{n}{set\PYGZus{}xlabel}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{R1 experimental /Hz}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
@@ -1556,7 +1737,7 @@ Finally the results of the fit are plotted alongside the isotropic theory and th
 \PYG{n}{ax}\PYG{o}{.}\PYG{n}{set\PYGZus{}title}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Tb parashift R1}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
 \PYG{n}{ax}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{(}\PYG{p}{)}
 \PYG{n}{fig}\PYG{o}{.}\PYG{n}{tight\PYGZus{}layout}\PYG{p}{(}\PYG{p}{)}
-\PYG{n}{fig}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{pre\PYGZus{}fit\PYGZus{}aniso\PYGZus{}dipolar.png}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{dpi}\PYG{o}{=}\PYG{l+m+mi}{200}\PYG{p}{)}
+\PYG{n}{fig}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{pre\PYGZus{}fit\PYGZus{}aniso\PYGZus{}dipolar.png}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
 \end{sphinxVerbatim}
 
 \sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{pre\_fit\_aniso\_dipolar.png}}{]}
@@ -1626,12 +1807,12 @@ Note that the two H and N atoms are provided. The first atom is the nuclear spin
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{} Calculate the cross\PYGZhy{}correlated realxation}
 \PYG{n}{compare\PYGZus{}cn} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
-\PYG{k}{for} \PYG{n}{H}\PYG{p}{,} \PYG{n}{N}\PYG{p}{,} \PYG{n}{value}\PYG{p}{,} \PYG{n}{error} \PYG{o+ow}{in} \PYG{n}{data\PYGZus{}cn}\PYG{p}{:}
+\PYG{k}{for} \PYG{n}{H}\PYG{p}{,} \PYG{n}{N}\PYG{p}{,} \PYG{n}{value}\PYG{p}{,} \PYG{n}{error} \PYG{o+ow}{in} \PYG{n}{data\PYGZus{}cn}\PYG{p}{[}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{atm}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{atx}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{err}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{]}\PYG{p}{:}
 	\PYG{n}{delta} \PYG{o}{=} \PYG{n}{met\PYGZus{}cn}\PYG{o}{.}\PYG{n}{atom\PYGZus{}ccr}\PYG{p}{(}\PYG{n}{H}\PYG{p}{,} \PYG{n}{N}\PYG{p}{)}
 	\PYG{n}{compare\PYGZus{}cn}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{p}{(}\PYG{n}{value}\PYG{p}{,} \PYG{n}{delta}\PYG{o}{*}\PYG{l+m+mf}{0.5}\PYG{p}{)}\PYG{p}{)}
 
 \PYG{n}{compare\PYGZus{}f} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
-\PYG{k}{for} \PYG{n}{H}\PYG{p}{,} \PYG{n}{N}\PYG{p}{,} \PYG{n}{value}\PYG{p}{,} \PYG{n}{error} \PYG{o+ow}{in} \PYG{n}{data\PYGZus{}f}\PYG{p}{:}
+\PYG{k}{for} \PYG{n}{H}\PYG{p}{,} \PYG{n}{N}\PYG{p}{,} \PYG{n}{value}\PYG{p}{,} \PYG{n}{error} \PYG{o+ow}{in} \PYG{n}{data\PYGZus{}f}\PYG{p}{[}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{atm}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{atx}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{exp}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{err}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{]}\PYG{p}{:}
 	\PYG{n}{delta} \PYG{o}{=} \PYG{n}{met\PYGZus{}f}\PYG{o}{.}\PYG{n}{atom\PYGZus{}ccr}\PYG{p}{(}\PYG{n}{H}\PYG{p}{,} \PYG{n}{N}\PYG{p}{)}
 	\PYG{n}{compare\PYGZus{}f}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{p}{(}\PYG{n}{value}\PYG{p}{,} \PYG{n}{delta}\PYG{o}{*}\PYG{l+m+mf}{0.5}\PYG{p}{)}\PYG{p}{)}
 \end{sphinxVerbatim}
@@ -2053,6 +2234,10 @@ by ZYZ convention. Defualt is (0,0,0)
 anisotropy
 
 \item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{g\_axrh}} (\sphinxstyleliteralemphasis{\sphinxupquote{array of floats}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} the axial and rhombic values defining the power spectral density
+tensor
+
+\item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{mueff}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} the effective magnetic moment in units of A.m\textasciicircum{}2
 
 \item {} 
@@ -2118,6 +2303,11 @@ Calculate the residual dipolar coupling between two atoms
 {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.atom_set_position:paramagpy.metal.Metal.atom_set_position}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{atom\_set\_position}}}}}(atom)
 &
 Set the position of the Metal object to that of an atom
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.average:paramagpy.metal.Metal.average}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{average}}}}}(metals)
+&
+Set the attributes of the current instance to the average of a list of provided tensor objects
 \\
 \hline
 {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.ccr:paramagpy.metal.Metal.ccr}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{ccr}}}}}(position, gamma, dipole\_shift\_tensor)
@@ -2478,6 +2668,25 @@ Set the position of the Metal object to that of an atom
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode
 \sphinxstyleliteralstrong{\sphinxupquote{atom}} (\sphinxstyleliteralemphasis{\sphinxupquote{biopython atom object}}) \textendash{} must have ‘position’ attribute
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
+
+\subparagraph{paramagpy.metal.Metal.average}
+\label{\detokenize{reference/generated/paramagpy.metal.Metal.average:paramagpy-metal-metal-average}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.average::doc}}\index{average() (paramagpy.metal.Metal method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.average:paramagpy.metal.Metal.average}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{average}}}{\emph{metals}}{}
+Set the attributes of the current instance to the average
+of a list of provided tensor objects
+
+WARNING: averging is unstable for spectral power density \textless{}g\_tensor\textgreater{}
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{metals}} (\sphinxstyleliteralemphasis{\sphinxupquote{a list of Metal objects}}) \textendash{} the average of attributes of this list will be taken
 
 \end{description}\end{quote}
 
@@ -3835,6 +4044,11 @@ The eigenvalues defining the magnitude of the principle axes
 
 \\
 \hline
+{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.fundamental_attributes:paramagpy.metal.Metal.fundamental_attributes}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{fundamental\_attributes}}}}}
+&
+
+\\
+\hline
 {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.g:paramagpy.metal.Metal.g}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{g}}}}}
 &
 gamma euler anglue
@@ -4089,6 +4303,15 @@ The eigenvalues defining the magnitude of the principle axes
 
 
 
+\subparagraph{paramagpy.metal.Metal.fundamental\_attributes}
+\label{\detokenize{reference/generated/paramagpy.metal.Metal.fundamental_attributes:paramagpy-metal-metal-fundamental-attributes}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.fundamental_attributes::doc}}\index{fundamental\_attributes (paramagpy.metal.Metal attribute)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.fundamental_attributes:paramagpy.metal.Metal.fundamental_attributes}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{fundamental\_attributes}}\sphinxbfcode{\sphinxupquote{ = ('position', 'eulers', 'axrh', 'mueff', 'g\_axrh', 't1e', 'shift', 'temperature', 'B0', 'taur')}}}
+\end{fulllineitems}
+
+
+
 \subparagraph{paramagpy.metal.Metal.g}
 \label{\detokenize{reference/generated/paramagpy.metal.Metal.g:paramagpy-metal-metal-g}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.g::doc}}\index{g (paramagpy.metal.Metal attribute)}
 
@@ -4190,7 +4413,7 @@ The magnidue of the isotropic component of the tensor
 \label{\detokenize{reference/generated/paramagpy.metal.Metal.lanth_lib:paramagpy-metal-metal-lanth-lib}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.lanth_lib::doc}}\index{lanth\_lib (paramagpy.metal.Metal attribute)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.lanth_lib:paramagpy.metal.Metal.lanth_lib}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{lanth\_lib}}\sphinxbfcode{\sphinxupquote{ = \{'Ce': (2.5, 0.8571428571428571, 1.33e-13), 'Dy': (7.5, 1.3333333333333333, 2.4e-13), 'Er': (7.5, 1.2, 1.89e-13), 'Eu': (2.0, 1.5, 1.5e-14), 'Gd': (3.5, 2.0, nan), 'Ho': (8.0, 1.25, 2.09e-13), 'Nd': (4.5, 0.7272727272727273, 2.1e-13), 'Pm': (4.0, 0.6, nan), 'Pr': (4.0, 0.8, 5.4e-14), 'Sm': (2.5, 0.2857142857142857, 7.4e-14), 'Tb': (6.0, 1.5, 2.51e-13), 'Tm': (6.0, 1.1666666666666667, 2.68e-13), 'Yb': (3.5, 1.1428571428571428, 1.57e-13), 'Zero': (0.0, 0.0, 0.0)\}}}}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.lanth_lib:paramagpy.metal.Metal.lanth_lib}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{lanth\_lib}}\sphinxbfcode{\sphinxupquote{ = \{'Ce': (2.5, 0.8571428571428571, 1.33e-13), 'Dy': (7.5, 1.3333333333333333, 2.4e-13), 'Er': (7.5, 1.2, 1.89e-13), 'Eu': (2.0, 1.5, 1.5e-14), 'Gd': (3.5, 2.0, 0.0), 'Ho': (8.0, 1.25, 2.09e-13), 'Nd': (4.5, 0.7272727272727273, 2.1e-13), 'Pm': (4.0, 0.6, 0.0), 'Pr': (4.0, 0.8, 5.4e-14), 'Sm': (2.5, 0.2857142857142857, 7.4e-14), 'Tb': (6.0, 1.5, 2.51e-13), 'Tm': (6.0, 1.1666666666666667, 2.68e-13), 'Yb': (3.5, 1.1428571428571428, 1.57e-13), 'Zero': (0.0, 0.0, 0.0)\}}}}
 \end{fulllineitems}
 
 
@@ -5368,7 +5591,7 @@ Add a child to the Entity at a specified position.
 \hline
 {\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{parse}}}}}(dataValues{[}, models{]})
 &
-
+Associate experimental data with atoms of the PDB file This method takes a DataContainer instance from the dataparse module
 \\
 \hline
 {\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.set_parent:paramagpy.protein.CustomStructure.set_parent}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{set\_parent}}}}}(entity)
@@ -5578,6 +5801,23 @@ Add a child to the Entity at a specified position.
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{CustomStructure.}}\sphinxbfcode{\sphinxupquote{parse}}}{\emph{dataValues}, \emph{models=None}}{}
+Associate experimental data with atoms of the PDB file
+This method takes a DataContainer instance from the
+dataparse module
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{dataValues}} (\sphinxstyleliteralemphasis{\sphinxupquote{DataContainer instance}}) \textendash{} a dictionary containing the experimental values
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{dataArray} \textendash{} the returned array has a row for each relevant atom
+in the PDB file. The columns contain model,
+experimental/calculated data, errors and indexes.
+
+\item[{Return type}] \leavevmode
+numpy structured array
+
+\end{description}\end{quote}
+
 \end{fulllineitems}
 
 
@@ -6462,77 +6702,62 @@ This module handles the fitting of paramagnetic objects to experimental data.
 
 \endlastfoot
 
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.cantor_pairing:paramagpy.fit.cantor_pairing}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{cantor\_pairing}}}}}(a, b)
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.ensemble_average:paramagpy.fit.ensemble_average}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{ensemble\_average}}}}}(dataArray)
 &
-Map two integers to a single integer.
+Calculate the ensemble average for the calculated values in the column ‘cal’ of the argument \textless{}dataArray\textgreater{} over models of the PDB file.
 \\
 \hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.clean_indices:paramagpy.fit.clean_indices}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{clean\_indices}}}}}(indices)
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.extract_atom_data:paramagpy.fit.extract_atom_data}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{extract\_atom\_data}}}}}(data{[}, csa, separateModels{]})
 &
-Uniquely map a list of integers to their smallest size.
+Extract values required for PCS/PRE calculations
 \\
 \hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.ensemble_average:paramagpy.fit.ensemble_average}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{ensemble\_average}}}}}(atoms, *values)
-&
-
-\\
-\hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.extract_ccr:paramagpy.fit.extract_ccr}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{extract\_ccr}}}}}(data)
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.extract_ccr_data:paramagpy.fit.extract_ccr_data}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{extract\_ccr\_data}}}}}(data{[}, separateModels{]})
 &
 Extract values required for CCR calculations
 \\
 \hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.extract_csa:paramagpy.fit.extract_csa}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{extract\_csa}}}}}(data)
-&
-Extract CSA tensors from atoms
-\\
-\hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.extract_pcs:paramagpy.fit.extract_pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{extract\_pcs}}}}}(data)
-&
-Extract values required for PCS calculations
-\\
-\hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.extract_pre:paramagpy.fit.extract_pre}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{extract\_pre}}}}}(data)
-&
-Extract values required for PRE calculations
-\\
-\hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.extract_rdc:paramagpy.fit.extract_rdc}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{extract\_rdc}}}}}(data)
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.extract_rdc_data:paramagpy.fit.extract_rdc_data}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{extract\_rdc\_data}}}}}(data{[}, separateModels{]})
 &
 Extract values required for RDC calculations
 \\
 \hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_ccr:paramagpy.fit.nlr_fit_metal_from_ccr}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{nlr\_fit\_metal\_from\_ccr}}}}}(initMetals, ccrs{[}, …{]})
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.fit_error_bootstrap:paramagpy.fit.fit_error_bootstrap}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{fit\_error\_bootstrap}}}}}(fittingFunction, …)
 &
-Fit deltaChi tensor to CCR values using non-linear regression.
+Perform uncertainty analysis sourcing noise from fractioning the experimental data.
 \\
 \hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pcs:paramagpy.fit.nlr_fit_metal_from_pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{nlr\_fit\_metal\_from\_pcs}}}}}(initMetals, pcss{[}, …{]})
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.fit_error_models:paramagpy.fit.fit_error_models}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{fit\_error\_models}}}}}(fittingFunction, **kwargs)
+&
+Perform uncertainty analysis sourcing noise from cooridinates as defined by models of the PDB structure.
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.fit_error_monte_carlo:paramagpy.fit.fit_error_monte_carlo}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{fit\_error\_monte\_carlo}}}}}(fittingFunction, …)
+&
+Perform uncertainty analysis sourcing noise from experimental uncertainties This function takes a fitting routine \textless{}fittingFunction\textgreater{} and repeats it for the specified iterations in a Monte-Carlo approach.
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.metal_standard_deviation:paramagpy.fit.metal_standard_deviation}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{metal\_standard\_deviation}}}}}(metals, params)
+&
+Calculate the standard deviation in parameters \textless{}params\textgreater{} for a list of metal objects \textless{}metals\textgreater{}.
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_ccr:paramagpy.fit.nlr_fit_metal_from_ccr}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{nlr\_fit\_metal\_from\_ccr}}}}}(initMetals, dataArrays)
+&
+Fit Chi tensor to CCR values using non-linear regression.
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pcs:paramagpy.fit.nlr_fit_metal_from_pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{nlr\_fit\_metal\_from\_pcs}}}}}(initMetals, dataArrays)
 &
 Fit deltaChi tensor to PCS values using non-linear regression.
 \\
 \hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pre:paramagpy.fit.nlr_fit_metal_from_pre}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{nlr\_fit\_metal\_from\_pre}}}}}(initMetals, pres{[}, …{]})
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pre:paramagpy.fit.nlr_fit_metal_from_pre}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{nlr\_fit\_metal\_from\_pre}}}}}(initMetals, …{[}, …{]})
 &
-Fit deltaChi tensor to PRE values using non-linear regression.
+Fit Chi tensor to PRE values using non-linear regression.
 \\
 \hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_rdc:paramagpy.fit.nlr_fit_metal_from_rdc}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{nlr\_fit\_metal\_from\_rdc}}}}}(metal, rdc{[}, params, …{]})
-&
-Fit deltaChi tensor to RDC values using non-linear regression.
-\\
-\hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.pcs_fit_error_bootstrap:paramagpy.fit.pcs_fit_error_bootstrap}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{pcs\_fit\_error\_bootstrap}}}}}(initMetals, pcss, …)
-&
-Analyse uncertainty of PCS fit by Bootstrap methods.
-\\
-\hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.pcs_fit_error_monte_carlo:paramagpy.fit.pcs_fit_error_monte_carlo}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{pcs\_fit\_error\_monte\_carlo}}}}}(initMetals, pcss, …)
-&
-Analyse uncertainty of PCS fit by Monte-Carlo simulation This repeatedly adds noise to experimental PCS data and fits the tensor.
-\\
-\hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.qfactor:paramagpy.fit.qfactor}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{qfactor}}}}}(experiment, calculated{[}, sumIndices{]})
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.qfactor:paramagpy.fit.qfactor}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{qfactor}}}}}(dataArray{[}, ensembleAverage, …{]})
 &
 Calculate the Q-factor to judge tensor fit quality
 \\
@@ -6557,103 +6782,108 @@ Solve PCS equation by single value decomposition with offset.
 Solve RDC equation by single value decomposition.
 \\
 \hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.svd_fit_metal_from_rdc:paramagpy.fit.svd_fit_metal_from_rdc}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{svd\_fit\_metal\_from\_rdc}}}}}(metal, rdc{[}, sumIndices{]})
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.svd_fit_metal_from_rdc:paramagpy.fit.svd_fit_metal_from_rdc}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{svd\_fit\_metal\_from\_rdc}}}}}(initMetals, dataArrays)
 &
-Fit deltaChi tensor to RDC values using SVD algorithm.
+Fit deltaChi tensor to RDC values using Single Value Decomposition.
 \\
 \hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.svd_gridsearch_fit_metal_from_pcs:paramagpy.fit.svd_gridsearch_fit_metal_from_pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{svd\_gridsearch\_fit\_metal\_from\_pcs}}}}}(metals, pcss)
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.svd_gridsearch_fit_metal_from_pcs:paramagpy.fit.svd_gridsearch_fit_metal_from_pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{svd\_gridsearch\_fit\_metal\_from\_pcs}}}}}(…{[}, …{]})
 &
 Fit deltaChi tensor to PCS values using Single Value Decomposition over a grid of points in a sphere.
 \\
 \hline
-{\hyperref[\detokenize{reference/generated/paramagpy.fit.unique_pairing:paramagpy.fit.unique_pairing}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{unique\_pairing}}}}}(a, b)
-&
-Bijectively map two integers to a single integer.
-\\
-\hline
 \end{longtable}\sphinxatlongtableend\end{savenotes}
-
-
-\paragraph{paramagpy.fit.cantor\_pairing}
-\label{\detokenize{reference/generated/paramagpy.fit.cantor_pairing:paramagpy-fit-cantor-pairing}}\label{\detokenize{reference/generated/paramagpy.fit.cantor_pairing::doc}}\index{cantor\_pairing() (in module paramagpy.fit)}
-
-\begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.cantor_pairing:paramagpy.fit.cantor_pairing}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{cantor\_pairing}}}{\emph{a}, \emph{b}}{}
-Map two integers to a single integer.
-The mapped space is minimum size.
-Ordering matters in this case.
-see \sphinxhref{https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/}{Bijective mapping f:ZxZ-\textgreater{}N}.
-\begin{quote}\begin{description}
-\item[{Parameters}] \leavevmode\begin{itemize}
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{a}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} 
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{b}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} 
-
-\end{itemize}
-
-\item[{Returns}] \leavevmode
-\sphinxstylestrong{c} \textendash{} bijective mapping (a, b) -\textgreater{} c
-
-\item[{Return type}] \leavevmode
-int
-
-\end{description}\end{quote}
-
-\end{fulllineitems}
-
-
-
-\paragraph{paramagpy.fit.clean\_indices}
-\label{\detokenize{reference/generated/paramagpy.fit.clean_indices:paramagpy-fit-clean-indices}}\label{\detokenize{reference/generated/paramagpy.fit.clean_indices::doc}}\index{clean\_indices() (in module paramagpy.fit)}
-
-\begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.clean_indices:paramagpy.fit.clean_indices}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{clean\_indices}}}{\emph{indices}}{}
-Uniquely map a list of integers to their smallest size.
-For example: {[}7,4,7,9,9,10,1{]} -\textgreater{} {[}4 2 4 0 0 1 3{]}
-\begin{quote}\begin{description}
-\item[{Parameters}] \leavevmode
-\sphinxstyleliteralstrong{\sphinxupquote{indices}} (\sphinxstyleliteralemphasis{\sphinxupquote{array-like integers}}) \textendash{} a list of integers
-
-\item[{Returns}] \leavevmode
-\sphinxstylestrong{new\_indices} \textendash{} the mapped integers with smallest size
-
-\item[{Return type}] \leavevmode
-array-like integers
-
-\end{description}\end{quote}
-
-\end{fulllineitems}
-
 
 
 \paragraph{paramagpy.fit.ensemble\_average}
 \label{\detokenize{reference/generated/paramagpy.fit.ensemble_average:paramagpy-fit-ensemble-average}}\label{\detokenize{reference/generated/paramagpy.fit.ensemble_average::doc}}\index{ensemble\_average() (in module paramagpy.fit)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.ensemble_average:paramagpy.fit.ensemble_average}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{ensemble\_average}}}{\emph{atoms}, \emph{*values}}{}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.ensemble_average:paramagpy.fit.ensemble_average}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{ensemble\_average}}}{\emph{dataArray}}{}
+Calculate the ensemble average for the calculated values in the
+column ‘cal’ of the argument \textless{}dataArray\textgreater{} over models of the
+PDB file.
+Ensemble averaging behaviour is determined by the column ‘idx’
+of the input array.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{dataArray}} (\sphinxstyleliteralemphasis{\sphinxupquote{numpy array}}) \textendash{} the input array for ensemble averaging
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{data} \textendash{} a smaller dataArray with ensemble averaged values
+
+\item[{Return type}] \leavevmode
+numpy array
+
+\end{description}\end{quote}
+
 \end{fulllineitems}
 
 
 
-\paragraph{paramagpy.fit.extract\_ccr}
-\label{\detokenize{reference/generated/paramagpy.fit.extract_ccr:paramagpy-fit-extract-ccr}}\label{\detokenize{reference/generated/paramagpy.fit.extract_ccr::doc}}\index{extract\_ccr() (in module paramagpy.fit)}
+\paragraph{paramagpy.fit.extract\_atom\_data}
+\label{\detokenize{reference/generated/paramagpy.fit.extract_atom_data:paramagpy-fit-extract-atom-data}}\label{\detokenize{reference/generated/paramagpy.fit.extract_atom_data::doc}}\index{extract\_atom\_data() (in module paramagpy.fit)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.extract_ccr:paramagpy.fit.extract_ccr}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{extract\_ccr}}}{\emph{data}}{}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.extract_atom_data:paramagpy.fit.extract_atom_data}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{extract\_atom\_data}}}{\emph{data}, \emph{csa=False}, \emph{separateModels=True}}{}
+Extract values required for PCS/PRE calculations
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{data}} (\sphinxstyleliteralemphasis{\sphinxupquote{numpy.ndarray}}) \textendash{} a numpy structured array containing atomic information
+and experimental data values
+This is returned from.
+{\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.protein.CustomStructure.parse()}}}}}
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{csa}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} when True, calculates the CSA tensor for each atom
+this may be required for RACS and CSAxDSA calculations
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{separateModels}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} when True, separates data into separate lists
+by their model number. When False, returns only one list
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{arr} \textendash{} this has fields specified by structdtype
+this array is core to all fitting algorithms
+
+\item[{Return type}] \leavevmode
+numpy.ndarra
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
+
+\paragraph{paramagpy.fit.extract\_ccr\_data}
+\label{\detokenize{reference/generated/paramagpy.fit.extract_ccr_data:paramagpy-fit-extract-ccr-data}}\label{\detokenize{reference/generated/paramagpy.fit.extract_ccr_data::doc}}\index{extract\_ccr\_data() (in module paramagpy.fit)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.extract_ccr_data:paramagpy.fit.extract_ccr_data}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{extract\_ccr\_data}}}{\emph{data}, \emph{separateModels=True}}{}
 Extract values required for CCR calculations
 \begin{quote}\begin{description}
-\item[{Parameters}] \leavevmode
-\sphinxstyleliteralstrong{\sphinxupquote{data}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of lists}}) \textendash{} A list with elements {[}Atom1, Atom2, value, error{]}, where Atom is
-an Atom object, value is the CCR value, and error is the uncertainty
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{data}} (\sphinxstyleliteralemphasis{\sphinxupquote{numpy.ndarray}}) \textendash{} a numpy structured array containing atomic information
+and experimental data values
+This is returned from
+{\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.protein.CustomStructure.parse()}}}}}
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{separateModels}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} when True, separates data into separate lists
+by their model number. When False, returns only one list
+
+\end{itemize}
 
 \item[{Returns}] \leavevmode
-\sphinxstylestrong{tuple} \textendash{} all information required for CCR calculations
+\sphinxstylestrong{arr} \textendash{} this has fields specified by structdtype
+this array is core to all fitting algorithms
 
 \item[{Return type}] \leavevmode
-dict
+numpy.ndarra
 
 \end{description}\end{quote}
 
@@ -6661,93 +6891,201 @@ dict
 
 
 
-\paragraph{paramagpy.fit.extract\_csa}
-\label{\detokenize{reference/generated/paramagpy.fit.extract_csa:paramagpy-fit-extract-csa}}\label{\detokenize{reference/generated/paramagpy.fit.extract_csa::doc}}\index{extract\_csa() (in module paramagpy.fit)}
+\paragraph{paramagpy.fit.extract\_rdc\_data}
+\label{\detokenize{reference/generated/paramagpy.fit.extract_rdc_data:paramagpy-fit-extract-rdc-data}}\label{\detokenize{reference/generated/paramagpy.fit.extract_rdc_data::doc}}\index{extract\_rdc\_data() (in module paramagpy.fit)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.extract_csa:paramagpy.fit.extract_csa}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{extract\_csa}}}{\emph{data}}{}
-Extract CSA tensors from atoms
-\begin{quote}\begin{description}
-\item[{Parameters}] \leavevmode
-\sphinxstyleliteralstrong{\sphinxupquote{data}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of lists}}) \textendash{} A list with elements {[}Atom, value, error{]}, where Atom is
-an Atom object, value is the PCS/RDC/PRE value,
-and error is the uncertainty
-
-\item[{Returns}] \leavevmode
-\sphinxstylestrong{csas} \textendash{} an array of each CSA tensor
-
-\item[{Return type}] \leavevmode
-array of 3x3 arrays
-
-\end{description}\end{quote}
-
-\end{fulllineitems}
-
-
-
-\paragraph{paramagpy.fit.extract\_pcs}
-\label{\detokenize{reference/generated/paramagpy.fit.extract_pcs:paramagpy-fit-extract-pcs}}\label{\detokenize{reference/generated/paramagpy.fit.extract_pcs::doc}}\index{extract\_pcs() (in module paramagpy.fit)}
-
-\begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.extract_pcs:paramagpy.fit.extract_pcs}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{extract\_pcs}}}{\emph{data}}{}
-Extract values required for PCS calculations
-\begin{quote}\begin{description}
-\item[{Parameters}] \leavevmode
-\sphinxstyleliteralstrong{\sphinxupquote{data}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of lists}}) \textendash{} A list with elements {[}Atom, value, error{]}, where Atom is
-an Atom object, value is the PCS value, and error is the uncertainty
-
-\item[{Returns}] \leavevmode
-\sphinxstylestrong{tuple} \textendash{} all information required for PCS calculations
-
-\item[{Return type}] \leavevmode
-(atom coordinates, PCS values, PCS errors, atom indices)
-
-\end{description}\end{quote}
-
-\end{fulllineitems}
-
-
-
-\paragraph{paramagpy.fit.extract\_pre}
-\label{\detokenize{reference/generated/paramagpy.fit.extract_pre:paramagpy-fit-extract-pre}}\label{\detokenize{reference/generated/paramagpy.fit.extract_pre::doc}}\index{extract\_pre() (in module paramagpy.fit)}
-
-\begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.extract_pre:paramagpy.fit.extract_pre}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{extract\_pre}}}{\emph{data}}{}
-Extract values required for PRE calculations
-\begin{quote}\begin{description}
-\item[{Parameters}] \leavevmode
-\sphinxstyleliteralstrong{\sphinxupquote{data}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of lists}}) \textendash{} A list with elements {[}Atom, value, error{]}, where Atom is
-an Atom object, value is the PRE value, and error is the uncertainty
-
-\item[{Returns}] \leavevmode
-\sphinxstylestrong{tuple} \textendash{} all information required for PRE calculations
-
-\item[{Return type}] \leavevmode
-(atom coordinates, PRE values, PRE errors, atom indices)
-
-\end{description}\end{quote}
-
-\end{fulllineitems}
-
-
-
-\paragraph{paramagpy.fit.extract\_rdc}
-\label{\detokenize{reference/generated/paramagpy.fit.extract_rdc:paramagpy-fit-extract-rdc}}\label{\detokenize{reference/generated/paramagpy.fit.extract_rdc::doc}}\index{extract\_rdc() (in module paramagpy.fit)}
-
-\begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.extract_rdc:paramagpy.fit.extract_rdc}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{extract\_rdc}}}{\emph{data}}{}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.extract_rdc_data:paramagpy.fit.extract_rdc_data}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{extract\_rdc\_data}}}{\emph{data}, \emph{separateModels=True}}{}
 Extract values required for RDC calculations
 \begin{quote}\begin{description}
-\item[{Parameters}] \leavevmode
-\sphinxstyleliteralstrong{\sphinxupquote{data}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of lists}}) \textendash{} A list with elements {[}Atom1, Atom2, value, error{]}, where Atom is
-an Atom object, value is the RDC value, and error is the uncertainty
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{data}} (\sphinxstyleliteralemphasis{\sphinxupquote{numpy.ndarray}}) \textendash{} a numpy structured array containing atomic information
+and experimental data values
+This is returned from
+{\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.protein.CustomStructure.parse()}}}}}
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{separateModels}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} when True, separates data into separate lists
+by their model number. When False, returns only one list
+
+\end{itemize}
 
 \item[{Returns}] \leavevmode
-\sphinxstylestrong{tuple} \textendash{}         RDC errors, atom indices)
-all information required for RDC calculations and fitting
+\sphinxstylestrong{arr} \textendash{} this has fields specified by structdtype
+this array is core to all fitting algorithms
 
 \item[{Return type}] \leavevmode
-(inter-atomic vector, gamma values, RDC values,
+numpy.ndarra
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
+
+\paragraph{paramagpy.fit.fit\_error\_bootstrap}
+\label{\detokenize{reference/generated/paramagpy.fit.fit_error_bootstrap:paramagpy-fit-fit-error-bootstrap}}\label{\detokenize{reference/generated/paramagpy.fit.fit_error_bootstrap::doc}}\index{fit\_error\_bootstrap() (in module paramagpy.fit)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.fit_error_bootstrap:paramagpy.fit.fit_error_bootstrap}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{fit\_error\_bootstrap}}}{\emph{fittingFunction}, \emph{iterations}, \emph{fraction}, \emph{**kwargs}}{}
+Perform uncertainty analysis sourcing noise from fractioning the
+experimental data. This function takes a fitting routine \textless{}fittingFunction\textgreater{}
+and repeats it for the specified iterations in a Bootstrap approach.
+With each iteration, a random subset of the experimental data is sampled as
+specified by the \textless{}fraction\textgreater{} argument. The standard deviation in the fitted
+parameters is then returned.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{fittingFunction}} (\sphinxstyleliteralemphasis{\sphinxupquote{function}}) \textendash{} the fitting routine to be used.
+This could be ‘nlr\_fit\_metal\_from\_ccr’ for example
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{iterations}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} the number of iterations for the Monte-Carlo simulation
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{kwargs}} (\sphinxstyleliteralemphasis{\sphinxupquote{dict}}) \textendash{} all key-word arguments will be bundled into this variable and
+parsed to the fittingFunction.
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\begin{itemize}
+\item {} 
+\sphinxstylestrong{sample\_metals} (\sphinxstyleemphasis{list of list of metals}) \textendash{} the metals fitted to the data with noise at each iteration
+
+\item {} 
+\sphinxstylestrong{std\_metals} (\sphinxstyleemphasis{list of metals}) \textendash{} the standard deviation in fitted parameters over all iterations of the
+Monte Carlo simulation.
+These are stored within the metal object. All unfitted parameters
+are zero.
+
+\end{itemize}
+
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
+
+\paragraph{paramagpy.fit.fit\_error\_models}
+\label{\detokenize{reference/generated/paramagpy.fit.fit_error_models:paramagpy-fit-fit-error-models}}\label{\detokenize{reference/generated/paramagpy.fit.fit_error_models::doc}}\index{fit\_error\_models() (in module paramagpy.fit)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.fit_error_models:paramagpy.fit.fit_error_models}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{fit\_error\_models}}}{\emph{fittingFunction}, \emph{**kwargs}}{}
+Perform uncertainty analysis sourcing noise from cooridinates as defined
+by models of the PDB structure.
+This function takes a fitting routine \textless{}fittingFunction\textgreater{} and repeats it for
+each model. The standard deviation in the fitted parameters is then returned.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{fittingFunction}} (\sphinxstyleliteralemphasis{\sphinxupquote{function}}) \textendash{} the fitting routine to be used.
+This could be ‘nlr\_fit\_metal\_from\_ccr’ for example
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{kwargs}} (\sphinxstyleliteralemphasis{\sphinxupquote{dict}}) \textendash{} all key-word arguments will be bundled into this variable and
+parsed to the fittingFunction.
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\begin{itemize}
+\item {} 
+\sphinxstylestrong{sample\_metals} (\sphinxstyleemphasis{list of list of metals}) \textendash{} the metals fitted to the data with noise at each iteration
+
+\item {} 
+\sphinxstylestrong{std\_metals} (\sphinxstyleemphasis{list of metals}) \textendash{} the standard deviation in fitted parameters over all iterations of the
+Monte Carlo simulation.
+These are stored within the metal object. All unfitted parameters
+are zero.
+
+\end{itemize}
+
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
+
+\paragraph{paramagpy.fit.fit\_error\_monte\_carlo}
+\label{\detokenize{reference/generated/paramagpy.fit.fit_error_monte_carlo:paramagpy-fit-fit-error-monte-carlo}}\label{\detokenize{reference/generated/paramagpy.fit.fit_error_monte_carlo::doc}}\index{fit\_error\_monte\_carlo() (in module paramagpy.fit)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.fit_error_monte_carlo:paramagpy.fit.fit_error_monte_carlo}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{fit\_error\_monte\_carlo}}}{\emph{fittingFunction}, \emph{iterations}, \emph{**kwargs}}{}
+Perform uncertainty analysis sourcing noise from experimental uncertainties
+This function takes a fitting routine \textless{}fittingFunction\textgreater{} and repeats it for
+the specified iterations in a Monte-Carlo approach. With each iteration,
+random noise sourced from a uniform distribution scaled by the experimental
+uncertainties is added to the experimental values. The standard deviation in
+the fitted parameters is then returned.
+
+NOTE: the ‘err’ column of the dataArrays must be set to non-zero values for
+this method to work.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{fittingFunction}} (\sphinxstyleliteralemphasis{\sphinxupquote{function}}) \textendash{} the fitting routine to be used.
+This could be ‘nlr\_fit\_metal\_from\_ccr’ for example
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{iterations}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} the number of iterations for the Monte-Carlo simulation
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{kwargs}} (\sphinxstyleliteralemphasis{\sphinxupquote{dict}}) \textendash{} all key-word arguments will be bundled into this variable and
+parsed to the fittingFunction.
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\begin{itemize}
+\item {} 
+\sphinxstylestrong{sample\_metals} (\sphinxstyleemphasis{list of list of metals}) \textendash{} the metals fitted to the data with noise at each iteration
+
+\item {} 
+\sphinxstylestrong{std\_metals} (\sphinxstyleemphasis{list of metals}) \textendash{} the standard deviation in fitted parameters over all iterations of the
+Monte Carlo simulation.
+These are stored within the metal object. All unfitted parameters
+are zero.
+
+\end{itemize}
+
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
+
+\paragraph{paramagpy.fit.metal\_standard\_deviation}
+\label{\detokenize{reference/generated/paramagpy.fit.metal_standard_deviation:paramagpy-fit-metal-standard-deviation}}\label{\detokenize{reference/generated/paramagpy.fit.metal_standard_deviation::doc}}\index{metal\_standard\_deviation() (in module paramagpy.fit)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.metal_standard_deviation:paramagpy.fit.metal_standard_deviation}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{metal\_standard\_deviation}}}{\emph{metals}, \emph{params}}{}
+Calculate the standard deviation in parameters \textless{}params\textgreater{} for a
+list of metal objects \textless{}metals\textgreater{}.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{metals}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of Metal objects}}) \textendash{} the metals for which the standard deviation in parameters
+will be calculated
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{params}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of str}}) \textendash{} the parameters for the standard deviation calculation.
+For example {[}‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’,’shift’{]}
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{std\_metal} \textendash{} the returned metal object has attributes equal to the
+standard deviation in the given parameter.
+All other attributes are zero.
+
+\item[{Return type}] \leavevmode
+metal object
 
 \end{description}\end{quote}
 
@@ -6759,35 +7097,38 @@ all information required for RDC calculations and fitting
 \label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_ccr:paramagpy-fit-nlr-fit-metal-from-ccr}}\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_ccr::doc}}\index{nlr\_fit\_metal\_from\_ccr() (in module paramagpy.fit)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_ccr:paramagpy.fit.nlr_fit_metal_from_ccr}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{nlr\_fit\_metal\_from\_ccr}}}{\emph{initMetals}, \emph{ccrs}, \emph{params=('x'}, \emph{'y'}, \emph{'z')}, \emph{sumIndices=None}, \emph{progress=None}}{}
-Fit deltaChi tensor to CCR values using non-linear regression.
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_ccr:paramagpy.fit.nlr_fit_metal_from_ccr}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{nlr\_fit\_metal\_from\_ccr}}}{\emph{initMetals}, \emph{dataArrays}, \emph{params=('x'}, \emph{'y'}, \emph{'z')}, \emph{ensembleAverage=False}, \emph{progress=None}}{}
+Fit Chi tensor to CCR values using non-linear regression.
+This algorithm applies to CSA/Curie spin cross-correlated relaxation
+for R2 differential line broadening.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{initMetals}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of Metal objects}}) \textendash{} a list of metals used as starting points for fitting.
 a list must always be provided, but may also contain
 only one element. If multiple metals are provided, each metal
-is fitted to their respective CCR dataset by index, but all are
-fitted to a common position.
+is fitted to their respective PRE dataset by index in \textless{}dataArrays,
+but all are fitted to a common position.
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{ccrs}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of CCR datasets}}) \textendash{} each CCR dataset must correspond to an associated metal for fitting.
-each CCR dataset has structure {[}Atom, value, error{]}, where Atom is
-an Atom object, value is the PCS/RDC/PRE/CCR value
-and error is the uncertainty
+\sphinxstyleliteralstrong{\sphinxupquote{dataArrays}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of PRE dataArray}}) \textendash{} each PRE dataArray must correspond to an associated metal for fitting.
+each PRE dataArray has structure determined by
+{\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.protein.CustomStructure.parse()}}}}}.
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{params}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of str}}) \textendash{} the parameters to be fit.
-For example {[}‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’,’shift’{]}
-This defaults to {[}‘x’,’y’,’z’{]}
+For example {[}‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’{]}
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{sumIndices}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of arrays of ints}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} each index list must correspond to an associated ccr dataset.
-each index list contains an index assigned to each atom.
-Common indices determine summation between models
-for ensemble averaging.
-If None, defaults to atom serial number to determine summation
-between models.
+\sphinxstyleliteralstrong{\sphinxupquote{ensembleAverage}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} when False, each model of the structure is fit independently.
+The parameters for each fitted tensor are then averaged before
+returning the final averaged tensor.
+When True, the structure models are treated as an ensemble and
+ensemble averaging of calculated PCS/PRE/RDC/CCR values is
+conducted at all stages of fitting to fit a single tensor to all
+models simultaneously. The ‘idx’ column of the dataArray
+determines the ensemble averaging behaviour with common indices
+for atoms between models resulting in their summation.
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{progress}} (\sphinxstyleliteralemphasis{\sphinxupquote{object}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} to keep track of the calculation, progress.set(x) is called each
@@ -6798,13 +7139,12 @@ iteration and varies from 0.0 -\textgreater{} 1.0 when the calculation is comple
 \item[{Returns}] \leavevmode
 \begin{itemize}
 \item {} 
-\sphinxstylestrong{metals} (\sphinxstyleemphasis{list of metals}) \textendash{} the metals fitted by NLR to the CCR data provided
+\sphinxstylestrong{fitMetals} (\sphinxstyleemphasis{list of metals}) \textendash{} a list of the fitted tensors.
 
 \item {} 
-\sphinxstylestrong{calc\_ccrs} (\sphinxstyleemphasis{list of lists of floats}) \textendash{} the calculated CCR values
-
-\item {} 
-\sphinxstylestrong{qfactors} (\sphinxstyleemphasis{list})
+\sphinxstylestrong{dataArrays} (\sphinxstyleemphasis{list of dataArray}) \textendash{} each dataArray is copy of the original dataArray with
+the ‘cal’ column populated with back-calculated values from the
+fitted tensor.
 
 \end{itemize}
 
@@ -6819,7 +7159,7 @@ iteration and varies from 0.0 -\textgreater{} 1.0 when the calculation is comple
 \label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pcs:paramagpy-fit-nlr-fit-metal-from-pcs}}\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pcs::doc}}\index{nlr\_fit\_metal\_from\_pcs() (in module paramagpy.fit)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pcs:paramagpy.fit.nlr_fit_metal_from_pcs}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{nlr\_fit\_metal\_from\_pcs}}}{\emph{initMetals}, \emph{pcss}, \emph{params=('x'}, \emph{'y'}, \emph{'z'}, \emph{'ax'}, \emph{'rh'}, \emph{'a'}, \emph{'b'}, \emph{'g')}, \emph{sumIndices=None}, \emph{userads=False}, \emph{useracs=False}, \emph{progress=None}}{}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pcs:paramagpy.fit.nlr_fit_metal_from_pcs}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{nlr\_fit\_metal\_from\_pcs}}}{\emph{initMetals}, \emph{dataArrays}, \emph{params=('x'}, \emph{'y'}, \emph{'z'}, \emph{'ax'}, \emph{'rh'}, \emph{'a'}, \emph{'b'}, \emph{'g')}, \emph{ensembleAverage=False}, \emph{userads=False}, \emph{useracs=False}, \emph{progress=None}}{}
 Fit deltaChi tensor to PCS values using non-linear regression.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
@@ -6827,26 +7167,28 @@ Fit deltaChi tensor to PCS values using non-linear regression.
 \sphinxstyleliteralstrong{\sphinxupquote{initMetals}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of Metal objects}}) \textendash{} a list of metals used as starting points for fitting.
 a list must always be provided, but may also contain
 only one element. If multiple metals are provided, each metal
-is fitted to their respective PCS dataset by index, but all are
-fitted to a common position.
+is fitted to their respective PCS dataset by index in \textless{}dataArrays,
+but all are fitted to a common position.
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{pcss}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of PCS datasets}}) \textendash{} each PCS dataset must correspond to an associated metal for fitting.
-each PCS dataset has structure {[}Atom, value, error{]}, where Atom is
-an Atom object, value is the PCS/RDC/PRE value
-and error is the uncertainty
+\sphinxstyleliteralstrong{\sphinxupquote{dataArrays}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of PCS dataArray}}) \textendash{} each PCS dataArray must correspond to an associated metal for fitting.
+each PCS dataArray has structure determined by
+{\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.protein.CustomStructure.parse()}}}}}.
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{params}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of str}}) \textendash{} the parameters to be fit.
 For example {[}‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’,’shift’{]}
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{sumIndices}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of arrays of ints}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} each index list must correspond to an associated pcs dataset.
-each index list contains an index assigned to each atom.
-Common indices determine summation between models
-for ensemble averaging.
-If None, defaults to atom serial number to determine summation
-between models.
+\sphinxstyleliteralstrong{\sphinxupquote{ensembleAverage}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} when False, each model of the structure is fit independently.
+The parameters for each fitted tensor are then averaged before
+returning the final averaged tensor.
+When True, the structure models are treated as an ensemble and
+ensemble averaging of calculated PCS/PRE/RDC/CCR values is
+conducted at all stages of fitting to fit a single tensor to all
+models simultaneously. The ‘idx’ column of the dataArray
+determines the ensemble averaging behaviour with common indices
+for atoms between models resulting in their summation.
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{userads}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} include residual anisotropic dipolar shielding (RADS) during fitting
@@ -6864,10 +7206,12 @@ iteration and varies from 0.0 -\textgreater{} 1.0 when the calculation is comple
 \item[{Returns}] \leavevmode
 \begin{itemize}
 \item {} 
-\sphinxstylestrong{metals} (\sphinxstyleemphasis{list of metals}) \textendash{} the metals fitted by NLR to the PCS data provided
+\sphinxstylestrong{fitMetals} (\sphinxstyleemphasis{list of metals}) \textendash{} a list of the fitted tensors.
 
 \item {} 
-\sphinxstylestrong{calc\_pcss} (\sphinxstyleemphasis{list of lists of floats}) \textendash{} the calculated PCS values
+\sphinxstylestrong{dataArrays} (\sphinxstyleemphasis{list of dataArray}) \textendash{} each dataArray is copy of the original dataArray with
+the ‘cal’ column populated with back-calculated values from the
+fitted tensor.
 
 \end{itemize}
 
@@ -6882,39 +7226,30 @@ iteration and varies from 0.0 -\textgreater{} 1.0 when the calculation is comple
 \label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pre:paramagpy-fit-nlr-fit-metal-from-pre}}\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pre::doc}}\index{nlr\_fit\_metal\_from\_pre() (in module paramagpy.fit)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pre:paramagpy.fit.nlr_fit_metal_from_pre}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{nlr\_fit\_metal\_from\_pre}}}{\emph{initMetals}, \emph{pres}, \emph{params=('x'}, \emph{'y'}, \emph{'z')}, \emph{sumIndices=None}, \emph{rtypes=None}, \emph{usesbm=True}, \emph{usegsbm=False}, \emph{usedsa=True}, \emph{usecsa=False}, \emph{progress=None}}{}
-Fit deltaChi tensor to PRE values using non-linear regression.
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pre:paramagpy.fit.nlr_fit_metal_from_pre}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{nlr\_fit\_metal\_from\_pre}}}{\emph{initMetals}, \emph{dataArrays}, \emph{rtypes}, \emph{params=('x'}, \emph{'y'}, \emph{'z')}, \emph{usesbm=True}, \emph{usegsbm=False}, \emph{usedsa=True}, \emph{usecsa=False}, \emph{ensembleAverage=False}, \emph{progress=None}}{}
+Fit Chi tensor to PRE values using non-linear regression.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{initMetals}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of Metal objects}}) \textendash{} a list of metals used as starting points for fitting.
 a list must always be provided, but may also contain
 only one element. If multiple metals are provided, each metal
-is fitted to their respective PRE dataset by index, but all are
-fitted to a common position.
+is fitted to their respective PRE dataset by index in \textless{}dataArrays,
+but all are fitted to a common position.
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{pres}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of PRE datasets}}) \textendash{} each PRE dataset must correspond to an associated metal for fitting.
-each PRE dataset has structure {[}Atom, value, error{]}, where Atom is
-an Atom object, value is the PCS/RDC/PRE value
-and error is the uncertainty
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{params}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of str}}) \textendash{} the parameters to be fit.
-For example {[}‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’,’iso’,’taur’,’t1e’{]}
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{sumIndices}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of arrays of ints}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} each index list must correspond to an associated pcs dataset.
-each index list contains an index assigned to each atom.
-Common indices determine summation between models
-for ensemble averaging.
-If None, defaults to atom serial number to determine summation
-between models.
+\sphinxstyleliteralstrong{\sphinxupquote{dataArrays}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of PRE dataArray}}) \textendash{} each PRE dataArray must correspond to an associated metal for fitting.
+each PRE dataArray has structure determined by
+{\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.protein.CustomStructure.parse()}}}}}.
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{rtypes}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} the relaxtion type, either ‘r1’ or ‘r2’. A list must be provided with
 each element corresponding to an associated dataset.
 Defaults to ‘r2’ for all datasets of None is specified.
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{params}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of str}}) \textendash{} the parameters to be fit.
+For example {[}‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’,’shift’{]}
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{usesbm}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} include Solomon-Bloemenbergen-Morgan (Dipole-dipole) relaxation theory.
@@ -6934,49 +7269,15 @@ default is True
 default is False
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{progress}} (\sphinxstyleliteralemphasis{\sphinxupquote{object}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} to keep track of the calculation, progress.set(x) is called each
-iteration and varies from 0.0 -\textgreater{} 1.0 when the calculation is complete.
-
-\end{itemize}
-
-\item[{Returns}] \leavevmode
-\sphinxstylestrong{metals} \textendash{} the metals fitted by NLR to the PRE data provided
-
-\item[{Return type}] \leavevmode
-list of metals
-
-\end{description}\end{quote}
-
-\end{fulllineitems}
-
-
-
-\paragraph{paramagpy.fit.nlr\_fit\_metal\_from\_rdc}
-\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_rdc:paramagpy-fit-nlr-fit-metal-from-rdc}}\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_rdc::doc}}\index{nlr\_fit\_metal\_from\_rdc() (in module paramagpy.fit)}
-
-\begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_rdc:paramagpy.fit.nlr_fit_metal_from_rdc}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{nlr\_fit\_metal\_from\_rdc}}}{\emph{metal}, \emph{rdc}, \emph{params=('ax'}, \emph{'rh'}, \emph{'a'}, \emph{'b'}, \emph{'g')}, \emph{sumIndices=None}, \emph{progress=None}}{}
-Fit deltaChi tensor to RDC values using non-linear regression.
-\begin{quote}\begin{description}
-\item[{Parameters}] \leavevmode\begin{itemize}
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{metal}} (\sphinxstyleliteralemphasis{\sphinxupquote{Metal object}}) \textendash{} the starting metal for fitting
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{rdc}} (\sphinxstyleliteralemphasis{\sphinxupquote{the RDC dataset}}) \textendash{} each RDC dataset has structure {[}Atom, value, error{]}, where Atom is
-an Atom object, value is the PCS/RDC/PRE value
-and error is the uncertainty
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{params}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} the parameters to be fit.
-this defaults to {[}‘ax’,’rh’,’a’,’b’,’g’{]}
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{sumIndices}} (\sphinxstyleliteralemphasis{\sphinxupquote{array of ints}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} the list contains an index assigned to each atom.
-Common indices determine summation between models
-for ensemble averaging.
-If None, defaults to atom serial number to determine summation
-between models.
+\sphinxstyleliteralstrong{\sphinxupquote{ensembleAverage}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} when False, each model of the structure is fit independently.
+The parameters for each fitted tensor are then averaged before
+returning the final averaged tensor.
+When True, the structure models are treated as an ensemble and
+ensemble averaging of calculated PCS/PRE/RDC/CCR values is
+conducted at all stages of fitting to fit a single tensor to all
+models simultaneously. The ‘idx’ column of the dataArray
+determines the ensemble averaging behaviour with common indices
+for atoms between models resulting in their summation.
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{progress}} (\sphinxstyleliteralemphasis{\sphinxupquote{object}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} to keep track of the calculation, progress.set(x) is called each
@@ -6987,162 +7288,12 @@ iteration and varies from 0.0 -\textgreater{} 1.0 when the calculation is comple
 \item[{Returns}] \leavevmode
 \begin{itemize}
 \item {} 
-\sphinxstylestrong{fitMetal} (\sphinxstyleemphasis{Metal object}) \textendash{} the fitted metal by NLR to the RDC data provided
+\sphinxstylestrong{fitMetals} (\sphinxstyleemphasis{list of metals}) \textendash{} a list of the fitted tensors.
 
 \item {} 
-\sphinxstylestrong{calculated} (\sphinxstyleemphasis{array of floats}) \textendash{} the calculated RDC values
-
-\item {} 
-\sphinxstylestrong{qfac} (\sphinxstyleemphasis{float}) \textendash{} the qfactor judging the fit quality
-
-\end{itemize}
-
-
-\end{description}\end{quote}
-
-\end{fulllineitems}
-
-
-
-\paragraph{paramagpy.fit.pcs\_fit\_error\_bootstrap}
-\label{\detokenize{reference/generated/paramagpy.fit.pcs_fit_error_bootstrap:paramagpy-fit-pcs-fit-error-bootstrap}}\label{\detokenize{reference/generated/paramagpy.fit.pcs_fit_error_bootstrap::doc}}\index{pcs\_fit\_error\_bootstrap() (in module paramagpy.fit)}
-
-\begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.pcs_fit_error_bootstrap:paramagpy.fit.pcs_fit_error_bootstrap}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{pcs\_fit\_error\_bootstrap}}}{\emph{initMetals}, \emph{pcss}, \emph{iterations}, \emph{fraction}, \emph{params=('x'}, \emph{'y'}, \emph{'z'}, \emph{'ax'}, \emph{'rh'}, \emph{'a'}, \emph{'b'}, \emph{'g')}, \emph{sumIndices=None}, \emph{userads=False}, \emph{useracs=False}, \emph{progress=None}}{}
-Analyse uncertainty of PCS fit by Bootstrap methods.
-This repeats the tensor fitting, but each time samples a fraction
-of the data randomly. The standard deviation in fitted parameters
-over each iteration is then reported.
-\begin{quote}\begin{description}
-\item[{Parameters}] \leavevmode\begin{itemize}
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{initMetals}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of Metal objects}}) \textendash{} a list of metals used as starting points for fitting.
-a list must always be provided, but may also contain
-only one element. If multiple metals are provided, each metal
-is fitted to their respective PCS dataset by index, but all are
-fitted to a common position.
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{pcss}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of PCS datasets}}) \textendash{} each PCS dataset must correspond to an associated metal for fitting.
-each PCS dataset has structure {[}Atom, value, error{]}, where Atom is
-an Atom object, value is the PCS/RDC/PRE value
-and error is the uncertainty
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{iterations}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} the number of Monte Carlo iterations to perform
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{fraction}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} must be between 0 and 1
-the proportion of data to be sample for fitting with each iteration
-of the bootstrap method.
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{params}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of str}}) \textendash{} the parameters to be fit.
-For example {[}‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’,’shift’{]}
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{sumIndices}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of arrays of ints}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} each index list must correspond to an associated pcs dataset.
-each index list contains an index assigned to each atom.
-Common indices determine summation between models
-for ensemble averaging.
-If None, defaults to atom serial number to determine summation
-between models.
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{userads}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} include residual anisotropic dipolar shielding (RADS) during fitting
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{useracs}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} include residual anisotropic chemical shielding (RACS) during fitting.
-CSA tensors are taken using the \textless{}csa\textgreater{} method of atoms.
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{progress}} (\sphinxstyleliteralemphasis{\sphinxupquote{object}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} to keep track of the calculation, progress.set(x) is called each
-iteration and varies from 0.0 -\textgreater{} 1.0 when the calculation is complete.
-
-\end{itemize}
-
-\item[{Returns}] \leavevmode
-\begin{itemize}
-\item {} 
-\sphinxstylestrong{sample\_metals} (\sphinxstyleemphasis{list of list of metals}) \textendash{} the metals fitted by NLR to the PCS data with noise at each iteration
-
-\item {} 
-\sphinxstylestrong{std\_metals} (\sphinxstyleemphasis{list of metals}) \textendash{} the standard deviation in fitted parameters over all iterations of the
-Monte Carlo simulation.
-These are stored within the metal object. All unfitted parameters
-are zero.
-
-\end{itemize}
-
-
-\end{description}\end{quote}
-
-\end{fulllineitems}
-
-
-
-\paragraph{paramagpy.fit.pcs\_fit\_error\_monte\_carlo}
-\label{\detokenize{reference/generated/paramagpy.fit.pcs_fit_error_monte_carlo:paramagpy-fit-pcs-fit-error-monte-carlo}}\label{\detokenize{reference/generated/paramagpy.fit.pcs_fit_error_monte_carlo::doc}}\index{pcs\_fit\_error\_monte\_carlo() (in module paramagpy.fit)}
-
-\begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.pcs_fit_error_monte_carlo:paramagpy.fit.pcs_fit_error_monte_carlo}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{pcs\_fit\_error\_monte\_carlo}}}{\emph{initMetals}, \emph{pcss}, \emph{iterations}, \emph{params=('x'}, \emph{'y'}, \emph{'z'}, \emph{'ax'}, \emph{'rh'}, \emph{'a'}, \emph{'b'}, \emph{'g')}, \emph{sumIndices=None}, \emph{userads=False}, \emph{useracs=False}, \emph{progress=None}}{}
-Analyse uncertainty of PCS fit by Monte-Carlo simulation
-This repeatedly adds noise to experimental PCS data and fits the tensor.
-The standard deviation of the fitted parameters across each iteration
-is then reported.
-\begin{quote}\begin{description}
-\item[{Parameters}] \leavevmode\begin{itemize}
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{initMetals}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of Metal objects}}) \textendash{} a list of metals used as starting points for fitting.
-a list must always be provided, but may also contain
-only one element. If multiple metals are provided, each metal
-is fitted to their respective PCS dataset by index, but all are
-fitted to a common position.
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{pcss}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of PCS datasets}}) \textendash{} each PCS dataset must correspond to an associated metal for fitting.
-each PCS dataset has structure {[}Atom, value, error{]}, where Atom is
-an Atom object, value is the PCS/RDC/PRE value
-and error is the uncertainty
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{iterations}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} the number of Monte Carlo iterations to perform
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{params}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of str}}) \textendash{} the parameters to be fit.
-For example {[}‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’,’shift’{]}
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{sumIndices}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of arrays of ints}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} each index list must correspond to an associated pcs dataset.
-each index list contains an index assigned to each atom.
-Common indices determine summation between models
-for ensemble averaging.
-If None, defaults to atom serial number to determine summation
-between models.
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{userads}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} include residual anisotropic dipolar shielding (RADS) during fitting
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{useracs}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} include residual anisotropic chemical shielding (RACS) during fitting.
-CSA tensors are taken using the \textless{}csa\textgreater{} method of atoms.
-
-\item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{progress}} (\sphinxstyleliteralemphasis{\sphinxupquote{object}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} to keep track of the calculation, progress.set(x) is called each
-iteration and varies from 0.0 -\textgreater{} 1.0 when the calculation is complete.
-
-\end{itemize}
-
-\item[{Returns}] \leavevmode
-\begin{itemize}
-\item {} 
-\sphinxstylestrong{sample\_metals} (\sphinxstyleemphasis{list of list of metals}) \textendash{} the metals fitted by NLR to the PCS data with noise at each iteration
-
-\item {} 
-\sphinxstylestrong{std\_metals} (\sphinxstyleemphasis{list of metals}) \textendash{} the standard deviation in fitted parameters over all iterations of the
-Monte Carlo simulation.
-These are stored within the metal object. All unfitted parameters
-are zero.
+\sphinxstylestrong{dataArrays} (\sphinxstyleemphasis{list of dataArray}) \textendash{} each dataArray is copy of the original dataArray with
+the ‘cal’ column populated with back-calculated values from the
+fitted tensor.
 
 \end{itemize}
 
@@ -7157,7 +7308,7 @@ are zero.
 \label{\detokenize{reference/generated/paramagpy.fit.qfactor:paramagpy-fit-qfactor}}\label{\detokenize{reference/generated/paramagpy.fit.qfactor::doc}}\index{qfactor() (in module paramagpy.fit)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.qfactor:paramagpy.fit.qfactor}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{qfactor}}}{\emph{experiment}, \emph{calculated}, \emph{sumIndices=None}}{}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.qfactor:paramagpy.fit.qfactor}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{qfactor}}}{\emph{dataArray}, \emph{ensembleAverage=False}, \emph{calDenominator=False}}{}
 Calculate the Q-factor to judge tensor fit quality
 
 A lower value indicates a better fit. The Q-factor is calculated using
@@ -7175,15 +7326,26 @@ respectively.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{experiment}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of floats}}) \textendash{} the experimental values
+\sphinxstyleliteralstrong{\sphinxupquote{dataArray}} (\sphinxstyleliteralemphasis{\sphinxupquote{numpy array}}) \textendash{} the dataArray must contain the columns ‘exp’, ‘cal’ and ‘idx’
+corresponding to the experimenta, calculated and index values
+respectively. The index value determines the ensemble averaging
+behaviour, and can be ignored if the argument \textless{}ensembleAverage\textgreater{}
+is False.
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{calculated}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of floats}}) \textendash{} the corresponding caluclated values from the fitted model
+\sphinxstyleliteralstrong{\sphinxupquote{ensembleAverage}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} when False, the q-factor calculation squares each difference
+independently.
+When True, the q-factor calculates an ensemble average before
+taking the square of differences. The ‘idx’ column of the dataArray
+determines the ensemble averaging behaviour with common indices
+for atoms between models resulting in their summation.
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{sumIndices}} (\sphinxstyleliteralemphasis{\sphinxupquote{list ints}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Common indices determine summation between models
-for ensemble averaging.
-If None, no ensemble averaging is conducted
+\sphinxstyleliteralstrong{\sphinxupquote{calDenominator}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} when False, the standard Q-factor is calculated with only the sum
+of squares for the experimental values used in the denominator
+when True, the Q-factor established by Ubbink et al. is
+calculated which has a sum of absolute values of exp and cal
+values squared in the denominator.
 
 \end{itemize}
 
@@ -7244,7 +7406,8 @@ This function is generally called by higher methods like
 \sphinxstyleliteralstrong{\sphinxupquote{pos}} (\sphinxstyleliteralemphasis{\sphinxupquote{array of}}\sphinxstyleliteralemphasis{\sphinxupquote{ {[}}}\sphinxstyleliteralemphasis{\sphinxupquote{x}}\sphinxstyleliteralemphasis{\sphinxupquote{,}}\sphinxstyleliteralemphasis{\sphinxupquote{y}}\sphinxstyleliteralemphasis{\sphinxupquote{,}}\sphinxstyleliteralemphasis{\sphinxupquote{z}}\sphinxstyleliteralemphasis{\sphinxupquote{{]} }}\sphinxstyleliteralemphasis{\sphinxupquote{floats}}) \textendash{} the atomic positions in meters
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{pcs}} (\sphinxstyleliteralemphasis{\sphinxupquote{array of floats}}) \textendash{} the PCS values in ppm
+\sphinxstyleliteralstrong{\sphinxupquote{pcs}} (\sphinxstyleliteralemphasis{\sphinxupquote{array of floats}}) \textendash{} the PCS values in ppm. Note these should be weighted by the
+experimental uncertainties.
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{idx}} (\sphinxstyleliteralemphasis{\sphinxupquote{array of ints}}) \textendash{} an index assigned to each atom. Common indices determine summation
@@ -7257,12 +7420,16 @@ in the measured value
 \end{itemize}
 
 \item[{Returns}] \leavevmode
-\sphinxstylestrong{tuple} \textendash{} calc are the calculated PCS values from the fitted tensor
-sol is the solution to the linearised PCS equation and
-consists of the tensor matrix elements
+\begin{itemize}
+\item {} 
+\sphinxstylestrong{calc} (\sphinxstyleemphasis{array of floats}) \textendash{} the calculated PCS values from the fitted tensor
 
-\item[{Return type}] \leavevmode
-(calc, sol)
+\item {} 
+\sphinxstylestrong{sol} (\sphinxstyleemphasis{array of floats}) \textendash{} solution to the linearised PCS equation and
+consists of the tensor 5 matrix elements
+
+\end{itemize}
+
 
 \end{description}\end{quote}
 
@@ -7288,7 +7455,8 @@ NOTE: the factor of 1E26 is required for floating point error mitigation
 \sphinxstyleliteralstrong{\sphinxupquote{pos}} (\sphinxstyleliteralemphasis{\sphinxupquote{array of}}\sphinxstyleliteralemphasis{\sphinxupquote{ {[}}}\sphinxstyleliteralemphasis{\sphinxupquote{x}}\sphinxstyleliteralemphasis{\sphinxupquote{,}}\sphinxstyleliteralemphasis{\sphinxupquote{y}}\sphinxstyleliteralemphasis{\sphinxupquote{,}}\sphinxstyleliteralemphasis{\sphinxupquote{z}}\sphinxstyleliteralemphasis{\sphinxupquote{{]} }}\sphinxstyleliteralemphasis{\sphinxupquote{floats}}) \textendash{} the atomic positions in meters
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{pcs}} (\sphinxstyleliteralemphasis{\sphinxupquote{array of floats}}) \textendash{} the PCS values in ppm
+\sphinxstyleliteralstrong{\sphinxupquote{pcs}} (\sphinxstyleliteralemphasis{\sphinxupquote{array of floats}}) \textendash{} the PCS values in ppm. Note these should be weighted by the
+experimental uncertainties.
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{idx}} (\sphinxstyleliteralemphasis{\sphinxupquote{array of ints}}) \textendash{} an index assigned to each atom. Common indices determine summation
@@ -7301,12 +7469,16 @@ in the measured value
 \end{itemize}
 
 \item[{Returns}] \leavevmode
-\sphinxstylestrong{tuple} \textendash{} calc are the calculated PCS values from the fitted tensor
-sol is the solution to the linearised PCS equation and
-consists of the tensor matrix elements and offset
+\begin{itemize}
+\item {} 
+\sphinxstylestrong{calc} (\sphinxstyleemphasis{array of floats}) \textendash{} the calculated PCS values from the fitted tensor
 
-\item[{Return type}] \leavevmode
-(calc, sol)
+\item {} 
+\sphinxstylestrong{sol} (\sphinxstyleemphasis{array of floats}) \textendash{} solution to the linearised PCS equation and
+consists of the tensor 5 matrix elements and offset values
+
+\end{itemize}
+
 
 \end{description}\end{quote}
 
@@ -7362,40 +7534,54 @@ consists of the tensor matrix elements
 \label{\detokenize{reference/generated/paramagpy.fit.svd_fit_metal_from_rdc:paramagpy-fit-svd-fit-metal-from-rdc}}\label{\detokenize{reference/generated/paramagpy.fit.svd_fit_metal_from_rdc::doc}}\index{svd\_fit\_metal\_from\_rdc() (in module paramagpy.fit)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.svd_fit_metal_from_rdc:paramagpy.fit.svd_fit_metal_from_rdc}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{svd\_fit\_metal\_from\_rdc}}}{\emph{metal}, \emph{rdc}, \emph{sumIndices=None}}{}
-Fit deltaChi tensor to RDC values using SVD algorithm.
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.svd_fit_metal_from_rdc:paramagpy.fit.svd_fit_metal_from_rdc}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{svd\_fit\_metal\_from\_rdc}}}{\emph{initMetals}, \emph{dataArrays}, \emph{params=('ax'}, \emph{'rh'}, \emph{'a'}, \emph{'b'}, \emph{'g')}, \emph{ensembleAverage=False}, \emph{progress=None}}{}
+Fit deltaChi tensor to RDC values using Single Value Decomposition.
 Note this is a weighted SVD calculation which takes into account
 experimental errors.
-Ensemble averaging defaults to atom numbers.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{metal}} (\sphinxstyleliteralemphasis{\sphinxupquote{Metal object}}) \textendash{} the starting metal for fitting
+\sphinxstyleliteralstrong{\sphinxupquote{initMetals}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of Metal objects}}) \textendash{} a list of metals used as starting points for fitting.
+a list must always be provided, but may also contain
+only one element. If multiple metals are provided, each metal
+is fitted to their respective RDC dataset by index in \textless{}dataArrays\textgreater{}.
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{rdc}} (\sphinxstyleliteralemphasis{\sphinxupquote{the RDC dataset}}) \textendash{} each RDC dataset has structure {[}(Atom1, Atom2), value, error{]},
-where Atom is an Atom object, value is the RDC value
-and error is the uncertainty
+\sphinxstyleliteralstrong{\sphinxupquote{dataArrays}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of PRE dataArray}}) \textendash{} each RDC dataArray must correspond to an associated metal for fitting.
+each RDC dataArray has structure determined by
+{\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.protein.CustomStructure.parse()}}}}}.
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{sumIndices}} (\sphinxstyleliteralemphasis{\sphinxupquote{array of ints}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} the list contains an index assigned to each atom.
-Common indices determine summation between models
-for ensemble averaging.
-If None, defaults to atom serial number to determine summation
-between models.
+\sphinxstyleliteralstrong{\sphinxupquote{params}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of str}}) \textendash{} the parameters to be fit.
+NOTE: This is a dummy argument and does not influence the fitting.
+The default parameters (‘ax’,’rh’,’a’,’b’,’g’) are the only option.
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{ensembleAverage}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} when False, each model of the structure is fit independently.
+The parameters for each fitted tensor are then averaged before
+returning the final averaged tensor.
+When True, the structure models are treated as an ensemble and
+ensemble averaging of calculated PCS/PRE/RDC/CCR values is
+conducted at all stages of fitting to fit a single tensor to all
+models simultaneously. The ‘idx’ column of the dataArray
+determines the ensemble averaging behaviour with common indices
+for atoms between models resulting in their summation.
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{progress}} (\sphinxstyleliteralemphasis{\sphinxupquote{object}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} to keep track of the calculation, progress.set(x) is called each
+iteration and varies from 0.0 -\textgreater{} 1.0 when the calculation is complete.
 
 \end{itemize}
 
 \item[{Returns}] \leavevmode
 \begin{itemize}
 \item {} 
-\sphinxstylestrong{fitMetal} (\sphinxstyleemphasis{Metal object}) \textendash{} the fitted metal by NLR to the RDC data provided
+\sphinxstylestrong{fitMetals} (\sphinxstyleemphasis{list of metals}) \textendash{} a list of the fitted tensors.
 
 \item {} 
-\sphinxstylestrong{calculated} (\sphinxstyleemphasis{array of floats}) \textendash{} the calculated RDC values
-
-\item {} 
-\sphinxstylestrong{qfac} (\sphinxstyleemphasis{float}) \textendash{} the qfactor judging the fit quality
+\sphinxstylestrong{dataArrays} (\sphinxstyleemphasis{list of dataArray}) \textendash{} each dataArray is copy of the original dataArray with
+the ‘cal’ column populated with back-calculated values from the
+fitted tensor.
 
 \end{itemize}
 
@@ -7410,34 +7596,35 @@ between models.
 \label{\detokenize{reference/generated/paramagpy.fit.svd_gridsearch_fit_metal_from_pcs:paramagpy-fit-svd-gridsearch-fit-metal-from-pcs}}\label{\detokenize{reference/generated/paramagpy.fit.svd_gridsearch_fit_metal_from_pcs::doc}}\index{svd\_gridsearch\_fit\_metal\_from\_pcs() (in module paramagpy.fit)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.svd_gridsearch_fit_metal_from_pcs:paramagpy.fit.svd_gridsearch_fit_metal_from_pcs}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{svd\_gridsearch\_fit\_metal\_from\_pcs}}}{\emph{metals}, \emph{pcss}, \emph{sumIndices=None}, \emph{origin=None}, \emph{radius=20.0}, \emph{points=16}, \emph{offsetShift=False}, \emph{progress=None}}{}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.svd_gridsearch_fit_metal_from_pcs:paramagpy.fit.svd_gridsearch_fit_metal_from_pcs}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{svd\_gridsearch\_fit\_metal\_from\_pcs}}}{\emph{initMetals}, \emph{dataArrays}, \emph{ensembleAverage=False}, \emph{origin=None}, \emph{radius=20.0}, \emph{points=16}, \emph{offsetShift=False}, \emph{progress=None}}{}
 Fit deltaChi tensor to PCS values using Single Value Decomposition over
 a grid of points in a sphere.
 Note this uses a weighted SVD fit which takes into account
 experimental errors
-Ensemble averaging is determined by atom number.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{metals}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of Metal objects}}) \textendash{} a list of metals used as starting points for fitting.
+\sphinxstyleliteralstrong{\sphinxupquote{initMetals}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of Metal objects}}) \textendash{} a list of metals used as starting points for fitting.
 a list must always be provided, but may also contain
 only one element. If multiple metals are provided, each metal
-is fitted to their respective PCS dataset by index, but all are
-fitted to a common position.
+is fitted to their respective PCS dataset by index in \textless{}dataArrays,
+but all are fitted to a common position.
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{pcss}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of PCS datasets}}) \textendash{} each PCS dataset must correspond to an associated metal for fitting.
-each PCS dataset has structure {[}Atom, value, error{]}, where Atom is
-an Atom object, value is the PCS/RDC/PRE value
-and error is the uncertainty
+\sphinxstyleliteralstrong{\sphinxupquote{dataArrays}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of PCS dataArray}}) \textendash{} each PCS dataArray must correspond to an associated metal for fitting.
+each PCS dataArray has structure determined by
+{\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.protein.CustomStructure.parse()}}}}}.
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{sumIndices}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of arrays of ints}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} each index list must correspond to an associated pcs dataset.
-each index list contains an index assigned to each atom.
-Common indices determine summation between models
-for ensemble averaging.
-If None, defaults to atom serial number to determine summation
-between models.
+\sphinxstyleliteralstrong{\sphinxupquote{ensembleAverage}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} when False, each model of the structure is fit independently.
+The parameters for each fitted tensor are then averaged before
+returning the final averaged tensor.
+When True, the structure models are treated as an ensemble and
+ensemble averaging of calculated PCS/PRE/RDC/CCR values is
+conducted at all stages of fitting to fit a single tensor to all
+models simultaneously. The ‘idx’ column of the dataArray
+determines the ensemble averaging behaviour with common indices
+for atoms between models resulting in their summation.
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{origin}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} the centre of the gridsearch of positions in Angstroms.
@@ -7463,41 +7650,17 @@ iteration and varies from 0.0 -\textgreater{} 1.0 when the calculation is comple
 \end{itemize}
 
 \item[{Returns}] \leavevmode
-\sphinxstylestrong{minmetals} \textendash{} the metals fitted by SVD to the PCS data provided
-
-\item[{Return type}] \leavevmode
-list of metals
-
-\end{description}\end{quote}
-
-\end{fulllineitems}
-
-
-
-\paragraph{paramagpy.fit.unique\_pairing}
-\label{\detokenize{reference/generated/paramagpy.fit.unique_pairing:paramagpy-fit-unique-pairing}}\label{\detokenize{reference/generated/paramagpy.fit.unique_pairing::doc}}\index{unique\_pairing() (in module paramagpy.fit)}
-
-\begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.unique_pairing:paramagpy.fit.unique_pairing}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{unique\_pairing}}}{\emph{a}, \emph{b}}{}
-Bijectively map two integers to a single integer.
-The mapped space is minimum size.
-The input is symmetric.
-see \sphinxhref{https://stackoverflow.com/questions/919612/mapping-two-integers-to-one-in-a-unique-and-deterministic-way/}{Bijective mapping f:ZxZ-\textgreater{}N}.
-\begin{quote}\begin{description}
-\item[{Parameters}] \leavevmode\begin{itemize}
+\begin{itemize}
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{a}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} 
+\sphinxstylestrong{fitMetals} (\sphinxstyleemphasis{list of metals}) \textendash{} a list of the fitted tensors.
 
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{b}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} 
+\sphinxstylestrong{dataArrays} (\sphinxstyleemphasis{list of dataArray}) \textendash{} each dataArray is copy of the original dataArray with
+the ‘cal’ column populated with back-calculated values from the
+fitted tensor.
 
 \end{itemize}
 
-\item[{Returns}] \leavevmode
-\sphinxstylestrong{c} \textendash{} bijective symmetric mapping (a, b) \textbar{} (b, a) -\textgreater{} c
-
-\item[{Return type}] \leavevmode
-int
 
 \end{description}\end{quote}
 

@@ -20,12 +20,12 @@ data_f = prot.parse(dataparse.read_ccr("../data_files/myoglobin_f.ccr"))
 
 # Calculate the cross-correlated realxation
 compare_cn = []
-for H, N, value, error in data_cn:
+for H, N, value, error in data_cn[['atm','atx','exp','err']]:
 	delta = met_cn.atom_ccr(H, N)
 	compare_cn.append((value, delta*0.5))
 
 compare_f = []
-for H, N, value, error in data_f:
+for H, N, value, error in data_f[['atm','atx','exp','err']]:
 	delta = met_f.atom_ccr(H, N)
 	compare_f.append((value, delta*0.5))
 

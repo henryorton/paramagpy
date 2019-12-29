@@ -18,8 +18,8 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="paramagpy.fit.extract_ccr" href="paramagpy.fit.extract_ccr.html" />
-    <link rel="prev" title="paramagpy.fit.clean_indices" href="paramagpy.fit.clean_indices.html" /> 
+    <link rel="next" title="paramagpy.fit.extract_atom_data" href="paramagpy.fit.extract_atom_data.html" />
+    <link rel="prev" title="paramagpy.fit" href="paramagpy.fit.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -31,10 +31,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="paramagpy.fit.extract_ccr.html" title="paramagpy.fit.extract_ccr"
+          <a href="paramagpy.fit.extract_atom_data.html" title="paramagpy.fit.extract_atom_data"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="paramagpy.fit.clean_indices.html" title="paramagpy.fit.clean_indices"
+          <a href="paramagpy.fit.html" title="paramagpy.fit"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
@@ -51,8 +51,25 @@
 <h1>paramagpy.fit.ensemble_average<a class="headerlink" href="#paramagpy-fit-ensemble-average" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="paramagpy.fit.ensemble_average">
-<code class="descclassname">paramagpy.fit.</code><code class="descname">ensemble_average</code><span class="sig-paren">(</span><em>atoms</em>, <em>*values</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#ensemble_average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.ensemble_average" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">paramagpy.fit.</code><code class="descname">ensemble_average</code><span class="sig-paren">(</span><em>dataArray</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#ensemble_average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.ensemble_average" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the ensemble average for the calculated values in the
+column ‘cal’ of the argument &lt;dataArray&gt; over models of the
+PDB file.
+Ensemble averaging behaviour is determined by the column ‘idx’
+of the input array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dataArray</strong> (<em>numpy array</em>) – the input array for ensemble averaging</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> – a smaller dataArray with ensemble averaged values</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 
@@ -63,11 +80,11 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="paramagpy.fit.clean_indices.html"
-                        title="previous chapter">paramagpy.fit.clean_indices</a></p>
+  <p class="topless"><a href="paramagpy.fit.html"
+                        title="previous chapter">paramagpy.fit</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="paramagpy.fit.extract_ccr.html"
-                        title="next chapter">paramagpy.fit.extract_ccr</a></p>
+  <p class="topless"><a href="paramagpy.fit.extract_atom_data.html"
+                        title="next chapter">paramagpy.fit.extract_atom_data</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -101,10 +118,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="paramagpy.fit.extract_ccr.html" title="paramagpy.fit.extract_ccr"
+          <a href="paramagpy.fit.extract_atom_data.html" title="paramagpy.fit.extract_atom_data"
              >next</a> |</li>
         <li class="right" >
-          <a href="paramagpy.fit.clean_indices.html" title="paramagpy.fit.clean_indices"
+          <a href="paramagpy.fit.html" title="paramagpy.fit"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
