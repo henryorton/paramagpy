@@ -22,7 +22,8 @@ This start of this script follows the script :ref:`pcs_fit` to fit the tensor.
 .. literalinclude:: ../../../examples/pcs_fit_uncertainty/pcs_fit_uncertainty.py
 	:lines: 1-24
 
-### Uncertainty from structure models
+Uncertainty from structure models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The PDB file contains models that capture uncertainty in the structure of the protein. This can be propagated to estimate uncertainty in the fitted tensor parameters using the fnction :py:func:`paramagpy.fit.fit_error_model`. This fits a separate tensor to each model and returns all fitted tensors as well as the standard deviation in the fitted parameters.
 
@@ -40,7 +41,8 @@ The standard deviation in the fitted tensor parameters is found in the variable 
 .. image:: ../../../examples/pcs_fit_uncertainty/models.png
 
 
-### Uncertainty from experimental uncertainties
+Uncertainty from experimental uncertainties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Experimental uncertainties can be measured. This may arise due to spectral noise in peak heights for PREs, or spectral noise as uncertainties in chemical shifts for PCSs, as is the case here. The function :py:func:`paramagpy.fit.fit_error_monte_carlo` will repeat the fit for many iterations, each time adding random noise from a uniform distribution scaled by the experimental errors present in the ``err`` column of the dataArray ``parsedData``. 
 
@@ -56,7 +58,8 @@ Experimental uncertainties can be measured. This may arise due to spectral noise
 .. image:: ../../../examples/pcs_fit_uncertainty/monte_carlo.png
 
 
-### Uncertainty from sample fraction
+Uncertainty from sample fraction
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A final, but generally not recommended method is to source noise from taking a random fraction of the data and conducting the fit for many iterations to then view the deviation in fitted parameters. This method is often called bootstrapping and is desirable if the experimental uncertainties are unknown and the PDB file does not contain models that capture structural unceratinty. The function :py:func:`paramagpy.fit.fit_error_bootstrap` will repeat the fit for many iterations, each time sampling the desired amount of the experimental data randomly. 
 

@@ -4,6 +4,8 @@
 Examples
 ########
 
+Note that all these examples are for scripted calculations using the Paramagpy python module. Most of this functionality is also available by the GUI :ref:`paramagpy_gui`
+
 PCS data
 --------
 

@@ -1,12 +1,10 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Welcome to paramagpy’s documentation &#8212; paramagpy 0.44 documentation</title>
+    <meta charset="utf-8" />
+    <title>Welcome to paramagpy’s documentation &#8212; paramagpy 1.0 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -14,7 +12,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -32,7 +31,7 @@
         <li class="right" >
           <a href="install.html" title="Installation Guide"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">paramagpy 0.44 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">paramagpy 1.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -43,56 +42,54 @@
             
   <div class="section" id="welcome-to-paramagpy-s-documentation">
 <h1>Welcome to paramagpy’s documentation<a class="headerlink" href="#welcome-to-paramagpy-s-documentation" title="Permalink to this headline">¶</a></h1>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">0.44</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">Dec 29, 2019</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Release</dt>
+<dd class="field-odd"><p>1.0</p>
+</dd>
+<dt class="field-even">Date</dt>
+<dd class="field-even"><p>Dec 29, 2019</p>
+</dd>
+</dl>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>paramagpy is a python module for calculating paramagnetic effects in NMR spectra of proteins. This currently includes fitting of paramagnetic susceptibility tensors to experimental data associated with pseudocontact shifts (PCS) residual dipolar couplings (RDC), paramagnetic relaxation enhancements (PRE) and cross-correlated relaxation (CCR). A GUI allows easy viewing of data and seamless transition between PCS/RDC/PRE/CCR calculations.</p>
 <div class="figure align-center" id="id1">
 <img alt="_images/icon.png" src="_images/icon.png" />
-<p class="caption"><span class="caption-text"><em>Please, not the eyes!</em> - Canberra cyclist</span></p>
+<p class="caption"><span class="caption-text"><em>Please, not the eyes!</em> - Canberra cyclist</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
 </div>
 </div>
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Support for PDB protein structures with models</li>
-<li>Combined SVD gridsearch and gradient descent algorithms for solving PCS tensors</li>
-<li>Optional fitting of reference offset parameter for PCS datasets</li>
-<li>Support for Residual Anisotropic Chemical Shielding (RACS) and Residual Anisotropic Dipolar Shielding (RADS) corrections to PCS</li>
-<li>Lanthanide parameter templates available</li>
-<li>Plotting of correlation between experiment/calculated values</li>
-<li>Plotting of tensor isosurfaces compatible with PyMol</li>
-<li>Q-factor calculations</li>
-<li>Error analysis of tensor fit quality by Monte-Carlo or Bootstrap methods</li>
-<li>Optimisation of multiple PCS/PRE/CCR datasets to a common position</li>
-<li>Unique tensor representation compatible with Numbat (program)</li>
-<li>Fitting of RDC tensor by SVD algorithm</li>
-<li>PRE calculations by Solomon and Curie spin mechanisms</li>
-<li>Spectral power density tensor fitting for anisotropic dipolar PREs</li>
-<li>CSA cross-correlation correction to PRE calculations</li>
-<li>Dipole-dipole/Curie spin cross-correlated relaxation calculations</li>
-<li>Fitting of tensor parameters to PRE/CCR data</li>
-<li>Macro scripts for integration with CCPNMR and Sparky</li>
+<li><p>Support for PDB protein structures with models</p></li>
+<li><p>Combined SVD gridsearch and gradient descent algorithms for solving PCS tensors</p></li>
+<li><p>Optional fitting of reference offset parameter for PCS datasets</p></li>
+<li><p>Support for Residual Anisotropic Chemical Shielding (RACS) and Residual Anisotropic Dipolar Shielding (RADS) corrections to PCS</p></li>
+<li><p>Lanthanide parameter templates available</p></li>
+<li><p>Plotting of correlation between experiment/calculated values</p></li>
+<li><p>Plotting of tensor isosurfaces compatible with PyMol</p></li>
+<li><p>Q-factor calculations</p></li>
+<li><p>Error analysis of tensor fit quality by Monte-Carlo or Bootstrap methods</p></li>
+<li><p>Optimisation of multiple PCS/PRE/CCR datasets to a common position</p></li>
+<li><p>Unique tensor representation compatible with Numbat (program)</p></li>
+<li><p>Fitting of RDC tensor by SVD algorithm</p></li>
+<li><p>PRE calculations by Solomon and Curie spin mechanisms</p></li>
+<li><p>Spectral power density tensor fitting for anisotropic dipolar PREs</p></li>
+<li><p>CSA cross-correlation correction to PRE calculations</p></li>
+<li><p>Dipole-dipole/Curie spin cross-correlated relaxation calculations</p></li>
+<li><p>Fitting of tensor parameters to PRE/CCR data</p></li>
+<li><p>Macro scripts for integration with CCPNMR and Sparky</p></li>
 </ul>
 </div>
 <div class="section" id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference external" href="https://henryorton.github.io/paramagpy/">https://henryorton.github.io/paramagpy/</a></li>
+<li><p><a class="reference external" href="https://henryorton.github.io/paramagpy/">https://henryorton.github.io/paramagpy/</a></p></li>
 </ul>
 </div>
 <div class="section" id="citing-paramagpy">
 <h2>Citing paramagpy<a class="headerlink" href="#citing-paramagpy" title="Permalink to this headline">¶</a></h2>
-<p>The paramagpy preprint can be found on ChemArXiv <a class="reference external" href="https://doi.org/10.26434/chemrxiv.9643154.v1">https://doi.org/10.26434/chemrxiv.9643154.v1</a></p>
+<p>Paramagpy is published in Magnetic Resonance <a class="reference external" href="https://doi.org/10.5194/mr-2019-3">https://doi.org/10.5194/mr-2019-3</a></p>
 </div>
 <div class="section" id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
@@ -120,6 +117,10 @@
 <li class="toctree-l1"><a class="reference internal" href="nmr_software_macros/index.html">NMR Software Macros</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nmr_software_macros/index.html#ccpnmr-analysis-2-4">CCPNMR Analysis 2.4</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nmr_software_macros/index.html#sparky">Sparky</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mathematical_proofs.html">Mathematical Proofs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mathematical_proofs.html#proof-of-equivalence-between-the-matrix-representation-of-curie-spin-dipole-dipole-cross-correlated-relaxation-paramagpy-implementation-and-the-original-description-by-ghose-and-prestegard">Proof of equivalence between the matrix representation of Curie-spin dipole–dipole cross-correlated relaxation (Paramagpy implementation) and the original description by Ghose and Prestegard</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="reference/index.html">Reference Guide</a><ul>
@@ -163,13 +164,11 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -190,12 +189,12 @@
         <li class="right" >
           <a href="install.html" title="Installation Guide"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">paramagpy 0.44 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">paramagpy 1.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

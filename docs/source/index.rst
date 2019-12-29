@@ -36,4 +36,5 @@ Contents
     examples/index
     paramagpy_gui
     nmr_software_macros/index
+    mathematical_proofs
     reference/index

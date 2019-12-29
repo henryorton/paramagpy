@@ -1,0 +1,212 @@
+\indexentry{paramagpy.metal (module)@\spxentry{paramagpy.metal}\spxextra{module}|hyperpage}{46}
+\indexentry{euler\_to\_matrix() (in module paramagpy.metal)@\spxentry{euler\_to\_matrix()}\spxextra{in module paramagpy.metal}|hyperpage}{46}
+\indexentry{matrix\_to\_euler() (in module paramagpy.metal)@\spxentry{matrix\_to\_euler()}\spxextra{in module paramagpy.metal}|hyperpage}{46}
+\indexentry{unique\_eulers() (in module paramagpy.metal)@\spxentry{unique\_eulers()}\spxextra{in module paramagpy.metal}|hyperpage}{47}
+\indexentry{make\_tensor() (in module paramagpy.metal)@\spxentry{make\_tensor()}\spxextra{in module paramagpy.metal}|hyperpage}{47}
+\indexentry{Metal (class in paramagpy.metal)@\spxentry{Metal}\spxextra{class in paramagpy.metal}|hyperpage}{48}
+\indexentry{\_\_init\_\_() (paramagpy.metal.Metal method)@\spxentry{\_\_init\_\_()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{48}
+\indexentry{atom\_ccr() (paramagpy.metal.Metal method)@\spxentry{atom\_ccr()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{50}
+\indexentry{atom\_pcs() (paramagpy.metal.Metal method)@\spxentry{atom\_pcs()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{50}
+\indexentry{atom\_pre() (paramagpy.metal.Metal method)@\spxentry{atom\_pre()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{51}
+\indexentry{atom\_rdc() (paramagpy.metal.Metal method)@\spxentry{atom\_rdc()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{51}
+\indexentry{atom\_set\_position() (paramagpy.metal.Metal method)@\spxentry{atom\_set\_position()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{51}
+\indexentry{average() (paramagpy.metal.Metal method)@\spxentry{average()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{51}
+\indexentry{ccr() (paramagpy.metal.Metal method)@\spxentry{ccr()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{51}
+\indexentry{copy() (paramagpy.metal.Metal method)@\spxentry{copy()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{52}
+\indexentry{dipole\_shift\_tensor() (paramagpy.metal.Metal method)@\spxentry{dipole\_shift\_tensor()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{52}
+\indexentry{dsa\_r1() (paramagpy.metal.Metal method)@\spxentry{dsa\_r1()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{52}
+\indexentry{dsa\_r2() (paramagpy.metal.Metal method)@\spxentry{dsa\_r2()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{52}
+\indexentry{fast\_ccr() (paramagpy.metal.Metal method)@\spxentry{fast\_ccr()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{53}
+\indexentry{fast\_dipole\_shift\_tensor() (paramagpy.metal.Metal method)@\spxentry{fast\_dipole\_shift\_tensor()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{53}
+\indexentry{fast\_dsa\_r1() (paramagpy.metal.Metal method)@\spxentry{fast\_dsa\_r1()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{53}
+\indexentry{fast\_dsa\_r2() (paramagpy.metal.Metal method)@\spxentry{fast\_dsa\_r2()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{53}
+\indexentry{fast\_first\_invariant\_squared() (paramagpy.metal.Metal static method)@\spxentry{fast\_first\_invariant\_squared()}\spxextra{paramagpy.metal.Metal static method}|hyperpage}{54}
+\indexentry{fast\_g\_sbm\_r1() (paramagpy.metal.Metal method)@\spxentry{fast\_g\_sbm\_r1()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{54}
+\indexentry{fast\_pcs() (paramagpy.metal.Metal method)@\spxentry{fast\_pcs()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{54}
+\indexentry{fast\_pre() (paramagpy.metal.Metal method)@\spxentry{fast\_pre()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{54}
+\indexentry{fast\_racs() (paramagpy.metal.Metal method)@\spxentry{fast\_racs()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{55}
+\indexentry{fast\_rads() (paramagpy.metal.Metal method)@\spxentry{fast\_rads()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{55}
+\indexentry{fast\_rdc() (paramagpy.metal.Metal method)@\spxentry{fast\_rdc()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{55}
+\indexentry{fast\_sbm\_r1() (paramagpy.metal.Metal method)@\spxentry{fast\_sbm\_r1()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{55}
+\indexentry{fast\_sbm\_r2() (paramagpy.metal.Metal method)@\spxentry{fast\_sbm\_r2()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{56}
+\indexentry{fast\_second\_invariant\_squared() (paramagpy.metal.Metal static method)@\spxentry{fast\_second\_invariant\_squared()}\spxextra{paramagpy.metal.Metal static method}|hyperpage}{56}
+\indexentry{first\_invariant\_squared() (paramagpy.metal.Metal static method)@\spxentry{first\_invariant\_squared()}\spxextra{paramagpy.metal.Metal static method}|hyperpage}{56}
+\indexentry{g\_sbm\_r1() (paramagpy.metal.Metal method)@\spxentry{g\_sbm\_r1()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{56}
+\indexentry{get\_params() (paramagpy.metal.Metal method)@\spxentry{get\_params()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{57}
+\indexentry{info() (paramagpy.metal.Metal method)@\spxentry{info()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{57}
+\indexentry{isomap() (paramagpy.metal.Metal method)@\spxentry{isomap()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{58}
+\indexentry{make\_mesh() (paramagpy.metal.Metal method)@\spxentry{make\_mesh()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{58}
+\indexentry{pcs() (paramagpy.metal.Metal method)@\spxentry{pcs()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{58}
+\indexentry{pcs\_mesh() (paramagpy.metal.Metal method)@\spxentry{pcs\_mesh()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{58}
+\indexentry{pre() (paramagpy.metal.Metal method)@\spxentry{pre()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{59}
+\indexentry{pre\_mesh() (paramagpy.metal.Metal method)@\spxentry{pre\_mesh()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{59}
+\indexentry{racs() (paramagpy.metal.Metal method)@\spxentry{racs()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{59}
+\indexentry{rads() (paramagpy.metal.Metal method)@\spxentry{rads()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{60}
+\indexentry{rdc() (paramagpy.metal.Metal method)@\spxentry{rdc()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{60}
+\indexentry{save() (paramagpy.metal.Metal method)@\spxentry{save()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{60}
+\indexentry{sbm\_r1() (paramagpy.metal.Metal method)@\spxentry{sbm\_r1()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{60}
+\indexentry{sbm\_r2() (paramagpy.metal.Metal method)@\spxentry{sbm\_r2()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{60}
+\indexentry{second\_invariant\_squared() (paramagpy.metal.Metal static method)@\spxentry{second\_invariant\_squared()}\spxextra{paramagpy.metal.Metal static method}|hyperpage}{61}
+\indexentry{set\_Jg() (paramagpy.metal.Metal method)@\spxentry{set\_Jg()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{61}
+\indexentry{set\_lanthanide() (paramagpy.metal.Metal method)@\spxentry{set\_lanthanide()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{61}
+\indexentry{set\_params() (paramagpy.metal.Metal method)@\spxentry{set\_params()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{61}
+\indexentry{set\_utr() (paramagpy.metal.Metal method)@\spxentry{set\_utr()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{62}
+\indexentry{spec\_dens() (paramagpy.metal.Metal static method)@\spxentry{spec\_dens()}\spxextra{paramagpy.metal.Metal static method}|hyperpage}{62}
+\indexentry{write\_isomap() (paramagpy.metal.Metal method)@\spxentry{write\_isomap()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{62}
+\indexentry{write\_pymol\_script() (paramagpy.metal.Metal method)@\spxentry{write\_pymol\_script()}\spxextra{paramagpy.metal.Metal method}|hyperpage}{62}
+\indexentry{B0\_MHz (paramagpy.metal.Metal attribute)@\spxentry{B0\_MHz}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{64}
+\indexentry{GAMMA (paramagpy.metal.Metal attribute)@\spxentry{GAMMA}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{64}
+\indexentry{HBAR (paramagpy.metal.Metal attribute)@\spxentry{HBAR}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{64}
+\indexentry{K (paramagpy.metal.Metal attribute)@\spxentry{K}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{64}
+\indexentry{MU0 (paramagpy.metal.Metal attribute)@\spxentry{MU0}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{64}
+\indexentry{MUB (paramagpy.metal.Metal attribute)@\spxentry{MUB}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{64}
+\indexentry{a (paramagpy.metal.Metal attribute)@\spxentry{a}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{64}
+\indexentry{alignment\_factor (paramagpy.metal.Metal attribute)@\spxentry{alignment\_factor}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{64}
+\indexentry{ax (paramagpy.metal.Metal attribute)@\spxentry{ax}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{64}
+\indexentry{b (paramagpy.metal.Metal attribute)@\spxentry{b}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{65}
+\indexentry{eigenvalues (paramagpy.metal.Metal attribute)@\spxentry{eigenvalues}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{65}
+\indexentry{fit\_scaling (paramagpy.metal.Metal attribute)@\spxentry{fit\_scaling}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{65}
+\indexentry{fundamental\_attributes (paramagpy.metal.Metal attribute)@\spxentry{fundamental\_attributes}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{65}
+\indexentry{g (paramagpy.metal.Metal attribute)@\spxentry{g}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{65}
+\indexentry{g\_eigenvalues (paramagpy.metal.Metal attribute)@\spxentry{g\_eigenvalues}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{65}
+\indexentry{g\_isotropy (paramagpy.metal.Metal attribute)@\spxentry{g\_isotropy}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{65}
+\indexentry{g\_tensor (paramagpy.metal.Metal attribute)@\spxentry{g\_tensor}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{65}
+\indexentry{gax (paramagpy.metal.Metal attribute)@\spxentry{gax}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{65}
+\indexentry{grh (paramagpy.metal.Metal attribute)@\spxentry{grh}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{66}
+\indexentry{iso (paramagpy.metal.Metal attribute)@\spxentry{iso}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{66}
+\indexentry{isotropy (paramagpy.metal.Metal attribute)@\spxentry{isotropy}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{66}
+\indexentry{lanth\_axrh (paramagpy.metal.Metal attribute)@\spxentry{lanth\_axrh}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{66}
+\indexentry{lanth\_lib (paramagpy.metal.Metal attribute)@\spxentry{lanth\_lib}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{66}
+\indexentry{lower\_coords (paramagpy.metal.Metal attribute)@\spxentry{lower\_coords}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{66}
+\indexentry{rh (paramagpy.metal.Metal attribute)@\spxentry{rh}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{66}
+\indexentry{rotationMatrix (paramagpy.metal.Metal attribute)@\spxentry{rotationMatrix}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{66}
+\indexentry{saupe\_factor (paramagpy.metal.Metal attribute)@\spxentry{saupe\_factor}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{66}
+\indexentry{tauc (paramagpy.metal.Metal attribute)@\spxentry{tauc}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{67}
+\indexentry{tensor (paramagpy.metal.Metal attribute)@\spxentry{tensor}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{67}
+\indexentry{tensor\_alignment (paramagpy.metal.Metal attribute)@\spxentry{tensor\_alignment}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{67}
+\indexentry{tensor\_saupe (paramagpy.metal.Metal attribute)@\spxentry{tensor\_saupe}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{67}
+\indexentry{tensor\_traceless (paramagpy.metal.Metal attribute)@\spxentry{tensor\_traceless}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{67}
+\indexentry{upper\_coords (paramagpy.metal.Metal attribute)@\spxentry{upper\_coords}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{67}
+\indexentry{upper\_triang (paramagpy.metal.Metal attribute)@\spxentry{upper\_triang}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{67}
+\indexentry{upper\_triang\_alignment (paramagpy.metal.Metal attribute)@\spxentry{upper\_triang\_alignment}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{67}
+\indexentry{upper\_triang\_saupe (paramagpy.metal.Metal attribute)@\spxentry{upper\_triang\_saupe}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{68}
+\indexentry{x (paramagpy.metal.Metal attribute)@\spxentry{x}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{68}
+\indexentry{y (paramagpy.metal.Metal attribute)@\spxentry{y}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{68}
+\indexentry{z (paramagpy.metal.Metal attribute)@\spxentry{z}\spxextra{paramagpy.metal.Metal attribute}|hyperpage}{68}
+\indexentry{paramagpy.protein (module)@\spxentry{paramagpy.protein}\spxextra{module}|hyperpage}{68}
+\indexentry{load\_pdb() (in module paramagpy.protein)@\spxentry{load\_pdb()}\spxextra{in module paramagpy.protein}|hyperpage}{68}
+\indexentry{rotation\_matrix() (in module paramagpy.protein)@\spxentry{rotation\_matrix()}\spxextra{in module paramagpy.protein}|hyperpage}{69}
+\indexentry{CustomAtom (class in paramagpy.protein)@\spxentry{CustomAtom}\spxextra{class in paramagpy.protein}|hyperpage}{69}
+\indexentry{\_\_init\_\_() (paramagpy.protein.CustomAtom method)@\spxentry{\_\_init\_\_()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{69}
+\indexentry{copy() (paramagpy.protein.CustomAtom method)@\spxentry{copy()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{70}
+\indexentry{detach\_parent() (paramagpy.protein.CustomAtom method)@\spxentry{detach\_parent()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{70}
+\indexentry{dipole\_shift\_tensor() (paramagpy.protein.CustomAtom method)@\spxentry{dipole\_shift\_tensor()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{70}
+\indexentry{flag\_disorder() (paramagpy.protein.CustomAtom method)@\spxentry{flag\_disorder()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{71}
+\indexentry{get\_altloc() (paramagpy.protein.CustomAtom method)@\spxentry{get\_altloc()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{71}
+\indexentry{get\_anisou() (paramagpy.protein.CustomAtom method)@\spxentry{get\_anisou()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{71}
+\indexentry{get\_bfactor() (paramagpy.protein.CustomAtom method)@\spxentry{get\_bfactor()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{71}
+\indexentry{get\_coord() (paramagpy.protein.CustomAtom method)@\spxentry{get\_coord()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{71}
+\indexentry{get\_full\_id() (paramagpy.protein.CustomAtom method)@\spxentry{get\_full\_id()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{71}
+\indexentry{get\_fullname() (paramagpy.protein.CustomAtom method)@\spxentry{get\_fullname()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{71}
+\indexentry{get\_id() (paramagpy.protein.CustomAtom method)@\spxentry{get\_id()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{71}
+\indexentry{get\_level() (paramagpy.protein.CustomAtom method)@\spxentry{get\_level()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{72}
+\indexentry{get\_name() (paramagpy.protein.CustomAtom method)@\spxentry{get\_name()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{72}
+\indexentry{get\_occupancy() (paramagpy.protein.CustomAtom method)@\spxentry{get\_occupancy()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{72}
+\indexentry{get\_parent() (paramagpy.protein.CustomAtom method)@\spxentry{get\_parent()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{72}
+\indexentry{get\_serial\_number() (paramagpy.protein.CustomAtom method)@\spxentry{get\_serial\_number()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{72}
+\indexentry{get\_sigatm() (paramagpy.protein.CustomAtom method)@\spxentry{get\_sigatm()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{72}
+\indexentry{get\_siguij() (paramagpy.protein.CustomAtom method)@\spxentry{get\_siguij()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{72}
+\indexentry{get\_vector() (paramagpy.protein.CustomAtom method)@\spxentry{get\_vector()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{72}
+\indexentry{is\_disordered() (paramagpy.protein.CustomAtom method)@\spxentry{is\_disordered()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{73}
+\indexentry{set\_altloc() (paramagpy.protein.CustomAtom method)@\spxentry{set\_altloc()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{73}
+\indexentry{set\_anisou() (paramagpy.protein.CustomAtom method)@\spxentry{set\_anisou()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{73}
+\indexentry{set\_bfactor() (paramagpy.protein.CustomAtom method)@\spxentry{set\_bfactor()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{73}
+\indexentry{set\_coord() (paramagpy.protein.CustomAtom method)@\spxentry{set\_coord()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{73}
+\indexentry{set\_occupancy() (paramagpy.protein.CustomAtom method)@\spxentry{set\_occupancy()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{73}
+\indexentry{set\_parent() (paramagpy.protein.CustomAtom method)@\spxentry{set\_parent()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{73}
+\indexentry{set\_serial\_number() (paramagpy.protein.CustomAtom method)@\spxentry{set\_serial\_number()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{73}
+\indexentry{set\_sigatm() (paramagpy.protein.CustomAtom method)@\spxentry{set\_sigatm()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{74}
+\indexentry{set\_siguij() (paramagpy.protein.CustomAtom method)@\spxentry{set\_siguij()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{74}
+\indexentry{top() (paramagpy.protein.CustomAtom method)@\spxentry{top()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{74}
+\indexentry{transform() (paramagpy.protein.CustomAtom method)@\spxentry{transform()}\spxextra{paramagpy.protein.CustomAtom method}|hyperpage}{74}
+\indexentry{HBAR (paramagpy.protein.CustomAtom attribute)@\spxentry{HBAR}\spxextra{paramagpy.protein.CustomAtom attribute}|hyperpage}{75}
+\indexentry{MU0 (paramagpy.protein.CustomAtom attribute)@\spxentry{MU0}\spxextra{paramagpy.protein.CustomAtom attribute}|hyperpage}{75}
+\indexentry{csa (paramagpy.protein.CustomAtom attribute)@\spxentry{csa}\spxextra{paramagpy.protein.CustomAtom attribute}|hyperpage}{75}
+\indexentry{csa\_lib (paramagpy.protein.CustomAtom attribute)@\spxentry{csa\_lib}\spxextra{paramagpy.protein.CustomAtom attribute}|hyperpage}{75}
+\indexentry{gyro\_lib (paramagpy.protein.CustomAtom attribute)@\spxentry{gyro\_lib}\spxextra{paramagpy.protein.CustomAtom attribute}|hyperpage}{75}
+\indexentry{position (paramagpy.protein.CustomAtom attribute)@\spxentry{position}\spxextra{paramagpy.protein.CustomAtom attribute}|hyperpage}{75}
+\indexentry{CustomStructure (class in paramagpy.protein)@\spxentry{CustomStructure}\spxextra{class in paramagpy.protein}|hyperpage}{75}
+\indexentry{\_\_init\_\_() (paramagpy.protein.CustomStructure method)@\spxentry{\_\_init\_\_()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{75}
+\indexentry{add() (paramagpy.protein.CustomStructure method)@\spxentry{add()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{76}
+\indexentry{copy() (paramagpy.protein.CustomStructure method)@\spxentry{copy()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{76}
+\indexentry{detach\_child() (paramagpy.protein.CustomStructure method)@\spxentry{detach\_child()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{76}
+\indexentry{detach\_parent() (paramagpy.protein.CustomStructure method)@\spxentry{detach\_parent()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{76}
+\indexentry{get\_atoms() (paramagpy.protein.CustomStructure method)@\spxentry{get\_atoms()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{76}
+\indexentry{get\_chains() (paramagpy.protein.CustomStructure method)@\spxentry{get\_chains()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{76}
+\indexentry{get\_full\_id() (paramagpy.protein.CustomStructure method)@\spxentry{get\_full\_id()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{77}
+\indexentry{get\_id() (paramagpy.protein.CustomStructure method)@\spxentry{get\_id()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{77}
+\indexentry{get\_iterator() (paramagpy.protein.CustomStructure method)@\spxentry{get\_iterator()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{77}
+\indexentry{get\_level() (paramagpy.protein.CustomStructure method)@\spxentry{get\_level()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{77}
+\indexentry{get\_list() (paramagpy.protein.CustomStructure method)@\spxentry{get\_list()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{77}
+\indexentry{get\_models() (paramagpy.protein.CustomStructure method)@\spxentry{get\_models()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{77}
+\indexentry{get\_parent() (paramagpy.protein.CustomStructure method)@\spxentry{get\_parent()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{77}
+\indexentry{get\_residues() (paramagpy.protein.CustomStructure method)@\spxentry{get\_residues()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{78}
+\indexentry{has\_id() (paramagpy.protein.CustomStructure method)@\spxentry{has\_id()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{78}
+\indexentry{insert() (paramagpy.protein.CustomStructure method)@\spxentry{insert()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{78}
+\indexentry{parse() (paramagpy.protein.CustomStructure method)@\spxentry{parse()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{78}
+\indexentry{set\_parent() (paramagpy.protein.CustomStructure method)@\spxentry{set\_parent()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{78}
+\indexentry{transform() (paramagpy.protein.CustomStructure method)@\spxentry{transform()}\spxextra{paramagpy.protein.CustomStructure method}|hyperpage}{78}
+\indexentry{id (paramagpy.protein.CustomStructure attribute)@\spxentry{id}\spxextra{paramagpy.protein.CustomStructure attribute}|hyperpage}{79}
+\indexentry{CustomStructureBuilder (class in paramagpy.protein)@\spxentry{CustomStructureBuilder}\spxextra{class in paramagpy.protein}|hyperpage}{79}
+\indexentry{\_\_init\_\_() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{\_\_init\_\_()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{79}
+\indexentry{get\_structure() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{get\_structure()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{79}
+\indexentry{init\_atom() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{init\_atom()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{79}
+\indexentry{init\_chain() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{init\_chain()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{80}
+\indexentry{init\_model() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{init\_model()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{80}
+\indexentry{init\_residue() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{init\_residue()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{80}
+\indexentry{init\_seg() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{init\_seg()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{80}
+\indexentry{init\_structure() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{init\_structure()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{80}
+\indexentry{set\_anisou() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{set\_anisou()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{80}
+\indexentry{set\_header() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{set\_header()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{81}
+\indexentry{set\_line\_counter() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{set\_line\_counter()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{81}
+\indexentry{set\_sigatm() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{set\_sigatm()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{81}
+\indexentry{set\_siguij() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{set\_siguij()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{81}
+\indexentry{set\_symmetry() (paramagpy.protein.CustomStructureBuilder method)@\spxentry{set\_symmetry()}\spxextra{paramagpy.protein.CustomStructureBuilder method}|hyperpage}{81}
+\indexentry{paramagpy.dataparse (module)@\spxentry{paramagpy.dataparse}\spxextra{module}|hyperpage}{81}
+\indexentry{read\_pcs() (in module paramagpy.dataparse)@\spxentry{read\_pcs()}\spxextra{in module paramagpy.dataparse}|hyperpage}{82}
+\indexentry{read\_rdc() (in module paramagpy.dataparse)@\spxentry{read\_rdc()}\spxextra{in module paramagpy.dataparse}|hyperpage}{82}
+\indexentry{read\_pre() (in module paramagpy.dataparse)@\spxentry{read\_pre()}\spxextra{in module paramagpy.dataparse}|hyperpage}{83}
+\indexentry{read\_ccr() (in module paramagpy.dataparse)@\spxentry{read\_ccr()}\spxextra{in module paramagpy.dataparse}|hyperpage}{83}
+\indexentry{DataContainer (class in paramagpy.dataparse)@\spxentry{DataContainer}\spxextra{class in paramagpy.dataparse}|hyperpage}{83}
+\indexentry{\_\_init\_\_() (paramagpy.dataparse.DataContainer method)@\spxentry{\_\_init\_\_()}\spxextra{paramagpy.dataparse.DataContainer method}|hyperpage}{83}
+\indexentry{clear() (paramagpy.dataparse.DataContainer method)@\spxentry{clear()}\spxextra{paramagpy.dataparse.DataContainer method}|hyperpage}{84}
+\indexentry{copy() (paramagpy.dataparse.DataContainer method)@\spxentry{copy()}\spxextra{paramagpy.dataparse.DataContainer method}|hyperpage}{84}
+\indexentry{fromkeys() (paramagpy.dataparse.DataContainer method)@\spxentry{fromkeys()}\spxextra{paramagpy.dataparse.DataContainer method}|hyperpage}{84}
+\indexentry{get() (paramagpy.dataparse.DataContainer method)@\spxentry{get()}\spxextra{paramagpy.dataparse.DataContainer method}|hyperpage}{84}
+\indexentry{items() (paramagpy.dataparse.DataContainer method)@\spxentry{items()}\spxextra{paramagpy.dataparse.DataContainer method}|hyperpage}{85}
+\indexentry{keys() (paramagpy.dataparse.DataContainer method)@\spxentry{keys()}\spxextra{paramagpy.dataparse.DataContainer method}|hyperpage}{85}
+\indexentry{move\_to\_end() (paramagpy.dataparse.DataContainer method)@\spxentry{move\_to\_end()}\spxextra{paramagpy.dataparse.DataContainer method}|hyperpage}{85}
+\indexentry{pop() (paramagpy.dataparse.DataContainer method)@\spxentry{pop()}\spxextra{paramagpy.dataparse.DataContainer method}|hyperpage}{85}
+\indexentry{popitem() (paramagpy.dataparse.DataContainer method)@\spxentry{popitem()}\spxextra{paramagpy.dataparse.DataContainer method}|hyperpage}{85}
+\indexentry{setdefault() (paramagpy.dataparse.DataContainer method)@\spxentry{setdefault()}\spxextra{paramagpy.dataparse.DataContainer method}|hyperpage}{85}
+\indexentry{update() (paramagpy.dataparse.DataContainer method)@\spxentry{update()}\spxextra{paramagpy.dataparse.DataContainer method}|hyperpage}{85}
+\indexentry{values() (paramagpy.dataparse.DataContainer method)@\spxentry{values()}\spxextra{paramagpy.dataparse.DataContainer method}|hyperpage}{85}
+\indexentry{paramagpy.fit (module)@\spxentry{paramagpy.fit}\spxextra{module}|hyperpage}{86}
+\indexentry{ensemble\_average() (in module paramagpy.fit)@\spxentry{ensemble\_average()}\spxextra{in module paramagpy.fit}|hyperpage}{87}
+\indexentry{extract\_atom\_data() (in module paramagpy.fit)@\spxentry{extract\_atom\_data()}\spxextra{in module paramagpy.fit}|hyperpage}{87}
+\indexentry{extract\_ccr\_data() (in module paramagpy.fit)@\spxentry{extract\_ccr\_data()}\spxextra{in module paramagpy.fit}|hyperpage}{87}
+\indexentry{extract\_rdc\_data() (in module paramagpy.fit)@\spxentry{extract\_rdc\_data()}\spxextra{in module paramagpy.fit}|hyperpage}{88}
+\indexentry{fit\_error\_bootstrap() (in module paramagpy.fit)@\spxentry{fit\_error\_bootstrap()}\spxextra{in module paramagpy.fit}|hyperpage}{88}
+\indexentry{fit\_error\_models() (in module paramagpy.fit)@\spxentry{fit\_error\_models()}\spxextra{in module paramagpy.fit}|hyperpage}{88}
+\indexentry{fit\_error\_monte\_carlo() (in module paramagpy.fit)@\spxentry{fit\_error\_monte\_carlo()}\spxextra{in module paramagpy.fit}|hyperpage}{89}
+\indexentry{metal\_standard\_deviation() (in module paramagpy.fit)@\spxentry{metal\_standard\_deviation()}\spxextra{in module paramagpy.fit}|hyperpage}{89}
+\indexentry{nlr\_fit\_metal\_from\_ccr() (in module paramagpy.fit)@\spxentry{nlr\_fit\_metal\_from\_ccr()}\spxextra{in module paramagpy.fit}|hyperpage}{89}
+\indexentry{nlr\_fit\_metal\_from\_pcs() (in module paramagpy.fit)@\spxentry{nlr\_fit\_metal\_from\_pcs()}\spxextra{in module paramagpy.fit}|hyperpage}{90}
+\indexentry{nlr\_fit\_metal\_from\_pre() (in module paramagpy.fit)@\spxentry{nlr\_fit\_metal\_from\_pre()}\spxextra{in module paramagpy.fit}|hyperpage}{91}
+\indexentry{qfactor() (in module paramagpy.fit)@\spxentry{qfactor()}\spxextra{in module paramagpy.fit}|hyperpage}{92}
+\indexentry{sphere\_grid() (in module paramagpy.fit)@\spxentry{sphere\_grid()}\spxextra{in module paramagpy.fit}|hyperpage}{92}
+\indexentry{svd\_calc\_metal\_from\_pcs() (in module paramagpy.fit)@\spxentry{svd\_calc\_metal\_from\_pcs()}\spxextra{in module paramagpy.fit}|hyperpage}{92}
+\indexentry{svd\_calc\_metal\_from\_pcs\_offset() (in module paramagpy.fit)@\spxentry{svd\_calc\_metal\_from\_pcs\_offset()}\spxextra{in module paramagpy.fit}|hyperpage}{93}
+\indexentry{svd\_calc\_metal\_from\_rdc() (in module paramagpy.fit)@\spxentry{svd\_calc\_metal\_from\_rdc()}\spxextra{in module paramagpy.fit}|hyperpage}{93}
+\indexentry{svd\_fit\_metal\_from\_rdc() (in module paramagpy.fit)@\spxentry{svd\_fit\_metal\_from\_rdc()}\spxextra{in module paramagpy.fit}|hyperpage}{94}
+\indexentry{svd\_gridsearch\_fit\_metal\_from\_pcs() (in module paramagpy.fit)@\spxentry{svd\_gridsearch\_fit\_metal\_from\_pcs()}\spxextra{in module paramagpy.fit}|hyperpage}{94}

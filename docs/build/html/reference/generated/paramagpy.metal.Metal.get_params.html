@@ -1,12 +1,10 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>paramagpy.metal.Metal.get_params &#8212; paramagpy 0.44 documentation</title>
+    <meta charset="utf-8" />
+    <title>paramagpy.metal.Metal.get_params &#8212; paramagpy 1.0 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -14,7 +12,8 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,7 +35,7 @@
         <li class="right" >
           <a href="paramagpy.metal.Metal.g_sbm_r1.html" title="paramagpy.metal.Metal.g_sbm_r1"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../metal.html" >paramagpy.metal</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="paramagpy.metal.Metal.html" accesskey="U">paramagpy.metal.Metal</a> &#187;</li> 
@@ -52,26 +51,25 @@
 <h1>paramagpy.metal.Metal.get_params<a class="headerlink" href="#paramagpy-metal-metal-get-params" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="paramagpy.metal.Metal.get_params">
-<code class="descclassname">Metal.</code><code class="descname">get_params</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.get_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Metal.</code><code class="sig-name descname">get_params</code><span class="sig-paren">(</span><em class="sig-param">params</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.get_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get tensor parameters that have been scaled appropriately</p>
 <p>This is often used to get parameter values during fitting where
 floating point errors would otherwise occur on the small values
 encountered.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>params</strong> (<em>list of str</em>) – each element of the list is a string that corresponds to
-an attribute of the Metal to be retrieved.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>scaled_params</strong> – a list with respective scaled parameter values from the input.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>list of str</em>) – each element of the list is a string that corresponds to
+an attribute of the Metal to be retrieved.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>scaled_params</strong> – a list with respective scaled parameter values from the input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">metal</span> <span class="o">=</span> <span class="n">Metal</span><span class="p">(</span><span class="n">axrh</span><span class="o">=</span><span class="p">[</span><span class="mf">20E-32</span><span class="p">,</span> <span class="mf">3E-32</span><span class="p">],</span><span class="n">position</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">10E-10</span><span class="p">,</span><span class="o">-</span><span class="mf">5E-10</span><span class="p">])</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">metal</span> <span class="o">=</span> <span class="n">Metal</span><span class="p">(</span><span class="n">axrh</span><span class="o">=</span><span class="p">[</span><span class="mf">20E-32</span><span class="p">,</span> <span class="mf">3E-32</span><span class="p">],</span><span class="n">position</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">10E-10</span><span class="p">,</span><span class="o">-</span><span class="mf">5E-10</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">metal</span><span class="o">.</span><span class="n">get_params</span><span class="p">([</span><span class="s1">&#39;ax&#39;</span><span class="p">,</span><span class="s1">&#39;rh&#39;</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">])</span>
 <span class="go">[20.0, 3.0, 0.0, 10.0, -5.0]</span>
 </pre></div>
@@ -100,13 +98,11 @@ an attribute of the Metal to be retrieved.</td>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -130,7 +126,7 @@ an attribute of the Metal to be retrieved.</td>
         <li class="right" >
           <a href="paramagpy.metal.Metal.g_sbm_r1.html" title="paramagpy.metal.Metal.g_sbm_r1"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../metal.html" >paramagpy.metal</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="paramagpy.metal.Metal.html" >paramagpy.metal.Metal</a> &#187;</li> 
@@ -138,7 +134,7 @@ an attribute of the Metal to be retrieved.</td>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

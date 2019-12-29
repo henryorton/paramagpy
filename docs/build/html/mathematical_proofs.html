@@ -1,0 +1,223 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mathematical Proofs &#8212; paramagpy 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Reference Guide" href="reference/index.html" />
+    <link rel="prev" title="NMR Software Macros" href="nmr_software_macros/index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference/index.html" title="Reference Guide"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nmr_software_macros/index.html" title="NMR Software Macros"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">paramagpy 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="mathematical-proofs">
+<h1>Mathematical Proofs<a class="headerlink" href="#mathematical-proofs" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="proof-of-equivalence-between-the-matrix-representation-of-curie-spin-dipole-dipole-cross-correlated-relaxation-paramagpy-implementation-and-the-original-description-by-ghose-and-prestegard">
+<h2>Proof of equivalence between the matrix representation of Curie-spin dipole–dipole cross-correlated relaxation (Paramagpy implementation) and the original description by Ghose and Prestegard<a class="headerlink" href="#proof-of-equivalence-between-the-matrix-representation-of-curie-spin-dipole-dipole-cross-correlated-relaxation-paramagpy-implementation-and-the-original-description-by-ghose-and-prestegard" title="Permalink to this headline">¶</a></h2>
+<p>This proof concerns equations 24-27 of the <a class="reference external" href="https://doi.org/10.5194/mr-2019-3">article</a> on the software Paramagpy, which describe the cross-correlated relaxation between the Curie spin and dipole–dipole relaxation mechanisms. The equations 24-27 follow the matrix representation of relaxation theory (equations 20-21) by <a class="reference external" href="https://doi.org/10.1039/C8CP01332B">Suturina et al.</a> . It is shown below that these equations are equivalent to the equations established previously by <a class="reference external" href="https://doi.org/10.1006/jmre.1997.1227">Ghose and Prestegard</a> and reported in slightly modified form by <a class="reference external" href="https://doi.org/10.1006/jmre.2001.2378">Bertini et al.</a>. The proof begins with equations 24-27 of the manuscript and describes their rearrangement into the form given by <a class="reference external" href="https://doi.org/10.1006/jmre.2001.2378">Bertini et al.</a></p>
+<p>For a specific example, we consider the case of a <sup>15</sup>N - <sup>1</sup>H group, with the Curie-spin shielding tensor <span class="math notranslate nohighlight">\(\sigma\)</span> at the site of the <sup>1</sup>H spin located at <span class="math notranslate nohighlight">\(\vec r=[x,y,z]\)</span> and distance <span class="math notranslate nohighlight">\(r\)</span> from the paramagnetic centre.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\sigma = \frac{1}{4\pi r^5}
+\begin{bmatrix}
+(3x^2-r^2) &amp; 3xy &amp; 3xz\\
+3xy &amp; (3y^2-r^2) &amp; 3yz\\
+3xz &amp; 3yz &amp; (3z^2 - r^2)
+\end{bmatrix}.
+\begin{bmatrix}
+\chi_{xx} &amp; \chi_{xy} &amp; \chi_{xz}\\
+\chi_{xy} &amp; \chi_{yy} &amp; \chi_{yz}\\
+\chi_{xz} &amp; \chi_{yz} &amp; \chi_{zz}
+\end{bmatrix}\end{split}\]</div>
+<p>We  choose the orientation of the electron–<sup>1</sup>H vector to be aligned with the <span class="math notranslate nohighlight">\(z\)</span>-axis such that <span class="math notranslate nohighlight">\(z\rightarrow r\)</span>. In the case of an isotropic magnetic susceptibility, <span class="math notranslate nohighlight">\(x=y=0\)</span> and the <span class="math notranslate nohighlight">\(\chi\)</span> tensor is represented by a diagonal matrix with three identical elements <span class="math notranslate nohighlight">\(\chi_\text{iso}\)</span>, yielding the following simplification</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\sigma &amp;= \frac{1}{4\pi r^5}
+\begin{bmatrix}
+-r^2 &amp; 0 &amp; 0\\
+0 &amp; -r^2 &amp; 0\\
+0 &amp; 0 &amp; 2r^2
+\end{bmatrix}.
+\begin{bmatrix}
+\chi_\text{iso} &amp; 0 &amp; 0\\
+0 &amp; \chi_\text{iso} &amp; 0\\
+0 &amp; 0 &amp; \chi_\text{iso}
+\end{bmatrix}\\
+&amp;= \xi_\text{DSA}
+\begin{bmatrix}
+-r^2 &amp; 0 &amp; 0\\
+0 &amp; -r^2 &amp; 0\\
+0 &amp; 0 &amp; 2r^2
+\end{bmatrix}\\
+\text{where} \qquad \xi_\text{DSA}&amp;=\frac{\chi_\text{iso}}{4\pi r^5}\end{split}\]</div>
+<p>The nuclear dipole shielding tensor arising from the <sup>15</sup>N spin can be described in the same coordinate frame for an arbitrary orientation of the bond vector <span class="math notranslate nohighlight">\(\vec r_\text{HN}=[x,y,z]\)</span> with bond length <span class="math notranslate nohighlight">\(r_\text{HN}\)</span> by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\sigma_N &amp;= \frac{1}{B_0}\frac{\mu_0}{4\pi}\gamma_N\hbar I \left[ 3\frac{\vec r_\text{HN}\otimes \vec r_\text{HN}^T}{r_\text{HN}^5} - \frac{\mathbb{I}_3}{r_\text{HN}^3} \right]\\
+\sigma_N &amp;= \xi_\text{DD}
+\begin{bmatrix}
+(3x^2-r_\text{HN}^2) &amp; 3xy &amp; 3xz\\
+3xy &amp; (3y^2-r_\text{HN}^2) &amp; 3yz\\
+3xz &amp; 3yz &amp; (3z^2 - r_\text{HN}^2)
+\end{bmatrix}\\
+\text{where} \qquad \xi_\text{DD} &amp;= \frac{1}{B_0} \frac{\mu_0}{4\pi} \frac{\gamma_N\hbar I}{r_\text{HN}^5}\end{split}\]</div>
+<p>and <span class="math notranslate nohighlight">\(x\)</span>, <span class="math notranslate nohighlight">\(y\)</span>, <span class="math notranslate nohighlight">\(z\)</span> denote the coordinates of the <sup>15</sup>N spin relative to the <sup>1</sup>H spin.</p>
+<p>The effective shielding tensor at the site of the <sup>1</sup>H spin, when the <sup>15</sup>N partner is in the spin-up state, is given by the sum of the two tensors</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\sigma_\uparrow &amp;= \sigma + \sigma_N\\
+&amp;=
+\begin{bmatrix}
+(3x^2-r_\text{HN}^2)\xi_\text{DD} -(r^2)\xi_\text{DSA}  &amp; (3xy)\xi_\text{DD} &amp; (3xz)\xi_\text{DD}\\
+(3xy)\xi_\text{DD} &amp; (3y^2-r_\text{HN}^2)\xi_\text{DD} -(r^2)\xi_\text{DSA} &amp; (3yz)\xi_\text{DD}\\
+(3xz)\xi_\text{DD} &amp; (3yz)\xi_\text{DD} &amp; (3z^2 - r_\text{HN}^2)\xi_\text{DD} +(2r^2)\xi_\text{DSA}
+\end{bmatrix}\end{split}\]</div>
+<p>Note that this matrix is symmetric. Therefore we can ignore equation 18 of the main text and only need to substitute matrix elements into equation 19. Expanding and simplifying (via symbolic processing in the program Mathematica), this yields</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\Delta(\sigma_\uparrow)^2={}&amp; \sigma_{xx}^2+\sigma_{yy}^2+\sigma_{zz}^2
+-\sigma_{xx}\sigma_{yy}-\sigma_{xx}\sigma_{zz}-\sigma_{yy}\sigma_{zz} \notag\\
+&amp;+\frac{3}{4}\left[
+((\sigma_{xy}+\sigma_{yx})^2 + (\sigma_{xz}+\sigma_{zx})^2 + (\sigma_{yz}+\sigma_{zy})^2\right]\\
+={}&amp;
+\left((3x^2-r_\text{HN}^2)\xi_\text{DD} -(r^2)\xi_\text{DSA}\right)^2 \notag\\
+&amp;+\left((3y^2-r^2)\xi_\text{DD} -(r^2)\xi_\text{DSA}\right)^2 \notag\\
+&amp;+\left((3z^2 - r_\text{HN}^2)\xi_\text{DD} +(2r^2)\xi_\text{DSA}\right)^2 \notag\\
+&amp;-\left((3x^2-r_\text{HN}^2)\xi_\text{DD} -(r^2)\xi_\text{DSA}\right)
+\left((3y^2-r^2)\xi_\text{DD} -(r^2)\xi_\text{DSA}\right) \notag\\
+&amp;-\left((3x^2-r_\text{HN}^2)\xi_\text{DD} -(r^2)\xi_\text{DSA}\right)
+\left((3z^2 - r_\text{HN}^2)\xi_\text{DD} +(2r^2)\xi_\text{DSA}\right) \notag\\
+&amp;-\left((3y^2-r^2)\xi_\text{DD} -(r^2)\xi_\text{DSA}\right)
+\left((3z^2 - r_\text{HN}^2)\xi_\text{DD} +(2r^2)\xi_\text{DSA}\right) \notag\\
+&amp;+\frac{3}{4}\left[
+(6xy\xi_\text{DD})^2
++ (6xz\xi_\text{DD})^2
++ (6yz\xi_\text{DD})^2
+\right]\\
+={}&amp; 9\xi_\text{DD}^2r_\text{HN}^4 + 9\xi_\text{DSA}^2r^4 -
+9\xi_\text{DD}(r_\text{HN}^2-3z^2)\xi_\text{DSA}r^2\end{split}\]</div>
+<p>The angle <span class="math notranslate nohighlight">\(\theta\)</span> between the electron-nuclear vector <span class="math notranslate nohighlight">\(\vec r\)</span> and the nuclear bond vector <span class="math notranslate nohighlight">\(\vec r_\text{HN}\)</span> is captured by the dot product formula</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\vec r.\vec r_\text{HN} &amp;= |\vec r||\vec r_\text{HN}| \cos{\theta}\\
+\implies \qquad [0,0,r].[x,y,z] &amp;= r.r_\text{HN} \cos{\theta}\\
+\implies \qquad  z &amp;= r_\text{HN} \cos{\theta}\end{split}\]</div>
+<p>Using above equation to substitute $z$ yields</p>
+<div class="math notranslate nohighlight">
+\[\Delta(\sigma_\uparrow)^2= 9\xi_\text{DD}^2r_\text{HN}^4 + 9\xi_\text{DSA}^2r^4 - 9\xi_\text{DD}r_\text{HN}^2(1-3\cos^2{\theta})\xi_\text{DSA}r^2\]</div>
+<p>where the first two terms account for the dipolar and Curie spin auto-relaxation terms respectively, and the last term accounts for their cross-correlation. The <span class="math notranslate nohighlight">\(R_2\)</span> relaxation rate can be calculated by substitution of <span class="math notranslate nohighlight">\(\Delta^2\)</span> into equation 21 of the main text.</p>
+<div class="math notranslate nohighlight">
+\[R_2^\text{Curie}(\sigma_\uparrow) = \frac{1}{45}\omega^2 \left[4\mathbf{J}(0) + 3\mathbf{J}(\omega)\right]
+\left( 9\xi_\text{DD}^2r_\text{HN}^4 + 9\xi_\text{DSA}^2r^4 +
+9\xi_\text{DD}r_\text{HN}^2(3\cos^2{\theta}-1)\xi_\text{DSA}r^2 \right)\]</div>
+<p>The same derivation for <span class="math notranslate nohighlight">\(\sigma_\downarrow\)</span> yields the same result except for a sign change in the cross term:</p>
+<div class="math notranslate nohighlight">
+\[R_2^\text{Curie}(\sigma_\downarrow) = \frac{1}{45}B_0^2\gamma_H^2 \left[4\mathbf{J}(0) + 3\mathbf{J}(\omega)\right]
+\left( 9\xi_\text{DD}^2r_\text{HN}^4 + 9\xi_\text{DSA}^2r^4 -
+9\xi_\text{DD}r_\text{HN}^2(3\cos^2{\theta}-1)\xi_\text{DSA}r^2 \right)\]</div>
+<p>Taking the difference we obtain</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}R_2^\text{Curie$\times$DD} &amp;= R_2^\text{Curie}(\sigma_\uparrow) - R_2^\text{Curie}(\sigma_\downarrow)\\
+&amp;= \frac{1}{45}B_0^2\gamma_H^2 \left(18\xi_\text{DD}r_\text{HN}^2(3\cos^2{\theta}-1)\xi_\text{DSA}r^2 \right)\left[4\mathbf{J}(0) + 3\mathbf{J}(\omega)\right]\\
+&amp;=\frac{18}{45} \frac{\mu_0}{4\pi} \frac{B_0\gamma_H^2\gamma_N\hbar I}{r_\text{HN}^3}\frac{\chi_\text{iso}}{4\pi r^3}(3\cos^2{\theta}-1)\left[4\mathbf{J}(0) + 3\mathbf{J}(\omega)\right]\end{split}\]</div>
+<p>Substituting <span class="math notranslate nohighlight">\(\chi_\text{iso}\)</span> and the spin of <sup>15</sup>N as <sup>I=1/2</sup> yields</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}R_2^\text{Curie$\times$DD}&amp;=\frac{9}{45} \left(\frac{\mu_0}{4\pi}\right)^2 \frac{B_0\gamma_H^2\gamma_N\hbar}{r_\text{HN}^3} \frac{\mu_B^2g^2J(J+1)}{3 k T r^3}(3\cos^2{\theta}-1)\left[4\mathbf{J}(0) + 3\mathbf{J}(\omega)\right]\\
+&amp;=\frac{2}{15} \left(\frac{\mu_0}{4\pi}\right)^2 \frac{B_0\gamma_H^2\gamma_N\hbar}{r_\text{HN}^3} \frac{\mu_B^2g^2J(J+1)}{k T r^3}\frac{(3\cos^2{\theta}-1)}{2}\left[4\mathbf{J}(0) + 3\mathbf{J}(\omega)\right]\end{split}\]</div>
+<p>The differential line width can be calculated from the relaxation rate as <span class="math notranslate nohighlight">\(\Delta\nu = R_2^\text{Curie$\times$DD}/\pi\)</span> and thus this equation matches equation 7 from <a class="reference external" href="https://doi.org/10.1006/jmre.2001.2378">Bertini et al.</a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Mathematical Proofs</a><ul>
+<li><a class="reference internal" href="#proof-of-equivalence-between-the-matrix-representation-of-curie-spin-dipole-dipole-cross-correlated-relaxation-paramagpy-implementation-and-the-original-description-by-ghose-and-prestegard">Proof of equivalence between the matrix representation of Curie-spin dipole–dipole cross-correlated relaxation (Paramagpy implementation) and the original description by Ghose and Prestegard</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nmr_software_macros/index.html"
+                        title="previous chapter">NMR Software Macros</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="reference/index.html"
+                        title="next chapter">Reference Guide</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/mathematical_proofs.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference/index.html" title="Reference Guide"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nmr_software_macros/index.html" title="NMR Software Macros"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">paramagpy 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Henry Orton.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

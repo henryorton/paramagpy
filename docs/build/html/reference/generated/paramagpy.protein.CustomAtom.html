@@ -1,12 +1,10 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>paramagpy.protein.CustomAtom &#8212; paramagpy 0.44 documentation</title>
+    <meta charset="utf-8" />
+    <title>paramagpy.protein.CustomAtom &#8212; paramagpy 1.0 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -14,7 +12,8 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,7 +35,7 @@
         <li class="right" >
           <a href="paramagpy.protein.rotation_matrix.html" title="paramagpy.protein.rotation_matrix"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../protein.html" accesskey="U">paramagpy.protein</a> &#187;</li> 
       </ul>
@@ -51,159 +50,151 @@
 <h1>paramagpy.protein.CustomAtom<a class="headerlink" href="#paramagpy-protein-customatom" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="paramagpy.protein.CustomAtom">
-<em class="property">class </em><code class="descclassname">paramagpy.protein.</code><code class="descname">CustomAtom</code><span class="sig-paren">(</span><em>*arg</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/protein.html#CustomAtom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.protein.CustomAtom" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">paramagpy.protein.</code><code class="sig-name descname">CustomAtom</code><span class="sig-paren">(</span><em class="sig-param">*arg</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/protein.html#CustomAtom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.protein.CustomAtom" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="paramagpy.protein.CustomAtom.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>*arg</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/protein.html#CustomAtom.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.protein.CustomAtom.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create Atom object.</p>
-<p>The Atom object stores atom name (both with and without spaces),
-coordinates, B factor, occupancy, alternative location specifier
-and (optionally) anisotropic B factor and standard deviations of
-B factor and positions.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) – atom name (eg. “CA”). Note that spaces are normally stripped.</li>
-<li><strong>coord</strong> (<em>Numeric array</em><em> (</em><em>Float0</em><em>, </em><em>size 3</em><em>)</em>) – atomic coordinates (x,y,z)</li>
-<li><strong>bfactor</strong> (<em>number</em>) – isotropic B factor</li>
-<li><strong>occupancy</strong> (<em>number</em>) – occupancy (0.0-1.0)</li>
-<li><strong>altloc</strong> (<em>string</em>) – alternative location specifier for disordered atoms</li>
-<li><strong>fullname</strong> (<em>string</em>) – full atom name, including spaces, e.g. ” CA “. Normally
-these spaces are stripped from the atom name.</li>
-<li><strong>element</strong> (<em>uppercase string</em><em> (or </em><em>None if unknown</em><em>)</em>) – atom element, e.g. “C” for Carbon, “HG” for mercury,</li>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">*arg</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/protein.html#CustomAtom.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.protein.CustomAtom.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize Atom object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>string</em>) – atom name (eg. “CA”). Note that spaces are normally stripped.</p></li>
+<li><p><strong>coord</strong> (<em>Numeric array</em><em> (</em><em>Float0</em><em>, </em><em>size 3</em><em>)</em>) – atomic coordinates (x,y,z)</p></li>
+<li><p><strong>bfactor</strong> (<em>number</em>) – isotropic B factor</p></li>
+<li><p><strong>occupancy</strong> (<em>number</em>) – occupancy (0.0-1.0)</p></li>
+<li><p><strong>altloc</strong> (<em>string</em>) – alternative location specifier for disordered atoms</p></li>
+<li><p><strong>fullname</strong> (<em>string</em>) – full atom name, including spaces, e.g. ” CA “. Normally
+these spaces are stripped from the atom name.</p></li>
+<li><p><strong>element</strong> (<em>uppercase string</em><em> (or </em><em>None if unknown</em><em>)</em>) – atom element, e.g. “C” for Carbon, “HG” for mercury,</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.copy.html#paramagpy.protein.CustomAtom.copy" title="paramagpy.protein.CustomAtom.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
-<td>Create a copy of the Atom.</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.copy.html#paramagpy.protein.CustomAtom.copy" title="paramagpy.protein.CustomAtom.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</p></td>
+<td><p>Create a copy of the Atom.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.detach_parent.html#paramagpy.protein.CustomAtom.detach_parent" title="paramagpy.protein.CustomAtom.detach_parent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detach_parent</span></code></a>()</td>
-<td>Remove reference to parent.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.detach_parent.html#paramagpy.protein.CustomAtom.detach_parent" title="paramagpy.protein.CustomAtom.detach_parent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detach_parent</span></code></a>()</p></td>
+<td><p>Remove reference to parent.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.dipole_shift_tensor.html#paramagpy.protein.CustomAtom.dipole_shift_tensor" title="paramagpy.protein.CustomAtom.dipole_shift_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dipole_shift_tensor</span></code></a>(position)</td>
-<td>Calculate the magnetic field shielding tensor at the given postition due to the nuclear dipole</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.dipole_shift_tensor.html#paramagpy.protein.CustomAtom.dipole_shift_tensor" title="paramagpy.protein.CustomAtom.dipole_shift_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dipole_shift_tensor</span></code></a>(position)</p></td>
+<td><p>Calculate the magnetic field shielding tensor at the given postition due to the nuclear dipole</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.flag_disorder.html#paramagpy.protein.CustomAtom.flag_disorder" title="paramagpy.protein.CustomAtom.flag_disorder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flag_disorder</span></code></a>()</td>
-<td>Set the disordered flag to 1.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.flag_disorder.html#paramagpy.protein.CustomAtom.flag_disorder" title="paramagpy.protein.CustomAtom.flag_disorder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flag_disorder</span></code></a>()</p></td>
+<td><p>Set the disordered flag to 1.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_altloc.html#paramagpy.protein.CustomAtom.get_altloc" title="paramagpy.protein.CustomAtom.get_altloc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_altloc</span></code></a>()</td>
-<td>Return alternative location specifier.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_altloc.html#paramagpy.protein.CustomAtom.get_altloc" title="paramagpy.protein.CustomAtom.get_altloc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_altloc</span></code></a>()</p></td>
+<td><p>Return alternative location specifier.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_anisou.html#paramagpy.protein.CustomAtom.get_anisou" title="paramagpy.protein.CustomAtom.get_anisou"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_anisou</span></code></a>()</td>
-<td>Return anisotropic B factor.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_anisou.html#paramagpy.protein.CustomAtom.get_anisou" title="paramagpy.protein.CustomAtom.get_anisou"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_anisou</span></code></a>()</p></td>
+<td><p>Return anisotropic B factor.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_bfactor.html#paramagpy.protein.CustomAtom.get_bfactor" title="paramagpy.protein.CustomAtom.get_bfactor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bfactor</span></code></a>()</td>
-<td>Return B factor.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_bfactor.html#paramagpy.protein.CustomAtom.get_bfactor" title="paramagpy.protein.CustomAtom.get_bfactor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bfactor</span></code></a>()</p></td>
+<td><p>Return B factor.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_coord.html#paramagpy.protein.CustomAtom.get_coord" title="paramagpy.protein.CustomAtom.get_coord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coord</span></code></a>()</td>
-<td>Return atomic coordinates.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_coord.html#paramagpy.protein.CustomAtom.get_coord" title="paramagpy.protein.CustomAtom.get_coord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coord</span></code></a>()</p></td>
+<td><p>Return atomic coordinates.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_full_id.html#paramagpy.protein.CustomAtom.get_full_id" title="paramagpy.protein.CustomAtom.get_full_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_full_id</span></code></a>()</td>
-<td>Return the full id of the atom.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_full_id.html#paramagpy.protein.CustomAtom.get_full_id" title="paramagpy.protein.CustomAtom.get_full_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_full_id</span></code></a>()</p></td>
+<td><p>Return the full id of the atom.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_fullname.html#paramagpy.protein.CustomAtom.get_fullname" title="paramagpy.protein.CustomAtom.get_fullname"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fullname</span></code></a>()</td>
-<td>Return the atom name, including leading and trailing spaces.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_fullname.html#paramagpy.protein.CustomAtom.get_fullname" title="paramagpy.protein.CustomAtom.get_fullname"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fullname</span></code></a>()</p></td>
+<td><p>Return the atom name, including leading and trailing spaces.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_id.html#paramagpy.protein.CustomAtom.get_id" title="paramagpy.protein.CustomAtom.get_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_id</span></code></a>()</td>
-<td>Return the id of the atom (which is its atom name).</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_id.html#paramagpy.protein.CustomAtom.get_id" title="paramagpy.protein.CustomAtom.get_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_id</span></code></a>()</p></td>
+<td><p>Return the id of the atom (which is its atom name).</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_level.html#paramagpy.protein.CustomAtom.get_level" title="paramagpy.protein.CustomAtom.get_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_level</span></code></a>()</td>
-<td></td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_level.html#paramagpy.protein.CustomAtom.get_level" title="paramagpy.protein.CustomAtom.get_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_level</span></code></a>()</p></td>
+<td><p>Return level.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_name.html#paramagpy.protein.CustomAtom.get_name" title="paramagpy.protein.CustomAtom.get_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_name</span></code></a>()</td>
-<td>Return atom name.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_name.html#paramagpy.protein.CustomAtom.get_name" title="paramagpy.protein.CustomAtom.get_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_name</span></code></a>()</p></td>
+<td><p>Return atom name.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_occupancy.html#paramagpy.protein.CustomAtom.get_occupancy" title="paramagpy.protein.CustomAtom.get_occupancy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_occupancy</span></code></a>()</td>
-<td>Return occupancy.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_occupancy.html#paramagpy.protein.CustomAtom.get_occupancy" title="paramagpy.protein.CustomAtom.get_occupancy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_occupancy</span></code></a>()</p></td>
+<td><p>Return occupancy.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_parent.html#paramagpy.protein.CustomAtom.get_parent" title="paramagpy.protein.CustomAtom.get_parent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parent</span></code></a>()</td>
-<td>Return parent residue.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_parent.html#paramagpy.protein.CustomAtom.get_parent" title="paramagpy.protein.CustomAtom.get_parent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parent</span></code></a>()</p></td>
+<td><p>Return parent residue.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_serial_number.html#paramagpy.protein.CustomAtom.get_serial_number" title="paramagpy.protein.CustomAtom.get_serial_number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_serial_number</span></code></a>()</td>
-<td></td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_serial_number.html#paramagpy.protein.CustomAtom.get_serial_number" title="paramagpy.protein.CustomAtom.get_serial_number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_serial_number</span></code></a>()</p></td>
+<td><p>Return the serial number.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_sigatm.html#paramagpy.protein.CustomAtom.get_sigatm" title="paramagpy.protein.CustomAtom.get_sigatm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sigatm</span></code></a>()</td>
-<td>Return standard deviation of atomic parameters.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_sigatm.html#paramagpy.protein.CustomAtom.get_sigatm" title="paramagpy.protein.CustomAtom.get_sigatm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sigatm</span></code></a>()</p></td>
+<td><p>Return standard deviation of atomic parameters.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_siguij.html#paramagpy.protein.CustomAtom.get_siguij" title="paramagpy.protein.CustomAtom.get_siguij"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_siguij</span></code></a>()</td>
-<td>Return standard deviations of anisotropic temperature factors.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_siguij.html#paramagpy.protein.CustomAtom.get_siguij" title="paramagpy.protein.CustomAtom.get_siguij"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_siguij</span></code></a>()</p></td>
+<td><p>Return standard deviations of anisotropic temperature factors.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.get_vector.html#paramagpy.protein.CustomAtom.get_vector" title="paramagpy.protein.CustomAtom.get_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_vector</span></code></a>()</td>
-<td>Return coordinates as Vector.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.get_vector.html#paramagpy.protein.CustomAtom.get_vector" title="paramagpy.protein.CustomAtom.get_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_vector</span></code></a>()</p></td>
+<td><p>Return coordinates as Vector.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.is_disordered.html#paramagpy.protein.CustomAtom.is_disordered" title="paramagpy.protein.CustomAtom.is_disordered"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_disordered</span></code></a>()</td>
-<td>Return the disordered flag (1 if disordered, 0 otherwise).</td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.is_disordered.html#paramagpy.protein.CustomAtom.is_disordered" title="paramagpy.protein.CustomAtom.is_disordered"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_disordered</span></code></a>()</p></td>
+<td><p>Return the disordered flag (1 if disordered, 0 otherwise).</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.set_altloc.html#paramagpy.protein.CustomAtom.set_altloc" title="paramagpy.protein.CustomAtom.set_altloc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_altloc</span></code></a>(altloc)</td>
-<td></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.set_altloc.html#paramagpy.protein.CustomAtom.set_altloc" title="paramagpy.protein.CustomAtom.set_altloc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_altloc</span></code></a>(altloc)</p></td>
+<td><p>Set alternative location specifier.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.set_anisou.html#paramagpy.protein.CustomAtom.set_anisou" title="paramagpy.protein.CustomAtom.set_anisou"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_anisou</span></code></a>(anisou_array)</td>
-<td>Set anisotropic B factor.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.set_anisou.html#paramagpy.protein.CustomAtom.set_anisou" title="paramagpy.protein.CustomAtom.set_anisou"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_anisou</span></code></a>(anisou_array)</p></td>
+<td><p>Set anisotropic B factor.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.set_bfactor.html#paramagpy.protein.CustomAtom.set_bfactor" title="paramagpy.protein.CustomAtom.set_bfactor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bfactor</span></code></a>(bfactor)</td>
-<td></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.set_bfactor.html#paramagpy.protein.CustomAtom.set_bfactor" title="paramagpy.protein.CustomAtom.set_bfactor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bfactor</span></code></a>(bfactor)</p></td>
+<td><p>Set isotroptic B factor.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.set_coord.html#paramagpy.protein.CustomAtom.set_coord" title="paramagpy.protein.CustomAtom.set_coord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coord</span></code></a>(coord)</td>
-<td></td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.set_coord.html#paramagpy.protein.CustomAtom.set_coord" title="paramagpy.protein.CustomAtom.set_coord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coord</span></code></a>(coord)</p></td>
+<td><p>Set coordinates.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.set_occupancy.html#paramagpy.protein.CustomAtom.set_occupancy" title="paramagpy.protein.CustomAtom.set_occupancy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_occupancy</span></code></a>(occupancy)</td>
-<td></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.set_occupancy.html#paramagpy.protein.CustomAtom.set_occupancy" title="paramagpy.protein.CustomAtom.set_occupancy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_occupancy</span></code></a>(occupancy)</p></td>
+<td><p>Set occupancy.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.set_parent.html#paramagpy.protein.CustomAtom.set_parent" title="paramagpy.protein.CustomAtom.set_parent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parent</span></code></a>(parent)</td>
-<td>Set the parent residue.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.set_parent.html#paramagpy.protein.CustomAtom.set_parent" title="paramagpy.protein.CustomAtom.set_parent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parent</span></code></a>(parent)</p></td>
+<td><p>Set the parent residue.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.set_serial_number.html#paramagpy.protein.CustomAtom.set_serial_number" title="paramagpy.protein.CustomAtom.set_serial_number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_serial_number</span></code></a>(n)</td>
-<td></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.set_serial_number.html#paramagpy.protein.CustomAtom.set_serial_number" title="paramagpy.protein.CustomAtom.set_serial_number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_serial_number</span></code></a>(n)</p></td>
+<td><p>Set serial number.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.set_sigatm.html#paramagpy.protein.CustomAtom.set_sigatm" title="paramagpy.protein.CustomAtom.set_sigatm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_sigatm</span></code></a>(sigatm_array)</td>
-<td>Set standard deviation of atomic parameters.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.set_sigatm.html#paramagpy.protein.CustomAtom.set_sigatm" title="paramagpy.protein.CustomAtom.set_sigatm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_sigatm</span></code></a>(sigatm_array)</p></td>
+<td><p>Set standard deviation of atomic parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.set_siguij.html#paramagpy.protein.CustomAtom.set_siguij" title="paramagpy.protein.CustomAtom.set_siguij"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_siguij</span></code></a>(siguij_array)</td>
-<td>Set standard deviations of anisotropic temperature factors.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.set_siguij.html#paramagpy.protein.CustomAtom.set_siguij" title="paramagpy.protein.CustomAtom.set_siguij"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_siguij</span></code></a>(siguij_array)</p></td>
+<td><p>Set standard deviations of anisotropic temperature factors.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.top.html#paramagpy.protein.CustomAtom.top" title="paramagpy.protein.CustomAtom.top"><code class="xref py py-obj docutils literal notranslate"><span class="pre">top</span></code></a>()</td>
-<td></td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.top.html#paramagpy.protein.CustomAtom.top" title="paramagpy.protein.CustomAtom.top"><code class="xref py py-obj docutils literal notranslate"><span class="pre">top</span></code></a>()</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.transform.html#paramagpy.protein.CustomAtom.transform" title="paramagpy.protein.CustomAtom.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(rot,&nbsp;tran)</td>
-<td>Apply rotation and translation to the atomic coordinates.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.transform.html#paramagpy.protein.CustomAtom.transform" title="paramagpy.protein.CustomAtom.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(rot, tran)</p></td>
+<td><p>Apply rotation and translation to the atomic coordinates.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.HBAR.html#paramagpy.protein.CustomAtom.HBAR" title="paramagpy.protein.CustomAtom.HBAR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HBAR</span></code></a></td>
-<td></td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.HBAR.html#paramagpy.protein.CustomAtom.HBAR" title="paramagpy.protein.CustomAtom.HBAR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HBAR</span></code></a></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.MU0.html#paramagpy.protein.CustomAtom.MU0" title="paramagpy.protein.CustomAtom.MU0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MU0</span></code></a></td>
-<td></td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.MU0.html#paramagpy.protein.CustomAtom.MU0" title="paramagpy.protein.CustomAtom.MU0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MU0</span></code></a></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.csa.html#paramagpy.protein.CustomAtom.csa" title="paramagpy.protein.CustomAtom.csa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csa</span></code></a></td>
-<td>Get the CSA tensor at the nuclear position This uses the geometry of neighbouring atoms and a standard library from Bax J.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.csa.html#paramagpy.protein.CustomAtom.csa" title="paramagpy.protein.CustomAtom.csa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csa</span></code></a></p></td>
+<td><p>Get the CSA tensor at the nuclear position This uses the geometry of neighbouring atoms and a standard library from Bax J.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.csa_lib.html#paramagpy.protein.CustomAtom.csa_lib" title="paramagpy.protein.CustomAtom.csa_lib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csa_lib</span></code></a></td>
-<td>docstring for CustomAtom</td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.csa_lib.html#paramagpy.protein.CustomAtom.csa_lib" title="paramagpy.protein.CustomAtom.csa_lib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csa_lib</span></code></a></p></td>
+<td><p>docstring for CustomAtom</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.gyro_lib.html#paramagpy.protein.CustomAtom.gyro_lib" title="paramagpy.protein.CustomAtom.gyro_lib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gyro_lib</span></code></a></td>
-<td></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.gyro_lib.html#paramagpy.protein.CustomAtom.gyro_lib" title="paramagpy.protein.CustomAtom.gyro_lib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gyro_lib</span></code></a></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="paramagpy.protein.CustomAtom.position.html#paramagpy.protein.CustomAtom.position" title="paramagpy.protein.CustomAtom.position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">position</span></code></a></td>
-<td></td>
+<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.protein.CustomAtom.position.html#paramagpy.protein.CustomAtom.position" title="paramagpy.protein.CustomAtom.position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">position</span></code></a></p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -233,13 +224,11 @@ these spaces are stripped from the atom name.</li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -263,14 +252,14 @@ these spaces are stripped from the atom name.</li>
         <li class="right" >
           <a href="paramagpy.protein.rotation_matrix.html" title="paramagpy.protein.rotation_matrix"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../protein.html" >paramagpy.protein</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

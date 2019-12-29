@@ -1,12 +1,10 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>NMR Software Macros &#8212; paramagpy 0.44 documentation</title>
+    <meta charset="utf-8" />
+    <title>NMR Software Macros &#8212; paramagpy 1.0 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -14,11 +12,12 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Reference Guide" href="../reference/index.html" />
+    <link rel="next" title="Mathematical Proofs" href="../mathematical_proofs.html" />
     <link rel="prev" title="Graphic User Interface (GUI)" href="../paramagpy_gui.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -31,12 +30,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../reference/index.html" title="Reference Guide"
+          <a href="../mathematical_proofs.html" title="Mathematical Proofs"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../paramagpy_gui.html" title="Graphic User Interface (GUI)"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 0.44 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -52,8 +51,8 @@
 <h2>CCPNMR Analysis 2.4<a class="headerlink" href="#ccpnmr-analysis-2-4" title="Permalink to this headline">¶</a></h2>
 <p>Download the two scripts:</p>
 <ul class="simple">
-<li><a class="reference download internal" download="" href="../_downloads/6a2224ae7558299070cdda0626217c4e/paramagpy_ccpnmr_macro.py"><code class="xref download docutils literal notranslate"><span class="pre">paramagpy_ccpnmr_macro.py</span></code></a></li>
-<li><a class="reference download internal" download="" href="../_downloads/a68f55163fc1ecf12958d3ecb8c0a823/paramagpy_fit_pcs.py"><code class="xref download docutils literal notranslate"><span class="pre">paramagpy_fit_pcs.py</span></code></a></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/73b8675ded64cb7260c2afd1b1ab7931/paramagpy_ccpnmr_macro.py"><code class="xref download docutils literal notranslate"><span class="pre">paramagpy_ccpnmr_macro.py</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/949ba947c6ac4cebefff52937a45bf92/paramagpy_fit_pcs.py"><code class="xref download docutils literal notranslate"><span class="pre">paramagpy_fit_pcs.py</span></code></a></p></li>
 </ul>
 <p>In the first line of the script <cite>paramagpy_fit_pcs.py</cite>, replace the shebang with the path to the python version on your machine that contains the paramagpy installation. On my computer this is set to.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python3</span>
@@ -63,9 +62,9 @@
 <img alt="../_images/ccpnmr_screen.png" src="../_images/ccpnmr_screen.png" />
 <p>The popup window allows you to select a diamagnetic and paramagnetic spectrum and has 3 available buttons:</p>
 <ul class="simple">
-<li>Write PCS: This will calculate the difference between assigned peaks in the paramagnetic and diamagnetic spectra and write them to a .npc file (as specified in the relevant field).</li>
-<li>Fit Tensor: This will call the paramagpy script <cite>paramagpy_fit_pcs.py</cite> to fit the tensor the the written PCS values.</li>
-<li>Read PCS: This will read back-calculated PCS values from file (as specified in the relevant field) and plot the expected peaks on the paramagnetic spectrum in red.</li>
+<li><p>Write PCS: This will calculate the difference between assigned peaks in the paramagnetic and diamagnetic spectra and write them to a .npc file (as specified in the relevant field).</p></li>
+<li><p>Fit Tensor: This will call the paramagpy script <cite>paramagpy_fit_pcs.py</cite> to fit the tensor the the written PCS values.</p></li>
+<li><p>Read PCS: This will read back-calculated PCS values from file (as specified in the relevant field) and plot the expected peaks on the paramagnetic spectrum in red.</p></li>
 </ul>
 <p>Note, to alter the parameters for fitting of the PCS tensor, you can change the values within the script <cite>paramagpy_fit_pcs.py</cite>.</p>
 </div>
@@ -73,9 +72,9 @@
 <h2>Sparky<a class="headerlink" href="#sparky" title="Permalink to this headline">¶</a></h2>
 <p>Download the 3 scripts:</p>
 <ul class="simple">
-<li><a class="reference download internal" download="" href="../_downloads/8e58931c3ae28fbac4d642de932ec5d7/paramagpy_sparky_macro.py"><code class="xref download docutils literal notranslate"><span class="pre">paramagpy_sparky_macro.py</span></code></a></li>
-<li><a class="reference download internal" download="" href="../_downloads/a7e55abd00f54c51ecdb760e3b7f5f9d/sparky_init.py"><code class="xref download docutils literal notranslate"><span class="pre">sparky_init.py</span></code></a></li>
-<li><a class="reference download internal" download="" href="../_downloads/a68f55163fc1ecf12958d3ecb8c0a823/paramagpy_fit_pcs.py"><code class="xref download docutils literal notranslate"><span class="pre">paramagpy_fit_pcs.py</span></code></a></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/c26223d21c808a331a0142363b6f7371/paramagpy_sparky_macro.py"><code class="xref download docutils literal notranslate"><span class="pre">paramagpy_sparky_macro.py</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/e85d7c0cd04715f2d3e396f3f06de412/sparky_init.py"><code class="xref download docutils literal notranslate"><span class="pre">sparky_init.py</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/949ba947c6ac4cebefff52937a45bf92/paramagpy_fit_pcs.py"><code class="xref download docutils literal notranslate"><span class="pre">paramagpy_fit_pcs.py</span></code></a></p></li>
 </ul>
 <p>Place the first two scripts <cite>paramagpy_sparky_macro.py</cite> and <cite>sparky_init.py</cite> in the Sparky directory <cite>~/Sparky/Python</cite>. Note that the Sparky directory usually contains the <cite>Projects</cite>, <cite>Lists</cite> and <cite>Save</cite> folders. You may need to create the <cite>Python</cite> directory here in which to place the two scripts.</p>
 <p>Place the third script <cite>paramagpy_fit_pcs.py</cite> in your home directory.</p>
@@ -83,9 +82,9 @@
 <img alt="../_images/sparky_screen.png" src="../_images/sparky_screen.png" />
 <p>The popup window allows you to select a diamagnetic and paramagnetic spectrum and has 3 available buttons:</p>
 <ul class="simple">
-<li>Write PCS: This will calculate the difference between assigned peaks in the paramagnetic and diamagnetic spectra and write them to a .npc file (as specified in the relevant field).</li>
-<li>Read PCS: This will read back-calculated PCS values from file (as specified in the relevant field) and plot the expected peaks on the paramagnetic spectrum in green.</li>
-<li>Clear PCS: This will remove all calculated PCS peaks from the spectrum.</li>
+<li><p>Write PCS: This will calculate the difference between assigned peaks in the paramagnetic and diamagnetic spectra and write them to a .npc file (as specified in the relevant field).</p></li>
+<li><p>Read PCS: This will read back-calculated PCS values from file (as specified in the relevant field) and plot the expected peaks on the paramagnetic spectrum in green.</p></li>
+<li><p>Clear PCS: This will remove all calculated PCS peaks from the spectrum.</p></li>
 </ul>
 <p>Note, to perform the tensor fitting, you will need to execute the paramagpy script in a separate terminal including an argument with the experimental PCS file such as:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>user@computer:~$ ./paramagpy_fit_pcs.py pcsexp.npc
@@ -114,8 +113,8 @@
   <p class="topless"><a href="../paramagpy_gui.html"
                         title="previous chapter">Graphic User Interface (GUI)</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../reference/index.html"
-                        title="next chapter">Reference Guide</a></p>
+  <p class="topless"><a href="../mathematical_proofs.html"
+                        title="next chapter">Mathematical Proofs</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -124,13 +123,11 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -149,17 +146,17 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../reference/index.html" title="Reference Guide"
+          <a href="../mathematical_proofs.html" title="Mathematical Proofs"
              >next</a> |</li>
         <li class="right" >
           <a href="../paramagpy_gui.html" title="Graphic User Interface (GUI)"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 0.44 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

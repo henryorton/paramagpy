@@ -1,0 +1,327 @@
+\begin{sphinxtheindex}
+\let\bigletter\sphinxstyleindexlettergroup
+\let\spxpagem \sphinxstyleindexpagemain
+\let\spxentry \sphinxstyleindexentry
+\let\spxextra \sphinxstyleindexextra
+
+  \bigletter {\sphinxsymbolsname}
+  \item \spxentry{\_\_init\_\_()}\spxextra{paramagpy.dataparse.DataContainer method}, 
+		\hyperpage{83}
+  \item \spxentry{\_\_init\_\_()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{48}
+  \item \spxentry{\_\_init\_\_()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{69}
+  \item \spxentry{\_\_init\_\_()}\spxextra{paramagpy.protein.CustomStructure method}, 
+		\hyperpage{75}
+  \item \spxentry{\_\_init\_\_()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{79}
+
+  \indexspace
+  \bigletter A
+  \item \spxentry{a}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{64}
+  \item \spxentry{add()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{76}
+  \item \spxentry{alignment\_factor}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{64}
+  \item \spxentry{atom\_ccr()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{50}
+  \item \spxentry{atom\_pcs()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{50}
+  \item \spxentry{atom\_pre()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{51}
+  \item \spxentry{atom\_rdc()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{51}
+  \item \spxentry{atom\_set\_position()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{51}
+  \item \spxentry{average()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{51}
+  \item \spxentry{ax}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{64}
+
+  \indexspace
+  \bigletter B
+  \item \spxentry{b}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{65}
+  \item \spxentry{B0\_MHz}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{64}
+
+  \indexspace
+  \bigletter C
+  \item \spxentry{ccr()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{51}
+  \item \spxentry{clear()}\spxextra{paramagpy.dataparse.DataContainer method}, \hyperpage{84}
+  \item \spxentry{copy()}\spxextra{paramagpy.dataparse.DataContainer method}, \hyperpage{84}
+  \item \spxentry{copy()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{52}
+  \item \spxentry{copy()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{70}
+  \item \spxentry{copy()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{76}
+  \item \spxentry{csa}\spxextra{paramagpy.protein.CustomAtom attribute}, \hyperpage{75}
+  \item \spxentry{csa\_lib}\spxextra{paramagpy.protein.CustomAtom attribute}, \hyperpage{75}
+  \item \spxentry{CustomAtom}\spxextra{class in paramagpy.protein}, \hyperpage{69}
+  \item \spxentry{CustomStructure}\spxextra{class in paramagpy.protein}, \hyperpage{75}
+  \item \spxentry{CustomStructureBuilder}\spxextra{class in paramagpy.protein}, \hyperpage{79}
+
+  \indexspace
+  \bigletter D
+  \item \spxentry{DataContainer}\spxextra{class in paramagpy.dataparse}, \hyperpage{83}
+  \item \spxentry{detach\_child()}\spxextra{paramagpy.protein.CustomStructure method}, 
+		\hyperpage{76}
+  \item \spxentry{detach\_parent()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{70}
+  \item \spxentry{detach\_parent()}\spxextra{paramagpy.protein.CustomStructure method}, 
+		\hyperpage{76}
+  \item \spxentry{dipole\_shift\_tensor()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{52}
+  \item \spxentry{dipole\_shift\_tensor()}\spxextra{paramagpy.protein.CustomAtom method}, 
+		\hyperpage{70}
+  \item \spxentry{dsa\_r1()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{52}
+  \item \spxentry{dsa\_r2()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{52}
+
+  \indexspace
+  \bigletter E
+  \item \spxentry{eigenvalues}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{65}
+  \item \spxentry{ensemble\_average()}\spxextra{in module paramagpy.fit}, \hyperpage{87}
+  \item \spxentry{euler\_to\_matrix()}\spxextra{in module paramagpy.metal}, \hyperpage{46}
+  \item \spxentry{extract\_atom\_data()}\spxextra{in module paramagpy.fit}, \hyperpage{87}
+  \item \spxentry{extract\_ccr\_data()}\spxextra{in module paramagpy.fit}, \hyperpage{87}
+  \item \spxentry{extract\_rdc\_data()}\spxextra{in module paramagpy.fit}, \hyperpage{88}
+
+  \indexspace
+  \bigletter F
+  \item \spxentry{fast\_ccr()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{53}
+  \item \spxentry{fast\_dipole\_shift\_tensor()}\spxextra{paramagpy.metal.Metal method}, 
+		\hyperpage{53}
+  \item \spxentry{fast\_dsa\_r1()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{53}
+  \item \spxentry{fast\_dsa\_r2()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{53}
+  \item \spxentry{fast\_first\_invariant\_squared()}\spxextra{paramagpy.metal.Metal static method}, 
+		\hyperpage{54}
+  \item \spxentry{fast\_g\_sbm\_r1()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{54}
+  \item \spxentry{fast\_pcs()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{54}
+  \item \spxentry{fast\_pre()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{54}
+  \item \spxentry{fast\_racs()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{55}
+  \item \spxentry{fast\_rads()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{55}
+  \item \spxentry{fast\_rdc()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{55}
+  \item \spxentry{fast\_sbm\_r1()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{55}
+  \item \spxentry{fast\_sbm\_r2()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{56}
+  \item \spxentry{fast\_second\_invariant\_squared()}\spxextra{paramagpy.metal.Metal static method}, 
+		\hyperpage{56}
+  \item \spxentry{first\_invariant\_squared()}\spxextra{paramagpy.metal.Metal static method}, 
+		\hyperpage{56}
+  \item \spxentry{fit\_error\_bootstrap()}\spxextra{in module paramagpy.fit}, \hyperpage{88}
+  \item \spxentry{fit\_error\_models()}\spxextra{in module paramagpy.fit}, \hyperpage{88}
+  \item \spxentry{fit\_error\_monte\_carlo()}\spxextra{in module paramagpy.fit}, \hyperpage{89}
+  \item \spxentry{fit\_scaling}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{65}
+  \item \spxentry{flag\_disorder()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{71}
+  \item \spxentry{fromkeys()}\spxextra{paramagpy.dataparse.DataContainer method}, \hyperpage{84}
+  \item \spxentry{fundamental\_attributes}\spxextra{paramagpy.metal.Metal attribute}, 
+		\hyperpage{65}
+
+  \indexspace
+  \bigletter G
+  \item \spxentry{g}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{65}
+  \item \spxentry{g\_eigenvalues}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{65}
+  \item \spxentry{g\_isotropy}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{65}
+  \item \spxentry{g\_sbm\_r1()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{56}
+  \item \spxentry{g\_tensor}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{65}
+  \item \spxentry{GAMMA}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{64}
+  \item \spxentry{gax}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{65}
+  \item \spxentry{get()}\spxextra{paramagpy.dataparse.DataContainer method}, \hyperpage{84}
+  \item \spxentry{get\_altloc()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{71}
+  \item \spxentry{get\_anisou()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{71}
+  \item \spxentry{get\_atoms()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{76}
+  \item \spxentry{get\_bfactor()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{71}
+  \item \spxentry{get\_chains()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{76}
+  \item \spxentry{get\_coord()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{71}
+  \item \spxentry{get\_full\_id()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{71}
+  \item \spxentry{get\_full\_id()}\spxextra{paramagpy.protein.CustomStructure method}, 
+		\hyperpage{77}
+  \item \spxentry{get\_fullname()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{71}
+  \item \spxentry{get\_id()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{71}
+  \item \spxentry{get\_id()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{77}
+  \item \spxentry{get\_iterator()}\spxextra{paramagpy.protein.CustomStructure method}, 
+		\hyperpage{77}
+  \item \spxentry{get\_level()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{72}
+  \item \spxentry{get\_level()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{77}
+  \item \spxentry{get\_list()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{77}
+  \item \spxentry{get\_models()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{77}
+  \item \spxentry{get\_name()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{72}
+  \item \spxentry{get\_occupancy()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{72}
+  \item \spxentry{get\_params()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{57}
+  \item \spxentry{get\_parent()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{72}
+  \item \spxentry{get\_parent()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{77}
+  \item \spxentry{get\_residues()}\spxextra{paramagpy.protein.CustomStructure method}, 
+		\hyperpage{78}
+  \item \spxentry{get\_serial\_number()}\spxextra{paramagpy.protein.CustomAtom method}, 
+		\hyperpage{72}
+  \item \spxentry{get\_sigatm()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{72}
+  \item \spxentry{get\_siguij()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{72}
+  \item \spxentry{get\_structure()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{79}
+  \item \spxentry{get\_vector()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{72}
+  \item \spxentry{grh}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{66}
+  \item \spxentry{gyro\_lib}\spxextra{paramagpy.protein.CustomAtom attribute}, \hyperpage{75}
+
+  \indexspace
+  \bigletter H
+  \item \spxentry{has\_id()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{78}
+  \item \spxentry{HBAR}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{64}
+  \item \spxentry{HBAR}\spxextra{paramagpy.protein.CustomAtom attribute}, \hyperpage{75}
+
+  \indexspace
+  \bigletter I
+  \item \spxentry{id}\spxextra{paramagpy.protein.CustomStructure attribute}, \hyperpage{79}
+  \item \spxentry{info()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{57}
+  \item \spxentry{init\_atom()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{79}
+  \item \spxentry{init\_chain()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{80}
+  \item \spxentry{init\_model()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{80}
+  \item \spxentry{init\_residue()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{80}
+  \item \spxentry{init\_seg()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{80}
+  \item \spxentry{init\_structure()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{80}
+  \item \spxentry{insert()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{78}
+  \item \spxentry{is\_disordered()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{73}
+  \item \spxentry{iso}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{66}
+  \item \spxentry{isomap()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{58}
+  \item \spxentry{isotropy}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{66}
+  \item \spxentry{items()}\spxextra{paramagpy.dataparse.DataContainer method}, \hyperpage{85}
+
+  \indexspace
+  \bigletter K
+  \item \spxentry{K}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{64}
+  \item \spxentry{keys()}\spxextra{paramagpy.dataparse.DataContainer method}, \hyperpage{85}
+
+  \indexspace
+  \bigletter L
+  \item \spxentry{lanth\_axrh}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{66}
+  \item \spxentry{lanth\_lib}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{66}
+  \item \spxentry{load\_pdb()}\spxextra{in module paramagpy.protein}, \hyperpage{68}
+  \item \spxentry{lower\_coords}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{66}
+
+  \indexspace
+  \bigletter M
+  \item \spxentry{make\_mesh()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{58}
+  \item \spxentry{make\_tensor()}\spxextra{in module paramagpy.metal}, \hyperpage{47}
+  \item \spxentry{matrix\_to\_euler()}\spxextra{in module paramagpy.metal}, \hyperpage{46}
+  \item \spxentry{Metal}\spxextra{class in paramagpy.metal}, \hyperpage{48}
+  \item \spxentry{metal\_standard\_deviation()}\spxextra{in module paramagpy.fit}, \hyperpage{89}
+  \item \spxentry{move\_to\_end()}\spxextra{paramagpy.dataparse.DataContainer method}, 
+		\hyperpage{85}
+  \item \spxentry{MU0}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{64}
+  \item \spxentry{MU0}\spxextra{paramagpy.protein.CustomAtom attribute}, \hyperpage{75}
+  \item \spxentry{MUB}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{64}
+
+  \indexspace
+  \bigletter N
+  \item \spxentry{nlr\_fit\_metal\_from\_ccr()}\spxextra{in module paramagpy.fit}, \hyperpage{89}
+  \item \spxentry{nlr\_fit\_metal\_from\_pcs()}\spxextra{in module paramagpy.fit}, \hyperpage{90}
+  \item \spxentry{nlr\_fit\_metal\_from\_pre()}\spxextra{in module paramagpy.fit}, \hyperpage{91}
+
+  \indexspace
+  \bigletter P
+  \item \spxentry{paramagpy.dataparse}\spxextra{module}, \hyperpage{81}
+  \item \spxentry{paramagpy.fit}\spxextra{module}, \hyperpage{86}
+  \item \spxentry{paramagpy.metal}\spxextra{module}, \hyperpage{46}
+  \item \spxentry{paramagpy.protein}\spxextra{module}, \hyperpage{68}
+  \item \spxentry{parse()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{78}
+  \item \spxentry{pcs()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{58}
+  \item \spxentry{pcs\_mesh()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{58}
+  \item \spxentry{pop()}\spxextra{paramagpy.dataparse.DataContainer method}, \hyperpage{85}
+  \item \spxentry{popitem()}\spxextra{paramagpy.dataparse.DataContainer method}, \hyperpage{85}
+  \item \spxentry{position}\spxextra{paramagpy.protein.CustomAtom attribute}, \hyperpage{75}
+  \item \spxentry{pre()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{59}
+  \item \spxentry{pre\_mesh()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{59}
+
+  \indexspace
+  \bigletter Q
+  \item \spxentry{qfactor()}\spxextra{in module paramagpy.fit}, \hyperpage{92}
+
+  \indexspace
+  \bigletter R
+  \item \spxentry{racs()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{59}
+  \item \spxentry{rads()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{60}
+  \item \spxentry{rdc()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{60}
+  \item \spxentry{read\_ccr()}\spxextra{in module paramagpy.dataparse}, \hyperpage{83}
+  \item \spxentry{read\_pcs()}\spxextra{in module paramagpy.dataparse}, \hyperpage{82}
+  \item \spxentry{read\_pre()}\spxextra{in module paramagpy.dataparse}, \hyperpage{83}
+  \item \spxentry{read\_rdc()}\spxextra{in module paramagpy.dataparse}, \hyperpage{82}
+  \item \spxentry{rh}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{66}
+  \item \spxentry{rotation\_matrix()}\spxextra{in module paramagpy.protein}, \hyperpage{69}
+  \item \spxentry{rotationMatrix}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{66}
+
+  \indexspace
+  \bigletter S
+  \item \spxentry{saupe\_factor}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{66}
+  \item \spxentry{save()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{60}
+  \item \spxentry{sbm\_r1()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{60}
+  \item \spxentry{sbm\_r2()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{60}
+  \item \spxentry{second\_invariant\_squared()}\spxextra{paramagpy.metal.Metal static method}, 
+		\hyperpage{61}
+  \item \spxentry{set\_altloc()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{73}
+  \item \spxentry{set\_anisou()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{73}
+  \item \spxentry{set\_anisou()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{80}
+  \item \spxentry{set\_bfactor()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{73}
+  \item \spxentry{set\_coord()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{73}
+  \item \spxentry{set\_header()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{81}
+  \item \spxentry{set\_Jg()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{61}
+  \item \spxentry{set\_lanthanide()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{61}
+  \item \spxentry{set\_line\_counter()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{81}
+  \item \spxentry{set\_occupancy()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{73}
+  \item \spxentry{set\_params()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{61}
+  \item \spxentry{set\_parent()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{73}
+  \item \spxentry{set\_parent()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{78}
+  \item \spxentry{set\_serial\_number()}\spxextra{paramagpy.protein.CustomAtom method}, 
+		\hyperpage{73}
+  \item \spxentry{set\_sigatm()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{74}
+  \item \spxentry{set\_sigatm()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{81}
+  \item \spxentry{set\_siguij()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{74}
+  \item \spxentry{set\_siguij()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{81}
+  \item \spxentry{set\_symmetry()}\spxextra{paramagpy.protein.CustomStructureBuilder method}, 
+		\hyperpage{81}
+  \item \spxentry{set\_utr()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{62}
+  \item \spxentry{setdefault()}\spxextra{paramagpy.dataparse.DataContainer method}, \hyperpage{85}
+  \item \spxentry{spec\_dens()}\spxextra{paramagpy.metal.Metal static method}, \hyperpage{62}
+  \item \spxentry{sphere\_grid()}\spxextra{in module paramagpy.fit}, \hyperpage{92}
+  \item \spxentry{svd\_calc\_metal\_from\_pcs()}\spxextra{in module paramagpy.fit}, \hyperpage{92}
+  \item \spxentry{svd\_calc\_metal\_from\_pcs\_offset()}\spxextra{in module paramagpy.fit}, 
+		\hyperpage{93}
+  \item \spxentry{svd\_calc\_metal\_from\_rdc()}\spxextra{in module paramagpy.fit}, \hyperpage{93}
+  \item \spxentry{svd\_fit\_metal\_from\_rdc()}\spxextra{in module paramagpy.fit}, \hyperpage{94}
+  \item \spxentry{svd\_gridsearch\_fit\_metal\_from\_pcs()}\spxextra{in module paramagpy.fit}, 
+		\hyperpage{94}
+
+  \indexspace
+  \bigletter T
+  \item \spxentry{tauc}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{67}
+  \item \spxentry{tensor}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{67}
+  \item \spxentry{tensor\_alignment}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{67}
+  \item \spxentry{tensor\_saupe}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{67}
+  \item \spxentry{tensor\_traceless}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{67}
+  \item \spxentry{top()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{74}
+  \item \spxentry{transform()}\spxextra{paramagpy.protein.CustomAtom method}, \hyperpage{74}
+  \item \spxentry{transform()}\spxextra{paramagpy.protein.CustomStructure method}, \hyperpage{78}
+
+  \indexspace
+  \bigletter U
+  \item \spxentry{unique\_eulers()}\spxextra{in module paramagpy.metal}, \hyperpage{47}
+  \item \spxentry{update()}\spxextra{paramagpy.dataparse.DataContainer method}, \hyperpage{85}
+  \item \spxentry{upper\_coords}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{67}
+  \item \spxentry{upper\_triang}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{67}
+  \item \spxentry{upper\_triang\_alignment}\spxextra{paramagpy.metal.Metal attribute}, 
+		\hyperpage{67}
+  \item \spxentry{upper\_triang\_saupe}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{68}
+
+  \indexspace
+  \bigletter V
+  \item \spxentry{values()}\spxextra{paramagpy.dataparse.DataContainer method}, \hyperpage{85}
+
+  \indexspace
+  \bigletter W
+  \item \spxentry{write\_isomap()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{62}
+  \item \spxentry{write\_pymol\_script()}\spxextra{paramagpy.metal.Metal method}, \hyperpage{62}
+
+  \indexspace
+  \bigletter X
+  \item \spxentry{x}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{68}
+
+  \indexspace
+  \bigletter Y
+  \item \spxentry{y}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{68}
+
+  \indexspace
+  \bigletter Z
+  \item \spxentry{z}\spxextra{paramagpy.metal.Metal attribute}, \hyperpage{68}
+
+\end{sphinxtheindex}
