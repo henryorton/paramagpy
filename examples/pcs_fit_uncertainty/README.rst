@@ -1,7 +1,7 @@
 .. _pcs_fit_uncertainty:
 
-Fit a tensor to PCS data with uncertainties
-===========================================
+Propagate Uncertainty to Fitted Tensor Parameters
+=================================================
 
 This example shows the various error analysis functions available in paramagpy for estimating the unceratinty in fitted parameters for a paramagnetic center.
 
