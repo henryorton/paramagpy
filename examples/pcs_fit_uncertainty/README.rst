@@ -1,34 +1,96 @@
-.. _pcs_fit_error:
+.. _pcs_fit_uncertainty:
 
-Fit a tensor to PCS data with uncertainties
-===========================================
+Propagate Uncertainty to Fitted Tensor Parameters
+=================================================
 
-This example shows how to conduct a weighted fit of a :math:`{\Delta\chi}`-tensor to experimental PCS data with experimental errors.
+This example shows the various error analysis functions available in paramagpy for estimating the unceratinty in fitted parameters for a paramagnetic center.
 
 
 Downloads
 ---------
 
-* Download the data files ``4icbH_mut.pdb`` and ``calbindin_Er_HN_PCS_errors.npc`` from `here <https://github.com/henryorton/paramagpy/tree/master/examples/data_files/>`_:
+* Download the data files ``2bcb.pdb`` and ``calbindin_Er_HN_PCS_errors.npc`` from `here <https://github.com/henryorton/paramagpy/tree/master/examples/data_files/>`_:
 
-* Download the script :download:`pcs_fit_error.py <../../../examples/pcs_fit_error/pcs_fit_error.py>`
+* Download the script :download:`pcs_fit_uncertainty.py <../../../examples/pcs_fit_uncertainty/pcs_fit_uncertainty.py>`
 
 
 Script + Explanation
 --------------------
 
-This script follows very closely the script :ref:`pcs_fit`. The only difference being that errors are included in the fourth column of the .npc file and errorbars are included in the plotting routine.
+This start of this script follows the script :ref:`pcs_fit` to fit the tensor.
 
-.. literalinclude:: ../../../examples/pcs_fit_error/pcs_fit_error.py 
+.. literalinclude:: ../../../examples/pcs_fit_uncertainty/pcs_fit_uncertainty.py
+	:lines: 1-24
 
-The fitted tensor:
+### Uncertainty from structure models
 
-*Output:* [:download:`calbindin_Er_HN_PCS_tensor_errors.txt <../../../examples/pcs_fit_error/calbindin_Er_HN_PCS_tensor_errors.txt>`]
+The PDB file contains models that capture uncertainty in the structure of the protein. This can be propagated to estimate uncertainty in the fitted tensor parameters using the fnction :py:func:`paramagpy.fit.fit_error_model`. This fits a separate tensor to each model and returns all fitted tensors as well as the standard deviation in the fitted parameters.
 
-.. literalinclude:: ../../../examples/pcs_fit_error/calbindin_Er_HN_PCS_tensor_errors.txt
+.. literalinclude:: ../../../examples/pcs_fit_uncertainty/pcs_fit_uncertainty.py
+	:lines: 26-30
 
-And correlation plot:
+The standard deviation in the fitted tensor parameters is found in the variable ``mod_std``. This variation in tensor principle axes can be viewed by a Sanson-Flamsteed plot.
 
-*Output:* [:download:`pcs_fit_error.png <../../../examples/pcs_fit_error/pcs_fit_error.png>`]
+*Output:* [:download:`error_tensor_models.txt <../../../examples/pcs_fit_uncertainty/error_tensor_models.txt>`]
 
-.. image:: ../../../examples/pcs_fit_error/pcs_fit_error.png
+.. literalinclude:: ../../../examples/pcs_fit_uncertainty/error_tensor_models.txt
+
+*Output:* [:download:`models.png <../../../examples/pcs_fit_uncertainty/models.png>`]
+
+.. image:: ../../../examples/pcs_fit_uncertainty/models.png
+
+
+### Uncertainty from experimental uncertainties
+
+Experimental uncertainties can be measured. This may arise due to spectral noise in peak heights for PREs, or spectral noise as uncertainties in chemical shifts for PCSs, as is the case here. The function :py:func:`paramagpy.fit.fit_error_monte_carlo` will repeat the fit for many iterations, each time adding random noise from a uniform distribution scaled by the experimental errors present in the ``err`` column of the dataArray ``parsedData``. 
+
+.. literalinclude:: ../../../examples/pcs_fit_uncertainty/pcs_fit_uncertainty.py
+	:lines: 32-36
+
+*Output:* [:download:`error_tensor_monte_carlo.txt <../../../examples/pcs_fit_uncertainty/error_tensor_monte_carlo.txt>`]
+
+.. literalinclude:: ../../../examples/pcs_fit_uncertainty/error_tensor_monte_carlo.txt
+
+*Output:* [:download:`monte_carlo.png <../../../examples/pcs_fit_uncertainty/monte_carlo.png>`]
+
+.. image:: ../../../examples/pcs_fit_uncertainty/monte_carlo.png
+
+
+### Uncertainty from sample fraction
+
+A final, but generally not recommended method is to source noise from taking a random fraction of the data and conducting the fit for many iterations to then view the deviation in fitted parameters. This method is often called bootstrapping and is desirable if the experimental uncertainties are unknown and the PDB file does not contain models that capture structural unceratinty. The function :py:func:`paramagpy.fit.fit_error_bootstrap` will repeat the fit for many iterations, each time sampling the desired amount of the experimental data randomly. 
+
+.. literalinclude:: ../../../examples/pcs_fit_uncertainty/pcs_fit_uncertainty.py
+	:lines: 38-42
+
+*Output:* [:download:`error_tensor_bootstrap.txt <../../../examples/pcs_fit_uncertainty/error_tensor_bootstrap.txt>`]
+
+.. literalinclude:: ../../../examples/pcs_fit_uncertainty/error_tensor_bootstrap.txt
+
+*Output:* [:download:`bootstrap.png <../../../examples/pcs_fit_uncertainty/bootstrap.png>`]
+
+.. image:: ../../../examples/pcs_fit_uncertainty/bootstrap.png
+
+This piece of code is used to generate the Sanson-Flamsteed projection plots
+
+.. literalinclude:: ../../../examples/pcs_fit_uncertainty/pcs_fit_uncertainty.py
+	:lines: 44-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

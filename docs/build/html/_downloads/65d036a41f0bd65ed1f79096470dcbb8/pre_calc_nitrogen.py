@@ -19,7 +19,7 @@ met.taur = 4.25E-9
 exp = []
 cal = []
 cal_csa = []
-for atom, pre, err in data:
+for atom, pre, err in data[['atm','exp','err']]:
 	exp.append(pre)
 	cal.append(met.atom_pre(atom, rtype='r1'))
 	cal_csa.append(met.atom_pre(atom, rtype='r1', csa=atom.csa))

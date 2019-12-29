@@ -12,20 +12,17 @@ paramagpy.fit
          .. autosummary::
             :toctree:
             
-               cantor_pairing
-               clean_indices
                ensemble_average
-               extract_ccr
-               extract_csa
-               extract_pcs
-               extract_pre
-               extract_rdc
+               extract_atom_data
+               extract_ccr_data
+               extract_rdc_data
+               fit_error_bootstrap
+               fit_error_models
+               fit_error_monte_carlo
+               metal_standard_deviation
                nlr_fit_metal_from_ccr
                nlr_fit_metal_from_pcs
                nlr_fit_metal_from_pre
-               nlr_fit_metal_from_rdc
-               pcs_fit_error_bootstrap
-               pcs_fit_error_monte_carlo
                qfactor
                sphere_grid
                svd_calc_metal_from_pcs
@@ -33,6 +30,5 @@ paramagpy.fit
                svd_calc_metal_from_rdc
                svd_fit_metal_from_rdc
                svd_gridsearch_fit_metal_from_pcs
-               unique_pairing
       
    

@@ -725,7 +725,7 @@ class ErrorSimulationPopup(Popup):
 		except ImportError:
 			print("You need to install matplotlib module for this function")
 			raise
-		title = "Monte Carlo Uncertianty Simulation"
+		title = "Uncertianty Analysis"
 		super().__init__(parent, title)
 
 		self.frm_left = tk.Frame(self)
@@ -740,7 +740,7 @@ class ErrorSimulationPopup(Popup):
 		self.errorTensor.temperature = 0.0
 		self.errorTensor.B0 = 0.0
 
-		if self.parent.dtype in ['PCS','PRE']:
+		if self.parent.dtype in ['PCS','PRE','CCR']:
 			self.varMulti = tk.BooleanVar(value=False)
 			tk.Label(self.frm_opt, text='Fitting:').grid(
 				row=0,column=0,sticky='W')
@@ -750,56 +750,49 @@ class ErrorSimulationPopup(Popup):
 				value=True).grid(row=2,column=0, sticky='W')
 
 		ttk.Separator(self.frm_opt, orient='vertical').grid(
-			row=0,column=1,rowspan=3,sticky='ns')
+			row=0,column=1,rowspan=4,sticky='ns')
 
-		self.varAverage = tk.BooleanVar(value=True)
-		tk.Label(self.frm_opt, text='Models:').grid(
+		tk.Label(self.frm_opt, text='Noise Source:').grid(
 			row=0,column=2,sticky='W')
-		ttk.Radiobutton(self.frm_opt, text='Ensemble Average', 
-			variable=self.varAverage, 
-			value=True).grid(row=1,column=2, sticky='W')
-		ttk.Radiobutton(self.frm_opt, text='Use Current Model', 
-			variable=self.varAverage, 
-			value=False).grid(row=2,column=2, sticky='W')
-
-		ttk.Separator(self.frm_opt, orient='vertical').grid(
-			row=0,column=3,rowspan=3,sticky='ns')
-
+		
 		self.var_error_method = tk.StringVar(value='mc')
+		self.var_error_method.trace("w", self.error_method_changed)
 
-		tk.Label(self.frm_opt, text="Method:").grid(
-			row=0,column=4,sticky='W')
-		ttk.Radiobutton(self.frm_opt, text='Monte Carlo', 
+		but_mdl = ttk.Radiobutton(self.frm_opt, text='Structure Models', 
 			variable=self.var_error_method, 
-			value='mc').grid(row=1,column=4, sticky='W')
-		ttk.Radiobutton(self.frm_opt, text='Bootstrap', 
+			value='md')
+		but_mdl.grid(row=1,column=2, sticky='W')
+		ttk.Radiobutton(self.frm_opt, text='Experimental Uncertainty', 
 			variable=self.var_error_method, 
-			value='bs').grid(row=2,column=4, sticky='W')
+			value='mc').grid(row=2,column=2, sticky='W')
+		ttk.Radiobutton(self.frm_opt, text='Data Fraction', 
+			variable=self.var_error_method, 
+			value='bs').grid(row=3,column=2, sticky='W')
 
 		ttk.Separator(self.frm_opt, orient='vertical').grid(
-			row=0,column=5,rowspan=3,sticky='ns')
+			row=0,column=4,rowspan=4,sticky='ns')
 
 		tk.Label(self.frm_opt, text="Parameters:").grid(
-			row=0,column=6,columnspan=2,sticky='W')
-		tk.Label(self.frm_opt, text="Iterations:").grid(
-			row=1,column=6,sticky='W')
+			row=0,column=5,columnspan=2,sticky='W')
+		lab_iter = tk.Label(self.frm_opt, text="Iterations:")
+		lab_iter.grid(row=1,column=5,sticky='W')
 		self.iterations = NumericEntry(self.frm_opt, None, 200, 
-			formatter="{:d}", dtype=int, onlyPositive=True)
-		self.iterations.grid(row=1,column=7, sticky='W')
-		tk.Label(self.frm_opt, text="Sample Fraction:").grid(
-			row=2,column=6,sticky='W')
+			formatter="{:d}", dtype=int, onlyPositive=True, label=lab_iter)
+		self.iterations.grid(row=1,column=6, sticky='W')
+		lab_frac = tk.Label(self.frm_opt, text="Sample Fraction:")
+		lab_frac.grid(row=2,column=5,sticky='W')
 		self.bootfrac = NumericEntry(self.frm_opt, None, 0.9, 
-			formatter="{:.3f}", dtype=float, onlyPositive=True)
-		self.bootfrac.grid(row=2,column=7, sticky='W')
+			formatter="{:.3f}", dtype=float, onlyPositive=True, label=lab_frac)
+		self.bootfrac.grid(row=2,column=6, sticky='W')
 		
 		ttk.Separator(self.frm_opt, orient='horizontal').grid(
-			row=3,column=0,columnspan=8,sticky='ew')
+			row=4,column=0,columnspan=8,sticky='ew')
 
 		ttk.Button(self.frm_opt, text='Run', 
-			command=self.run).grid(row=4,column=0,columnspan=8,sticky='EW')
+			command=self.run).grid(row=5,column=0,columnspan=8,sticky='EW')
 
 		self.textbox = tk.Text(self, state="disabled", 
-			width=29, height=29)
+			width=29, height=32)
 		self.textbox.pack(side='right')
 
 		self.fig = Figure(figsize=(5, 3), dpi=100)#, tight_layout=True)
@@ -810,9 +803,25 @@ class ErrorSimulationPopup(Popup):
 		self.toolbar = NavigationToolbar2Tk(self.canvas, self.frm_disp)
 		self.toolbar.update()
 
+		if not self.parent.fopts.frm_pdb.has_models():
+			but_mdl.config(state='disabled')
+
 		self.update()
+		self.error_method_changed()
 		self.plot()
 		self.type_tensors()
+
+	def error_method_changed(self, *args):
+		method = self.var_error_method.get()
+		if method=='md':
+			self.iterations.disable()
+			self.bootfrac.disable()
+		elif method=='mc':
+			self.iterations.enable()
+			self.bootfrac.disable()
+		elif method=='bs':
+			self.iterations.enable()
+			self.bootfrac.enable()
 
 	def type_tensors(self, *args):
 		s = "Fitted Tensor:\n"
@@ -825,14 +834,13 @@ class ErrorSimulationPopup(Popup):
 		self.textbox.config(state='disabled')
 
 	def run(self, *args):
-		if self.varMulti.get():
-			dataTabs = self.parent.parent.parent.parent.frm_fmul.get_chosen_tabs()
+		if self.parent.dtype in ['PCS','PRE','CCR']:
+			if self.varMulti.get():
+				dataTabs = self.parent.parent.parent.parent.frm_fmul.get_chosen_tabs()
+			else:
+				dataTabs = [self.parent.parent]
 		else:
 			dataTabs = [self.parent.parent]
-		if self.varAverage.get():
-			model = None
-		else:
-			model = self.parent.parent.viewData.currentModel.get()
 
 		method = self.var_error_method.get()
 		iters = int(self.iterations.floatVar.get())
@@ -840,11 +848,18 @@ class ErrorSimulationPopup(Popup):
 
 		if self.parent.dtype=='PCS':
 			all_metals, std_metal = self.parent.fopts.error_pcs(dataTabs, method, iters, 
-				bsfrac=bsfrac, singleModel=model)
-			self.errorTensor = std_metal
+				bsfrac=bsfrac)
 		elif self.parent.dtype=='PRE':
-			pass
+			all_metals, std_metal = self.parent.fopts.error_pre(dataTabs, method, iters, 
+				bsfrac=bsfrac)
+		elif self.parent.dtype=='RDC':
+			all_metals, std_metal = self.parent.fopts.error_rdc(dataTabs, method, iters, 
+				bsfrac=bsfrac)
+		elif self.parent.dtype=='CCR':
+			all_metals, std_metal = self.parent.fopts.error_ccr(dataTabs, method, iters, 
+				bsfrac=bsfrac)
 
+		self.errorTensor = std_metal
 		def transform(vector):
 			x, y, z = vector
 			theta = np.arctan2(y, x)
@@ -1374,12 +1389,12 @@ class TensorFrame(tk.LabelFrame):
 		if 'Fitted' in text:
 			ttk.Button(self, text='More', command=self.more).grid(row=5+ofs, 
 				column=0, columnspan=2, sticky='EW')
+			ttk.Button(self, text='Error Sim.', command=self.error_sim).grid(row=5+ofs, 
+				column=2, columnspan=2, sticky='EW')
 			if self.dtype in ['PCS', 'PRE']:
 				ttk.Button(self, text='Plot', command=self.plot).grid(row=5+ofs, 
 					column=4, columnspan=2, sticky='EW')
-			if self.dtype=='PCS':
-				ttk.Button(self, text='Error Sim.', command=self.error_sim).grid(row=5+ofs, 
-					column=2, columnspan=2, sticky='EW')
+
 
 		self.update()
 
@@ -1639,28 +1654,22 @@ class DataTab(tk.Frame):
 				return
 			pdata = self.frm_pdb.prot.parse(expdata)
 			df = []
-			for atom1, atom2, val, err in pdata:
-				_, mdl1, chn1, (_,seq1,_), (atm1, _) = atom1.get_full_id()
-				_, mdl2, chn2, (_,seq2,_), (atm2, _) = atom2.get_full_id()
-				assert mdl1==mdl2
-				if mdl1 not in self.frm_pdb.models:
+			for r in pdata:
+				
+				if r['mdl'] not in self.frm_pdb.models:
 					continue
 
-				res1 = atom1.parent.resname
-				res2 = atom2.parent.resname
-				idx = fit.unique_pairing(atom1.serial_number, atom2.serial_number)
-				row = (mdl1, True, atom1, atom2, np.nan, val, err, idx)
+				res1 = r['atm'].parent.resname
+				res2 = r['atx'].parent.resname
+				row = (r['mdl'], True, r['atm'], r['atx'], np.nan, r['exp'], r['err'], r['idx'])
 
-				if atom1.element in atom_selection and res1 in resi_selection:
-					if atom2.element in atom_selection and res2 in resi_selection:
+				if r['atm'].element in atom_selection and res1 in resi_selection:
+					if r['atx'].element in atom_selection and res2 in resi_selection:
 						df.append(row)
 			self.data = np.array(df, dtype=dtype)
 
-	def get_fit_data(self, model=None):
-		filt = self.data[self.data['use']]
-		if model is not None:
-			filt = filt[filt['mdl']==model]
-		return filt
+	def get_fit_data(self):
+		return self.data[self.data['use']]
 
 	def back_calc(self):
 		if self.dtype=='PCS':
@@ -1714,15 +1723,9 @@ class DataTab(tk.Frame):
 		self.set_qfactor()
 		self.update(1)
 
-	def set_qfactor(self, model=None):
-		sqfac = 0.0
+	def set_qfactor(self):
 		filt = self.data[self.data['use']]
-		if model is not None:
-			filt = filt[filt['mdl']==model]
-		exp = filt['exp']
-		cal = filt['cal']
-		idx = filt['idx']
-		qfac = fit.qfactor(exp, cal, idx)
+		qfac = fit.qfactor(filt, ensembleAverage=self.fopts.params['eav'].get())
 		self.viewData.set_qfac(qfac)
 		return qfac
 
@@ -1837,7 +1840,7 @@ class FittingOptionsFrame(tk.LabelFrame):
 	'pos':'Fit Position',
 	'rad':'SVD Radius/\u00c5',
 	'den':'SVD Grid Spacing/\u00c5',
-	'mod':'Fit Separate Models',
+	'eav':'Ensemble Average',
 	'racs':'Use RACS',
 	'rads':'Use RADS',
 	'taur':'Fit \u03c4r',
@@ -1859,7 +1862,7 @@ class FittingOptionsFrame(tk.LabelFrame):
 		if self.dtype=='PCS':
 			self.set_checkbox('ref', 0, 0, 1, 0)
 			self.set_checkbox('pos', 1, 0, 1)
-			self.set_checkbox('mod', 2, 0, 1, 0)
+			self.set_checkbox('eav', 2, 0, 1, 0)
 			ttk.Separator(self,orient='vertical').grid(
 				row=0,column=1,rowspan=3,sticky='ns')
 			self.set_checkbox('svd', 0, 2, 2)
@@ -1872,12 +1875,12 @@ class FittingOptionsFrame(tk.LabelFrame):
 			self.set_checkbox('rads', 2, 5, 1, 0)
 
 		elif self.dtype=='RDC':
-			self.set_checkbox('mod', 0, 0, 1, 0)
+			self.set_checkbox('eav', 0, 0, 1, 0)
 
 		elif self.dtype=='PRE':
 			self.set_checkbox('iso', 0, 0, 1, 0)
 			self.set_checkbox('pos', 1, 0, 1)
-			self.set_checkbox('mod', 2, 0, 1, 0)
+			self.set_checkbox('eav', 2, 0, 1, 0)
 
 			self.set_checkbox('dchi', 0, 1, 1, 0)
 			self.set_checkbox('taur', 1, 1, 1, 0)
@@ -1890,7 +1893,7 @@ class FittingOptionsFrame(tk.LabelFrame):
 		elif self.dtype=='CCR':
 			self.set_checkbox('iso', 0, 0, 1, 0)
 			self.set_checkbox('pos', 1, 0, 1)
-			self.set_checkbox('mod', 2, 0, 1, 0)
+			self.set_checkbox('eav', 2, 0, 1, 0)
 
 			self.set_checkbox('dchi', 0, 1, 1, 0)
 			self.set_checkbox('taur', 1, 1, 1, 0)
@@ -1961,34 +1964,8 @@ class FittingOptionsFrame(tk.LabelFrame):
 		if self.dtype=='CCR':
 			self.fit_ccr(dataTabs)
 
-
-	def get_data(self, dataTabs, seperateModels=False):
-		if seperateModels:
-			models = self.frm_pdb.models
-		else:
-			models = [None]
-		modeldata = []
-		if self.dtype in ['PCS','PRE']:
-			for model in models:
-				fitdata = [tab.get_fit_data(model) for tab in dataTabs]
-				data = [d[['atm','exp','err']] for d in fitdata]
-				tmp = model, data
-				modeldata.append(tmp)
-			return modeldata
-		elif self.dtype=='RDC':
-			for model in models:
-				fitdata = dataTabs.get_fit_data(model)
-				data = fitdata[['atm','atx','exp','err']]
-				tmp = model, data
-				modeldata.append(tmp)
-			return modeldata
-		elif self.dtype=='CCR':
-			for model in models:
-				fitdata = [tab.get_fit_data(model) for tab in dataTabs]
-				data = [d[['atm','atx','exp','err']] for d in fitdata]
-				tmp = model, data
-				modeldata.append(tmp)
-			return modeldata
+	def get_data(self, dataTabs):
+		return [tab.get_fit_data() for tab in dataTabs]
 
 	def get_params(self):
 		if self.dtype=='PCS':
@@ -2021,8 +1998,6 @@ class FittingOptionsFrame(tk.LabelFrame):
 				pars += ['ax','rh','a','b','g']
 			if self.params['taur'].get():
 				pars += ['taur']
-			if self.params['taue'].get():
-				pars += ['t1e']
 			return pars
 
 
@@ -2040,106 +2015,104 @@ class FittingOptionsFrame(tk.LabelFrame):
 	def fit_pcs(self, dataTabs):
 		if not self.check_data(dataTabs):
 			return
-		metals = [tab.tensorStart.tensor.copy() for tab in dataTabs]
-		modeldata = self.get_data(dataTabs, 
-			seperateModels=self.params['mod'].get())
 
-		minqfac = 1E50
-		minmod = None
-		minmetal = None
+		metals = [tab.tensorStart.tensor for tab in dataTabs]
+		datas = self.get_data(dataTabs)
+
 		progVar = tk.DoubleVar(value=0.0)
 		progbar = ProgressPopup(self, progVar, "", auto_close=False)
-		for model, data in modeldata:
-			if model is not None:
-				svdline = "Model: {}\nSVD Gridsearch . . .".format(model)
-				nlrline = "Model: {}\nNLR Fitting . . .".format(model)
-			else:
-				svdline = "SVD Gridsearch . . ."
-				nlrline = "NLR Fitting . . ."
 
-			if self.params['svd'].get():
-				progbar.set_label(svdline)
-				progVar.set(0.0)
-				radius = float(self.fields['rad'].get())
-				points = int(radius/float(self.fields['den'].get()))
-				if points<1:
-					points = 1
-				ref = self.params['ref'].get()
-				metals, calc, qfacs = fit.svd_gridsearch_fit_metal_from_pcs(
-					metals, data, origin=None, radius=radius, points=points, 
-					offsetShift=ref, progress=progVar)
+		svdline = "SVD Gridsearch . . ."
+		nlrline = "NLR Fitting . . ."
 
-			if self.params['nlr'].get():
-				progbar.set_label(nlrline)
-				progVar.set(1.0)
-				pars = self.get_params()
-				metals, calc, qfacs = fit.nlr_fit_metal_from_pcs(
-					metals, data, pars,
-					userads=self.params['rads'].get(), 
-					useracs=self.params['racs'].get())
+		if self.params['svd'].get():
+			progbar.set_label(svdline)
+			progVar.set(0.0)
+			radius = float(self.fields['rad'].get())
+			points = int(radius/float(self.fields['den'].get()))
+			if points<1:
+				points = 1
+			ref = self.params['ref'].get()
+			metals, calcs = fit.svd_gridsearch_fit_metal_from_pcs(
+				metals, datas, 
+				radius=radius, 
+				points=points, 
+				offsetShift=ref, 
+				ensembleAverage=self.params['eav'].get(),
+				progress=progVar)
 
-			if self.params['mod'].get():
-				qfac = np.mean(qfacs)
-				if qfac<minqfac:
-					minmod = model
-					minmetals = [m.copy() for m in metals]
-					minqfac = qfac
+		if self.params['nlr'].get():
+			progbar.set_label(nlrline)
+			progVar.set(0.0)
+			pars = self.get_params()
+			metals, calcs = fit.nlr_fit_metal_from_pcs(
+				metals, datas, pars,
+				userads=self.params['rads'].get(), 
+				useracs=self.params['racs'].get(),
+				ensembleAverage=self.params['eav'].get(),
+				progress=progVar)
 
 		progbar.death()
-		if self.params['mod'].get():
-			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
-			messagebox.showinfo("Model with best fit found", 
-				line.format(minmod, minqfac))
-			metals = minmetals
 
 		for tab, metal in zip(dataTabs, metals):
 			tab.tensorFit.tensor = metal.copy()
-			if minmod is not None:
-				tab.viewData.set_current_model(minmod)
 			tab.update(0)
 			tab.back_calc()
 
-	def error_pcs(self, dataTabs, method, iters, bsfrac=None, singleModel=None):
+		if self.frm_pdb.has_models():
+			qs = {mdl:0.0 for mdl in self.frm_pdb.models}
+			for mdl in qs:
+				for calc in calcs:
+					filt = calc[calc['use']]
+					filt = filt[filt['mdl']==mdl]
+					q = fit.qfactor(filt, ensembleAverage=self.params['eav'].get())
+					qs[mdl] += q / len(calcs)
+			qsort = sorted(qs.items(), key=lambda x: x[1])
+			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
+			messagebox.showinfo("Model with best fit found", 
+				line.format(qsort[0][0], qsort[0][1]))
+			tab.viewData.set_current_model(qsort[0][0])
+
+	def error_pcs(self, dataTabs, method, iters=None, bsfrac=None):
 		if not self.check_data(dataTabs):
 			return
-		metals = [tab.tensorFit.tensor.copy() for tab in dataTabs]
-		if singleModel is None:
-			modeldata = self.get_data(dataTabs)[0]
-		else:
-			modeldata = self.get_data(dataTabs, seperateModels=True)
-			tmp = filter(lambda x: x[0]==singleModel, modeldata)
-			modeldata = list(tmp)[0]
 
+		if method=='md':
+			title = "Structure Sourced Uncertainty Analysis"
 		if method=='mc':
-			title = "Monte Calro Simulation"
+			title = "Experimental Error Sourced Uncertainty Analysis"
 		elif method=='bs':
-			title = "Bootstrapping Simulation"
+			title = "Sample Fractions Sourced Uncertainty Analysis"
 
 		progVar = tk.DoubleVar(value=0.0)
 		progbar = ProgressPopup(self, progVar, 
-			"Repeating NLR with noise . . .",
+			"Repeating NLR fit . . .",
 			title=title, auto_close=False)
-		pars = self.get_params()
-		model, data = modeldata
 
-		if method=='mc':
-			all_metals, std_metals = fit.pcs_fit_error_monte_carlo(
-				metals, data, iters,
-				params=pars, 
-				userads=self.params['rads'].get(), 
-				useracs=self.params['racs'].get(), 
-				progress=progVar)
+		kwargs = {
+			'initMetals':[tab.tensorStart.tensor for tab in dataTabs],
+			'dataArrays':self.get_data(dataTabs),
+			'params':self.get_params(),
+			'ensembleAverage':self.params['eav'].get(),
+			'userads':self.params['rads'].get(), 
+			'useracs':self.params['racs'].get(), 
+			'progress':progVar
+		}
+
+		if method=='md':
+			all_metals, std_metals = fit.fit_error_models(
+				fit.nlr_fit_metal_from_pcs, **kwargs)
+
+		elif method=='mc':
+			all_metals, std_metals = fit.fit_error_monte_carlo(
+				fit.nlr_fit_metal_from_pcs, iters, **kwargs)
+
 		elif method=='bs':
-			all_metals, std_metals = fit.pcs_fit_error_bootstrap(
-				metals, data, iters, bsfrac, 
-				params=pars,
-				userads=self.params['rads'].get(), 
-				useracs=self.params['racs'].get(), 
-				progress=progVar)
+			all_metals, std_metals = fit.fit_error_bootstrap(
+				fit.nlr_fit_metal_from_pcs, iters, bsfrac, **kwargs)
 
 		progbar.death()
 
-		deviations = {}
 		for tab, am, sm in zip(dataTabs, all_metals, std_metals):
 			if tab.is_current():
 				return am, sm
@@ -2148,129 +2121,259 @@ class FittingOptionsFrame(tk.LabelFrame):
 	def fit_pre(self, dataTabs):
 		if not self.check_data(dataTabs):
 			return
-		metals = [tab.tensorStart.tensor.copy() for tab in dataTabs]
-		rtypes = [tab.rtype() for tab in dataTabs]
-		modeldata = self.get_data(dataTabs, 
-			seperateModels=self.params['mod'].get())
 
-		qfac = 1E50
-		minmod = None
-		minmetal = None
+		metals = [tab.tensorStart.tensor for tab in dataTabs]
+		datas = self.get_data(dataTabs)
+
 		progVar = tk.DoubleVar(value=0.0)
 		progbar = ProgressPopup(self, progVar, "", auto_close=False)
-		for model, data in modeldata:
-			if model is not None:
-				nlrline = "Model: {}\nNLR Fitting . . .".format(model)
-			else:
-				nlrline = "NLR Fitting . . ."
 
-			progbar.set_label(nlrline)
-			progVar.set(1.0)
-			pars = self.get_params()
-			metals, calc, qfacs = fit.nlr_fit_metal_from_pre(metals, data, pars,
-				rtypes=rtypes,
-				usesbm=self.params['sbm'].get(), 
-				usedsa=self.params['dsa'].get(),
-				usecsa=self.params['csa'].get())
+		nlrline = "NLR Fitting . . ."
 
-			if self.params['mod'].get():
-				q = sum(qfacs)
-				if q<qfac:
-					minmod = model
-					minmetals = [m.copy() for m in metals]
-					qfac = q
+		progbar.set_label(nlrline)
+		progVar.set(0.0)
+		metals, calcs = fit.nlr_fit_metal_from_pre(
+			metals, datas,
+			rtypes=[tab.rtype() for tab in dataTabs],
+			params=self.get_params(),
+			usesbm=self.params['sbm'].get(), 
+			usedsa=self.params['dsa'].get(),
+			usecsa=self.params['csa'].get(),
+			ensembleAverage=self.params['eav'].get(),
+			progress=progVar)
 
 		progbar.death()
-		if self.params['mod'].get():
-			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
-			messagebox.showinfo("Model with best fit found", 
-				line.format(minmod, qfac))
-			metals = minmetals
 
 		for tab, metal in zip(dataTabs, metals):
 			tab.tensorFit.tensor = metal.copy()
-			if minmod is not None:
-				tab.viewData.set_current_model(minmod)
 			tab.update(0)
 			tab.back_calc()
+
+		if self.frm_pdb.has_models():
+			qs = {mdl:0.0 for mdl in self.frm_pdb.models}
+			for mdl in qs:
+				for calc in calcs:
+					filt = calc[calc['use']]
+					filt = filt[filt['mdl']==mdl]
+					q = fit.qfactor(filt, ensembleAverage=self.params['eav'].get())
+					qs[mdl] += q / len(calcs)
+			qsort = sorted(qs.items(), key=lambda x: x[1])
+			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
+			messagebox.showinfo("Model with best fit found", 
+				line.format(qsort[0][0], qsort[0][1]))
+			tab.viewData.set_current_model(qsort[0][0])
+
+
+	def error_pre(self, dataTabs, method, iters=None, bsfrac=None):
+		if not self.check_data(dataTabs):
+			return
+
+		if method=='md':
+			title = "Structure Sourced Uncertainty Analysis"
+		if method=='mc':
+			title = "Experimental Error Sourced Uncertainty Analysis"
+		elif method=='bs':
+			title = "Sample Fractions Sourced Uncertainty Analysis"
+
+		progVar = tk.DoubleVar(value=0.0)
+		progbar = ProgressPopup(self, progVar, 
+			"Repeating NLR fit . . .",
+			title=title, auto_close=False)
+
+		kwargs = {
+			'initMetals':[tab.tensorStart.tensor for tab in dataTabs],
+			'dataArrays':self.get_data(dataTabs),
+			'rtypes':[tab.rtype() for tab in dataTabs],
+			'params':self.get_params(),
+			'ensembleAverage':self.params['eav'].get(),
+			'usesbm':self.params['sbm'].get(),
+			'usedsa':self.params['dsa'].get(),
+			'usecsa':self.params['csa'].get(),
+			'progress':progVar
+		}
+
+		if method=='md':
+			all_metals, std_metals = fit.fit_error_models(
+				fit.nlr_fit_metal_from_pre, **kwargs)
+
+		elif method=='mc':
+			all_metals, std_metals = fit.fit_error_monte_carlo(
+				fit.nlr_fit_metal_from_pre, iters, **kwargs)
+
+		elif method=='bs':
+			all_metals, std_metals = fit.fit_error_bootstrap(
+				fit.nlr_fit_metal_from_pre, iters, bsfrac, **kwargs)
+
+		progbar.death()
+
+		for tab, am, sm in zip(dataTabs, all_metals, std_metals):
+			if tab.is_current():
+				return am, sm
 
 
 	def fit_rdc(self, dataTab):
 		if not self.check_data([dataTab]):
 			return
+
 		metal = dataTab.tensorStart.tensor.copy()
-		modeldata = self.get_data(dataTab, 
-			seperateModels=self.params['mod'].get())
+		[data] = self.get_data([dataTab])
 
-		minqfac = 1E50
-		minmod = None
-		minmetal = None
 		progVar = tk.DoubleVar(value=0.0)
-		for model, data in modeldata:
-			metal, calc, qfac = fit.svd_fit_metal_from_rdc(metal, data)
+		progbar = ProgressPopup(self, progVar, "", auto_close=False)
 
-			if self.params['mod'].get():
-				if qfac<minqfac:
-					minmod = model
-					minmetal = metal.copy()
-					minqfac = qfac
+		nlrline = "SVD Fitting . . ."
 
-		if self.params['mod'].get():
-			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
-			messagebox.showinfo("Model with best fit found", 
-				line.format(minmod, minqfac))
-			metal = minmetal
+		progbar.set_label(nlrline)
+		progVar.set(0.0)
+		[metal], [calc] = fit.svd_fit_metal_from_rdc(
+			[metal], [data],
+			ensembleAverage=self.params['eav'].get(),
+			progress=progVar)
+
 
 		dataTab.tensorFit.tensor = metal.copy()
-		if minmod is not None:
-			dataTab.viewData.set_current_model(minmod)
 		dataTab.update(0)
 		dataTab.back_calc()
+		progbar.death()
+
+		if self.frm_pdb.has_models():
+			qs = {}
+			for mdl in self.frm_pdb.models:
+				filt = calc[calc['use']]
+				filt = filt[filt['mdl']==mdl]
+				qs[mdl] = fit.qfactor(filt, ensembleAverage=self.params['eav'].get())
+			qsort = sorted(qs.items(), key=lambda x: x[1])
+			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
+			messagebox.showinfo("Model with best fit found", 
+				line.format(qsort[0][0], qsort[0][1]))
+			dataTab.viewData.set_current_model(qsort[0][0])
+
+
+	def error_rdc(self, dataTabs, method, iters=None, bsfrac=None):
+		if not self.check_data(dataTabs):
+			return
+
+		if method=='md':
+			title = "Structure Sourced Uncertainty Analysis"
+		if method=='mc':
+			title = "Experimental Error Sourced Uncertainty Analysis"
+		elif method=='bs':
+			title = "Sample Fractions Sourced Uncertainty Analysis"
+
+		progVar = tk.DoubleVar(value=0.0)
+		progbar = ProgressPopup(self, progVar, 
+			"Repeating SVD calc . . .",
+			title=title, auto_close=False)
+
+		kwargs = {
+			'initMetals':[tab.tensorStart.tensor for tab in dataTabs],
+			'dataArrays':self.get_data(dataTabs),
+			'ensembleAverage':self.params['eav'].get(),
+			'progress':progVar
+		}
+
+		if method=='md':
+			all_metals, std_metals = fit.fit_error_models(
+				fit.svd_fit_metal_from_rdc, **kwargs)
+
+		elif method=='mc':
+			all_metals, std_metals = fit.fit_error_monte_carlo(
+				fit.svd_fit_metal_from_rdc, iters, **kwargs)
+
+		elif method=='bs':
+			all_metals, std_metals = fit.fit_error_bootstrap(
+				fit.svd_fit_metal_from_rdc, iters, bsfrac, **kwargs)
+
+		progbar.death()
+
+		for tab, am, sm in zip(dataTabs, all_metals, std_metals):
+			if tab.is_current():
+				return am, sm
 
 
 	def fit_ccr(self, dataTabs):
 		if not self.check_data(dataTabs):
 			return
-		metals = [tab.tensorStart.tensor.copy() for tab in dataTabs]
-		modeldata = self.get_data(dataTabs, 
-			seperateModels=self.params['mod'].get())
 
-		qfac = 1E50
-		minmod = None
-		minmetal = None
+		metals = [tab.tensorStart.tensor for tab in dataTabs]
+		datas = self.get_data(dataTabs)
+
 		progVar = tk.DoubleVar(value=0.0)
 		progbar = ProgressPopup(self, progVar, "", auto_close=False)
-		for model, data in modeldata:
-			if model is not None:
-				nlrline = "Model: {}\nNLR Fitting . . .".format(model)
-			else:
-				nlrline = "NLR Fitting . . ."
 
-			progbar.set_label(nlrline)
-			progVar.set(1.0)
-			pars = self.get_params()
-			metals, calc, qfacs = fit.nlr_fit_metal_from_ccr(metals, data, pars)
+		nlrline = "NLR Fitting . . ."
 
-			if self.params['mod'].get():
-				q = sum(qfacs)
-				if q<qfac:
-					minmod = model
-					minmetals = [m.copy() for m in metals]
-					qfac = q
+		progbar.set_label(nlrline)
+		progVar.set(0.0)
+		metals, calcs = fit.nlr_fit_metal_from_ccr(
+			metals, datas,
+			params=self.get_params(),
+			ensembleAverage=self.params['eav'].get(),
+			progress=progVar)
 
 		progbar.death()
-		if self.params['mod'].get():
-			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
-			messagebox.showinfo("Model with best fit found", 
-				line.format(minmod, qfac))
-			metals = minmetals
 
 		for tab, metal in zip(dataTabs, metals):
 			tab.tensorFit.tensor = metal.copy()
-			if minmod is not None:
-				tab.viewData.set_current_model(minmod)
 			tab.update(0)
 			tab.back_calc()
+
+		if self.frm_pdb.has_models():
+			qs = {mdl:0.0 for mdl in self.frm_pdb.models}
+			for mdl in qs:
+				for calc in calcs:
+					filt = calc[calc['use']]
+					filt = filt[filt['mdl']==mdl]
+					q = fit.qfactor(filt, ensembleAverage=self.params['eav'].get())
+					qs[mdl] += q / len(calcs)
+			qsort = sorted(qs.items(), key=lambda x: x[1])
+			line = "Model {0:} found with minimum Q-factor of {1:5.3f}"
+			messagebox.showinfo("Model with best fit found", 
+				line.format(qsort[0][0], qsort[0][1]))
+			tab.viewData.set_current_model(qsort[0][0])
+
+
+	def error_ccr(self, dataTabs, method, iters=None, bsfrac=None):
+		if not self.check_data(dataTabs):
+			return
+
+		if method=='md':
+			title = "Structure Sourced Uncertainty Analysis"
+		if method=='mc':
+			title = "Experimental Error Sourced Uncertainty Analysis"
+		elif method=='bs':
+			title = "Sample Fractions Sourced Uncertainty Analysis"
+
+		progVar = tk.DoubleVar(value=0.0)
+		progbar = ProgressPopup(self, progVar, 
+			"Repeating NLR fit . . .",
+			title=title, auto_close=False)
+
+		kwargs = {
+			'initMetals':[tab.tensorStart.tensor for tab in dataTabs],
+			'dataArrays':self.get_data(dataTabs),
+			'params':self.get_params(),
+			'ensembleAverage':self.params['eav'].get(),
+			'progress':progVar
+		}
+
+		if method=='md':
+			all_metals, std_metals = fit.fit_error_models(
+				fit.nlr_fit_metal_from_ccr, **kwargs)
+
+		elif method=='mc':
+			all_metals, std_metals = fit.fit_error_monte_carlo(
+				fit.nlr_fit_metal_from_ccr, iters, **kwargs)
+
+		elif method=='bs':
+			all_metals, std_metals = fit.fit_error_bootstrap(
+				fit.nlr_fit_metal_from_ccr, iters, bsfrac, **kwargs)
+
+		progbar.death()
+
+		for tab, am, sm in zip(dataTabs, all_metals, std_metals):
+			if tab.is_current():
+				return am, sm
 
 
 class DataNotebook(ttk.Notebook):
@@ -2537,6 +2640,12 @@ class PDBFrame(tk.LabelFrame):
 		# Tooltip(b, tt['selection'])
 		b.grid(row=1,column=4,sticky='EW')
 
+	def has_models(self):
+		if len(self.models)>1:
+			return True
+		else:
+			return False
+
 	def update_views(self, strength=2):
 		"""
 		When the PDB is changed, all experimental data is parsed
@@ -2673,7 +2782,7 @@ ref : Allows fitting of an offset that shifts the entire PCS list by a given val
 pos : Option to disable fitting of the tensor position. Note that the SVD grid search for PCS will collapse to a single point if the position is constrained.
 rad : Radius of the SVD grid search sphere. This is taken with origin about the initial tensor position
 den : The points per Angstrom to be taken in the SVD grid search sphere.
-mod : When selected, fitting is conducted separately for each model specified. The best fitting tensor of a given model is then taken.
+eav : When selected, calculations and fitting are performed with ensemble averaging between models of the PDB file.
 racs : Residual anisotropic chemical shifts are included in the calculation. Fitting with RACS is only achieved with the NLR algorithm.
 rads : Residual anisotropic dipolar shifts are included in the calculation. Fitting with RADS is only achieved with the NLR algorithm.
 taur : The rotational correlation time is included as a parameter for fitting during the calculation.

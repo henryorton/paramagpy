@@ -73,12 +73,14 @@
 <span class="n">mStart</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">prot</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;A&#39;</span><span class="p">][(</span><span class="s1">&#39;H_ CA&#39;</span><span class="p">,</span> <span class="mi">77</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">position</span>
 </pre></div>
 </div>
-<p>To fit the the anisotropy and orientation without position, the linear PCS equation can be solved analytically by the SVD gridsearch method but using only one point with a radius of zero. This tensor is then saved.</p>
+<p>To fit the the anisotropy and orientation without position, the linear PCS equation can be solved analytically by the SVD gridsearch method but using only one point with a radius of zero. The Q-factor is then calculated and the tensor is saved.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate tensor by SVD</span>
-<span class="n">mFit</span><span class="p">,</span> <span class="n">calc</span><span class="p">,</span> <span class="n">qfac</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">svd_gridsearch_fit_metal_from_pcs</span><span class="p">(</span>
+<span class="p">[</span><span class="n">mFit</span><span class="p">],</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">svd_gridsearch_fit_metal_from_pcs</span><span class="p">(</span>
 	<span class="p">[</span><span class="n">mStart</span><span class="p">],[</span><span class="n">parsedData</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="n">mFit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;calbindin_Er_HN_PCS_tensor_position_constrained.txt&#39;</span><span class="p">)</span>
+<span class="n">qfac</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">qfactor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="n">mFit</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;calbindin_Er_HN_PCS_tensor_position_constrained.txt&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><em>Output:</em> [<a class="reference download internal" download="" href="../_downloads/f388ca0cd2bb5030627eee116382a630/calbindin_Er_HN_PCS_tensor_position_constrained.txt"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit_constrained.png</span></code></a>]</p>
@@ -95,14 +97,17 @@
 <span class="n">B0</span>    <span class="o">|</span>         <span class="n">T</span> <span class="p">:</span>    <span class="mf">18.790</span>
 <span class="n">temp</span>  <span class="o">|</span>         <span class="n">K</span> <span class="p">:</span>   <span class="mf">298.150</span>
 <span class="n">t1e</span>   <span class="o">|</span>        <span class="n">ps</span> <span class="p">:</span>     <span class="mf">0.000</span>
+<span class="n">taur</span>  <span class="o">|</span>        <span class="n">ns</span> <span class="p">:</span>     <span class="mf">0.000</span>
 </pre></div>
 </div>
 <p>To fit an axially symmetric tensor, we can used the Non-linear regression method and specify exactly which parameters we want to fit. This will be the axiality <code class="docutils literal notranslate"><span class="pre">ax</span></code>, two Euler angles <code class="docutils literal notranslate"><span class="pre">b</span></code> and <code class="docutils literal notranslate"><span class="pre">g</span></code> and the position coordinates. Note that in the output, the rhombic <code class="docutils literal notranslate"><span class="pre">rh</span></code> and alpha <code class="docutils literal notranslate"><span class="pre">a</span></code> parameters are redundant.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate axially symmetric tensor by NRL</span>
-<span class="n">mFitAx</span><span class="p">,</span> <span class="n">calcAx</span><span class="p">,</span> <span class="n">qfacAx</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">nlr_fit_metal_from_pcs</span><span class="p">(</span>
+<span class="p">[</span><span class="n">mFitAx</span><span class="p">],</span> <span class="p">[</span><span class="n">dataAx</span><span class="p">]</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">nlr_fit_metal_from_pcs</span><span class="p">(</span>
 	<span class="p">[</span><span class="n">mStart</span><span class="p">],</span> <span class="p">[</span><span class="n">parsedData</span><span class="p">],</span> <span class="n">params</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;ax&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">))</span>
 
-<span class="n">mFitAx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;calbindin_Er_HN_PCS_tensor_axially_symmetric.txt&#39;</span><span class="p">)</span>
+<span class="n">qfacAx</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">qfactor</span><span class="p">(</span><span class="n">dataAx</span><span class="p">)</span>
+
+<span class="n">mFitAx</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;calbindin_Er_HN_PCS_tensor_axially_symmetric.txt&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><em>Output:</em> [<a class="reference download internal" download="" href="../_downloads/047d0daa9080adbb086e5e1796213be8/calbindin_Er_HN_PCS_tensor_axially_symmetric.txt"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit_constrained.png</span></code></a>]</p>
@@ -119,6 +124,7 @@
 <span class="n">B0</span>    <span class="o">|</span>         <span class="n">T</span> <span class="p">:</span>    <span class="mf">18.790</span>
 <span class="n">temp</span>  <span class="o">|</span>         <span class="n">K</span> <span class="p">:</span>   <span class="mf">298.150</span>
 <span class="n">t1e</span>   <span class="o">|</span>        <span class="n">ps</span> <span class="p">:</span>     <span class="mf">0.000</span>
+<span class="n">taur</span>  <span class="o">|</span>        <span class="n">ns</span> <span class="p">:</span>     <span class="mf">0.000</span>
 </pre></div>
 </div>
 <p>Finally we plot the data.</p>
@@ -126,15 +132,12 @@
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
 
-<span class="c1"># Unpack the experimental values</span>
-<span class="n">atoms</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">parsedData</span><span class="p">)</span>
-
 <span class="c1"># Plot the data</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">experiment</span><span class="p">,</span> <span class="n">calc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> 
-	<span class="n">label</span><span class="o">=</span><span class="s2">&quot;Position constrained: Q = </span><span class="si">{:5.4f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qfac</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;exp&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;cal&#39;</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> 
+	<span class="n">label</span><span class="o">=</span><span class="s2">&quot;Position constrained: Q = </span><span class="si">{:5.4f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qfac</span><span class="p">))</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">experiment</span><span class="p">,</span> <span class="n">calcAx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> 
-	<span class="n">label</span><span class="o">=</span><span class="s2">&quot;Axially symmetric: Q = </span><span class="si">{:5.4f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qfacAx</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataAx</span><span class="p">[</span><span class="s1">&#39;exp&#39;</span><span class="p">],</span> <span class="n">dataAx</span><span class="p">[</span><span class="s1">&#39;cal&#39;</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> 
+	<span class="n">label</span><span class="o">=</span><span class="s2">&quot;Axially symmetric: Q = </span><span class="si">{:5.4f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qfacAx</span><span class="p">))</span>
 
 <span class="c1"># Plot a diagonal</span>
 <span class="n">l</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>

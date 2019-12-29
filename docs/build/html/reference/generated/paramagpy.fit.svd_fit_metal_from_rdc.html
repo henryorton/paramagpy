@@ -51,32 +51,44 @@
 <h1>paramagpy.fit.svd_fit_metal_from_rdc<a class="headerlink" href="#paramagpy-fit-svd-fit-metal-from-rdc" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="paramagpy.fit.svd_fit_metal_from_rdc">
-<code class="descclassname">paramagpy.fit.</code><code class="descname">svd_fit_metal_from_rdc</code><span class="sig-paren">(</span><em>metal</em>, <em>rdc</em>, <em>sumIndices=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#svd_fit_metal_from_rdc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.svd_fit_metal_from_rdc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit deltaChi tensor to RDC values using SVD algorithm.
+<code class="descclassname">paramagpy.fit.</code><code class="descname">svd_fit_metal_from_rdc</code><span class="sig-paren">(</span><em>initMetals</em>, <em>dataArrays</em>, <em>params=('ax'</em>, <em>'rh'</em>, <em>'a'</em>, <em>'b'</em>, <em>'g')</em>, <em>ensembleAverage=False</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#svd_fit_metal_from_rdc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.svd_fit_metal_from_rdc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit deltaChi tensor to RDC values using Single Value Decomposition.
 Note this is a weighted SVD calculation which takes into account
-experimental errors.
-Ensemble averaging defaults to atom numbers.</p>
+experimental errors.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>metal</strong> (<em>Metal object</em>) – the starting metal for fitting</li>
-<li><strong>rdc</strong> (<em>the RDC dataset</em>) – each RDC dataset has structure [(Atom1, Atom2), value, error],
-where Atom is an Atom object, value is the RDC value
-and error is the uncertainty</li>
-<li><strong>sumIndices</strong> (<em>array of ints</em><em>, </em><em>optional</em>) – the list contains an index assigned to each atom.
-Common indices determine summation between models
-for ensemble averaging.
-If None, defaults to atom serial number to determine summation
-between models.</li>
+<li><strong>initMetals</strong> (<em>list of Metal objects</em>) – a list of metals used as starting points for fitting.
+a list must always be provided, but may also contain
+only one element. If multiple metals are provided, each metal
+is fitted to their respective RDC dataset by index in &lt;dataArrays&gt;.</li>
+<li><strong>dataArrays</strong> (<em>list of PRE dataArray</em>) – each RDC dataArray must correspond to an associated metal for fitting.
+each RDC dataArray has structure determined by
+<a class="reference internal" href="paramagpy.protein.CustomStructure.parse.html#paramagpy.protein.CustomStructure.parse" title="paramagpy.protein.CustomStructure.parse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.protein.CustomStructure.parse()</span></code></a>.</li>
+<li><strong>params</strong> (<em>list of str</em>) – the parameters to be fit.
+NOTE: This is a dummy argument and does not influence the fitting.
+The default parameters (‘ax’,’rh’,’a’,’b’,’g’) are the only option.</li>
+<li><strong>ensembleAverage</strong> (<em>bool</em><em>, </em><em>optional</em>) – when False, each model of the structure is fit independently.
+The parameters for each fitted tensor are then averaged before
+returning the final averaged tensor.
+When True, the structure models are treated as an ensemble and
+ensemble averaging of calculated PCS/PRE/RDC/CCR values is
+conducted at all stages of fitting to fit a single tensor to all
+models simultaneously. The ‘idx’ column of the dataArray
+determines the ensemble averaging behaviour with common indices
+for atoms between models resulting in their summation.</li>
+<li><strong>progress</strong> (<em>object</em><em>, </em><em>optional</em>) – to keep track of the calculation, progress.set(x) is called each
+iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>fitMetal</strong> (<em>Metal object</em>) – the fitted metal by NLR to the RDC data provided</li>
-<li><strong>calculated</strong> (<em>array of floats</em>) – the calculated RDC values</li>
-<li><strong>qfac</strong> (<em>float</em>) – the qfactor judging the fit quality</li>
+<li><strong>fitMetals</strong> (<em>list of metals</em>) – a list of the fitted tensors.</li>
+<li><strong>dataArrays</strong> (<em>list of dataArray</em>) – each dataArray is copy of the original dataArray with
+the ‘cal’ column populated with back-calculated values from the
+fitted tensor.</li>
 </ul>
 </p>
 </td>

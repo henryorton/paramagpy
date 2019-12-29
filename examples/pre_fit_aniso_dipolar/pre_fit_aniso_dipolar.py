@@ -17,20 +17,19 @@ m.g_tensor = np.array([
 m0 = metal.Metal(taur=0.42E-9, B0=1.0, temperature=300.0)
 m0.set_lanthanide('Tb')
 
-[mfit], [calc], [q] = fit.nlr_fit_metal_from_pre([m0], [exp], params=('t1e', 'gax', 'grh', 'a','b','g'), 
-	sumIndices=None, rtypes=['r1'], usesbm=False, usegsbm=True, usedsa=True, 
+[mfit], [data] = fit.nlr_fit_metal_from_pre([m0], [exp], params=('t1e', 'gax', 'grh', 'a','b','g'), 
+	rtypes=['r1'], usesbm=False, usegsbm=True, usedsa=True, 
 	usecsa=False, progress=None)
 
-atoms, r1, err = zip(*exp)
-pos = np.array([a.position for a in atoms])
-gam = np.array([a.gamma for a in atoms])
+pos = np.array([a.position for a in exp['atm']])
+gam = np.array([a.gamma for a in exp['atm']])
 
 fig = plt.figure(figsize=(5,5))
 ax = fig.add_subplot(111)
 ax.plot([0,3200],[0,3200], '-k')
-ax.plot(r1, mfit.fast_sbm_r1(pos, gam), marker='o', lw=0, label='iso')
-ax.plot(r1, mfit.fast_g_sbm_r1(pos, gam), marker='o', lw=0, label='aniso')
-ax.plot(r1, m.fast_g_sbm_r1(pos, gam), marker='o', lw=0, label='literature fit')
+ax.plot(exp['exp'], mfit.fast_sbm_r1(pos, gam), marker='o', lw=0, label='iso')
+ax.plot(exp['exp'], mfit.fast_g_sbm_r1(pos, gam), marker='o', lw=0, label='aniso')
+ax.plot(exp['exp'], m.fast_g_sbm_r1(pos, gam), marker='o', lw=0, label='literature fit')
 ax.set_xlim(0,3200)
 ax.set_ylim(0,3200)
 ax.set_xlabel("R1 experimental /Hz")
@@ -38,4 +37,4 @@ ax.set_ylabel("R1 calcualted /Hz")
 ax.set_title("Tb parashift R1")
 ax.legend()
 fig.tight_layout()
-fig.savefig("pre_fit_aniso_dipolar.png", dpi=200)
+fig.savefig("pre_fit_aniso_dipolar.png")

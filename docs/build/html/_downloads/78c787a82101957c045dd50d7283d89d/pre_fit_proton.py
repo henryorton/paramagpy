@@ -18,9 +18,9 @@ mStart_er.B0 = 14.1
 mStart_tb.B0 = 18.8
 
 # Fit the rotational correlation time using non-linear regression
-(m_er,), (cal_er,), qfac = fit.nlr_fit_metal_from_pre(
+(m_er,), (cal_er,) = fit.nlr_fit_metal_from_pre(
 	[mStart_er], [data_er], params=['taur'], rtypes=['r2'])
-(m_tb,), (cal_tb,), qfac = fit.nlr_fit_metal_from_pre(
+(m_tb,), (cal_tb,) = fit.nlr_fit_metal_from_pre(
 	[mStart_tb], [data_tb], params=['taur'], rtypes=['r2'])
 
 # # Save the fitted tensor to file
@@ -31,14 +31,10 @@ m_tb.save('calbindin_Tb_H_R2_800_tensor.txt')
 from matplotlib import pyplot as plt
 fig, ax = plt.subplots(figsize=(5,5))
 
-# Unpack the experimental values
-atm_er, exp_er, err_er = zip(*data_er)
-atm_tb, exp_tb, err_tb = zip(*data_tb)
-
 # Plot the data
-ax.plot(exp_er, cal_er, marker='o', lw=0, ms=3, c='r',
+ax.plot(cal_er['exp'], cal_er['cal'], marker='o', lw=0, ms=3, c='r',
 	label="Er: taur = {:3.1f} ns".format(1E9*m_er.taur))
-ax.plot(exp_tb, cal_tb, marker='o', lw=0, ms=3, c='g',
+ax.plot(cal_tb['exp'], cal_tb['cal'], marker='o', lw=0, ms=3, c='g',
 	label="Tb: taur = {:3.1f} ns".format(1E9*m_tb.taur))
 
 # Plot a diagonal

@@ -16,25 +16,25 @@ mStart = metal.Metal()
 mStart.position = prot[0]['A'][56]['CA'].position
 
 # Calculate an initial tensor from an SVD gridsearch
-mGuess, calc, qfac = fit.svd_gridsearch_fit_metal_from_pcs(
+[mGuess], [data] = fit.svd_gridsearch_fit_metal_from_pcs(
 	[mStart],[parsedData], radius=10, points=10)
 
 # Refine the tensor using non-linear regression
-mFit, calc, qfac = fit.nlr_fit_metal_from_pcs(mGuess, [parsedData])
+[mFit], [data] = fit.nlr_fit_metal_from_pcs([mGuess], [parsedData])
+
+# Calculate the Q-factor
+qfac = fit.qfactor(data)
 
 # Save the fitted tensor to file
-mFit[0].save('calbindin_Er_HN_PCS_tensor.txt')
+mFit.save('calbindin_Er_HN_PCS_tensor.txt')
 
 #### Plot the correlation ####
 from matplotlib import pyplot as plt
 fig, ax = plt.subplots(figsize=(5,5))
 
-# Unpack the experimental values
-atoms, experiment, errors = zip(*parsedData)
-
 # Plot the data
-ax.plot(experiment, calc[0], marker='o', lw=0, ms=3, c='r', 
-	label="Q-factor = {:5.4f}".format(qfac[0]))
+ax.plot(data['exp'], data['cal'], marker='o', lw=0, ms=3, c='r', 
+	label="Q-factor = {:5.4f}".format(qfac))
 
 # Plot a diagonal
 l, h = ax.get_xlim()

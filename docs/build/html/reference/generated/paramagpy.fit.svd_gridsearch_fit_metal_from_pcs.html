@@ -18,7 +18,6 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="paramagpy.fit.unique_pairing" href="paramagpy.fit.unique_pairing.html" />
     <link rel="prev" title="paramagpy.fit.svd_fit_metal_from_rdc" href="paramagpy.fit.svd_fit_metal_from_rdc.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -30,9 +29,6 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="paramagpy.fit.unique_pairing.html" title="paramagpy.fit.unique_pairing"
-             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="paramagpy.fit.svd_fit_metal_from_rdc.html" title="paramagpy.fit.svd_fit_metal_from_rdc"
              accesskey="P">previous</a> |</li>
@@ -51,32 +47,33 @@
 <h1>paramagpy.fit.svd_gridsearch_fit_metal_from_pcs<a class="headerlink" href="#paramagpy-fit-svd-gridsearch-fit-metal-from-pcs" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs">
-<code class="descclassname">paramagpy.fit.</code><code class="descname">svd_gridsearch_fit_metal_from_pcs</code><span class="sig-paren">(</span><em>metals</em>, <em>pcss</em>, <em>sumIndices=None</em>, <em>origin=None</em>, <em>radius=20.0</em>, <em>points=16</em>, <em>offsetShift=False</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#svd_gridsearch_fit_metal_from_pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.svd_gridsearch_fit_metal_from_pcs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">paramagpy.fit.</code><code class="descname">svd_gridsearch_fit_metal_from_pcs</code><span class="sig-paren">(</span><em>initMetals</em>, <em>dataArrays</em>, <em>ensembleAverage=False</em>, <em>origin=None</em>, <em>radius=20.0</em>, <em>points=16</em>, <em>offsetShift=False</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#svd_gridsearch_fit_metal_from_pcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.svd_gridsearch_fit_metal_from_pcs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit deltaChi tensor to PCS values using Single Value Decomposition over
 a grid of points in a sphere.
 Note this uses a weighted SVD fit which takes into account
-experimental errors
-Ensemble averaging is determined by atom number.</p>
+experimental errors</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>metals</strong> (<em>list of Metal objects</em>) – a list of metals used as starting points for fitting.
+<li><strong>initMetals</strong> (<em>list of Metal objects</em>) – a list of metals used as starting points for fitting.
 a list must always be provided, but may also contain
 only one element. If multiple metals are provided, each metal
-is fitted to their respective PCS dataset by index, but all are
-fitted to a common position.</li>
-<li><strong>pcss</strong> (<em>list of PCS datasets</em>) – each PCS dataset must correspond to an associated metal for fitting.
-each PCS dataset has structure [Atom, value, error], where Atom is
-an Atom object, value is the PCS/RDC/PRE value
-and error is the uncertainty</li>
-<li><strong>sumIndices</strong> (<em>list of arrays of ints</em><em>, </em><em>optional</em>) – each index list must correspond to an associated pcs dataset.
-each index list contains an index assigned to each atom.
-Common indices determine summation between models
-for ensemble averaging.
-If None, defaults to atom serial number to determine summation
-between models.</li>
+is fitted to their respective PCS dataset by index in &lt;dataArrays,
+but all are fitted to a common position.</li>
+<li><strong>dataArrays</strong> (<em>list of PCS dataArray</em>) – each PCS dataArray must correspond to an associated metal for fitting.
+each PCS dataArray has structure determined by
+<a class="reference internal" href="paramagpy.protein.CustomStructure.parse.html#paramagpy.protein.CustomStructure.parse" title="paramagpy.protein.CustomStructure.parse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.protein.CustomStructure.parse()</span></code></a>.</li>
+<li><strong>ensembleAverage</strong> (<em>bool</em><em>, </em><em>optional</em>) – when False, each model of the structure is fit independently.
+The parameters for each fitted tensor are then averaged before
+returning the final averaged tensor.
+When True, the structure models are treated as an ensemble and
+ensemble averaging of calculated PCS/PRE/RDC/CCR values is
+conducted at all stages of fitting to fit a single tensor to all
+models simultaneously. The ‘idx’ column of the dataArray
+determines the ensemble averaging behaviour with common indices
+for atoms between models resulting in their summation.</li>
 <li><strong>origin</strong> (<em>float</em><em>, </em><em>optional</em>) – the centre of the gridsearch of positions in Angstroms.
 If None, the position of the first metal is used</li>
 <li><strong>radius</strong> (<em>float</em><em>, </em><em>optional</em>) – the radius of the gridsearch in Angstroms.</li>
@@ -91,10 +88,13 @@ iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>minmetals</strong> – the metals fitted by SVD to the PCS data provided</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of metals</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fitMetals</strong> (<em>list of metals</em>) – a list of the fitted tensors.</li>
+<li><strong>dataArrays</strong> (<em>list of dataArray</em>) – each dataArray is copy of the original dataArray with
+the ‘cal’ column populated with back-calculated values from the
+fitted tensor.</li>
+</ul>
+</p>
 </td>
 </tr>
 </tbody>
@@ -112,9 +112,6 @@ iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</li>
   <h4>Previous topic</h4>
   <p class="topless"><a href="paramagpy.fit.svd_fit_metal_from_rdc.html"
                         title="previous chapter">paramagpy.fit.svd_fit_metal_from_rdc</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="paramagpy.fit.unique_pairing.html"
-                        title="next chapter">paramagpy.fit.unique_pairing</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -147,9 +144,6 @@ iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</li>
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="paramagpy.fit.unique_pairing.html" title="paramagpy.fit.unique_pairing"
-             >next</a> |</li>
         <li class="right" >
           <a href="paramagpy.fit.svd_fit_metal_from_rdc.html" title="paramagpy.fit.svd_fit_metal_from_rdc"
              >previous</a> |</li>

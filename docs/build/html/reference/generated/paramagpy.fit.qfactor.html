@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="paramagpy.fit.sphere_grid" href="paramagpy.fit.sphere_grid.html" />
-    <link rel="prev" title="paramagpy.fit.pcs_fit_error_monte_carlo" href="paramagpy.fit.pcs_fit_error_monte_carlo.html" /> 
+    <link rel="prev" title="paramagpy.fit.nlr_fit_metal_from_pre" href="paramagpy.fit.nlr_fit_metal_from_pre.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -34,7 +34,7 @@
           <a href="paramagpy.fit.sphere_grid.html" title="paramagpy.fit.sphere_grid"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="paramagpy.fit.pcs_fit_error_monte_carlo.html" title="paramagpy.fit.pcs_fit_error_monte_carlo"
+          <a href="paramagpy.fit.nlr_fit_metal_from_pre.html" title="paramagpy.fit.nlr_fit_metal_from_pre"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
@@ -51,7 +51,7 @@
 <h1>paramagpy.fit.qfactor<a class="headerlink" href="#paramagpy-fit-qfactor" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="paramagpy.fit.qfactor">
-<code class="descclassname">paramagpy.fit.</code><code class="descname">qfactor</code><span class="sig-paren">(</span><em>experiment</em>, <em>calculated</em>, <em>sumIndices=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#qfactor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.qfactor" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">paramagpy.fit.</code><code class="descname">qfactor</code><span class="sig-paren">(</span><em>dataArray</em>, <em>ensembleAverage=False</em>, <em>calDenominator=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#qfactor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.qfactor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the Q-factor to judge tensor fit quality</p>
 <p>A lower value indicates a better fit. The Q-factor is calculated using
 the following equation:</p>
@@ -69,11 +69,22 @@ respectively.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>experiment</strong> (<em>list of floats</em>) – the experimental values</li>
-<li><strong>calculated</strong> (<em>list of floats</em>) – the corresponding caluclated values from the fitted model</li>
-<li><strong>sumIndices</strong> (<em>list ints</em><em>, </em><em>optional</em>) – Common indices determine summation between models
-for ensemble averaging.
-If None, no ensemble averaging is conducted</li>
+<li><strong>dataArray</strong> (<em>numpy array</em>) – the dataArray must contain the columns ‘exp’, ‘cal’ and ‘idx’
+corresponding to the experimenta, calculated and index values
+respectively. The index value determines the ensemble averaging
+behaviour, and can be ignored if the argument &lt;ensembleAverage&gt;
+is False.</li>
+<li><strong>ensembleAverage</strong> (<em>bool</em><em>, </em><em>optional</em>) – when False, the q-factor calculation squares each difference
+independently.
+When True, the q-factor calculates an ensemble average before
+taking the square of differences. The ‘idx’ column of the dataArray
+determines the ensemble averaging behaviour with common indices
+for atoms between models resulting in their summation.</li>
+<li><strong>calDenominator</strong> (<em>bool</em><em>, </em><em>optional</em>) – when False, the standard Q-factor is calculated with only the sum
+of squares for the experimental values used in the denominator
+when True, the Q-factor established by Ubbink et al. is
+calculated which has a sum of absolute values of exp and cal
+values squared in the denominator.</li>
 </ul>
 </td>
 </tr>
@@ -96,8 +107,8 @@ If None, no ensemble averaging is conducted</li>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="paramagpy.fit.pcs_fit_error_monte_carlo.html"
-                        title="previous chapter">paramagpy.fit.pcs_fit_error_monte_carlo</a></p>
+  <p class="topless"><a href="paramagpy.fit.nlr_fit_metal_from_pre.html"
+                        title="previous chapter">paramagpy.fit.nlr_fit_metal_from_pre</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="paramagpy.fit.sphere_grid.html"
                         title="next chapter">paramagpy.fit.sphere_grid</a></p>
@@ -137,7 +148,7 @@ If None, no ensemble averaging is conducted</li>
           <a href="paramagpy.fit.sphere_grid.html" title="paramagpy.fit.sphere_grid"
              >next</a> |</li>
         <li class="right" >
-          <a href="paramagpy.fit.pcs_fit_error_monte_carlo.html" title="paramagpy.fit.pcs_fit_error_monte_carlo"
+          <a href="paramagpy.fit.nlr_fit_metal_from_pre.html" title="paramagpy.fit.nlr_fit_metal_from_pre"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 0.44 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>

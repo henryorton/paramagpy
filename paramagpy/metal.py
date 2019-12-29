@@ -256,10 +256,10 @@ class Metal(object):
 		('Ce', ( 5./2., 6./7. , 0.133E-12)),
 		('Pr', ( 4./1., 4./5. , 0.054E-12)),
 		('Nd', ( 9./2., 8./11., 0.210E-12)),
-		('Pm', ( 4./1., 3./5. , np.nan   )),
+		('Pm', ( 4./1., 3./5. , 0.0      )),
 		('Sm', ( 5./2., 2./7. , 0.074E-12)),
 		('Eu', ( 2./1., 3./2. , 0.015E-12)),
-		('Gd', ( 7./2., 2./1. , np.nan   )),
+		('Gd', ( 7./2., 2./1. , 0.0      )),
 		('Tb', ( 6./1., 3./2. , 0.251E-12)),
 		('Dy', (15./2., 4./3. , 0.240E-12)),
 		('Ho', ( 8./1., 5./4. , 0.209E-12)),
@@ -286,6 +286,19 @@ class Metal(object):
 		('Yb', ( -8.3, -5.8))]
 	)
 
+	fundamental_attributes = (
+		'position', 
+		'eulers', 
+		'axrh', 
+		'mueff', 
+		'g_axrh', 
+		't1e',
+		'shift', 
+		'temperature', 
+		'B0', 
+		'taur'
+		)
+
 	# Indices defining 5 unique elements of 3x3 tensor anisotropy
 	upper_coords = ((0,1,0,0,1),(0,1,1,2,2))
 	lower_coords = ((0,1,1,2,2),(0,1,0,0,1))
@@ -309,6 +322,9 @@ class Metal(object):
 		axrh : array of floats, optional
 			the axial and rhombic values defining the magnetic susceptibility
 			anisotropy
+		g_axrh : array of floats, optional
+			the axial and rhombic values defining the power spectral density
+			tensor
 		mueff : float
 			the effective magnetic moment in units of A.m^2
 		shift : float
@@ -335,6 +351,9 @@ class Metal(object):
 		self.B0 = B0
 		self.taur = taur
 
+		# A dictionary of volatile parameters used during fitting
+		self.par = {}
+
 	def __str__(self):
 		return str(self.tensor)
 
@@ -352,6 +371,8 @@ class Metal(object):
 		.. math::
 			\\tau_c = \\frac{1}{\\frac{1}{\\tau_r}+\\frac{1}{T_{1e}}}
 		"""
+		if self.taur==0.0 or self.t1e==0.0:
+			raise ValueError("You need to set both taur and t1e attributes")
 		return 1./(1./self.taur + 1./self.t1e)
 
 	def copy(self):
@@ -366,7 +387,8 @@ class Metal(object):
 		return self.__class__(
 			position=tuple(self.position), 
 			eulers=tuple(self.eulers),
-			axrh=tuple(self.axrh), 
+			axrh=tuple(self.axrh),
+			g_axrh=tuple(self.g_axrh),
 			mueff=self.mueff, 
 			shift=self.shift, 
 			temperature=self.temperature, 
@@ -633,11 +655,9 @@ class Metal(object):
 
 	@isotropy.setter
 	def isotropy(self, newIsotropy):
-		if newIsotropy<0:
+		if newIsotropy<=0:
 			newIsotropy = 0.0
 		self.mueff = ((newIsotropy*3*self.K*self.temperature) / self.MU0)**0.5
-
-
 
 	@property
 	def g_eigenvalues(self):
@@ -657,12 +677,11 @@ class Metal(object):
 
 	@g_isotropy.setter
 	def g_isotropy(self, newIsotropy):
-		if newIsotropy<0:
-			newIsotropy = 0.0
-		self.t1e = (newIsotropy * self.MU0) / (
-			self.isotropy * self.K * self.temperature)
-
-
+		if newIsotropy<=0 or self.isotropy<=0:
+			self.t1e = 0.0
+		else:	
+			self.t1e = (newIsotropy * self.MU0) / (
+				self.isotropy * self.K * self.temperature)
 
 	@property
 	def rotationMatrix(self):
@@ -772,7 +791,6 @@ class Metal(object):
 		newTensor[2,2] = - elements[0] - elements[1]
 		self.tensor_saupe = newTensor
 
-
 	@property
 	def g_tensor(self):
 		"""The magnetic susceptibility tensor matrix representation"""
@@ -790,7 +808,6 @@ class Metal(object):
 		eulers = unique_eulers(matrix_to_euler(rotationMatrix))
 		self.eulers = np.array(eulers, dtype=float)
 		self.g_eigenvalues = eigenvals
-
 
 	def set_utr(self):
 		"""
@@ -813,6 +830,23 @@ class Metal(object):
 			must have 'position' attribute
 		"""
 		self.position = atom.position
+
+	def average(self, metals):
+		"""
+		Set the attributes of the current instance to the average
+		of a list of provided tensor objects
+
+		WARNING: averging is unstable for spectral power density <g_tensor>
+
+		Parameters
+		----------
+		metals : a list of Metal objects
+			the average of attributes of this list will be taken
+		"""
+		self.g_tensor = sum([m.g_tensor for m in metals])/len(metals)
+		self.tensor = sum([m.tensor for m in metals])/len(metals)
+		self.position = sum(m.position for m in metals)/len(metals)
+		self.taur = sum([m.taur for m in metals])/len(metals)
 
 	################################
 	# Methods for PCS calculations #
@@ -1935,10 +1969,6 @@ class Metal(object):
 	def save(self, fileName='tensor.txt'):
 		with open(fileName, 'w') as o:
 			o.write(self.info(comment=False))
-
-
-
-
 
 
 def make_tensor(x, y, z, axial, rhombic, 

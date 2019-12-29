@@ -53,7 +53,24 @@
 <dl class="method">
 <dt id="paramagpy.protein.CustomStructure.parse">
 <code class="descclassname">CustomStructure.</code><code class="descname">parse</code><span class="sig-paren">(</span><em>dataValues</em>, <em>models=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/protein.html#CustomStructure.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.protein.CustomStructure.parse" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Associate experimental data with atoms of the PDB file
+This method takes a DataContainer instance from the
+dataparse module</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dataValues</strong> (<em>DataContainer instance</em>) – a dictionary containing the experimental values</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>dataArray</strong> – the returned array has a row for each relevant atom
+in the PDB file. The columns contain model,
+experimental/calculated data, errors and indexes.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy structured array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 
