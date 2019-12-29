@@ -65,22 +65,13 @@
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul>
-<li><p class="first"><strong>mesh</strong> (<em>cubic grid array</em>) – This has shape (n,n,n,3) where n is the number of points
-along one edge of the grid. Units are meters</p>
-</li>
-<li><p class="first"><strong>bounds</strong> (<em>tuple (origin, low, high, points)</em>) – This tuple has information about the bounding box</p>
-<p>origin : array of floats, the (x,y,z) location of mesh vertex</p>
-<dl class="docutils">
-<dt>low <span class="classifier-delimiter">:</span> <span class="classifier">array of ints, the integer location of the first</span></dt>
-<dd><p class="first last">point in each dimension</p>
-</dd>
-<dt>high <span class="classifier-delimiter">:</span> <span class="classifier">array of ints, the integer location of the last</span></dt>
-<dd><p class="first last">point in each dimension</p>
-</dd>
-</dl>
-<p>points : array of ints, the number of points along each dimension</p>
-</li>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>mesh</strong> (<em>cubic grid array</em>) – This has shape (n,n,n,3) where n is the number of points
+along one edge of the grid. Units are meters</li>
+<li><strong>origin</strong> (<em>array of floats,</em>) – the (x,y,z) location of mesh vertex</li>
+<li><strong>low</strong> (<em>array of ints, the integer location of the first</em>) – point in each dimension</li>
+<li><strong>high</strong> (<em>array of ints, the integer location of the last</em>) – point in each dimension</li>
+<li><strong>points</strong> (<em>array of ints,</em>) – the number of points along each dimension</li>
 </ul>
 </p>
 </td>

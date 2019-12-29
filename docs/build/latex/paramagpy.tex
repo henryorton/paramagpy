@@ -3444,19 +3444,16 @@ This is contained in a cube
 along one edge of the grid. Units are meters
 
 \item {} 
-\sphinxstylestrong{bounds} (\sphinxstyleemphasis{tuple (origin, low, high, points)}) \textendash{} This tuple has information about the bounding box
+\sphinxstylestrong{origin} (\sphinxstyleemphasis{array of floats,}) \textendash{} the (x,y,z) location of mesh vertex
 
-origin : array of floats, the (x,y,z) location of mesh vertex
-\begin{description}
-\item[{low}] \leavevmode{[}array of ints, the integer location of the first{]}
-point in each dimension
+\item {} 
+\sphinxstylestrong{low} (\sphinxstyleemphasis{array of ints, the integer location of the first}) \textendash{} point in each dimension
 
-\item[{high}] \leavevmode{[}array of ints, the integer location of the last{]}
-point in each dimension
+\item {} 
+\sphinxstylestrong{high} (\sphinxstyleemphasis{array of ints, the integer location of the last}) \textendash{} point in each dimension
 
-\end{description}
-
-points : array of ints, the number of points along each dimension
+\item {} 
+\sphinxstylestrong{points} (\sphinxstyleemphasis{array of ints,}) \textendash{} the number of points along each dimension
 
 \end{itemize}
 

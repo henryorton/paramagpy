@@ -1843,18 +1843,14 @@
 <span class="sd">		mesh : cubic grid array</span>
 <span class="sd">			This has shape (n,n,n,3) where n is the number of points</span>
 <span class="sd">			along one edge of the grid. Units are meters</span>
-<span class="sd">		bounds : tuple (origin, low, high, points)</span>
-<span class="sd">			This tuple has information about the bounding box</span>
-
-<span class="sd">			origin : array of floats, the (x,y,z) location of mesh vertex</span>
-
-<span class="sd">			low : array of ints, the integer location of the first </span>
-<span class="sd">				point in each dimension</span>
-
-<span class="sd">			high : array of ints, the integer location of the last </span>
-<span class="sd">				point in each dimension</span>
-
-<span class="sd">			points : array of ints, the number of points along each dimension</span>
+<span class="sd">		origin : array of floats, </span>
+<span class="sd">			the (x,y,z) location of mesh vertex</span>
+<span class="sd">		low : array of ints, the integer location of the first </span>
+<span class="sd">			point in each dimension</span>
+<span class="sd">		high : array of ints, the integer location of the last </span>
+<span class="sd">			point in each dimension</span>
+<span class="sd">		points : array of ints, </span>
+<span class="sd">			the number of points along each dimension</span>
 
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">origin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">density</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">*</span><span class="mf">1E10</span> <span class="o">-</span> <span class="n">size</span><span class="o">/</span><span class="mf">2.0</span><span class="p">),</span> 
