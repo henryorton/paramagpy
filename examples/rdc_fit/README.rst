@@ -28,7 +28,7 @@ Two starting metals are initialised. It is important here to set the magnetic fi
 .. literalinclude:: ../../../examples/rdc_fit/rdc_fit.py 
 	:lines: 14-16
 
-The alignment tensor is solved using the function :py:func:`paramagpy.fit.svd_fit_metal_from_rdc` which return a tuple of ``(metal, calculated, qfactor)``, where metal is the fitted metal, calculated is the calculated RDC values. These tensor are then saved.
+The alignment tensor is solved using the function :py:func:`paramagpy.fit.svd_fit_metal_from_rdc` which return a tuple of ``(metal, calculated)``, where metal is the fitted metal, calculated is the calculated RDC values. The tensors are then saved. Note that we set the argument ``ensembleAverage`` to ``True``. This is important because the PDB structure represents and MD simulation. If set to False, a much smaller tensor would be fit.
 
 .. literalinclude:: ../../../examples/rdc_fit/rdc_fit.py 
 	:lines: 18-24

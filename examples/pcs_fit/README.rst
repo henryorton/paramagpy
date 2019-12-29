@@ -32,7 +32,7 @@ The PCS data is then loaded from a ``.npc`` file using the function :py:func:`pa
 .. literalinclude:: ../../../examples/pcs_fit/pcs_fit.py 
 	:lines: 6-7
 
-To associate the experimental PCS value with atoms of the PDB structure, the method :py:func:`paramagpy.protein.CustomStructure.parse` is called on ``rawData``. The new list ``parsedData`` contains elements ``[atom, PCS, Error]``, where ``atom`` is now an atom object from the PDB.
+To associate the experimental PCS value with atoms of the PDB structure, the method :py:func:`paramagpy.protein.CustomStructure.parse` is called on ``rawData``. The returned array ``parsedData`` has a row for each atom with columns ``[mdl,atm,exp,cal,err,idx]``, where ``mdl`` is the model number from the PDB file, ``atm`` is an atom object from the BioPython PDB structure, ``exp`` and ``cal`` are the experimental and calculated values, ``err`` is the experimental uncertainty and ``idx`` is the atom index, used to define ensemble averaging behaviour.
 
 .. literalinclude:: ../../../examples/pcs_fit/pcs_fit.py 
 	:lines: 9-10
@@ -42,7 +42,7 @@ An initial :math:`{\Delta\chi}`-tensor is defined by initialising a :py:class:`p
 .. literalinclude:: ../../../examples/pcs_fit/pcs_fit.py 
 	:lines: 12-16
 
-A quick gridsearch is conducted in a sphere of 10 Angstrom with 10 points per radius using the function :py:func:`paramagpy.fit.svd_gridsearch_fit_metal_from_pcs`. This requires two lists containing the starting metals ``mStart`` and parsed experimental data ``parsedData``. This function return lists containing a new fitted metal object, the calculated PCS values from the fitted model, and the Q-factor.
+A quick gridsearch is conducted in a sphere of 10 Angstrom with 10 points per radius using the function :py:func:`paramagpy.fit.svd_gridsearch_fit_metal_from_pcs`. This requires two lists containing the starting metals ``mStart`` and parsed experimental dataArray ``parsedData``. This function returns lists containing a new fitted metal object, the calculated PCS values from the fitted model.
 
 .. literalinclude:: ../../../examples/pcs_fit/pcs_fit.py 
 	:lines: 18-20
@@ -52,10 +52,15 @@ This is then refined using a non-linear regression gradient descent with the fun
 .. literalinclude:: ../../../examples/pcs_fit/pcs_fit.py 
 	:lines: 22-23
 
-The fitted tensor parameters are saved by calling the method :py:func:`paramagpy.metal.Metal.save`. Alterntaively they may be displayed using ``print(mFit[0].info())``
+The Q-factor is then calculated using the function :py:func`paramagpy.fit.qfactor`.
 
 .. literalinclude:: ../../../examples/pcs_fit/pcs_fit.py 
 	:lines: 25-26
+
+The fitted tensor parameters are saved by calling the method :py:func:`paramagpy.metal.Metal.save`. Alterntaively they may be displayed using ``print(mFit.info())``
+
+.. literalinclude:: ../../../examples/pcs_fit/pcs_fit.py 
+	:lines: 28-29
 
 *Output:* [:download:`calbindin_Er_HN_PCS_tensor.txt <../../../examples/pcs_fit/calbindin_Er_HN_PCS_tensor.txt>`]
 
@@ -65,7 +70,7 @@ The fitted tensor parameters are saved by calling the method :py:func:`paramagpy
 These experimental/calculated PCS values are then plotted in a correlation plot to assess the fit. This is achieved using standard functions of the plotting module `matplotlib <https://matplotlib.org/>`_.
 
 .. literalinclude:: ../../../examples/pcs_fit/pcs_fit.py 
-	:lines: 28-
+	:lines: 31-
 
 *Output:* [:download:`pcs_fit.png <../../../examples/pcs_fit/pcs_fit.png>`]
 

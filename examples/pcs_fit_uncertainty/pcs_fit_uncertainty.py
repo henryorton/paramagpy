@@ -1,7 +1,8 @@
 from paramagpy import protein, fit, dataparse, metal
+import numpy as np
 
 # Load the PDB file
-prot = protein.load_pdb('../data_files/4icbH_mut.pdb')
+prot = protein.load_pdb('../data_files/2bcb.pdb')
 
 # Load the PCS data
 rawData = dataparse.read_pcs('../data_files/calbindin_Er_HN_PCS_errors.npc')
@@ -16,88 +17,53 @@ mStart = metal.Metal()
 mStart.position = prot[0]['A'][56]['CA'].position
 
 # Calculate an initial tensor from an SVD gridsearch
-mGuess, calc, qfac = fit.svd_gridsearch_fit_metal_from_pcs(
+[mGuess], [data] = fit.svd_gridsearch_fit_metal_from_pcs(
 	[mStart],[parsedData], radius=10, points=10)
 
 # Refine the tensor using non-linear regression
-mFit, calc, qfac = fit.nlr_fit_metal_from_pcs(mGuess, [parsedData])
+[mFit], [data] = fit.nlr_fit_metal_from_pcs([mGuess], [parsedData])
 
-# mets, stdm = fit.pcs_fit_error_bootstrap(mFit, [parsedData], 10, 0.95)
+# Estimate uncertainty sourcing noise from the models of the PDB
+[mod_all], [mod_std] = fit.fit_error_models(fit.nlr_fit_metal_from_pcs, 
+	initMetals=[mFit], dataArrays=[parsedData])
 
-mets, stdm = fit.pcs_fit_error_monte_carlo(mFit, [parsedData], 50)
+mod_std.save('error_tensor_models.txt')
 
+# Estimate uncertainty sourcing noise from experimental uncertainties
+[mc_all], [mc_std] = fit.fit_error_monte_carlo(fit.nlr_fit_metal_from_pcs, 
+	50, initMetals=[mFit], dataArrays=[parsedData])
 
+mod_std.save('error_tensor_monte_carlo.txt')
 
-# self.errorTensor.set_params(devs.items())
-# def transform(vector):
-# 	x, y, z = vector
-# 	theta = np.arctan2(y, x)
-# 	phi = -np.arccos(z) + np.pi/2.
-# 	return theta, phi
+# Estimate uncertainty sourcing noise from sample fractions
+[bs_all], [bs_std] = fit.fit_error_bootstrap(fit.nlr_fit_metal_from_pcs, 
+	50, 0.8, initMetals=[mFit], dataArrays=[parsedData])
 
-# spcoords = []
-# for eulers in zip(stds['a'], stds['b'], stds['g']):
-# 	rotationMatrix = metal.euler_to_matrix(np.array(eulers))
-# 	x, y, z = rotationMatrix.T
-# 	spcoords.append(tuple(map(transform, [x,y,z])))
+mod_std.save('error_tensor_bootstrap.txt')
 
-# self.type_tensors()
-# self.plot(zip(*spcoords))
+#### Plot Sanson-Flamsteed ####
+from matplotlib import pyplot as plt
 
-# def plot(self, points=None):
-# self.axes.clear()
-# self.axes.set_xlabel("theta")
-# self.axes.set_ylabel("phi")
-# self.axes.grid()
+def transform(vector):
+	x, y, z = vector
+	theta = np.arctan2(y, x)
+	phi = -np.arccos(z) + np.pi/2.
+	return theta, phi
 
-# if points is not None:
-# 	for data, col, label in zip(points, ['r','g','b'], ['x','y','z']):
-# 		theta, phi = zip(*data)
-# 		self.axes.scatter(theta, phi, s=0.4, c=col, label=label)
-# 		# self.axes.plot(theta, phi, marker='x',
-# 			# lw=0, ms=3, label=label, color=col)
-# 	self.axes.legend()
-# self.canvas.draw()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # Save the fitted tensor to file
-# mFit[0].save('calbindin_Er_HN_PCS_tensor_errors.txt')
-
-# #### Plot the correlation ####
-# from matplotlib import pyplot as plt
-# fig, ax = plt.subplots(figsize=(5,5))
-
-# # Unpack the experimental values
-# atoms, experiment, errors = zip(*parsedData)
-
-# # Plot the data
-# ax.errorbar(experiment, calc[0], xerr=errors, fmt='o', c='r', ms=2, 
-# 	ecolor='k', capsize=3, label="Q-factor = {:5.4f}".format(qfac[0]))
-
-# # Plot a diagonal
-# l, h = ax.get_xlim()
-# ax.plot([l,h],[l,h],'grey',zorder=0)
-# ax.set_xlim(l,h)
-# ax.set_ylim(l,h)
-
-# # Make axis labels and save figure
-# ax.set_xlabel("Experiment")
-# ax.set_ylabel("Calculated")
-# ax.legend()
-# fig.savefig("pcs_fit_error.png")
+for name, mset in [('models',mod_all), ('monte_carlo',mc_all), ('bootstrap',bs_all)]:
+	spcoords = []
+	for m in mset:
+		x, y, z = m.rotationMatrix.T
+		spcoords.append(tuple(map(transform, [x,y,z])))
+	points = zip(*spcoords)
+	fig = plt.figure(figsize=(5, 3), dpi=100)
+	ax = fig.add_subplot(111, projection='hammer')
+	ax.set_xlabel("theta")
+	ax.set_ylabel("phi")
+	ax.set_title(name)
+	ax.grid()
+	for data, col, label in zip(points, ['r','g','b'], ['x','y','z']):
+		theta, phi = zip(*data)
+		ax.scatter(theta, phi, s=0.4, c=col, label=label, zorder=10)
+	ax.legend()
+	fig.savefig("{}.png".format(name))

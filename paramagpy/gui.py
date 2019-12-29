@@ -2220,7 +2220,7 @@ class FittingOptionsFrame(tk.LabelFrame):
 		progVar = tk.DoubleVar(value=0.0)
 		progbar = ProgressPopup(self, progVar, "", auto_close=False)
 
-		nlrline = "NLR Fitting . . ."
+		nlrline = "SVD Fitting . . ."
 
 		progbar.set_label(nlrline)
 		progVar.set(0.0)
@@ -2261,7 +2261,7 @@ class FittingOptionsFrame(tk.LabelFrame):
 
 		progVar = tk.DoubleVar(value=0.0)
 		progbar = ProgressPopup(self, progVar, 
-			"Repeating NLR fit . . .",
+			"Repeating SVD calc . . .",
 			title=title, auto_close=False)
 
 		kwargs = {

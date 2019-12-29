@@ -322,6 +322,9 @@ class Metal(object):
 		axrh : array of floats, optional
 			the axial and rhombic values defining the magnetic susceptibility
 			anisotropy
+		g_axrh : array of floats, optional
+			the axial and rhombic values defining the power spectral density
+			tensor
 		mueff : float
 			the effective magnetic moment in units of A.m^2
 		shift : float

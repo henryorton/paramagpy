@@ -61,6 +61,6 @@ The fitted tensors are saved to file. Note that the Er dataset gives a reasonabl
 And the results are plotted.
 
 .. literalinclude:: ../../../examples/pre_fit_proton/pre_fit_proton.py 
-	:lines: 31-54
+	:lines: 31-
 
 .. image:: ../../../examples/pre_fit_proton/pre_fit_proton.png

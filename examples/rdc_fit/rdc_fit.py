@@ -16,12 +16,12 @@ mStart1 = metal.Metal(B0=18.8, temperature=308.0)
 mStart2 = metal.Metal(B0=18.8, temperature=308.0)
 
 # Calculate the tensor using SVD
-sol1 = fit.svd_fit_metal_from_rdc(mStart1, parsedData1)
-sol2 = fit.svd_fit_metal_from_rdc(mStart2, parsedData2)
+[sol1], [data1] = fit.svd_fit_metal_from_rdc([mStart1], [parsedData1], ensembleAverage=True)
+[sol2], [data2] = fit.svd_fit_metal_from_rdc([mStart2], [parsedData2], ensembleAverage=True)
 
 # Save the fitted tensor to file
-sol1[0].save('ubiquitin_a28c_c1_Tb_tensor.txt')
-sol2[0].save('ubiquitin_s57c_c1_Tb_tensor.txt')
+sol1.save('ubiquitin_a28c_c1_Tb_tensor.txt')
+sol2.save('ubiquitin_s57c_c1_Tb_tensor.txt')
 
 #### Plot the correlation ####
 from matplotlib import pyplot as plt
@@ -31,21 +31,20 @@ ax2 = fig.add_subplot(212)
 ax1.set_title('A28C-C1-Tb')
 ax2.set_title('S57C-C1-Tb')
 
-for sol, ax, pdata in zip([sol1,sol2], [ax1,ax2], 
-	[parsedData1,parsedData2]):
+for sol, ax, data in zip([sol1,sol2], [ax1,ax2], [data1,data2]):
 
-	# Unpack the experimental values
-	atoms1, atoms2, exp, err = zip(*pdata)
-	atoms = list(zip(atoms1, atoms2))
-	metal, calc, qfac = sol
-	expEnsemble, calcEnsemble = fit.ensemble_average(atoms, exp, calc)
+	# Calculate ensemble averages
+	dataEAv = fit.ensemble_average(data)
+
+	# Calculate the Q-factor
+	qfac = fit.qfactor(data, ensembleAverage=True)
 
 	# Plot all models
-	ax.plot(exp, calc, marker='o', lw=0, ms=2, c='b', 
+	ax.plot(data['exp'], data['cal'], marker='o', lw=0, ms=2, c='b', 
 		alpha=0.5, label="All models: Q = {:5.4f}".format(qfac))
 
 	# Plot the ensemble average
-	ax.plot(expEnsemble, calcEnsemble, marker='o', lw=0, ms=2, c='r', 
+	ax.plot(dataEAv['exp'], dataEAv['cal'], marker='o', lw=0, ms=2, c='r', 
 		label="Ensemble Average: Q = {:5.4f}".format(qfac))
 
 	# Plot a diagonal

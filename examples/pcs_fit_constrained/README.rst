@@ -27,10 +27,10 @@ The calcium ion from the X-ray structure is contained in a heteroatom of the PDB
 .. literalinclude:: ../../../examples/pcs_fit_constrained/pcs_fit_constrained.py 
 	:lines: 9-10
 
-To fit the the anisotropy and orientation without position, the linear PCS equation can be solved analytically by the SVD gridsearch method but using only one point with a radius of zero. This tensor is then saved.
+To fit the the anisotropy and orientation without position, the linear PCS equation can be solved analytically by the SVD gridsearch method but using only one point with a radius of zero. The Q-factor is then calculated and the tensor is saved.
 
 .. literalinclude:: ../../../examples/pcs_fit_constrained/pcs_fit_constrained.py 
-	:lines: 12-16
+	:lines: 12-18
 
 *Output:* [:download:`pcs_fit_constrained.png <../../../examples/pcs_fit_constrained/calbindin_Er_HN_PCS_tensor_position_constrained.txt>`]
 
@@ -39,7 +39,7 @@ To fit the the anisotropy and orientation without position, the linear PCS equat
 To fit an axially symmetric tensor, we can used the Non-linear regression method and specify exactly which parameters we want to fit. This will be the axiality ``ax``, two Euler angles ``b`` and ``g`` and the position coordinates. Note that in the output, the rhombic ``rh`` and alpha ``a`` parameters are redundant.
 
 .. literalinclude:: ../../../examples/pcs_fit_constrained/pcs_fit_constrained.py 
-	:lines: 19-23
+	:lines: 21-27
 
 *Output:* [:download:`pcs_fit_constrained.png <../../../examples/pcs_fit_constrained/calbindin_Er_HN_PCS_tensor_axially_symmetric.txt>`]
 
@@ -48,7 +48,7 @@ To fit an axially symmetric tensor, we can used the Non-linear regression method
 Finally we plot the data.
 
 .. literalinclude:: ../../../examples/pcs_fit_constrained/pcs_fit_constrained.py 
-	:lines: 26-
+	:lines: 30-
 
 *Output:* [:download:`pcs_fit_constrained.png <../../../examples/pcs_fit_constrained/pcs_fit_constrained.png>`]
 

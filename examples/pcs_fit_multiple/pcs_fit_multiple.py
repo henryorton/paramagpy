@@ -20,37 +20,25 @@ mStart = [metal.Metal(), metal.Metal(), metal.Metal()]
 mStart[0].position = prot[0]['A'][56]['CA'].position
 
 # Calculate initial tensors from an SVD gridsearch
-mGuess = fit.svd_gridsearch_fit_metal_from_pcs(
+mGuess, datas = fit.svd_gridsearch_fit_metal_from_pcs(
 	mStart, parsedData, radius=10, points=10)
 
 # Refine the tensors using non-linear regression
 fitParameters = ['x','y','z','ax','rh','a','b','g']
-mFit = fit.nlr_fit_metal_from_pcs(mGuess, parsedData, fitParameters)
+mFit, datas = fit.nlr_fit_metal_from_pcs(mGuess, parsedData, fitParameters)
 
 # Save the fitted tensors to files
 for name, metal in zip(['Tb','Er','Yb'], mFit):
 	metal.save("tensor_{}.txt".format(name))
-
-# Make experimental and calculated PCS lists
-exp = []
-cal = []
-for metal, data in zip(mFit, parsedData):
-	ex = []
-	ca = []
-	for atom, exp_pcs, error in data:
-		ex.append(exp_pcs)
-		ca.append(metal.atom_pcs(atom))
-	exp.append(ex)
-	cal.append(ca)
 
 #### Plot the correlation ####
 from matplotlib import pyplot as plt
 fig, ax = plt.subplots(figsize=(5,5))
 
 # Plot the data
-for e, c, name, colour in zip(exp, cal, ['Tb','Er','Yb'],['r','g','b']):
-	qfactor = fit.qfactor(e,c)
-	ax.plot(e, c, marker='o', lw=0, ms=1, c=colour,
+for d, name, colour in zip(datas, ['Tb','Er','Yb'],['r','g','b']):
+	qfactor = fit.qfactor(d)
+	ax.plot(d['exp'], d['cal'], marker='o', lw=0, ms=1, c=colour,
 		label="{0:} - {1:5.3f}".format(name, qfactor))
 
 # Plot a diagonal

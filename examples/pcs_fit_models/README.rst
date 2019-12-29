@@ -24,15 +24,15 @@ Firstly, the standard preamble and loading of data.
 .. literalinclude:: ../../../examples/pcs_fit_models/pcs_fit_models.py 
 	:lines: 1-7
 
-The default method of fitting is to minimise the difference to the experimental values of the ensemble average of the calculated values. The default behaviour is to average atoms with the same serial number in the PDB file. To manipulate ensemble averaging, you can specify the ``sumIndices`` argument of any fitting function such as :py:func:`paramagpy.fit.nlr_fit_metal_from_pcs`. This array contains common integers for corresponding atoms to be averaged. To remove ensemble averaging completely, just specify a list of unique integers with length equal to the data such as ``sumIndices=list(range(len(parsedData)))``.
+The default method of fitting is to fit the tensor independently to each model of the PDB file. To achieve ensemble averaging behaviour, this requires setting the argument ``ensembleAverage`` to true within the fitting function. The default ensemble averaging behaviour is to average atoms with the same serial number in the PDB file. To manipulate ensemble averaging, you can specify the ``idx`` column of the input dataArray for :py:func:`paramagpy.fit.nlr_fit_metal_from_pcs`. The ``idx`` array contains common integers for corresponding atoms to be averaged. After fitting the Q-factor is calculated (with the ensembleAverage argument set to True), and ensemble averaging of the calculated data values is achieved with the function :py:func:`paramagpy.fit.ensemble_average`
 
 .. literalinclude:: ../../../examples/pcs_fit_models/pcs_fit_models.py 
-	:lines: 10-15
+	:lines: 10-19
 
-If desired, you can also fit a separate tensor to each model of the PDB and the compare them. In this case, we loop over each model, fit a tensor, then keep the one with the smallest Q-factor. Selected models can be parsed by specifying the ``models`` argument of :py:meth:`paramagpy.protein.CustomStructure.parse`.
+Fitting a separate tensor to each model of the PDB is the default behaviour of the fitting functions, the average of all fitted tensors is then returned. The model with the minimum Q-factor is then found by looping over the calculated data and sorting them by the calculated Q-factor.
 
 .. literalinclude:: ../../../examples/pcs_fit_models/pcs_fit_models.py 
-	:lines: 18-30
+	:lines: 22-30
 
 Finally we plot three sets of data:
 

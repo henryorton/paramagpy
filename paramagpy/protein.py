@@ -122,7 +122,6 @@ def clean_indices(indices):
 	return new_indices
 
 
-
 class CustomAtom(Atom):
 
 	MU0 = 4*np.pi*1E-7
@@ -273,6 +272,23 @@ class CustomStructure(Structure):
 		super().__init__(*arg, **kwargs)
 
 	def parse(self, dataValues, models=None):
+		"""
+		Associate experimental data with atoms of the PDB file
+		This method takes a DataContainer instance from the 
+		dataparse module
+
+		Parameters
+		----------
+		dataValues : DataContainer instance
+			a dictionary containing the experimental values
+
+		Returns
+		-------
+		dataArray : numpy structured array
+			the returned array has a row for each relevant atom
+			in the PDB file. The columns contain model,
+			experimental/calculated data, errors and indexes.
+		"""
 		if type(models)==int:
 			mods = [self[models]]
 		elif type(models) in (list, tuple):

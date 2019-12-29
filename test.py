@@ -12,14 +12,31 @@ rawDataPCS = dataparse.read_pcs('./examples/data_files/calbindin_Er_HN_PCS_error
 rawDataPCS2 = dataparse.read_pcs('./examples/data_files/calbindin_Tb_HN_PCS.npc')
 rawDataPRE = dataparse.read_pre('./examples/data_files/calbindin_Er_H_R2_600.pre')
 rawDataRDC = dataparse.read_rdc('./examples/data_files/ubiquitin_s57c_c1_Tb_HN.rdc')
+rawDataRDC2 = dataparse.read_rdc('./examples/data_files/ubiquitin_a28c_c1_Tb_HN.rdc')
 rawDataCCR = dataparse.read_ccr('./examples/data_files/myoglobin_f.ccr')
+rawDataCCR2 = dataparse.read_ccr('./examples/data_files/myoglobin_cn.ccr')
 
 # Associate PCS data with atoms of the PDB
 pcs = calb.parse(rawDataPCS)
 pcs2 = calb.parse(rawDataPCS2)
 pre = calb.parse(rawDataPRE)
 rdc = ubi.parse(rawDataRDC)
-ccr = myo.parse(rawDataCCR)
+rdc2 = ubi.parse(rawDataRDC2)
+ccrf = myo.parse(rawDataCCR)
+ccrcn = myo.parse(rawDataCCR2)
+
+# met_cn = metal.Metal(position=[-0.554E-10,   9.265E-10,  15.568E-10],
+# 	B0=18.79, 
+# 	temperature=303.0,
+# 	taur=5.7E-9)
+# met_f = met_cn.copy()
+# met_cn.iso = 4.4E-32
+# met_f.iso = 30.1E-32
+
+
+# [mfit], [cal] = fit.nlr_fit_metal_from_ccr([met_f], [ccrf])
+
+
 
 
 
@@ -29,7 +46,11 @@ ccr = myo.parse(rawDataCCR)
 
 # print(s[0].info())
 
-# f = fit.svd_fit_metal_from_rdc
+# fit, cal = fit.svd_fit_metal_from_rdc([m0, m0], [rdc, rdc2])
+
+# print(fit[0].info())
+# print(fit[1].info())
+
 
 # print(dir(f))
 # print(f.__defaults__)
