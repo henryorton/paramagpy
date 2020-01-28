@@ -1037,7 +1037,7 @@ class Metal(object):
 		racs : float
 			the residual anisotropic chemical shift in parts-per-million (ppm)
 		"""
-		racs = self.tensor_saupe.dot(csa).trace()/3.
+		racs = self.tensor_alignment.dot(csa).trace()
 		return 1E6*racs
 
 	def fast_racs(self, csaarray):
@@ -1056,7 +1056,7 @@ class Metal(object):
 		racs_array : array of floats with shape (n,1)
 			the residual anisotropic chemical shift in parts-per-million (ppm)
 		"""
-		racs = np.einsum('jk,ikl->ijl',self.tensor_saupe,csaarray)
+		racs = 2*np.einsum('jk,ikl->ijl',self.tensor_alignment,csaarray)
 		return 1E6*racs.trace(axis1=1,axis2=2)/3.
 
 	################################
