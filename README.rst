@@ -42,4 +42,4 @@ Documentation
 Citing paramagpy
 ----------------
 
-Paramagpy is published in Magnetic Resonance https://doi.org/10.5194/mr-2019-3
+Paramagpy is published in Magnetic Resonance https://doi.org/10.5194/mr-1-1-2020

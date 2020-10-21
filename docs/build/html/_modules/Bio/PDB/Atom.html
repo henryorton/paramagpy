@@ -1,9 +1,11 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Bio.PDB.Atom &#8212; paramagpy 1.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -12,8 +14,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -39,11 +40,9 @@
             
   <h1>Source code for Bio.PDB.Atom</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright (C) 2002, Thomas Hamelryck (thamelry@binf.ku.dk)</span>
-<span class="c1">#</span>
-<span class="c1"># This file is part of the Biopython distribution and governed by your</span>
-<span class="c1"># choice of the &quot;Biopython License Agreement&quot; or the &quot;BSD 3-Clause License&quot;.</span>
-<span class="c1"># Please see the LICENSE file that should have been included as part of this</span>
-<span class="c1"># package.</span>
+<span class="c1"># This code is part of the Biopython distribution and governed by its</span>
+<span class="c1"># license.  Please see the LICENSE file that should have been included</span>
+<span class="c1"># as part of this package.</span>
 
 <span class="sd">&quot;&quot;&quot;Atom class, used in Structure objects.&quot;&quot;&quot;</span>
 
@@ -51,33 +50,21 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
-<span class="kn">from</span> <span class="nn">Bio.PDB.Entity</span> <span class="kn">import</span> <span class="n">DisorderedEntityWrapper</span>
-<span class="kn">from</span> <span class="nn">Bio.PDB.PDBExceptions</span> <span class="kn">import</span> <span class="n">PDBConstructionWarning</span>
-<span class="kn">from</span> <span class="nn">Bio.PDB.vectors</span> <span class="kn">import</span> <span class="n">Vector</span>
-<span class="kn">from</span> <span class="nn">Bio.Data</span> <span class="kn">import</span> <span class="n">IUPACData</span>
+<span class="kn">from</span> <span class="nn">Bio.PDB.Entity</span> <span class="k">import</span> <span class="n">DisorderedEntityWrapper</span>
+<span class="kn">from</span> <span class="nn">Bio.PDB.PDBExceptions</span> <span class="k">import</span> <span class="n">PDBConstructionWarning</span>
+<span class="kn">from</span> <span class="nn">Bio.PDB.vectors</span> <span class="k">import</span> <span class="n">Vector</span>
+<span class="kn">from</span> <span class="nn">Bio.Data</span> <span class="k">import</span> <span class="n">IUPACData</span>
 
 
 <span class="k">class</span> <span class="nc">Atom</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Define Atom class.</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">coord</span><span class="p">,</span> <span class="n">bfactor</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">altloc</span><span class="p">,</span> <span class="n">fullname</span><span class="p">,</span> <span class="n">serial_number</span><span class="p">,</span>
+                 <span class="n">element</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create Atom object.</span>
 
-<span class="sd">    The Atom object stores atom name (both with and without spaces),</span>
-<span class="sd">    coordinates, B factor, occupancy, alternative location specifier</span>
-<span class="sd">    and (optionally) anisotropic B factor and standard deviations of</span>
-<span class="sd">    B factor and positions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">name</span><span class="p">,</span>
-        <span class="n">coord</span><span class="p">,</span>
-        <span class="n">bfactor</span><span class="p">,</span>
-        <span class="n">occupancy</span><span class="p">,</span>
-        <span class="n">altloc</span><span class="p">,</span>
-        <span class="n">fullname</span><span class="p">,</span>
-        <span class="n">serial_number</span><span class="p">,</span>
-        <span class="n">element</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize Atom object.</span>
+<span class="sd">        The Atom object stores atom name (both with and without spaces),</span>
+<span class="sd">        coordinates, B factor, occupancy, alternative location specifier</span>
+<span class="sd">        and (optionally) anisotropic B factor and standard deviations of</span>
+<span class="sd">        B factor and positions.</span>
 
 <span class="sd">        :param name: atom name (eg. &quot;CA&quot;). Note that spaces are normally stripped.</span>
 <span class="sd">        :type name: string</span>
@@ -125,26 +112,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assign_atom_mass</span><span class="p">()</span>
 
         <span class="c1"># For atom sorting (protein backbone atoms first)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sorting_keys</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;CA&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;O&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sorting_keys</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
 
     <span class="c1"># Sorting Methods</span>
     <span class="c1"># standard across different objects and allows direct comparison</span>
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test equality.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Atom</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">full_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test inequality.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Atom</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">full_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Test greater than.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test greater then.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Atom</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">parent</span>
@@ -159,7 +146,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test greater or equal.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Atom</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
@@ -175,7 +162,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test less than.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Atom</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
@@ -191,7 +178,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test less or equal.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Atom</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
@@ -208,8 +195,7 @@
             <span class="k">return</span> <span class="bp">NotImplemented</span>
 
     <span class="c1"># Hash method to allow uniqueness (set)</span>
-    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return atom full identifier.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_full_id</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">_assign_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
@@ -230,37 +216,31 @@
                     <span class="n">putative_element</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="n">putative_element</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="ow">in</span> <span class="n">IUPACData</span><span class="o">.</span><span class="n">atom_weights</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Used element </span><span class="si">%r</span><span class="s2"> for Atom (name=</span><span class="si">%s</span><span class="s2">) with given element </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-                    <span class="n">putative_element</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                    <span class="n">element</span><span class="p">,</span>
-                <span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Used element </span><span class="si">%r</span><span class="s2"> for Atom (name=</span><span class="si">%s</span><span class="s2">) with given element </span><span class="si">%r</span><span class="s2">&quot;</span> \
+                      <span class="o">%</span> <span class="p">(</span><span class="n">putative_element</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
                 <span class="n">element</span> <span class="o">=</span> <span class="n">putative_element</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="s2">&quot;Could not assign element </span><span class="si">%r</span><span class="s2"> for Atom (name=</span><span class="si">%s</span><span class="s2">) with given element </span><span class="si">%r</span><span class="s2">&quot;</span>
-                    <span class="o">%</span> <span class="p">(</span><span class="n">putative_element</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not assign element </span><span class="si">%r</span><span class="s2"> for Atom (name=</span><span class="si">%s</span><span class="s2">) with given element </span><span class="si">%r</span><span class="s2">&quot;</span> \
+                      <span class="o">%</span> <span class="p">(</span><span class="n">putative_element</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
                 <span class="n">element</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">PDBConstructionWarning</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">element</span>
 
     <span class="k">def</span> <span class="nf">_assign_atom_mass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return atom weight (PRIVATE).&quot;&quot;&quot;</span>
         <span class="c1"># Needed for Bio/Struct/Geometry.py C.O.M. function</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">element</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">IUPACData</span><span class="o">.</span><span class="n">atom_weights</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;NaN&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span>
 
     <span class="c1"># Special methods</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Print Atom object as &lt;Atom atom_name&gt;.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;&lt;Atom </span><span class="si">%s</span><span class="s2">&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate distance between two atoms.</span>
 
 <span class="sd">        :param other: the other atom</span>
@@ -268,9 +248,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-<span class="sd">        This is an incomplete but illustrative example::</span>
-
-<span class="sd">            distance = atom1 - atom2</span>
+<span class="sd">        &gt;&gt;&gt; distance = atom1 - atom2</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coord</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">coord</span>
@@ -279,23 +257,18 @@
     <span class="c1"># set methods</span>
 
     <span class="k">def</span> <span class="nf">set_serial_number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set serial number.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">serial_number</span> <span class="o">=</span> <span class="n">n</span>
 
     <span class="k">def</span> <span class="nf">set_bfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bfactor</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set isotroptic B factor.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bfactor</span> <span class="o">=</span> <span class="n">bfactor</span>
 
     <span class="k">def</span> <span class="nf">set_coord</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coord</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set coordinates.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">coord</span> <span class="o">=</span> <span class="n">coord</span>
 
     <span class="k">def</span> <span class="nf">set_altloc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">altloc</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set alternative location specifier.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">altloc</span> <span class="o">=</span> <span class="n">altloc</span>
 
     <span class="k">def</span> <span class="nf">set_occupancy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set occupancy.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">=</span> <span class="n">occupancy</span>
 
     <span class="k">def</span> <span class="nf">set_sigatm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigatm_array</span><span class="p">):</span>
@@ -370,7 +343,6 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span>
 
     <span class="k">def</span> <span class="nf">get_serial_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the serial number.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serial_number</span>
 
     <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -410,7 +382,6 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">altloc</span>
 
     <span class="k">def</span> <span class="nf">get_level</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return level.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span>
 
     <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rot</span><span class="p">,</span> <span class="n">tran</span><span class="p">):</span>
@@ -424,13 +395,9 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-<span class="sd">        This is an incomplete but illustrative example::</span>
-
-<span class="sd">            from numpy import pi, array</span>
-<span class="sd">            from Bio.PDB.vectors import Vector, rotmat</span>
-<span class="sd">            rotation = rotmat(pi, Vector(1, 0, 0))</span>
-<span class="sd">            translation = array((0, 0, 1), &#39;f&#39;)</span>
-<span class="sd">            atom.transform(rotation, translation)</span>
+<span class="sd">        &gt;&gt;&gt; rotation=rotmat(pi, Vector(1, 0, 0))</span>
+<span class="sd">        &gt;&gt;&gt; translation=array((0, 0, 1), &#39;f&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; atom.transform(rotation, translation)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">coord</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coord</span><span class="p">,</span> <span class="n">rot</span><span class="p">)</span> <span class="o">+</span> <span class="n">tran</span>
@@ -468,7 +435,7 @@
 <span class="sd">    method.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create DisorderedAtom.</span>
 
 <span class="sd">        Arguments:</span>
@@ -481,13 +448,11 @@
 
     <span class="c1"># Special methods</span>
     <span class="c1"># Override parent class __iter__ method</span>
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Iterate through disordered atoms.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">disordered_get_list</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">i</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return disordered atom identifier.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;&lt;Disordered Atom </span><span class="si">%s</span><span class="s2">&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">disordered_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
@@ -511,11 +476,13 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -539,7 +506,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

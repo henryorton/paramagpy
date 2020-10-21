@@ -11,3 +11,4 @@ shift |       ppm :     0.000
 B0    |         T :    18.790
 temp  |         K :   298.150
 t1e   |        ps :     0.000
+taur  |        ns :     0.000

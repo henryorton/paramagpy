@@ -1,9 +1,11 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Fit spectral power density tensor &#8212; paramagpy 1.0 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -12,8 +14,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -51,15 +52,15 @@
 <div class="section" id="downloads">
 <h2>Downloads<a class="headerlink" href="#downloads" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Download the data files <code class="docutils literal notranslate"><span class="pre">parashift_Tb.pdb</span></code> and <code class="docutils literal notranslate"><span class="pre">parashift_Tb_R1_exp.pre</span></code> from <a class="reference external" href="https://github.com/henryorton/paramagpy/tree/master/examples/data_files/">here</a>:</p></li>
-<li><p>Download the script <a class="reference download internal" download="" href="../_downloads/11d6eea968fa7509b627a213e59f4239/pre_fit_aniso_dipolar.py"><code class="xref download docutils literal notranslate"><span class="pre">pre_fit_aniso_dipolar.py</span></code></a></p></li>
+<li>Download the data files <code class="docutils literal notranslate"><span class="pre">parashift_Tb.pdb</span></code> and <code class="docutils literal notranslate"><span class="pre">parashift_Tb_R1_exp.pre</span></code> from <a class="reference external" href="https://github.com/henryorton/paramagpy/tree/master/examples/data_files/">here</a>:</li>
+<li>Download the script <a class="reference download internal" download="" href="../_downloads/70fecec3cb39692497b8563d4719cb74/pre_fit_aniso_dipolar.py"><code class="xref download docutils literal notranslate"><span class="pre">pre_fit_aniso_dipolar.py</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="script-explanation">
 <h2>Script + Explanation<a class="headerlink" href="#script-explanation" title="Permalink to this headline">¶</a></h2>
 <p>Load the relevant modules, read the PDB coordinates and experimental PRE values. Parse the values.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">paramagpy</span> <span class="kn">import</span> <span class="n">protein</span><span class="p">,</span> <span class="n">metal</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">dataparse</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">paramagpy</span> <span class="k">import</span> <span class="n">protein</span><span class="p">,</span> <span class="n">metal</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">dataparse</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="n">prot</span> <span class="o">=</span> <span class="n">protein</span><span class="o">.</span><span class="n">load_pdb</span><span class="p">(</span><span class="s1">&#39;../data_files/parashift_Tb.pdb&#39;</span><span class="p">)</span>
@@ -106,7 +107,7 @@
 <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;pre_fit_aniso_dipolar.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><em>Output:</em> [<a class="reference download internal" download="" href="../_downloads/988193a367ce68649f880b449ef997ef/pre_fit_aniso_dipolar.png"><code class="xref download docutils literal notranslate"><span class="pre">pre_fit_aniso_dipolar.png</span></code></a>]</p>
+<p><em>Output:</em> [<a class="reference download internal" download="" href="../_downloads/c9d34f37be1f9c76b31860d45f33c30a/pre_fit_aniso_dipolar.png"><code class="xref download docutils literal notranslate"><span class="pre">pre_fit_aniso_dipolar.png</span></code></a>]</p>
 <img alt="../_images/pre_fit_aniso_dipolar.png" src="../_images/pre_fit_aniso_dipolar.png" />
 </div>
 </div>
@@ -140,11 +141,13 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -174,7 +177,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

@@ -1,9 +1,11 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>paramagpy.metal.Metal.fast_pre &#8212; paramagpy 1.0 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -12,8 +14,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -51,32 +52,36 @@
 <h1>paramagpy.metal.Metal.fast_pre<a class="headerlink" href="#paramagpy-metal-metal-fast-pre" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="paramagpy.metal.Metal.fast_pre">
-<code class="sig-prename descclassname">Metal.</code><code class="sig-name descname">fast_pre</code><span class="sig-paren">(</span><em class="sig-param">posarray</em>, <em class="sig-param">gammaarray</em>, <em class="sig-param">rtype</em>, <em class="sig-param">dsa=True</em>, <em class="sig-param">sbm=True</em>, <em class="sig-param">gsbm=False</em>, <em class="sig-param">csaarray=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.fast_pre"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.fast_pre" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Metal.</code><code class="descname">fast_pre</code><span class="sig-paren">(</span><em>posarray</em>, <em>gammaarray</em>, <em>rtype</em>, <em>dsa=True</em>, <em>sbm=True</em>, <em>gsbm=False</em>, <em>csaarray=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.fast_pre"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.fast_pre" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the PRE for a set of spins using Curie and or SBM theory</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>posarray</strong> (<em>array with shape</em><em> (</em><em>n</em><em>,</em><em>3</em><em>)</em>) – array of positions in meters</p></li>
-<li><p><strong>gammaarray</strong> (<em>array with shape</em><em> (</em><em>n</em><em>,</em><em>3</em><em>)</em>) – array of gyromagnetic ratios of the spins</p></li>
-<li><p><strong>rtype</strong> (<em>str</em>) – either ‘r1’ or ‘r2’, the relaxation type</p></li>
-<li><p><strong>dsa</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True (defualt), DSA or Curie spin relaxation is included</p></li>
-<li><p><strong>sbm</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True (defualt), SBM spin relaxation is included</p></li>
-<li><p><strong>gsbm</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True (default=False), anisotropic dipolar relaxation is
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>posarray</strong> (<em>array with shape</em><em> (</em><em>n</em><em>,</em><em>3</em><em>)</em>) – array of positions in meters</li>
+<li><strong>gammaarray</strong> (<em>array with shape</em><em> (</em><em>n</em><em>,</em><em>3</em><em>)</em>) – array of gyromagnetic ratios of the spins</li>
+<li><strong>rtype</strong> (<em>str</em>) – either ‘r1’ or ‘r2’, the relaxation type</li>
+<li><strong>dsa</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True (defualt), DSA or Curie spin relaxation is included</li>
+<li><strong>sbm</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True (defualt), SBM spin relaxation is included</li>
+<li><strong>gsbm</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – when True (default=False), anisotropic dipolar relaxation is
 included using the spectral power density gensor &lt;g_tensor&gt;
 NOTE: when true, ignores relaxation of type SBM
-NOTE: only implemented for R1 relaxation calculations</p></li>
-<li><p><strong>csaarray</strong> (<em>array with shape</em><em> (</em><em>m</em><em>,</em><em>3</em><em>,</em><em>3</em><em>) </em><em>(</em><em>optional</em><em>)</em>) – array of CSA tensors of the spins.
+NOTE: only implemented for R1 relaxation calculations</li>
+<li><strong>csaarray</strong> (<em>array with shape</em><em> (</em><em>m</em><em>,</em><em>3</em><em>,</em><em>3</em><em>) </em><em>(</em><em>optional</em><em>)</em>) – array of CSA tensors of the spins.
 This defualts to 0.0, meaning CSAxDSA crosscorrelation is
-not accounted for.</p></li>
+not accounted for.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>rates</strong> – The PRE rates in /s</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>array with shape (n,1)</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>rates</strong> – The PRE rates in /s</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array with shape (n,1)</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -101,11 +106,13 @@ not accounted for.</p></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -137,7 +144,7 @@ not accounted for.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

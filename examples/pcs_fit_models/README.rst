@@ -3,9 +3,15 @@
 Fit Tensor to PDB with Models
 =============================
 
-This example shows how to fit a :math:`{\Delta\chi}`-tensor to experimental PCS data using an NMR structure that contains many models. The tensor can be fit to ensemble averaged PCS values, or to individual models. An ensemble averaged PCS is the mean calculated PCS of all models. No structural averages are ever taken.
+This example shows how to fit a :math:`{\Delta\chi}`-tensor to experimental PCS data using an NMR structure that contains multiple models. Data for calbindin D9k are used as in the previous example :ref:`pcs_fit`.
 
-Data for calbindin D9k are used as in the previous example :ref:`pcs_fit`.
+There are 3 fitting options available in paramagpy for fitting:
+
+1. Averaged fit: A tensor is fit to each model independently, and then all fitted tensors are averaged together. This is a good choice if models in your PDB represent structural uncertainty.
+
+2. Ensemble averaged fit: A single tensor is fit simultaneously to all models by averaging calculated PCS values during fitting. This is a good choice if models in your PDB represent dynamics as comes from a molecular dynamics simulation.
+
+3. Separate model fit: A tensor is fit to each model independently and the best fitting model is taken. This is a good choice if you are only looking for the best fit model in a PDB containing many models.
 
 
 Downloads
@@ -22,21 +28,26 @@ Script + Explanation
 Firstly, the standard preamble and loading of data.
 
 .. literalinclude:: ../../../examples/pcs_fit_models/pcs_fit_models.py 
-	:lines: 1-7
+	:lines: 1-6
 
-The default method of fitting is to fit the tensor independently to each model of the PDB file. To achieve ensemble averaging behaviour, this requires setting the argument ``ensembleAverage`` to true within the fitting function. The default ensemble averaging behaviour is to average atoms with the same serial number in the PDB file. To manipulate ensemble averaging, you can specify the ``idx`` column of the input dataArray for :py:func:`paramagpy.fit.nlr_fit_metal_from_pcs`. The ``idx`` array contains common integers for corresponding atoms to be averaged. After fitting the Q-factor is calculated (with the ensembleAverage argument set to True), and ensemble averaging of the calculated data values is achieved with the function :py:func:`paramagpy.fit.ensemble_average`
-
-.. literalinclude:: ../../../examples/pcs_fit_models/pcs_fit_models.py 
-	:lines: 10-19
-
-Fitting a separate tensor to each model of the PDB is the default behaviour of the fitting functions, the average of all fitted tensors is then returned. The model with the minimum Q-factor is then found by looping over the calculated data and sorting them by the calculated Q-factor.
+If all models are provided in the ``parsedData`` argument, the default functionality for all fitting methods such as :py:func:`paramagpy.fit.nlr_fit_metal_from_pcs` is to fit using method 1, meaning a tensor is fit to each model and the averaged tensor is returned. This is equivalent to setting the ``ensebleAverage`` argument to ``False``. This is done below. Averaging behaviour can be controlled through the ``idx`` column of ``parsedData``. The ``idx`` array contains common integers for corresponding atoms to be averaged, and defaults to the atom's serial number found in the PDB file.
 
 .. literalinclude:: ../../../examples/pcs_fit_models/pcs_fit_models.py 
-	:lines: 22-30
+	:lines: 12-16
+
+Method 2 can be followed by the same method, except setting the ``ensebleAverage`` argument to ``True``. At each stage of the fitting process, all PCS calculations are then averaged before fitting of a single tensor to all the data simultaneously. The ensemble averaging behaviour can be set through the ``idx`` column of the input data for :py:func:`paramagpy.fit.nlr_fit_metal_from_pcs`.
+
+.. literalinclude:: ../../../examples/pcs_fit_models/pcs_fit_models.py 
+	:lines: 18-22
+
+Method 3 can be achieved by constructing a ``for`` loop over the PDB models and fitting a separate tensor to the data from each model. The model which achieves the lowest Q-factor can then be extracted.
+
+.. literalinclude:: ../../../examples/pcs_fit_models/pcs_fit_models.py 
+	:lines: 24-31
 
 Finally we plot three sets of data:
 
-    * The ensemble average fit calculated for each model (green)
+    * The averaged fit calculated over all models (green)
 
     * The ensemble average of the calculated values of the ensemble fit (red)
 
@@ -45,7 +56,7 @@ Finally we plot three sets of data:
 Note that to calculate the ensemble average of the calculated values we use the function :py:func:`paramagpy.fit.ensemble_average`. This can take any number of arguments, and will average values based on common serial numbers of the list of atoms in the first argument.
 
 .. literalinclude:: ../../../examples/pcs_fit_models/pcs_fit_models.py 
-	:lines: 33-
+	:lines: 34-
 
 *Output:* [:download:`pcs_fit_models.png <../../../examples/pcs_fit_models/pcs_fit_models.png>`]
 

@@ -1,9 +1,11 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>paramagpy.metal.make_tensor &#8212; paramagpy 1.0 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -12,8 +14,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -50,27 +51,31 @@
 <h1>paramagpy.metal.make_tensor<a class="headerlink" href="#paramagpy-metal-make-tensor" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="paramagpy.metal.make_tensor">
-<code class="sig-prename descclassname">paramagpy.metal.</code><code class="sig-name descname">make_tensor</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">z</em>, <em class="sig-param">axial</em>, <em class="sig-param">rhombic</em>, <em class="sig-param">alpha</em>, <em class="sig-param">beta</em>, <em class="sig-param">gamma</em>, <em class="sig-param">lanthanide=None</em>, <em class="sig-param">temperature=298.15</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#make_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.make_tensor" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">paramagpy.metal.</code><code class="descname">make_tensor</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z</em>, <em>axial</em>, <em>rhombic</em>, <em>alpha</em>, <em>beta</em>, <em>gamma</em>, <em>lanthanide=None</em>, <em>temperature=298.15</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#make_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.make_tensor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a ChiTensor isntance from given parameters.
 This is designed to use pdb coordinates (x, y, z) and euler angles
 from an output like Numbat.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>y</strong><strong>, </strong><strong>z</strong> (<em>x</em><em>,</em>) – tensor position in pdb coordiante in Angstroms</p></li>
-<li><p><strong>rhombic</strong> (<em>axial</em><em>,</em>) – the tensor anisotropies in units 10^-32</p></li>
-<li><p><strong>beta</strong><strong>, </strong><strong>gamma</strong> (<em>alpha</em><em>,</em>) – the euler angles in degrees that maps the tensor
-to the pdb (I think?)</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong><strong>, </strong><strong>z</strong> (<em>x</em><em>,</em>) – tensor position in pdb coordiante in Angstroms</li>
+<li><strong>rhombic</strong> (<em>axial</em><em>,</em>) – the tensor anisotropies in units 10^-32</li>
+<li><strong>beta</strong><strong>, </strong><strong>gamma</strong> (<em>alpha</em><em>,</em>) – the euler angles in degrees that maps the tensor
+to the pdb (I think?)</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>ChiTensor</strong> – a tensor object for calulating paramagnetic effects on
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ChiTensor</strong> – a tensor object for calulating paramagnetic effects on
 nuclear spins in the pdb coordinate</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>object <a class="reference internal" href="paramagpy.metal.Metal.html#paramagpy.metal.Metal" title="paramagpy.metal.Metal"><code class="xref py py-class docutils literal notranslate"><span class="pre">paramagpy.metal.Metal</span></code></a></p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">object <a class="reference internal" href="paramagpy.metal.Metal.html#paramagpy.metal.Metal" title="paramagpy.metal.Metal"><code class="xref py py-class docutils literal notranslate"><span class="pre">paramagpy.metal.Metal</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -95,11 +100,13 @@ nuclear spins in the pdb coordinate</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -130,7 +137,7 @@ nuclear spins in the pdb coordinate</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

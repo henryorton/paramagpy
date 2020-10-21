@@ -1,9 +1,11 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>paramagpy.metal.Metal &#8212; paramagpy 1.0 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -12,8 +14,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -50,316 +51,320 @@
 <h1>paramagpy.metal.Metal<a class="headerlink" href="#paramagpy-metal-metal" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="paramagpy.metal.Metal">
-<em class="property">class </em><code class="sig-prename descclassname">paramagpy.metal.</code><code class="sig-name descname">Metal</code><span class="sig-paren">(</span><em class="sig-param">position=(0</em>, <em class="sig-param">0</em>, <em class="sig-param">0)</em>, <em class="sig-param">eulers=(0</em>, <em class="sig-param">0</em>, <em class="sig-param">0)</em>, <em class="sig-param">axrh=(0</em>, <em class="sig-param">0)</em>, <em class="sig-param">mueff=0.0</em>, <em class="sig-param">g_axrh=(0</em>, <em class="sig-param">0)</em>, <em class="sig-param">t1e=0.0</em>, <em class="sig-param">shift=0.0</em>, <em class="sig-param">temperature=298.15</em>, <em class="sig-param">B0=18.79</em>, <em class="sig-param">taur=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">paramagpy.metal.</code><code class="descname">Metal</code><span class="sig-paren">(</span><em>position=(0</em>, <em>0</em>, <em>0)</em>, <em>eulers=(0</em>, <em>0</em>, <em>0)</em>, <em>axrh=(0</em>, <em>0)</em>, <em>mueff=0.0</em>, <em>g_axrh=(0</em>, <em>0)</em>, <em>t1e=0.0</em>, <em>shift=0.0</em>, <em>temperature=298.15</em>, <em>B0=18.79</em>, <em>taur=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal" title="Permalink to this definition">¶</a></dt>
 <dd><p>An object for paramagnetic chi tensors and delta-chi tensors.
 This class has basic attributes that specify position,
 axiality/rhombicity, isotropy and euler angles.
 It also has methods for calculating PCS, RDC, PRE and CCR values.</p>
 <dl class="method">
 <dt id="paramagpy.metal.Metal.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">position=(0</em>, <em class="sig-param">0</em>, <em class="sig-param">0)</em>, <em class="sig-param">eulers=(0</em>, <em class="sig-param">0</em>, <em class="sig-param">0)</em>, <em class="sig-param">axrh=(0</em>, <em class="sig-param">0)</em>, <em class="sig-param">mueff=0.0</em>, <em class="sig-param">g_axrh=(0</em>, <em class="sig-param">0)</em>, <em class="sig-param">t1e=0.0</em>, <em class="sig-param">shift=0.0</em>, <em class="sig-param">temperature=298.15</em>, <em class="sig-param">B0=18.79</em>, <em class="sig-param">taur=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>position=(0</em>, <em>0</em>, <em>0)</em>, <em>eulers=(0</em>, <em>0</em>, <em>0)</em>, <em>axrh=(0</em>, <em>0)</em>, <em>mueff=0.0</em>, <em>g_axrh=(0</em>, <em>0)</em>, <em>t1e=0.0</em>, <em>shift=0.0</em>, <em>temperature=298.15</em>, <em>B0=18.79</em>, <em>taur=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate ChiTensor object</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>position</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – the (x,y,z) position in meters. Default is (0,0,0)
-stored as a np.matrix object.</p></li>
-<li><p><strong>eulers</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – the euler angles [alpha,beta,gamma] in radians
-by ZYZ convention. Defualt is (0,0,0)</p></li>
-<li><p><strong>axrh</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – the axial and rhombic values defining the magnetic susceptibility
-anisotropy</p></li>
-<li><p><strong>g_axrh</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – the axial and rhombic values defining the power spectral density
-tensor</p></li>
-<li><p><strong>mueff</strong> (<em>float</em>) – the effective magnetic moment in units of A.m^2</p></li>
-<li><p><strong>shift</strong> (<em>float</em>) – a bulk shift value applied to all PCS calculations.
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>position</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – the (x,y,z) position in meters. Default is (0,0,0)
+stored as a np.matrix object.</li>
+<li><strong>eulers</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – the euler angles [alpha,beta,gamma] in radians
+by ZYZ convention. Defualt is (0,0,0)</li>
+<li><strong>axrh</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – the axial and rhombic values defining the magnetic susceptibility
+anisotropy</li>
+<li><strong>g_axrh</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – the axial and rhombic values defining the power spectral density
+tensor</li>
+<li><strong>mueff</strong> (<em>float</em>) – the effective magnetic moment in units of A.m^2</li>
+<li><strong>shift</strong> (<em>float</em>) – a bulk shift value applied to all PCS calculations.
 This is a correction parameter that may arise due to an offset
-between diamagnetic and paramagnetic PCS datasets.</p></li>
-<li><p><strong>temperature</strong> (<em>float</em>) – the temperature in Kelvin</p></li>
-<li><p><strong>t1e</strong> (<em>float</em>) – the longitudinal electronic relaxation time</p></li>
-<li><p><strong>B0</strong> (<em>float</em>) – the magnetic field in Telsa</p></li>
-<li><p><strong>taur</strong> (<em>float</em>) – the rotational correlation time in seconds</p></li>
+between diamagnetic and paramagnetic PCS datasets.</li>
+<li><strong>temperature</strong> (<em>float</em>) – the temperature in Kelvin</li>
+<li><strong>t1e</strong> (<em>float</em>) – the longitudinal electronic relaxation time</li>
+<li><strong>B0</strong> (<em>float</em>) – the magnetic field in Telsa</li>
+<li><strong>taur</strong> (<em>float</em>) – the rotational correlation time in seconds</li>
 </ul>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table border="1" class="longtable docutils">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col width="10%" />
+<col width="90%" />
 </colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.atom_ccr.html#paramagpy.metal.Metal.atom_ccr" title="paramagpy.metal.Metal.atom_ccr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atom_ccr</span></code></a>(atom, atomPartner)</p></td>
-<td><p>Calculate R2 cross-corelated relaxation due to DDxDSA</p></td>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.atom_ccr.html#paramagpy.metal.Metal.atom_ccr" title="paramagpy.metal.Metal.atom_ccr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atom_ccr</span></code></a>(atom,&nbsp;atomPartner)</td>
+<td>Calculate R2 cross-corelated relaxation due to DDxDSA</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.atom_pcs.html#paramagpy.metal.Metal.atom_pcs" title="paramagpy.metal.Metal.atom_pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atom_pcs</span></code></a>(atom[, racs, rads])</p></td>
-<td><p>Calculate the psuedo-contact shift at the given atom</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.atom_pcs.html#paramagpy.metal.Metal.atom_pcs" title="paramagpy.metal.Metal.atom_pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atom_pcs</span></code></a>(atom[,&nbsp;racs,&nbsp;rads])</td>
+<td>Calculate the psuedo-contact shift at the given atom</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.atom_pre.html#paramagpy.metal.Metal.atom_pre" title="paramagpy.metal.Metal.atom_pre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atom_pre</span></code></a>(atom[, rtype, dsa, sbm, csa])</p></td>
-<td><p>Calculate the PRE for an atom</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.atom_pre.html#paramagpy.metal.Metal.atom_pre" title="paramagpy.metal.Metal.atom_pre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atom_pre</span></code></a>(atom[,&nbsp;rtype,&nbsp;dsa,&nbsp;sbm,&nbsp;csa])</td>
+<td>Calculate the PRE for an atom</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.atom_rdc.html#paramagpy.metal.Metal.atom_rdc" title="paramagpy.metal.Metal.atom_rdc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atom_rdc</span></code></a>(atom1, atom2)</p></td>
-<td><p>Calculate the residual dipolar coupling between two atoms</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.atom_rdc.html#paramagpy.metal.Metal.atom_rdc" title="paramagpy.metal.Metal.atom_rdc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atom_rdc</span></code></a>(atom1,&nbsp;atom2)</td>
+<td>Calculate the residual dipolar coupling between two atoms</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.atom_set_position.html#paramagpy.metal.Metal.atom_set_position" title="paramagpy.metal.Metal.atom_set_position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atom_set_position</span></code></a>(atom)</p></td>
-<td><p>Set the position of the Metal object to that of an atom</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.atom_set_position.html#paramagpy.metal.Metal.atom_set_position" title="paramagpy.metal.Metal.atom_set_position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atom_set_position</span></code></a>(atom)</td>
+<td>Set the position of the Metal object to that of an atom</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.average.html#paramagpy.metal.Metal.average" title="paramagpy.metal.Metal.average"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average</span></code></a>(metals)</p></td>
-<td><p>Set the attributes of the current instance to the average of a list of provided tensor objects</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.average.html#paramagpy.metal.Metal.average" title="paramagpy.metal.Metal.average"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average</span></code></a>(metals)</td>
+<td>Set the attributes of the current instance to the average of a list of provided tensor objects</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.ccr.html#paramagpy.metal.Metal.ccr" title="paramagpy.metal.Metal.ccr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ccr</span></code></a>(position, gamma, dipole_shift_tensor)</p></td>
-<td><p>Calculate R2 cross-corelated relaxation due to DDxDSA</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.ccr.html#paramagpy.metal.Metal.ccr" title="paramagpy.metal.Metal.ccr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ccr</span></code></a>(position,&nbsp;gamma,&nbsp;dipole_shift_tensor)</td>
+<td>Calculate R2 cross-corelated relaxation due to DDxDSA</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.copy.html#paramagpy.metal.Metal.copy" title="paramagpy.metal.Metal.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</p></td>
-<td><p>Copy the current Metal object to a new instance</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.copy.html#paramagpy.metal.Metal.copy" title="paramagpy.metal.Metal.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
+<td>Copy the current Metal object to a new instance</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.dipole_shift_tensor.html#paramagpy.metal.Metal.dipole_shift_tensor" title="paramagpy.metal.Metal.dipole_shift_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dipole_shift_tensor</span></code></a>(position)</p></td>
-<td><p>Calculate the chemical shift tensor at the given postition</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.dipole_shift_tensor.html#paramagpy.metal.Metal.dipole_shift_tensor" title="paramagpy.metal.Metal.dipole_shift_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dipole_shift_tensor</span></code></a>(position)</td>
+<td>Calculate the chemical shift tensor at the given postition</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.dsa_r1.html#paramagpy.metal.Metal.dsa_r1" title="paramagpy.metal.Metal.dsa_r1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dsa_r1</span></code></a>(position, gamma[, csa])</p></td>
-<td><p>Calculate R1 relaxation due to Curie Spin</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.dsa_r1.html#paramagpy.metal.Metal.dsa_r1" title="paramagpy.metal.Metal.dsa_r1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dsa_r1</span></code></a>(position,&nbsp;gamma[,&nbsp;csa])</td>
+<td>Calculate R1 relaxation due to Curie Spin</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.dsa_r2.html#paramagpy.metal.Metal.dsa_r2" title="paramagpy.metal.Metal.dsa_r2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dsa_r2</span></code></a>(position, gamma[, csa])</p></td>
-<td><p>Calculate R2 relaxation due to Curie Spin</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.dsa_r2.html#paramagpy.metal.Metal.dsa_r2" title="paramagpy.metal.Metal.dsa_r2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dsa_r2</span></code></a>(position,&nbsp;gamma[,&nbsp;csa])</td>
+<td>Calculate R2 relaxation due to Curie Spin</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_ccr.html#paramagpy.metal.Metal.fast_ccr" title="paramagpy.metal.Metal.fast_ccr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_ccr</span></code></a>(posarray, gammaarray, dstarray)</p></td>
-<td><p>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.ccr.html#paramagpy.metal.Metal.ccr" title="paramagpy.metal.Metal.ccr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.ccr()</span></code></a></p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_ccr.html#paramagpy.metal.Metal.fast_ccr" title="paramagpy.metal.Metal.fast_ccr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_ccr</span></code></a>(posarray,&nbsp;gammaarray,&nbsp;dstarray)</td>
+<td>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.ccr.html#paramagpy.metal.Metal.ccr" title="paramagpy.metal.Metal.ccr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.ccr()</span></code></a></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_dipole_shift_tensor.html#paramagpy.metal.Metal.fast_dipole_shift_tensor" title="paramagpy.metal.Metal.fast_dipole_shift_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_dipole_shift_tensor</span></code></a>(posarray)</p></td>
-<td><p>A vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.dipole_shift_tensor.html#paramagpy.metal.Metal.dipole_shift_tensor" title="paramagpy.metal.Metal.dipole_shift_tensor"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.dipole_shift_tensor()</span></code></a></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_dipole_shift_tensor.html#paramagpy.metal.Metal.fast_dipole_shift_tensor" title="paramagpy.metal.Metal.fast_dipole_shift_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_dipole_shift_tensor</span></code></a>(posarray)</td>
+<td>A vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.dipole_shift_tensor.html#paramagpy.metal.Metal.dipole_shift_tensor" title="paramagpy.metal.Metal.dipole_shift_tensor"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.dipole_shift_tensor()</span></code></a></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_dsa_r1.html#paramagpy.metal.Metal.fast_dsa_r1" title="paramagpy.metal.Metal.fast_dsa_r1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_dsa_r1</span></code></a>(posarray, gammaarray[, csaarray])</p></td>
-<td><p>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.dsa_r1.html#paramagpy.metal.Metal.dsa_r1" title="paramagpy.metal.Metal.dsa_r1"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.dsa_r1()</span></code></a></p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_dsa_r1.html#paramagpy.metal.Metal.fast_dsa_r1" title="paramagpy.metal.Metal.fast_dsa_r1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_dsa_r1</span></code></a>(posarray,&nbsp;gammaarray[,&nbsp;csaarray])</td>
+<td>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.dsa_r1.html#paramagpy.metal.Metal.dsa_r1" title="paramagpy.metal.Metal.dsa_r1"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.dsa_r1()</span></code></a></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_dsa_r2.html#paramagpy.metal.Metal.fast_dsa_r2" title="paramagpy.metal.Metal.fast_dsa_r2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_dsa_r2</span></code></a>(posarray, gammaarray[, csaarray])</p></td>
-<td><p>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.dsa_r2.html#paramagpy.metal.Metal.dsa_r2" title="paramagpy.metal.Metal.dsa_r2"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.dsa_r2()</span></code></a></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_dsa_r2.html#paramagpy.metal.Metal.fast_dsa_r2" title="paramagpy.metal.Metal.fast_dsa_r2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_dsa_r2</span></code></a>(posarray,&nbsp;gammaarray[,&nbsp;csaarray])</td>
+<td>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.dsa_r2.html#paramagpy.metal.Metal.dsa_r2" title="paramagpy.metal.Metal.dsa_r2"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.dsa_r2()</span></code></a></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_first_invariant_squared.html#paramagpy.metal.Metal.fast_first_invariant_squared" title="paramagpy.metal.Metal.fast_first_invariant_squared"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_first_invariant_squared</span></code></a>(t)</p></td>
-<td><p>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.first_invariant_squared.html#paramagpy.metal.Metal.first_invariant_squared" title="paramagpy.metal.Metal.first_invariant_squared"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.first_invariant_squared()</span></code></a></p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_first_invariant_squared.html#paramagpy.metal.Metal.fast_first_invariant_squared" title="paramagpy.metal.Metal.fast_first_invariant_squared"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_first_invariant_squared</span></code></a>(t)</td>
+<td>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.first_invariant_squared.html#paramagpy.metal.Metal.first_invariant_squared" title="paramagpy.metal.Metal.first_invariant_squared"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.first_invariant_squared()</span></code></a></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_g_sbm_r1.html#paramagpy.metal.Metal.fast_g_sbm_r1" title="paramagpy.metal.Metal.fast_g_sbm_r1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_g_sbm_r1</span></code></a>(posarray, gammaarray)</p></td>
-<td><p>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.g_sbm_r1.html#paramagpy.metal.Metal.g_sbm_r1" title="paramagpy.metal.Metal.g_sbm_r1"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.g_sbm_r1()</span></code></a></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_g_sbm_r1.html#paramagpy.metal.Metal.fast_g_sbm_r1" title="paramagpy.metal.Metal.fast_g_sbm_r1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_g_sbm_r1</span></code></a>(posarray,&nbsp;gammaarray)</td>
+<td>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.g_sbm_r1.html#paramagpy.metal.Metal.g_sbm_r1" title="paramagpy.metal.Metal.g_sbm_r1"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.g_sbm_r1()</span></code></a></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_pcs.html#paramagpy.metal.Metal.fast_pcs" title="paramagpy.metal.Metal.fast_pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_pcs</span></code></a>(posarray)</p></td>
-<td><p>A vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.pcs.html#paramagpy.metal.Metal.pcs" title="paramagpy.metal.Metal.pcs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.pcs()</span></code></a></p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_pcs.html#paramagpy.metal.Metal.fast_pcs" title="paramagpy.metal.Metal.fast_pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_pcs</span></code></a>(posarray)</td>
+<td>A vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.pcs.html#paramagpy.metal.Metal.pcs" title="paramagpy.metal.Metal.pcs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.pcs()</span></code></a></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_pre.html#paramagpy.metal.Metal.fast_pre" title="paramagpy.metal.Metal.fast_pre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_pre</span></code></a>(posarray, gammaarray, rtype[, dsa, …])</p></td>
-<td><p>Calculate the PRE for a set of spins using Curie and or SBM theory</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_pre.html#paramagpy.metal.Metal.fast_pre" title="paramagpy.metal.Metal.fast_pre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_pre</span></code></a>(posarray,&nbsp;gammaarray,&nbsp;rtype[,&nbsp;dsa,&nbsp;…])</td>
+<td>Calculate the PRE for a set of spins using Curie and or SBM theory</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_racs.html#paramagpy.metal.Metal.fast_racs" title="paramagpy.metal.Metal.fast_racs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_racs</span></code></a>(csaarray)</p></td>
-<td><p>A vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.racs.html#paramagpy.metal.Metal.racs" title="paramagpy.metal.Metal.racs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.racs()</span></code></a></p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_racs.html#paramagpy.metal.Metal.fast_racs" title="paramagpy.metal.Metal.fast_racs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_racs</span></code></a>(csaarray)</td>
+<td>A vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.racs.html#paramagpy.metal.Metal.racs" title="paramagpy.metal.Metal.racs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.racs()</span></code></a></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_rads.html#paramagpy.metal.Metal.fast_rads" title="paramagpy.metal.Metal.fast_rads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_rads</span></code></a>(posarray)</p></td>
-<td><p>A vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.rads.html#paramagpy.metal.Metal.rads" title="paramagpy.metal.Metal.rads"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.rads()</span></code></a></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_rads.html#paramagpy.metal.Metal.fast_rads" title="paramagpy.metal.Metal.fast_rads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_rads</span></code></a>(posarray)</td>
+<td>A vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.rads.html#paramagpy.metal.Metal.rads" title="paramagpy.metal.Metal.rads"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.rads()</span></code></a></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_rdc.html#paramagpy.metal.Metal.fast_rdc" title="paramagpy.metal.Metal.fast_rdc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_rdc</span></code></a>(vecarray, gammaProdArray)</p></td>
-<td><p>A vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.rdc.html#paramagpy.metal.Metal.rdc" title="paramagpy.metal.Metal.rdc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.rdc()</span></code></a> method.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_rdc.html#paramagpy.metal.Metal.fast_rdc" title="paramagpy.metal.Metal.fast_rdc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_rdc</span></code></a>(vecarray,&nbsp;gammaProdArray)</td>
+<td>A vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.rdc.html#paramagpy.metal.Metal.rdc" title="paramagpy.metal.Metal.rdc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.rdc()</span></code></a> method.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_sbm_r1.html#paramagpy.metal.Metal.fast_sbm_r1" title="paramagpy.metal.Metal.fast_sbm_r1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_sbm_r1</span></code></a>(posarray, gammaarray)</p></td>
-<td><p>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.sbm_r1.html#paramagpy.metal.Metal.sbm_r1" title="paramagpy.metal.Metal.sbm_r1"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.sbm_r1()</span></code></a></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_sbm_r1.html#paramagpy.metal.Metal.fast_sbm_r1" title="paramagpy.metal.Metal.fast_sbm_r1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_sbm_r1</span></code></a>(posarray,&nbsp;gammaarray)</td>
+<td>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.sbm_r1.html#paramagpy.metal.Metal.sbm_r1" title="paramagpy.metal.Metal.sbm_r1"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.sbm_r1()</span></code></a></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_sbm_r2.html#paramagpy.metal.Metal.fast_sbm_r2" title="paramagpy.metal.Metal.fast_sbm_r2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_sbm_r2</span></code></a>(posarray, gammaarray)</p></td>
-<td><p>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.sbm_r2.html#paramagpy.metal.Metal.sbm_r2" title="paramagpy.metal.Metal.sbm_r2"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.sbm_r2()</span></code></a></p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_sbm_r2.html#paramagpy.metal.Metal.fast_sbm_r2" title="paramagpy.metal.Metal.fast_sbm_r2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_sbm_r2</span></code></a>(posarray,&nbsp;gammaarray)</td>
+<td>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.sbm_r2.html#paramagpy.metal.Metal.sbm_r2" title="paramagpy.metal.Metal.sbm_r2"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.sbm_r2()</span></code></a></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fast_second_invariant_squared.html#paramagpy.metal.Metal.fast_second_invariant_squared" title="paramagpy.metal.Metal.fast_second_invariant_squared"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_second_invariant_squared</span></code></a>(t)</p></td>
-<td><p>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.second_invariant_squared.html#paramagpy.metal.Metal.second_invariant_squared" title="paramagpy.metal.Metal.second_invariant_squared"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.second_invariant_squared()</span></code></a></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.fast_second_invariant_squared.html#paramagpy.metal.Metal.fast_second_invariant_squared" title="paramagpy.metal.Metal.fast_second_invariant_squared"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_second_invariant_squared</span></code></a>(t)</td>
+<td>Vectorised version of <a class="reference internal" href="paramagpy.metal.Metal.second_invariant_squared.html#paramagpy.metal.Metal.second_invariant_squared" title="paramagpy.metal.Metal.second_invariant_squared"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.metal.Metal.second_invariant_squared()</span></code></a></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.first_invariant_squared.html#paramagpy.metal.Metal.first_invariant_squared" title="paramagpy.metal.Metal.first_invariant_squared"><code class="xref py py-obj docutils literal notranslate"><span class="pre">first_invariant_squared</span></code></a>(t)</p></td>
-<td><p>Calculate the antisymmetric contribution to relaxation via the first invariant of a tensor.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.first_invariant_squared.html#paramagpy.metal.Metal.first_invariant_squared" title="paramagpy.metal.Metal.first_invariant_squared"><code class="xref py py-obj docutils literal notranslate"><span class="pre">first_invariant_squared</span></code></a>(t)</td>
+<td>Calculate the antisymmetric contribution to relaxation via the first invariant of a tensor.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.g_sbm_r1.html#paramagpy.metal.Metal.g_sbm_r1" title="paramagpy.metal.Metal.g_sbm_r1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">g_sbm_r1</span></code></a>(position, gamma)</p></td>
-<td><p>Calculate R1 relaxation due to Solomon-Bloembergen-Morgan theory from anisotropic power spectral density tensor</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.g_sbm_r1.html#paramagpy.metal.Metal.g_sbm_r1" title="paramagpy.metal.Metal.g_sbm_r1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">g_sbm_r1</span></code></a>(position,&nbsp;gamma)</td>
+<td>Calculate R1 relaxation due to Solomon-Bloembergen-Morgan theory from anisotropic power spectral density tensor</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.get_params.html#paramagpy.metal.Metal.get_params" title="paramagpy.metal.Metal.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>(params)</p></td>
-<td><p>Get tensor parameters that have been scaled appropriately</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.get_params.html#paramagpy.metal.Metal.get_params" title="paramagpy.metal.Metal.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>(params)</td>
+<td>Get tensor parameters that have been scaled appropriately</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.info.html#paramagpy.metal.Metal.info" title="paramagpy.metal.Metal.info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">info</span></code></a>([comment])</p></td>
-<td><p>Get basic information about the Metal object</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.info.html#paramagpy.metal.Metal.info" title="paramagpy.metal.Metal.info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">info</span></code></a>([comment])</td>
+<td>Get basic information about the Metal object</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.isomap.html#paramagpy.metal.Metal.isomap" title="paramagpy.metal.Metal.isomap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isomap</span></code></a>([protein, isoval])</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.isomap.html#paramagpy.metal.Metal.isomap" title="paramagpy.metal.Metal.isomap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isomap</span></code></a>([protein,&nbsp;isoval])</td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.make_mesh.html#paramagpy.metal.Metal.make_mesh" title="paramagpy.metal.Metal.make_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_mesh</span></code></a>([density, size])</p></td>
-<td><p>Construct a 3D grid of points to map an isosurface</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.make_mesh.html#paramagpy.metal.Metal.make_mesh" title="paramagpy.metal.Metal.make_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_mesh</span></code></a>([density,&nbsp;size])</td>
+<td>Construct a 3D grid of points to map an isosurface</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.pcs.html#paramagpy.metal.Metal.pcs" title="paramagpy.metal.Metal.pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pcs</span></code></a>(position)</p></td>
-<td><p>Calculate the psuedo-contact shift at the given postition</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.pcs.html#paramagpy.metal.Metal.pcs" title="paramagpy.metal.Metal.pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pcs</span></code></a>(position)</td>
+<td>Calculate the psuedo-contact shift at the given postition</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.pcs_mesh.html#paramagpy.metal.Metal.pcs_mesh" title="paramagpy.metal.Metal.pcs_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pcs_mesh</span></code></a>(mesh)</p></td>
-<td><p>Calculate a PCS value at each location of cubic grid of points</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.pcs_mesh.html#paramagpy.metal.Metal.pcs_mesh" title="paramagpy.metal.Metal.pcs_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pcs_mesh</span></code></a>(mesh)</td>
+<td>Calculate a PCS value at each location of cubic grid of points</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.pre.html#paramagpy.metal.Metal.pre" title="paramagpy.metal.Metal.pre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pre</span></code></a>(position, gamma, rtype[, dsa, sbm, …])</p></td>
-<td><p>Calculate the PRE for a set of spins using Curie and or SBM theory</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.pre.html#paramagpy.metal.Metal.pre" title="paramagpy.metal.Metal.pre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pre</span></code></a>(position,&nbsp;gamma,&nbsp;rtype[,&nbsp;dsa,&nbsp;sbm,&nbsp;…])</td>
+<td>Calculate the PRE for a set of spins using Curie and or SBM theory</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.pre_mesh.html#paramagpy.metal.Metal.pre_mesh" title="paramagpy.metal.Metal.pre_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pre_mesh</span></code></a>(mesh[, gamma, rtype, dsa, sbm])</p></td>
-<td><p>Calculate a PRE value at each location of cubic grid of points</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.pre_mesh.html#paramagpy.metal.Metal.pre_mesh" title="paramagpy.metal.Metal.pre_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pre_mesh</span></code></a>(mesh[,&nbsp;gamma,&nbsp;rtype,&nbsp;dsa,&nbsp;sbm])</td>
+<td>Calculate a PRE value at each location of cubic grid of points</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.racs.html#paramagpy.metal.Metal.racs" title="paramagpy.metal.Metal.racs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">racs</span></code></a>(csa)</p></td>
-<td><p>Calculate the residual anisotropic chemical shift at the given postition.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.racs.html#paramagpy.metal.Metal.racs" title="paramagpy.metal.Metal.racs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">racs</span></code></a>(csa)</td>
+<td>Calculate the residual anisotropic chemical shift at the given postition.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.rads.html#paramagpy.metal.Metal.rads" title="paramagpy.metal.Metal.rads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rads</span></code></a>(position)</p></td>
-<td><p>Calculate the residual anisotropic dipolar shift at the given postition.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.rads.html#paramagpy.metal.Metal.rads" title="paramagpy.metal.Metal.rads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rads</span></code></a>(position)</td>
+<td>Calculate the residual anisotropic dipolar shift at the given postition.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.rdc.html#paramagpy.metal.Metal.rdc" title="paramagpy.metal.Metal.rdc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rdc</span></code></a>(vector, gammaProd)</p></td>
-<td><p>Calculate Residual Dipolar Coupling (RDC)</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.rdc.html#paramagpy.metal.Metal.rdc" title="paramagpy.metal.Metal.rdc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rdc</span></code></a>(vector,&nbsp;gammaProd)</td>
+<td>Calculate Residual Dipolar Coupling (RDC)</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.save.html#paramagpy.metal.Metal.save" title="paramagpy.metal.Metal.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([fileName])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.save.html#paramagpy.metal.Metal.save" title="paramagpy.metal.Metal.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([fileName])</td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.sbm_r1.html#paramagpy.metal.Metal.sbm_r1" title="paramagpy.metal.Metal.sbm_r1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sbm_r1</span></code></a>(position, gamma)</p></td>
-<td><p>Calculate R1 relaxation due to Solomon-Bloembergen-Morgan theory</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.sbm_r1.html#paramagpy.metal.Metal.sbm_r1" title="paramagpy.metal.Metal.sbm_r1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sbm_r1</span></code></a>(position,&nbsp;gamma)</td>
+<td>Calculate R1 relaxation due to Solomon-Bloembergen-Morgan theory</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.sbm_r2.html#paramagpy.metal.Metal.sbm_r2" title="paramagpy.metal.Metal.sbm_r2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sbm_r2</span></code></a>(position, gamma)</p></td>
-<td><p>Calculate R2 relaxation due to Solomon-Bloembergen-Morgan theory</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.sbm_r2.html#paramagpy.metal.Metal.sbm_r2" title="paramagpy.metal.Metal.sbm_r2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sbm_r2</span></code></a>(position,&nbsp;gamma)</td>
+<td>Calculate R2 relaxation due to Solomon-Bloembergen-Morgan theory</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.second_invariant_squared.html#paramagpy.metal.Metal.second_invariant_squared" title="paramagpy.metal.Metal.second_invariant_squared"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second_invariant_squared</span></code></a>(t)</p></td>
-<td><p>Calculate the second invariant squared of a tensor.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.second_invariant_squared.html#paramagpy.metal.Metal.second_invariant_squared" title="paramagpy.metal.Metal.second_invariant_squared"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second_invariant_squared</span></code></a>(t)</td>
+<td>Calculate the second invariant squared of a tensor.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.set_Jg.html#paramagpy.metal.Metal.set_Jg" title="paramagpy.metal.Metal.set_Jg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_Jg</span></code></a>(J, g)</p></td>
-<td><p>Set the magnetic susceptibility absolute magnitude from J/g.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.set_Jg.html#paramagpy.metal.Metal.set_Jg" title="paramagpy.metal.Metal.set_Jg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_Jg</span></code></a>(J,&nbsp;g)</td>
+<td>Set the magnetic susceptibility absolute magnitude from J/g.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.set_lanthanide.html#paramagpy.metal.Metal.set_lanthanide" title="paramagpy.metal.Metal.set_lanthanide"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_lanthanide</span></code></a>(lanthanide[, set_dchi])</p></td>
-<td><p>Set the anisotropy, isotropy and T1e parameters from literature values</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.set_lanthanide.html#paramagpy.metal.Metal.set_lanthanide" title="paramagpy.metal.Metal.set_lanthanide"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_lanthanide</span></code></a>(lanthanide[,&nbsp;set_dchi])</td>
+<td>Set the anisotropy, isotropy and T1e parameters from literature values</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.set_params.html#paramagpy.metal.Metal.set_params" title="paramagpy.metal.Metal.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(paramValues)</p></td>
-<td><p>Set tensor parameters that have been scaled appropriately</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.set_params.html#paramagpy.metal.Metal.set_params" title="paramagpy.metal.Metal.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(paramValues)</td>
+<td>Set tensor parameters that have been scaled appropriately</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.set_utr.html#paramagpy.metal.Metal.set_utr" title="paramagpy.metal.Metal.set_utr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_utr</span></code></a>()</p></td>
-<td><p>Modify current tensor parameters to unique tensor representation (UTR)</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.set_utr.html#paramagpy.metal.Metal.set_utr" title="paramagpy.metal.Metal.set_utr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_utr</span></code></a>()</td>
+<td>Modify current tensor parameters to unique tensor representation (UTR)</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.spec_dens.html#paramagpy.metal.Metal.spec_dens" title="paramagpy.metal.Metal.spec_dens"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spec_dens</span></code></a>(tau, omega)</p></td>
-<td><p>A spectral density function with Lorentzian shape:</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.spec_dens.html#paramagpy.metal.Metal.spec_dens" title="paramagpy.metal.Metal.spec_dens"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spec_dens</span></code></a>(tau,&nbsp;omega)</td>
+<td>A spectral density function with Lorentzian shape:</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.write_isomap.html#paramagpy.metal.Metal.write_isomap" title="paramagpy.metal.Metal.write_isomap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_isomap</span></code></a>(mesh, bounds[, fileName])</p></td>
-<td><p>Write a PyMol script to file which allows loading of the isosurface file</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.write_isomap.html#paramagpy.metal.Metal.write_isomap" title="paramagpy.metal.Metal.write_isomap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_isomap</span></code></a>(mesh,&nbsp;bounds[,&nbsp;fileName])</td>
+<td>Write a PyMol script to file which allows loading of the isosurface file</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.write_pymol_script.html#paramagpy.metal.Metal.write_pymol_script" title="paramagpy.metal.Metal.write_pymol_script"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_pymol_script</span></code></a>([isoval, surfaceName, …])</p></td>
-<td><p>Write a PyMol script to file which allows loading of the isosurface file</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.write_pymol_script.html#paramagpy.metal.Metal.write_pymol_script" title="paramagpy.metal.Metal.write_pymol_script"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_pymol_script</span></code></a>([isoval,&nbsp;surfaceName,&nbsp;…])</td>
+<td>Write a PyMol script to file which allows loading of the isosurface file</td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
+<table border="1" class="longtable docutils">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col width="10%" />
+<col width="90%" />
 </colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.B0_MHz.html#paramagpy.metal.Metal.B0_MHz" title="paramagpy.metal.Metal.B0_MHz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">B0_MHz</span></code></a></p></td>
-<td><p>1H NMR frequency for the given field in MHz</p></td>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.B0_MHz.html#paramagpy.metal.Metal.B0_MHz" title="paramagpy.metal.Metal.B0_MHz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">B0_MHz</span></code></a></td>
+<td>1H NMR frequency for the given field in MHz</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.GAMMA.html#paramagpy.metal.Metal.GAMMA" title="paramagpy.metal.Metal.GAMMA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GAMMA</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.GAMMA.html#paramagpy.metal.Metal.GAMMA" title="paramagpy.metal.Metal.GAMMA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GAMMA</span></code></a></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.HBAR.html#paramagpy.metal.Metal.HBAR" title="paramagpy.metal.Metal.HBAR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HBAR</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.HBAR.html#paramagpy.metal.Metal.HBAR" title="paramagpy.metal.Metal.HBAR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HBAR</span></code></a></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.K.html#paramagpy.metal.Metal.K" title="paramagpy.metal.Metal.K"><code class="xref py py-obj docutils literal notranslate"><span class="pre">K</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.K.html#paramagpy.metal.Metal.K" title="paramagpy.metal.Metal.K"><code class="xref py py-obj docutils literal notranslate"><span class="pre">K</span></code></a></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.MU0.html#paramagpy.metal.Metal.MU0" title="paramagpy.metal.Metal.MU0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MU0</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.MU0.html#paramagpy.metal.Metal.MU0" title="paramagpy.metal.Metal.MU0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MU0</span></code></a></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.MUB.html#paramagpy.metal.Metal.MUB" title="paramagpy.metal.Metal.MUB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MUB</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.MUB.html#paramagpy.metal.Metal.MUB" title="paramagpy.metal.Metal.MUB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MUB</span></code></a></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.a.html#paramagpy.metal.Metal.a" title="paramagpy.metal.Metal.a"><code class="xref py py-obj docutils literal notranslate"><span class="pre">a</span></code></a></p></td>
-<td><p>alpha euler anglue</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.a.html#paramagpy.metal.Metal.a" title="paramagpy.metal.Metal.a"><code class="xref py py-obj docutils literal notranslate"><span class="pre">a</span></code></a></td>
+<td>alpha euler anglue</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.alignment_factor.html#paramagpy.metal.Metal.alignment_factor" title="paramagpy.metal.Metal.alignment_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alignment_factor</span></code></a></p></td>
-<td><p>Factor for conversion between magnetic susceptibility and alignment tensors</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.alignment_factor.html#paramagpy.metal.Metal.alignment_factor" title="paramagpy.metal.Metal.alignment_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alignment_factor</span></code></a></td>
+<td>Factor for conversion between magnetic susceptibility and alignment tensors</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.ax.html#paramagpy.metal.Metal.ax" title="paramagpy.metal.Metal.ax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ax</span></code></a></p></td>
-<td><p>axiality</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.ax.html#paramagpy.metal.Metal.ax" title="paramagpy.metal.Metal.ax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ax</span></code></a></td>
+<td>axiality</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.b.html#paramagpy.metal.Metal.b" title="paramagpy.metal.Metal.b"><code class="xref py py-obj docutils literal notranslate"><span class="pre">b</span></code></a></p></td>
-<td><p>beta euler anglue</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.b.html#paramagpy.metal.Metal.b" title="paramagpy.metal.Metal.b"><code class="xref py py-obj docutils literal notranslate"><span class="pre">b</span></code></a></td>
+<td>beta euler anglue</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.eigenvalues.html#paramagpy.metal.Metal.eigenvalues" title="paramagpy.metal.Metal.eigenvalues"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eigenvalues</span></code></a></p></td>
-<td><p>The eigenvalues defining the magnitude of the principle axes</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.eigenvalues.html#paramagpy.metal.Metal.eigenvalues" title="paramagpy.metal.Metal.eigenvalues"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eigenvalues</span></code></a></td>
+<td>The eigenvalues defining the magnitude of the principle axes</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fit_scaling.html#paramagpy.metal.Metal.fit_scaling" title="paramagpy.metal.Metal.fit_scaling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_scaling</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.fit_scaling.html#paramagpy.metal.Metal.fit_scaling" title="paramagpy.metal.Metal.fit_scaling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_scaling</span></code></a></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.fundamental_attributes.html#paramagpy.metal.Metal.fundamental_attributes" title="paramagpy.metal.Metal.fundamental_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fundamental_attributes</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.fundamental_attributes.html#paramagpy.metal.Metal.fundamental_attributes" title="paramagpy.metal.Metal.fundamental_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fundamental_attributes</span></code></a></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.g.html#paramagpy.metal.Metal.g" title="paramagpy.metal.Metal.g"><code class="xref py py-obj docutils literal notranslate"><span class="pre">g</span></code></a></p></td>
-<td><p>gamma euler anglue</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.g.html#paramagpy.metal.Metal.g" title="paramagpy.metal.Metal.g"><code class="xref py py-obj docutils literal notranslate"><span class="pre">g</span></code></a></td>
+<td>gamma euler anglue</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.g_eigenvalues.html#paramagpy.metal.Metal.g_eigenvalues" title="paramagpy.metal.Metal.g_eigenvalues"><code class="xref py py-obj docutils literal notranslate"><span class="pre">g_eigenvalues</span></code></a></p></td>
-<td><p>The eigenvalues defining the magnitude of the principle axes</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.g_eigenvalues.html#paramagpy.metal.Metal.g_eigenvalues" title="paramagpy.metal.Metal.g_eigenvalues"><code class="xref py py-obj docutils literal notranslate"><span class="pre">g_eigenvalues</span></code></a></td>
+<td>The eigenvalues defining the magnitude of the principle axes</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.g_isotropy.html#paramagpy.metal.Metal.g_isotropy" title="paramagpy.metal.Metal.g_isotropy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">g_isotropy</span></code></a></p></td>
-<td><p>Estimate of the spectral power density tensor isotropy</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.g_isotropy.html#paramagpy.metal.Metal.g_isotropy" title="paramagpy.metal.Metal.g_isotropy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">g_isotropy</span></code></a></td>
+<td>Estimate of the spectral power density tensor isotropy</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.g_tensor.html#paramagpy.metal.Metal.g_tensor" title="paramagpy.metal.Metal.g_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">g_tensor</span></code></a></p></td>
-<td><p>The magnetic susceptibility tensor matrix representation</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.g_tensor.html#paramagpy.metal.Metal.g_tensor" title="paramagpy.metal.Metal.g_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">g_tensor</span></code></a></td>
+<td>The magnetic susceptibility tensor matrix representation</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.gax.html#paramagpy.metal.Metal.gax" title="paramagpy.metal.Metal.gax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gax</span></code></a></p></td>
-<td><p>axial componenet of spectral power density tensor</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.gax.html#paramagpy.metal.Metal.gax" title="paramagpy.metal.Metal.gax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gax</span></code></a></td>
+<td>axial componenet of spectral power density tensor</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.grh.html#paramagpy.metal.Metal.grh" title="paramagpy.metal.Metal.grh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grh</span></code></a></p></td>
-<td><p>axial componenet of spectral power density tensor</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.grh.html#paramagpy.metal.Metal.grh" title="paramagpy.metal.Metal.grh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grh</span></code></a></td>
+<td>axial componenet of spectral power density tensor</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.iso.html#paramagpy.metal.Metal.iso" title="paramagpy.metal.Metal.iso"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iso</span></code></a></p></td>
-<td><p>isotropy</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.iso.html#paramagpy.metal.Metal.iso" title="paramagpy.metal.Metal.iso"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iso</span></code></a></td>
+<td>isotropy</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.isotropy.html#paramagpy.metal.Metal.isotropy" title="paramagpy.metal.Metal.isotropy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isotropy</span></code></a></p></td>
-<td><p>The magnidue of the isotropic component of the tensor</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.isotropy.html#paramagpy.metal.Metal.isotropy" title="paramagpy.metal.Metal.isotropy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isotropy</span></code></a></td>
+<td>The magnidue of the isotropic component of the tensor</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.lanth_axrh.html#paramagpy.metal.Metal.lanth_axrh" title="paramagpy.metal.Metal.lanth_axrh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lanth_axrh</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.lanth_axrh.html#paramagpy.metal.Metal.lanth_axrh" title="paramagpy.metal.Metal.lanth_axrh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lanth_axrh</span></code></a></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.lanth_lib.html#paramagpy.metal.Metal.lanth_lib" title="paramagpy.metal.Metal.lanth_lib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lanth_lib</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.lanth_lib.html#paramagpy.metal.Metal.lanth_lib" title="paramagpy.metal.Metal.lanth_lib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lanth_lib</span></code></a></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.lower_coords.html#paramagpy.metal.Metal.lower_coords" title="paramagpy.metal.Metal.lower_coords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lower_coords</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.lower_coords.html#paramagpy.metal.Metal.lower_coords" title="paramagpy.metal.Metal.lower_coords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lower_coords</span></code></a></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.rh.html#paramagpy.metal.Metal.rh" title="paramagpy.metal.Metal.rh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rh</span></code></a></p></td>
-<td><p>rhombicity</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.rh.html#paramagpy.metal.Metal.rh" title="paramagpy.metal.Metal.rh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rh</span></code></a></td>
+<td>rhombicity</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.rotationMatrix.html#paramagpy.metal.Metal.rotationMatrix" title="paramagpy.metal.Metal.rotationMatrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotationMatrix</span></code></a></p></td>
-<td><p>The rotation matrix as defined by the euler angles</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.rotationMatrix.html#paramagpy.metal.Metal.rotationMatrix" title="paramagpy.metal.Metal.rotationMatrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotationMatrix</span></code></a></td>
+<td>The rotation matrix as defined by the euler angles</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.saupe_factor.html#paramagpy.metal.Metal.saupe_factor" title="paramagpy.metal.Metal.saupe_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">saupe_factor</span></code></a></p></td>
-<td><p>Factor for conversion between magnetic susceptibility and saupe tensors</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.saupe_factor.html#paramagpy.metal.Metal.saupe_factor" title="paramagpy.metal.Metal.saupe_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">saupe_factor</span></code></a></td>
+<td>Factor for conversion between magnetic susceptibility and saupe tensors</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.tauc.html#paramagpy.metal.Metal.tauc" title="paramagpy.metal.Metal.tauc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tauc</span></code></a></p></td>
-<td><p>The effective rotational correlation time.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.tauc.html#paramagpy.metal.Metal.tauc" title="paramagpy.metal.Metal.tauc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tauc</span></code></a></td>
+<td>The effective rotational correlation time.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.tensor.html#paramagpy.metal.Metal.tensor" title="paramagpy.metal.Metal.tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code></a></p></td>
-<td><p>The magnetic susceptibility tensor matrix representation</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.tensor.html#paramagpy.metal.Metal.tensor" title="paramagpy.metal.Metal.tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor</span></code></a></td>
+<td>The magnetic susceptibility tensor matrix representation</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.tensor_alignment.html#paramagpy.metal.Metal.tensor_alignment" title="paramagpy.metal.Metal.tensor_alignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor_alignment</span></code></a></p></td>
-<td><p>The alignment tensor matrix representation</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.tensor_alignment.html#paramagpy.metal.Metal.tensor_alignment" title="paramagpy.metal.Metal.tensor_alignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor_alignment</span></code></a></td>
+<td>The alignment tensor matrix representation</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.tensor_saupe.html#paramagpy.metal.Metal.tensor_saupe" title="paramagpy.metal.Metal.tensor_saupe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor_saupe</span></code></a></p></td>
-<td><p>The saupe tensor matrix representation</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.tensor_saupe.html#paramagpy.metal.Metal.tensor_saupe" title="paramagpy.metal.Metal.tensor_saupe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor_saupe</span></code></a></td>
+<td>The saupe tensor matrix representation</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.tensor_traceless.html#paramagpy.metal.Metal.tensor_traceless" title="paramagpy.metal.Metal.tensor_traceless"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor_traceless</span></code></a></p></td>
-<td><p>The traceless magnetic susceptibility tensor matrix representation</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.tensor_traceless.html#paramagpy.metal.Metal.tensor_traceless" title="paramagpy.metal.Metal.tensor_traceless"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor_traceless</span></code></a></td>
+<td>The traceless magnetic susceptibility tensor matrix representation</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.upper_coords.html#paramagpy.metal.Metal.upper_coords" title="paramagpy.metal.Metal.upper_coords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upper_coords</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.upper_coords.html#paramagpy.metal.Metal.upper_coords" title="paramagpy.metal.Metal.upper_coords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upper_coords</span></code></a></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.upper_triang.html#paramagpy.metal.Metal.upper_triang" title="paramagpy.metal.Metal.upper_triang"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upper_triang</span></code></a></p></td>
-<td><p>Fetch 5 unique matrix element defining the magnetic susceptibility tensor</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.upper_triang.html#paramagpy.metal.Metal.upper_triang" title="paramagpy.metal.Metal.upper_triang"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upper_triang</span></code></a></td>
+<td>Fetch 5 unique matrix element defining the magnetic susceptibility tensor</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.upper_triang_alignment.html#paramagpy.metal.Metal.upper_triang_alignment" title="paramagpy.metal.Metal.upper_triang_alignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upper_triang_alignment</span></code></a></p></td>
-<td><p>Fetch 5 unique matrix element defining the alignment tensor</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.upper_triang_alignment.html#paramagpy.metal.Metal.upper_triang_alignment" title="paramagpy.metal.Metal.upper_triang_alignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upper_triang_alignment</span></code></a></td>
+<td>Fetch 5 unique matrix element defining the alignment tensor</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.upper_triang_saupe.html#paramagpy.metal.Metal.upper_triang_saupe" title="paramagpy.metal.Metal.upper_triang_saupe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upper_triang_saupe</span></code></a></p></td>
-<td><p>Fetch 5 unique matrix element defining the magnetic susceptibility tensor</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.upper_triang_saupe.html#paramagpy.metal.Metal.upper_triang_saupe" title="paramagpy.metal.Metal.upper_triang_saupe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upper_triang_saupe</span></code></a></td>
+<td>Fetch 5 unique matrix element defining the magnetic susceptibility tensor</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.x.html#paramagpy.metal.Metal.x" title="paramagpy.metal.Metal.x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></a></p></td>
-<td><p>x coordinate</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.x.html#paramagpy.metal.Metal.x" title="paramagpy.metal.Metal.x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></a></td>
+<td>x coordinate</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="paramagpy.metal.Metal.y.html#paramagpy.metal.Metal.y" title="paramagpy.metal.Metal.y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code></a></p></td>
-<td><p>y coordinate</p></td>
+<tr class="row-even"><td><a class="reference internal" href="paramagpy.metal.Metal.y.html#paramagpy.metal.Metal.y" title="paramagpy.metal.Metal.y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code></a></td>
+<td>y coordinate</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="paramagpy.metal.Metal.z.html#paramagpy.metal.Metal.z" title="paramagpy.metal.Metal.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></p></td>
-<td><p>z coordinate</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="paramagpy.metal.Metal.z.html#paramagpy.metal.Metal.z" title="paramagpy.metal.Metal.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></td>
+<td>z coordinate</td>
 </tr>
 </tbody>
 </table>
@@ -389,11 +394,13 @@ between diamagnetic and paramagnetic PCS datasets.</p></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -424,7 +431,7 @@ between diamagnetic and paramagnetic PCS datasets.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

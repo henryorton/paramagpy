@@ -1,9 +1,11 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>paramagpy.fit.nlr_fit_metal_from_ccr &#8212; paramagpy 1.0 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -12,8 +14,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -50,24 +51,26 @@
 <h1>paramagpy.fit.nlr_fit_metal_from_ccr<a class="headerlink" href="#paramagpy-fit-nlr-fit-metal-from-ccr" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="paramagpy.fit.nlr_fit_metal_from_ccr">
-<code class="sig-prename descclassname">paramagpy.fit.</code><code class="sig-name descname">nlr_fit_metal_from_ccr</code><span class="sig-paren">(</span><em class="sig-param">initMetals</em>, <em class="sig-param">dataArrays</em>, <em class="sig-param">params=('x'</em>, <em class="sig-param">'y'</em>, <em class="sig-param">'z')</em>, <em class="sig-param">ensembleAverage=False</em>, <em class="sig-param">progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#nlr_fit_metal_from_ccr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.nlr_fit_metal_from_ccr" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">paramagpy.fit.</code><code class="descname">nlr_fit_metal_from_ccr</code><span class="sig-paren">(</span><em>initMetals</em>, <em>dataArrays</em>, <em>params=('x'</em>, <em>'y'</em>, <em>'z')</em>, <em>ensembleAverage=False</em>, <em>progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#nlr_fit_metal_from_ccr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.nlr_fit_metal_from_ccr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit Chi tensor to CCR values using non-linear regression.
 This algorithm applies to CSA/Curie spin cross-correlated relaxation
 for R2 differential line broadening.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>initMetals</strong> (<em>list of Metal objects</em>) – a list of metals used as starting points for fitting.
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>initMetals</strong> (<em>list of Metal objects</em>) – a list of metals used as starting points for fitting.
 a list must always be provided, but may also contain
 only one element. If multiple metals are provided, each metal
 is fitted to their respective PRE dataset by index in &lt;dataArrays,
-but all are fitted to a common position.</p></li>
-<li><p><strong>dataArrays</strong> (<em>list of PRE dataArray</em>) – each PRE dataArray must correspond to an associated metal for fitting.
+but all are fitted to a common position.</li>
+<li><strong>dataArrays</strong> (<em>list of PRE dataArray</em>) – each PRE dataArray must correspond to an associated metal for fitting.
 each PRE dataArray has structure determined by
-<a class="reference internal" href="paramagpy.protein.CustomStructure.parse.html#paramagpy.protein.CustomStructure.parse" title="paramagpy.protein.CustomStructure.parse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.protein.CustomStructure.parse()</span></code></a>.</p></li>
-<li><p><strong>params</strong> (<em>list of str</em>) – the parameters to be fit.
-For example [‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’]</p></li>
-<li><p><strong>ensembleAverage</strong> (<em>bool</em><em>, </em><em>optional</em>) – when False, each model of the structure is fit independently.
+<a class="reference internal" href="paramagpy.protein.CustomStructure.parse.html#paramagpy.protein.CustomStructure.parse" title="paramagpy.protein.CustomStructure.parse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">paramagpy.protein.CustomStructure.parse()</span></code></a>.</li>
+<li><strong>params</strong> (<em>list of str</em>) – the parameters to be fit.
+For example [‘x’,’y’,’z’,’ax’,’rh’,’a’,’b’,’g’]</li>
+<li><strong>ensembleAverage</strong> (<em>bool</em><em>, </em><em>optional</em>) – when False, each model of the structure is fit independently.
 The parameters for each fitted tensor are then averaged before
 returning the final averaged tensor.
 When True, the structure models are treated as an ensemble and
@@ -75,21 +78,23 @@ ensemble averaging of calculated PCS/PRE/RDC/CCR values is
 conducted at all stages of fitting to fit a single tensor to all
 models simultaneously. The ‘idx’ column of the dataArray
 determines the ensemble averaging behaviour with common indices
-for atoms between models resulting in their summation.</p></li>
-<li><p><strong>progress</strong> (<em>object</em><em>, </em><em>optional</em>) – to keep track of the calculation, progress.set(x) is called each
-iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</p></li>
+for atoms between models resulting in their summation.</li>
+<li><strong>progress</strong> (<em>object</em><em>, </em><em>optional</em>) – to keep track of the calculation, progress.set(x) is called each
+iteration and varies from 0.0 -&gt; 1.0 when the calculation is complete.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>fitMetals</strong> (<em>list of metals</em>) – a list of the fitted tensors.</p></li>
-<li><p><strong>dataArrays</strong> (<em>list of dataArray</em>) – each dataArray is copy of the original dataArray with
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fitMetals</strong> (<em>list of metals</em>) – a list of the fitted tensors.</li>
+<li><strong>dataArrays</strong> (<em>list of dataArray</em>) – each dataArray is copy of the original dataArray with
 the ‘cal’ column populated with back-calculated values from the
-fitted tensor.</p></li>
+fitted tensor.</li>
 </ul>
 </p>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -114,11 +119,13 @@ fitted tensor.</p></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -149,7 +156,7 @@ fitted tensor.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>
