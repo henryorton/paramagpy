@@ -7,6 +7,7 @@ import os, sys, subprocess, shutil
 from pprint import pprint
 from collections import OrderedDict
 
+import paramagpy
 from paramagpy import metal, fit, protein, dataparse
 
 def platform_settings():
@@ -2804,7 +2805,7 @@ for line in tooltips_raw.split('\n'):
 def run():
 	settings = platform_settings()
 	root = tk.Tk()
-	root.title('Paramagpy GUI')
+	root.title('Paramagpy GUI - v {}'.format(paramagpy.__version__))
 
 	if hasattr(sys, '_MEIPASS'):
 		dataDir = sys._MEIPASS
@@ -2829,3 +2830,4 @@ def run():
 
 if __name__ == "__main__":
 	run()
+ 
