@@ -1784,7 +1784,7 @@ class Metal(object):
 	# Methods for plotting isosurfaces #
 	####################################
 
-	def make_mesh(self, density=2, size=40.0):
+	def make_mesh(self, density=2, size=40.0, origin=None):
 		"""
 		Construct a 3D grid of points to map an isosurface
 
@@ -1812,14 +1812,17 @@ class Metal(object):
 			the number of points along each dimension
 
 		"""
-		origin = np.asarray(density * (self.position*1E10 - size/2.0), 
-			dtype=int)
-		low = origin / float(density)
+		if origin is None:
+			origin = self.position
+
+		grid_origin = np.asarray(density * (self.position*1E10 - size/2.0), 
+				dtype=int)
+		low = grid_origin / float(density)
 		high = low + size
 		points = np.array([int(density*size)]*3) + 1
 		domains = [1E-10*np.linspace(*i) for i in zip(low, high, points)]
 		mesh = np.array(np.meshgrid(*domains, indexing='ij')).T
-		return mesh, (origin, low, high, points)
+		return mesh, (grid_origin, low, high, points)
 
 	def pcs_mesh(self, mesh):
 		"""

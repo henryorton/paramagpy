@@ -1130,6 +1130,8 @@ def fit_error_bootstrap(fittingFunction, iterations, fraction, **kwargs):
 		This could be 'nlr_fit_metal_from_ccr' for example
 	iterations : int
 		the number of iterations for the Monte-Carlo simulation
+	fraction : float
+		the proportion of data to be samples. Must be between 0 and 1.0
 	kwargs : dict
 		all key-word arguments will be bundled into this variable and
 		parsed to the fittingFunction.
@@ -1269,6 +1271,142 @@ def ensemble_average(dataArray):
 		row['cal'] = np.mean(d['cal'])
 
 	return data
+
+
+
+# def nlr_fit_atom_from_pcs(metals, dataArrays, densityMap=False):
+
+# 	data = {}
+# 	for metal, dataArray in zip(metals, dataArrays):
+# 		for row in dataArray:
+# 			if row['idx'] not in data:
+# 				data[row['idx']] = []
+# 			data[row['idx']].append((metal, row))
+
+# 	opt = {}
+# 	for idx in data:
+# 		def cost(position):
+# 			ssq = 0
+# 			for metal, row in data[idx]:
+# 				pcs = metal.pcs(position * 1E-10)
+# 				ssq += (pcs - row['exp'])**2
+# 			return ssq
+
+# 		atom = data[idx][0][1]['atm']
+# 		opt[atom] = fmin_bfgs(cost, np.array([0.,0.,0.]), disp=False) * 1E-10
+
+# 	return opt
+
+
+
+
+class DensityMap(object):
+	CCP4_HEADER_DTYPE = np.dtype([
+	    ('np', 'i4', 3),       # Points in each axis
+	    ('mode', 'i4'),        # 2 for 32-bit float
+	    ('ns', 'i4', 3),       # Start number for each axis
+	    ('ni', 'i4', 3),       # Number of intervals along each axis
+	    ('dim', 'f4', 3),      # Cell dimensions in Angstrom
+	    ('ang', 'f4', 3),      # Cell angles in degrees
+	    ('map', 'i4', 3),      # Axis mappings, 1=x,2=y,3=z
+	    ('amin', 'f4'),        # Minimum density value
+	    ('amax', 'f4'),        # Maximum density value
+	    ('amean', 'f4'),       # Mean density value
+	    ('ispg', 'i4'),        # space group number
+	    ('padd', 'V932')       # additional headers
+	])
+	def __init__(self, origin, size, density):
+		"""
+		Make a density map over a cubic grid of coordinates
+
+		Parameters
+		----------
+		origin : np.ndarray of floats
+			[x,y,z] position in metres defining the centre of the cubic grid
+		size : float
+			the grid edge size in metres
+		density : float
+			grid density defined as points per angstrom
+		"""
+
+		origin_vertex = np.asarray(
+			density * (origin*1E10 - size/2.0), dtype=int)
+		low = origin_vertex / float(density)
+		high = low + size
+		points = np.array([int(density*size)]*3) + 1
+		domains = [1E-10*np.linspace(*i) for i in zip(low, high, points)]
+		
+		self.shape = points
+		self.mesh = np.array(np.meshgrid(*domains, indexing='ij')).T
+		self.positions = self.mesh.reshape(np.prod(points),3)
+		self.density = np.zeros(np.prod(points), dtype=np.float32)
+
+		h = np.zeros(1, dtype=self.CCP4_HEADER_DTYPE)
+		h['np'] = points
+		h['mode'] = 2
+		h['ns'] = origin_vertex
+		h['ni'] = points - 1
+		h['dim'] = high - low
+		h['ang'] = [90.0, 90.0, 90.0]
+		h['map'] = [1, 2, 3]
+		h['ispg'] = 1
+
+		self.header = h
+
+	# def set_density(self, values):
+	# 	self.density = np.asarray(values.reshape(self.shape), np.float32)
+
+	def minpos(self):
+		return self.positions[np.argmin(self.density)]
+
+	def write(self, fileName):
+		self.header['amin'] = np.min(self.density)
+		self.header['amax'] = np.max(self.density)
+		self.header['amean'] = np.mean(self.density)
+		with open(fileName, 'wb') as f:
+			f.write(self.header.tobytes())
+			f.write(self.density.reshape(*self.shape).tobytes())
+
+	def make_pymol_script(self, name, densityFileName, contourLevels, opts=None):
+		mapname = "{}_map".format(name)
+		s = "# PyMOL script for loading density map from paramagpy\n"
+		s += "import os, pymol\n"
+		s += "curdir = os.path.dirname(pymol.__script__)\n"
+		s += "set normalize_ccp4_maps, off\n"
+		s += "densitymap = os.path.join(curdir, '{}')\n".format(densityFileName)
+		s += "cmd.load(densitymap, '{}', 1, 'ccp4')\n".format(mapname)
+		for i, isoval in enumerate(contourLevels):
+			contourname = "{0:}({1:+})".format(mapname, isoval)
+			s += "isosurface {}, {}, {}\n".format(contourname, mapname, isoval)
+
+			if opts is not None:
+				for opt in opts[i]:
+					s += opt.format(contourname) + '\n'
+
+		return s
+
+
+def gridsearch_fit_atom_from_pcs(metals, dataArrays, mapSize=10.0, mapDensity=1.0):
+
+	data = {}
+	for metal, dataArray in zip(metals, dataArrays):
+		for row in dataArray:
+			if row['idx'] not in data:
+				data[row['idx']] = []
+			data[row['idx']].append((metal, row['atm'], row['exp']))
+
+	out = {}
+	for idx in data:
+		dm = DensityMap(data[idx][0][1].position, mapSize, mapDensity)
+		for metal, atom, exp in data[idx]:
+			dm.density += (metal.fast_pcs(dm.positions) - exp)**2
+		dm.density = (dm.density / len(data[idx]))**0.5 
+		out[atom] = dm
+
+	return out
+
+
+
 
 
 
