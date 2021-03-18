@@ -520,6 +520,7 @@ class PyMolScript(object):
 			name=name, *position)
 		self += "show spheres, {name}".format(name=name)
 		self += "color {colour}, {name}".format(colour=colour, name=name)
+		self += "set sphere_scale, {size}, {name}".format(size=size, name=name)
 		if label:
 			self += "label {name}, '{name}'".format(name=name)
 

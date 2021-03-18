@@ -1324,11 +1324,10 @@ class DensityMap(object):
 		origin : np.ndarray of floats
 			[x,y,z] position in metres defining the centre of the cubic grid
 		size : float
-			the grid edge size in metres
+			the grid edge size in Angstrom
 		density : float
 			grid density defined as points per angstrom
 		"""
-
 		origin_vertex = np.asarray(
 			density * (origin*1E10 - size/2.0), dtype=int)
 		low = origin_vertex / float(density)
@@ -1339,7 +1338,7 @@ class DensityMap(object):
 		self.shape = points
 		self.mesh = np.array(np.meshgrid(*domains, indexing='ij')).T
 		self.positions = self.mesh.reshape(np.prod(points),3)
-		self.density = np.zeros(np.prod(points), dtype=np.float32)
+		self.density = np.zeros(np.prod(points), dtype=np.float64)
 
 		h = np.zeros(1, dtype=self.CCP4_HEADER_DTYPE)
 		h['np'] = points
@@ -1359,53 +1358,165 @@ class DensityMap(object):
 	def minpos(self):
 		return self.positions[np.argmin(self.density)]
 
+	def boundary_min(self):
+		minarg = np.argmin(self.density.reshape(*self.shape))
+		idx = np.array(np.unravel_index(minarg, self.shape))
+		for i, s in zip(idx, self.shape):
+			if i==0 or i==(s-1):
+				return True
+		return False
+
+	def get_positions_below_density(self, cutoffValue):
+		return self.positions[np.where(self.density < cutoffValue)]
+
 	def write(self, fileName):
 		self.header['amin'] = np.min(self.density)
 		self.header['amax'] = np.max(self.density)
 		self.header['amean'] = np.mean(self.density)
 		with open(fileName, 'wb') as f:
 			f.write(self.header.tobytes())
-			f.write(self.density.reshape(*self.shape).tobytes())
+			f.write(np.asarray(self.density, dtype=np.float32).tobytes())
+			# f.write(self.density.reshape(*self.shape).tobytes())
 
-	def make_pymol_script(self, name, densityFileName, contourLevels, opts=None):
-		mapname = "{}_map".format(name)
-		s = "# PyMOL script for loading density map from paramagpy\n"
-		s += "import os, pymol\n"
-		s += "curdir = os.path.dirname(pymol.__script__)\n"
-		s += "set normalize_ccp4_maps, off\n"
-		s += "densitymap = os.path.join(curdir, '{}')\n".format(densityFileName)
-		s += "cmd.load(densitymap, '{}', 1, 'ccp4')\n".format(mapname)
-		for i, isoval in enumerate(contourLevels):
-			contourname = "{0:}({1:+})".format(mapname, isoval)
-			s += "isosurface {}, {}, {}\n".format(contourname, mapname, isoval)
+	# def make_pymol_script(self, name, densityFileName, contourLevels, opts=None):
+	# 	mapname = "{}_map".format(name)
+	# 	s = "# PyMOL script for loading density map from paramagpy\n"
+	# 	s += "import os, pymol\n"
+	# 	s += "curdir = os.path.dirname(pymol.__script__)\n"
+	# 	s += "set normalize_ccp4_maps, off\n"
+	# 	s += "densitymap = os.path.join(curdir, '{}')\n".format(densityFileName)
+	# 	s += "cmd.load(densitymap, '{}', 1, 'ccp4')\n".format(mapname)
+	# 	for i, isoval in enumerate(contourLevels):
+	# 		contourname = "{0:}({1:+})".format(mapname, isoval)
+	# 		s += "isosurface {}, {}, {}\n".format(contourname, mapname, isoval)
 
-			if opts is not None:
-				for opt in opts[i]:
-					s += opt.format(contourname) + '\n'
+	# 		if opts is not None:
+	# 			for opt in opts[i]:
+	# 				s += opt.format(contourname) + '\n'
 
-		return s
+	# 	return s
 
+
+from pprint import pprint
 
 def gridsearch_fit_atom_from_pcs(metals, dataArrays, mapSize=10.0, mapDensity=1.0):
 
 	data = {}
 	for metal, dataArray in zip(metals, dataArrays):
 		for row in dataArray:
-			if row['idx'] not in data:
-				data[row['idx']] = []
-			data[row['idx']].append((metal, row['atm'], row['exp']))
+			if row['atm'] not in data:
+				data[row['atm']] = []
+			data[row['atm']].append((metal, row['exp']))
 
 	out = {}
-	for idx in data:
-		dm = DensityMap(data[idx][0][1].position, mapSize, mapDensity)
-		for metal, atom, exp in data[idx]:
-			dm.density += (metal.fast_pcs(dm.positions) - exp)**2
-		dm.density = (dm.density / len(data[idx]))**0.5 
+	for atom in data:
+		dm = DensityMap(atom.position, mapSize, mapDensity)
+		for metal, exp in data[atom]:
+			dm.density += (metal.fast_pcs(dm.positions) - exp)**2 #* (1E10*np.linalg.norm(dm.positions - metal.position, axis=1))**5
+
+		dm.density = (dm.density / len(data[atom]))**0.5 
+
+		if dm.boundary_min():
+			warnings.warn("Atom {} has minimum position solved on grid boundary.".format(atom))
+
 		out[atom] = dm
 
 	return out
 
 
+def gridsearch_fit_atom_restrain_distance(densityMapA, densityMapB, distUpper, distLower, cutoffValue):
+	idxCutoffA = np.where(densityMapA.density < cutoffValue)
+	idxCutoffB = np.where(densityMapB.density < cutoffValue)
+	posA = densityMapA.positions[idxCutoffA]
+	posB = densityMapB.positions[idxCutoffB]
+	dist = np.linalg.norm(posA[:,None] - posB, axis=2)
+	idxA, idxB = np.where(np.logical_and(dist < distUpper, dist > distLower))
+	idxSort = np.argsort(densityMapA.density[idxA] + densityMapB.density[idxB])
+	return posA[idxA[idxSort]], posB[idxB[idxSort]]
+
+
+
+
+# args = {
+# 	"origin": np.array([0.,0.,0.]),
+# 	"size": 3,
+# 	"density": 1.0,
+# }
+# radius_outer = 5.0E-10
+# radius_inner = 4.5E-10
+
+# dm = DensityMap(**args)
+
+# dm.density[:] = 10
+# dm.density[3] = 1
+# dm.density[4] = 1
+# dm.density[7] = 1
+
+# p = dm.positions
+# print(p.shape)
+# diff = p[:,None] - p
+# print(diff.shape)
+# dist = np.linalg.norm(diff, axis=2)
+# print(dist.shape)
+
+# x = np.arange(10)
+# y = np.arange(5)
+
+# print(x)
+# print(y)
+
+# i = x[:,None]
+# diff = x[:,None] - y
+# logic = np.logical_and((2 < diff), (diff < 5))
+# n = np.where(logic)
+# print(logic)
+# print(n)
+
+
+
+
+
+# import matplotlib.pyplot as plt
+# from mpl_toolkits.mplot3d import Axes3D
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+
+
+# args = {
+# 	"origin": np.array([0.,0.,0.]),
+# 	"size": 11,
+# 	"density": 1.0,
+# }
+# radius_outer = 5.0E-10
+# radius_inner = 4.5E-10
+
+# dm = DensityMap(**args)
+
+# dm.density[:] = 10
+# dm.density[3] = 1
+# dm.density[4] = 1
+# dm.density[7] = 1
+
+
+
+# s = np.linspace(-radius, radius, 2*points-1)
+# mgrid = np.array(np.meshgrid(s, s, s, indexing='ij')).T.reshape(len(s)**3,3)
+# norms = np.linalg.norm(mgrid, axis=1)
+# sphere_idx = np.where(norms<=radius)
+# return mgrid[sphere_idx] + origin
+
+
+
+# norms = np.linalg.norm(dm.positions, axis=1)
+# idx_outer = np.where(norms<=radius_outer)
+# idx_inner = np.where(norms<=radius_inner)
+
+# idx = np.setdiff1d(idx_outer[0], idx_inner[0], assume_unique=True)
+
+
+# ax.scatter(*zip(*dm.positions[idx]))
+# # 
+# plt.show()
 
 
 
@@ -1414,9 +1525,18 @@ def gridsearch_fit_atom_from_pcs(metals, dataArrays, mapSize=10.0, mapDensity=1.
 
 
 
+# x = np.arange(10)
+# y = np.arange(5)
+
+# print(x)
+# print(y)
+
+# i = x[:,None]
+# diff = x[:,None] - y
+# logic = np.logical_and((2 < diff), (diff < 5))
+# n = np.where(logic)
+# print(logic)
+# print(n)
 
 
-
-
-
-
+# print(x[n[0]])
