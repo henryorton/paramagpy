@@ -1322,14 +1322,14 @@ class DensityMap(object):
 		Parameters
 		----------
 		origin : np.ndarray of floats
-			[x,y,z] position in metres defining the centre of the cubic grid
+			[x,y,z] position in Angstrom defining the centre of the cubic grid
 		size : float
 			the grid edge size in Angstrom
 		density : float
 			grid density defined as points per angstrom
 		"""
 		origin_vertex = np.asarray(
-			density * (origin*1E10 - size/2.0), dtype=int)
+			density * (origin - size/2.0), dtype=int)
 		low = origin_vertex / float(density)
 		high = low + size
 		points = np.array([int(density*size)]*3) + 1
@@ -1352,10 +1352,15 @@ class DensityMap(object):
 
 		self.header = h
 
-	# def set_density(self, values):
-	# 	self.density = np.asarray(values.reshape(self.shape), np.float32)
-
 	def minpos(self):
+		"""
+		Fetch the grid point position with minimum density value
+
+		Returs
+		----------
+		position : np.ndarray
+			[x,y,z] position in metres of the point
+		"""
 		return self.positions[np.argmin(self.density)]
 
 	def boundary_min(self):
@@ -1410,9 +1415,9 @@ def gridsearch_fit_atom_from_pcs(metals, dataArrays, mapSize=10.0, mapDensity=1.
 
 	out = {}
 	for atom in data:
-		dm = DensityMap(atom.position, mapSize, mapDensity)
+		dm = DensityMap(atom.position*1E10, mapSize, mapDensity)
 		for metal, exp in data[atom]:
-			dm.density += (metal.fast_pcs(dm.positions) - exp)**2 #* (1E10*np.linalg.norm(dm.positions - metal.position, axis=1))**5
+			dm.density += (metal.fast_pcs(dm.positions) - exp)**2# * (1E10*np.linalg.norm(dm.positions - metal.position, axis=1))**3
 
 		dm.density = (dm.density / len(data[atom]))**0.5 
 
@@ -1424,7 +1429,18 @@ def gridsearch_fit_atom_from_pcs(metals, dataArrays, mapSize=10.0, mapDensity=1.
 	return out
 
 
-def gridsearch_fit_atom_restrain_distance(densityMapA, densityMapB, distUpper, distLower, cutoffValue):
+def gridsearch_fit_atom_restrain_distance(densityMapA, densityMapB, distUpper, distLower, number):
+	idxSortA = np.argsort(densityMapA.density)[0:number]
+	idxSortB = np.argsort(densityMapB.density)[0:number]
+	posA = densityMapA.positions[idxSortA]
+	posB = densityMapB.positions[idxSortB]
+	dist = np.linalg.norm(posA[:,None] - posB, axis=2)
+	idxA, idxB = np.where(np.logical_and(dist < distUpper, dist > distLower))
+	idxSort = np.argsort(densityMapA.density[idxA] + densityMapB.density[idxB])
+	return posA[idxA[idxSort]], posB[idxB[idxSort]]
+
+
+def gridsearch_fit_atom_restrain_distance_cutoff(densityMapA, densityMapB, distUpper, distLower, cutoffValue):
 	idxCutoffA = np.where(densityMapA.density < cutoffValue)
 	idxCutoffB = np.where(densityMapB.density < cutoffValue)
 	posA = densityMapA.positions[idxCutoffA]
@@ -1433,6 +1449,47 @@ def gridsearch_fit_atom_restrain_distance(densityMapA, densityMapB, distUpper, d
 	idxA, idxB = np.where(np.logical_and(dist < distUpper, dist > distLower))
 	idxSort = np.argsort(densityMapA.density[idxA] + densityMapB.density[idxB])
 	return posA[idxA[idxSort]], posB[idxB[idxSort]]
+
+
+
+def pcs_orthogonality(metals, position):
+	"""
+	Calculate the orthogonality of PCS gradient vectors at a given position
+	"""
+	# grads = []
+	# for metal in metals:
+		# grad = metal.pcs_gradient(position)
+		# print(grad/np.linalg.norm(grad))
+		# grads.append(grad)
+	# grads = np.array(grads)
+
+	grads = np.array([metal.pcs_gradient(position) for metal in metals])
+	norms = grads / np.linalg.norm(grads, axis=1)[:,None]
+	dots = norms.dot(norms.T)
+	mask = ~np.eye(dots.shape[0], dtype=bool)
+	score = np.sum(np.abs(dots[mask])) / (len(metals)**2 - len(metals))
+	return score
+
+
+
+
+
+def pcs_orthogonality_cross(metals, position):
+	grads = np.array([metal.pcs_gradient(position) for metal in metals])*1E-10
+
+	vals = []
+	for g1 in grads:
+		for g2 in grads:
+			cross = np.cross(g1, g2)
+			vals.append(np.linalg.norm(cross)**0.5)
+
+	score = np.sum(vals) / (len(metals)**2 - len(metals))
+	return score
+
+
+
+
+
 
 
 

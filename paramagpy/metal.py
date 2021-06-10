@@ -184,6 +184,7 @@ def anisotropy_to_eigenvalues(axial_rhombic):
 	dx =  rhombic/2. - axial/3.
 	dy = -rhombic/2. - axial/3.
 	dz = (axial*2.)/3.
+	# return np.array(sorted([dx,dy,dz], key = lambda v: abs(v)))
 	return np.array([dx,dy,dz])
 
 
@@ -259,7 +260,7 @@ class Metal(object):
 		('Pm', ( 4./1., 3./5. , 0.0      )),
 		('Sm', ( 5./2., 2./7. , 0.074E-12)),
 		('Eu', ( 2./1., 3./2. , 0.015E-12)),
-		('Gd', ( 7./2., 2./1. , 0.0      )),
+		('Gd', ( 7./2., 2./1. , 1E-7    )),
 		('Tb', ( 6./1., 3./2. , 0.251E-12)),
 		('Dy', (15./2., 4./3. , 0.240E-12)),
 		('Ho', ( 8./1., 5./4. , 0.209E-12)),
@@ -270,20 +271,20 @@ class Metal(object):
 
 	# Template anisotropies [axial, rhombic] from Bertini
 	lanth_axrh = OrderedDict([
-		('Zero',( 0.0,  0.0)),
-		('Ce', (  2.1,  0.7)),
-		('Pr', (  3.4,  2.1)),
-		('Nd', (  1.7,  0.4)),
-		('Pm', (  0.0,  0.0)),
-		('Sm', (  0.2,  0.1)),
-		('Eu', (  2.4,  1.5)),
-		('Gd', (  0.0,  0.0)),
-		('Tb', ( 42.1, 11.2)),
-		('Dy', ( 34.7, 20.3)),
-		('Ho', ( 18.5,  5.8)),
-		('Er', (-11.6, -8.6)),
-		('Tm', (-21.9,-20.1)),
-		('Yb', ( -8.3, -5.8))]
+		('Zero',( 0.0,   0.0 )),
+		('Ce', (  2.08,  0.71)),
+		('Pr', (  3.40,  2.11)),
+		('Nd', (  1.74,  0.46)),
+		('Pm', (  0.0,   0.0 )),
+		('Sm', (  0.19,  0.08)),
+		('Eu', ( -2.34, -1.63)),
+		('Gd', (  0.0,   0.0 )),
+		('Tb', ( 42.1,  11.2 )),
+		('Dy', ( 34.7,  20.3 )),
+		('Ho', ( 18.5,   5.79)),
+		('Er', (-11.6,  -8.58)),
+		('Tm', (-21.9,  -20.1)),
+		('Yb', ( -8.26, -5.84))]
 	)
 
 	fundamental_attributes = (
@@ -703,7 +704,7 @@ class Metal(object):
 		eigenvals, eigenvecs = np.linalg.eigh(newTensor)
 		eigs = zip(eigenvals, np.array(eigenvecs).T)
 		iso = np.sum(eigenvals)/3.
-		eigenvals, (x, y, z) = zip(*sorted(eigs, key=lambda x: abs(x[0]-iso)))
+		eigenvals, (x, y, z) = zip(*sorted(eigs, key=lambda v: abs(v[0]-iso)))
 		eigenvecs = x * z.dot(np.cross(x,y)), y, z
 		rotationMatrix = np.vstack(eigenvecs).T
 		eulers = unique_eulers(matrix_to_euler(rotationMatrix))
@@ -1058,6 +1059,37 @@ class Metal(object):
 		"""
 		racs = 2*np.einsum('jk,ikl->ijl',self.tensor_alignment,csaarray)
 		return 1E6*racs.trace(axis1=1,axis2=2)/3.
+
+	def pcs_gradient(self, position):
+		"""
+		Calculate the gradient of the psuedo-contact shift 
+		at the given postition.
+		This equation uses analytic partial derivatives calculated in 
+		Mathematica.
+
+		Parameters
+		----------
+		position : array floats
+			the position (x, y, z) in metres
+
+		Returns
+		-------
+		pcs : array of floats
+			the [x,y,z] gradient vector for the pseudo-contact shift 
+			in parts-per-million (ppm) per metre
+		"""
+		pos = position - self.position
+		r = np.linalg.norm(pos)
+		x, y, z = pos
+		xx, yy, xy, xz, yz = self.upper_triang
+		dnt = (x**2-z**2)*xx + (y**2-z**2)*yy + 2*x*y*xy + 2*x*z*xz + 2*y*z*yz
+		dxt = 2*x*xx + 2*y*xy + 2*z*xz
+		dx = dxt / (4*np.pi*r**5) - 5*x*dnt / (4*np.pi*r**7)
+		dyt = 2*x*xy + 2*y*yy + 2*z*yz
+		dy = dyt / (4*np.pi*r**5) - 5*y*dnt / (4*np.pi*r**7)
+		dzt = -2*z*xx - 2*z*yy + 2*x*xz +2*y*yz
+		dz = dzt / (4*np.pi*r**5) - 5*z*dnt / (4*np.pi*r**7)
+		return 1E6 * np.array([dx,dy,dz])
 
 	################################
 	# Methods for PRE calculations #
@@ -1784,186 +1816,186 @@ class Metal(object):
 	# Methods for plotting isosurfaces #
 	####################################
 
-	def make_mesh(self, density=2, size=40.0, origin=None):
-		"""
-		Construct a 3D grid of points to map an isosurface
+	# def make_mesh(self, density=2, size=40.0, origin=None):
+	# 	"""
+	# 	Construct a 3D grid of points to map an isosurface
 
-		This is contained in a cube
+	# 	This is contained in a cube
 
-		Parameters
-		----------
-		density : int (optional)
-			the points per Angstrom in the grid
-		size : float (optional)
-			the length of one edge of the cube
+	# 	Parameters
+	# 	----------
+	# 	density : int (optional)
+	# 		the points per Angstrom in the grid
+	# 	size : float (optional)
+	# 		the length of one edge of the cube
 
-		Returns
-		-------
-		mesh : cubic grid array
-			This has shape (n,n,n,3) where n is the number of points
-			along one edge of the grid. Units are meters
-		origin : array of floats, 
-			the (x,y,z) location of mesh vertex
-		low : array of ints, the integer location of the first 
-			point in each dimension
-		high : array of ints, the integer location of the last 
-			point in each dimension
-		points : array of ints, 
-			the number of points along each dimension
+	# 	Returns
+	# 	-------
+	# 	mesh : cubic grid array
+	# 		This has shape (n,n,n,3) where n is the number of points
+	# 		along one edge of the grid. Units are meters
+	# 	origin : array of floats, 
+	# 		the (x,y,z) location of mesh vertex
+	# 	low : array of ints, the integer location of the first 
+	# 		point in each dimension
+	# 	high : array of ints, the integer location of the last 
+	# 		point in each dimension
+	# 	points : array of ints, 
+	# 		the number of points along each dimension
 
-		"""
-		if origin is None:
-			origin = self.position
+	# 	"""
+	# 	if origin is None:
+	# 		origin = self.position
 
-		grid_origin = np.asarray(density * (self.position*1E10 - size/2.0), 
-				dtype=int)
-		low = grid_origin / float(density)
-		high = low + size
-		points = np.array([int(density*size)]*3) + 1
-		domains = [1E-10*np.linspace(*i) for i in zip(low, high, points)]
-		mesh = np.array(np.meshgrid(*domains, indexing='ij')).T
-		return mesh, (grid_origin, low, high, points)
+	# 	grid_origin = np.asarray(density * (self.position*1E10 - size/2.0), 
+	# 			dtype=int)
+	# 	low = grid_origin / float(density)
+	# 	high = low + size
+	# 	points = np.array([int(density*size)]*3) + 1
+	# 	domains = [1E-10*np.linspace(*i) for i in zip(low, high, points)]
+	# 	mesh = np.array(np.meshgrid(*domains, indexing='ij')).T
+	# 	return mesh, (grid_origin, low, high, points)
 
-	def pcs_mesh(self, mesh):
-		"""
-		Calculate a PCS value at each location of cubic grid of points
+	# def pcs_mesh(self, mesh):
+	# 	"""
+	# 	Calculate a PCS value at each location of cubic grid of points
 
-		Parameters
-		----------
-		mesh : array with shape (n,n,n,3)
-			a cubic grid as generated by the method <make_mesh>
+	# 	Parameters
+	# 	----------
+	# 	mesh : array with shape (n,n,n,3)
+	# 		a cubic grid as generated by the method <make_mesh>
 
-		Returns
-		-------
-		pcs_mesh : array with shape (n,n,n,1)
-			The same grid shape, with PCS values at the respective locations
-		"""
-		og_shape = mesh.shape[:3]
-		pcs_mesh = self.fast_pcs(mesh.reshape(np.prod(og_shape),3))
-		return pcs_mesh.reshape(*og_shape)
+	# 	Returns
+	# 	-------
+	# 	pcs_mesh : array with shape (n,n,n,1)
+	# 		The same grid shape, with PCS values at the respective locations
+	# 	"""
+	# 	og_shape = mesh.shape[:3]
+	# 	pcs_mesh = self.fast_pcs(mesh.reshape(np.prod(og_shape),3))
+	# 	return pcs_mesh.reshape(*og_shape)
 
-	def pre_mesh(self, mesh, gamma=2*np.pi*42.576E6, rtype='r2', 
-		dsa=True, sbm=True):
-		"""
-		Calculate a PRE value at each location of cubic grid of points
+	# def pre_mesh(self, mesh, gamma=2*np.pi*42.576E6, rtype='r2', 
+	# 	dsa=True, sbm=True):
+	# 	"""
+	# 	Calculate a PRE value at each location of cubic grid of points
 
-		Parameters
-		----------
-		mesh : array with shape (n,n,n,3)
-			a cubic grid as generated by the method <make_mesh>
-		gamma : float
-			the gyromagnetic ratio of the spin
-		rtype : str
-			either 'r1' or 'r2', the relaxation type
-		dsa : bool (optional)
-			when True (defualt), DSA or Curie spin relaxation is included
-		sbm : bool (optional)
-			when True (defualt), SBM spin relaxation is included
+	# 	Parameters
+	# 	----------
+	# 	mesh : array with shape (n,n,n,3)
+	# 		a cubic grid as generated by the method <make_mesh>
+	# 	gamma : float
+	# 		the gyromagnetic ratio of the spin
+	# 	rtype : str
+	# 		either 'r1' or 'r2', the relaxation type
+	# 	dsa : bool (optional)
+	# 		when True (defualt), DSA or Curie spin relaxation is included
+	# 	sbm : bool (optional)
+	# 		when True (defualt), SBM spin relaxation is included
 
-		Returns
-		-------
-		pre_mesh : array with shape (n,n,n,1)
-			The same grid shape, with PRE values at the respective locations
-		"""
-		og_shape = mesh.shape[:3]
-		flat = mesh.reshape(np.prod(og_shape),3)
-		gamarr = np.ones(len(flat))*gamma
-		pre_mesh = self.fast_pre(flat, gamarr, rtype=rtype, dsa=dsa, sbm=sbm)
-		return pre_mesh.reshape(*og_shape)
+	# 	Returns
+	# 	-------
+	# 	pre_mesh : array with shape (n,n,n,1)
+	# 		The same grid shape, with PRE values at the respective locations
+	# 	"""
+	# 	og_shape = mesh.shape[:3]
+	# 	flat = mesh.reshape(np.prod(og_shape),3)
+	# 	gamarr = np.ones(len(flat))*gamma
+	# 	pre_mesh = self.fast_pre(flat, gamarr, rtype=rtype, dsa=dsa, sbm=sbm)
+	# 	return pre_mesh.reshape(*og_shape)
 
-	def write_pymol_script(self, isoval=1.0, surfaceName='isomap', 
-		scriptName='isomap.pml', meshName='./isomap.pml.ccp4', pdbFile=None):
-		"""
-		Write a PyMol script to file which allows loading of the 
-		isosurface file
+	# def write_pymol_script(self, isoval=1.0, surfaceName='isomap', 
+	# 	scriptName='isomap.pml', meshName='./isomap.pml.ccp4', pdbFile=None):
+	# 	"""
+	# 	Write a PyMol script to file which allows loading of the 
+	# 	isosurface file
 
-		Parameters
-		----------
-		isoval : float (optional)
-			the contour level of the isosurface
-		surfaceName : str (optional)
-			the name of the isosurface file within PyMol
-		scriptName : str (optional)
-			the name of the PyMol script to load the tensor isosurface
-		meshName : str (optional)
-			the name of the binary isosurface file
-		pdbFile : str (optional)
-			if not <None>, the file name of the PDB file to be loaded with
-			the isosurface.
-		"""
-		posname = "pos_{}".format(surfaceName)
-		negname = "neg_{}".format(surfaceName)
-		oriname = "ori_{}".format(surfaceName)
-		s = "# PyMOL macro for loading tensor isosurface from paramagpy\n"
-		s += self.info()+'\n'
-		s += "import os, pymol\n"
-		s += "curdir = os.path.dirname(pymol.__script__)\n"
-		s += "set normalize_ccp4_maps, off\n"
-		s += "meshfile = os.path.join(curdir, '{}')\n".format(meshName)
-		s += "cmd.load(meshfile, 'isomap', 1, 'ccp4')\n"
-		s += "isosurface {}, isomap, {}\n".format(posname,isoval)
-		s += "isosurface {}, isomap, {}\n".format(negname,-isoval)
-		s += "set transparency, 0.5, {}\n".format(posname)
-		s += "set transparency, 0.5, {}\n".format(negname)
-		s += "set surface_color, blue, {}\n".format(posname)
-		s += "set surface_color, red, {}\n".format(negname)
-		s += "pseudoatom {}, pos={}\n".format(oriname,list(self.position*1E10))
-		s += "show spheres, {}\n".format(oriname)
-		s += "color pink, {}\n".format(oriname)
-		if pdbFile:
-			protName = ntpath.basename(pdbFile).replace('.pdb','')
-			s += "cmd.load(os.path.join(curdir, '{}'),'{}')\n".format(
-				pdbFile, protName)
-			s += "show_as cartoon, {}\n".format(protName)
-		with open(scriptName, 'w') as o:
-			o.write(s)
-			print("{} script written".format(scriptName))
+	# 	Parameters
+	# 	----------
+	# 	isoval : float (optional)
+	# 		the contour level of the isosurface
+	# 	surfaceName : str (optional)
+	# 		the name of the isosurface file within PyMol
+	# 	scriptName : str (optional)
+	# 		the name of the PyMol script to load the tensor isosurface
+	# 	meshName : str (optional)
+	# 		the name of the binary isosurface file
+	# 	pdbFile : str (optional)
+	# 		if not <None>, the file name of the PDB file to be loaded with
+	# 		the isosurface.
+	# 	"""
+	# 	posname = "pos_{}".format(surfaceName)
+	# 	negname = "neg_{}".format(surfaceName)
+	# 	oriname = "ori_{}".format(surfaceName)
+	# 	s = "# PyMOL macro for loading tensor isosurface from paramagpy\n"
+	# 	s += self.info()+'\n'
+	# 	s += "import os, pymol\n"
+	# 	s += "curdir = os.path.dirname(pymol.__script__)\n"
+	# 	s += "set normalize_ccp4_maps, off\n"
+	# 	s += "meshfile = os.path.join(curdir, '{}')\n".format(meshName)
+	# 	s += "cmd.load(meshfile, 'isomap', 1, 'ccp4')\n"
+	# 	s += "isosurface {}, isomap, {}\n".format(posname,isoval)
+	# 	s += "isosurface {}, isomap, {}\n".format(negname,-isoval)
+	# 	s += "set transparency, 0.5, {}\n".format(posname)
+	# 	s += "set transparency, 0.5, {}\n".format(negname)
+	# 	s += "set surface_color, blue, {}\n".format(posname)
+	# 	s += "set surface_color, red, {}\n".format(negname)
+	# 	s += "pseudoatom {}, pos={}\n".format(oriname,list(self.position*1E10))
+	# 	s += "show spheres, {}\n".format(oriname)
+	# 	s += "color pink, {}\n".format(oriname)
+	# 	if pdbFile:
+	# 		protName = ntpath.basename(pdbFile).replace('.pdb','')
+	# 		s += "cmd.load(os.path.join(curdir, '{}'),'{}')\n".format(
+	# 			pdbFile, protName)
+	# 		s += "show_as cartoon, {}\n".format(protName)
+	# 	with open(scriptName, 'w') as o:
+	# 		o.write(s)
+	# 		print("{} script written".format(scriptName))
 
-	def write_isomap(self, mesh, bounds, fileName='isomap.pml.ccp4'):
-		"""
-		Write a PyMol script to file which allows loading of the 
-		isosurface file
+	# def write_isomap(self, mesh, bounds, fileName='isomap.pml.ccp4'):
+	# 	"""
+	# 	Write a PyMol script to file which allows loading of the 
+	# 	isosurface file
 
-		Parameters
-		----------
-		mesh : 3D scalar np.ndarray of floats
-			the scalar field of PCS or PRE values in a cubic grid
-		bounds : tuple (origin, low, high, points)
-			as generated by :meth:`paramagpy.metal.Metal.make_mesh`
-		fileName : str (optional)
-			the filename of the isosurface file
-		"""
-		mesh = np.asarray(mesh, np.float32)
-		origin, low, high, points = bounds
-		with open(fileName, 'wb') as o:
-			for dim in points:
-				o.write(struct.pack('i', dim)) # number points per dim
-			o.write(struct.pack('i',2)) # mode 2: 32bit float
-			for start in origin:
-				o.write(struct.pack('i', start)) # start point of map
-			for dim in points:
-				intervals = dim - 1
-				o.write(struct.pack('i', intervals)) # number intervals per dim
-			for scale in (high - low):
-				o.write(struct.pack('f', scale)) # cell dim scales
-			for i in range(3):
-				o.write(struct.pack('f', 90.0)) # lattice angles
-			for i in (1,2,3):
-				o.write(struct.pack('i', i)) # axis mappings (fast x->y->z slow)
-			for value in (np.min(mesh), np.max(mesh), np.mean(mesh)):
-				o.write(struct.pack('f', value)) # map min/avg/max values
-			o.write(struct.pack('i',1)) # space group
-			for x in range(24,257):
-				o.write(struct.pack('i',0))  # fill other fields with zero
-			o.write(mesh.tobytes()) # write data
+	# 	Parameters
+	# 	----------
+	# 	mesh : 3D scalar np.ndarray of floats
+	# 		the scalar field of PCS or PRE values in a cubic grid
+	# 	bounds : tuple (origin, low, high, points)
+	# 		as generated by :meth:`paramagpy.metal.Metal.make_mesh`
+	# 	fileName : str (optional)
+	# 		the filename of the isosurface file
+	# 	"""
+	# 	mesh = np.asarray(mesh, np.float32)
+	# 	origin, low, high, points = bounds
+	# 	with open(fileName, 'wb') as o:
+	# 		for dim in points:
+	# 			o.write(struct.pack('i', dim)) # number points per dim
+	# 		o.write(struct.pack('i',2)) # mode 2: 32bit float
+	# 		for start in origin:
+	# 			o.write(struct.pack('i', start)) # start point of map
+	# 		for dim in points:
+	# 			intervals = dim - 1
+	# 			o.write(struct.pack('i', intervals)) # number intervals per dim
+	# 		for scale in (high - low):
+	# 			o.write(struct.pack('f', scale)) # cell dim scales
+	# 		for i in range(3):
+	# 			o.write(struct.pack('f', 90.0)) # lattice angles
+	# 		for i in (1,2,3):
+	# 			o.write(struct.pack('i', i)) # axis mappings (fast x->y->z slow)
+	# 		for value in (np.min(mesh), np.max(mesh), np.mean(mesh)):
+	# 			o.write(struct.pack('f', value)) # map min/avg/max values
+	# 		o.write(struct.pack('i',1)) # space group
+	# 		for x in range(24,257):
+	# 			o.write(struct.pack('i',0))  # fill other fields with zero
+	# 		o.write(mesh.tobytes()) # write data
 
-			print("{} mesh written".format(fileName))
+	# 		print("{} mesh written".format(fileName))
 
-	def isomap(self, protein=None, isoval=1.0, **kwargs):
-		mesh, bounds = self.make_mesh(**kwargs)
-		pcs_mesh = self.pcs_mesh(mesh)
-		self.write_isomap(pcs_mesh, bounds)
-		self.write_pymol_script(isoval=isoval, pdbFile=protein)
+	# def isomap(self, protein=None, isoval=1.0, **kwargs):
+	# 	mesh, bounds = self.make_mesh(**kwargs)
+	# 	pcs_mesh = self.pcs_mesh(mesh)
+	# 	self.write_isomap(pcs_mesh, bounds)
+	# 	self.write_pymol_script(isoval=isoval, pdbFile=protein)
 
 	def save(self, fileName='tensor.txt'):
 		with open(fileName, 'w') as o:
@@ -2022,3 +2054,10 @@ def load_tensor(fileName):
 
 
 
+# for ln in Metal.lanth_axrh:
+# 	print(ln)
+
+# 	axrh = Metal.lanth_axrh[ln]
+# 	eig = anisotropy_to_eigenvalues(axrh)
+# 	print(eig)
+# 	# eigenvalues_to_anisotropy

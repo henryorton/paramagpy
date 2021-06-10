@@ -1,0 +1,244 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      7750,        234]
+NotebookOptionsPosition[      7218,        214]
+NotebookOutlinePosition[      7555,        229]
+CellTagsIndexPosition[      7512,        226]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"r", "=", 
+   RowBox[{"\[Sqrt]", 
+    RowBox[{"(", 
+     RowBox[{
+      SuperscriptBox["x", "2"], "+", 
+      SuperscriptBox["y", "2"], "+", 
+      SuperscriptBox["z", "2"]}], ")"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\[Delta]pcs", "=", 
+   RowBox[{
+    FractionBox["1", 
+     RowBox[{"4", "\[Pi]", " ", 
+      SuperscriptBox["r", "5"]}]], 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        SuperscriptBox["x", "2"], "-", 
+        SuperscriptBox["z", "2"]}], ",", 
+       RowBox[{
+        SuperscriptBox["y", "2"], "-", 
+        SuperscriptBox["z", "2"]}], ",", 
+       RowBox[{"2", "x", " ", "y"}], ",", " ", 
+       RowBox[{"2", "x", " ", "z"}], ",", 
+       RowBox[{"2", "y", " ", "z"}]}], "}"}], ".", 
+     RowBox[{"{", 
+      RowBox[{
+      "\[CapitalDelta]\[Chi]xx", ",", "\[CapitalDelta]\[Chi]yy", ",", 
+       "\[CapitalDelta]\[Chi]xy", ",", "\[CapitalDelta]\[Chi]xz", ",", 
+       "\[CapitalDelta]\[Chi]yz"}], "}"}]}]}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.8284760150729647`*^9, 3.828476171016472*^9}, {
+  3.831510909159175*^9, 
+  3.831510910509709*^9}},ExpressionUUID->"ca121a23-4974-4511-b4af-\
+16e030a979ee"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"D", "[", 
+  RowBox[{"\[Delta]pcs", ",", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "y", ",", "z"}], "}"}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.82847625231666*^9, 3.828476285176152*^9}, {
+  3.828476370595845*^9, 3.828476375380109*^9}, {3.8284841525829487`*^9, 
+  3.828484195456568*^9}},ExpressionUUID->"89639a23-65c9-4635-881e-\
+1fa104a61b0f"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+    FractionBox[
+     RowBox[{
+      RowBox[{"2", " ", "x", " ", "\[CapitalDelta]\[Chi]xx"}], "+", 
+      RowBox[{"2", " ", "y", " ", "\[CapitalDelta]\[Chi]xy"}], "+", 
+      RowBox[{"2", " ", "z", " ", "\[CapitalDelta]\[Chi]xz"}]}], 
+     RowBox[{"4", " ", "\[Pi]", " ", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         SuperscriptBox["x", "2"], "+", 
+         SuperscriptBox["y", "2"], "+", 
+         SuperscriptBox["z", "2"]}], ")"}], 
+       RowBox[{"5", "/", "2"}]]}]], "-", 
+    FractionBox[
+     RowBox[{"5", " ", "x", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["x", "2"], "-", 
+           SuperscriptBox["z", "2"]}], ")"}], " ", 
+         "\[CapitalDelta]\[Chi]xx"}], "+", 
+        RowBox[{"2", " ", "x", " ", "y", " ", "\[CapitalDelta]\[Chi]xy"}], 
+        "+", 
+        RowBox[{"2", " ", "x", " ", "z", " ", "\[CapitalDelta]\[Chi]xz"}], 
+        "+", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["y", "2"], "-", 
+           SuperscriptBox["z", "2"]}], ")"}], " ", 
+         "\[CapitalDelta]\[Chi]yy"}], "+", 
+        RowBox[{"2", " ", "y", " ", "z", " ", "\[CapitalDelta]\[Chi]yz"}]}], 
+       ")"}]}], 
+     RowBox[{"4", " ", "\[Pi]", " ", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         SuperscriptBox["x", "2"], "+", 
+         SuperscriptBox["y", "2"], "+", 
+         SuperscriptBox["z", "2"]}], ")"}], 
+       RowBox[{"7", "/", "2"}]]}]]}], ",", 
+   RowBox[{
+    FractionBox[
+     RowBox[{
+      RowBox[{"2", " ", "x", " ", "\[CapitalDelta]\[Chi]xy"}], "+", 
+      RowBox[{"2", " ", "y", " ", "\[CapitalDelta]\[Chi]yy"}], "+", 
+      RowBox[{"2", " ", "z", " ", "\[CapitalDelta]\[Chi]yz"}]}], 
+     RowBox[{"4", " ", "\[Pi]", " ", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         SuperscriptBox["x", "2"], "+", 
+         SuperscriptBox["y", "2"], "+", 
+         SuperscriptBox["z", "2"]}], ")"}], 
+       RowBox[{"5", "/", "2"}]]}]], "-", 
+    FractionBox[
+     RowBox[{"5", " ", "y", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["x", "2"], "-", 
+           SuperscriptBox["z", "2"]}], ")"}], " ", 
+         "\[CapitalDelta]\[Chi]xx"}], "+", 
+        RowBox[{"2", " ", "x", " ", "y", " ", "\[CapitalDelta]\[Chi]xy"}], 
+        "+", 
+        RowBox[{"2", " ", "x", " ", "z", " ", "\[CapitalDelta]\[Chi]xz"}], 
+        "+", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["y", "2"], "-", 
+           SuperscriptBox["z", "2"]}], ")"}], " ", 
+         "\[CapitalDelta]\[Chi]yy"}], "+", 
+        RowBox[{"2", " ", "y", " ", "z", " ", "\[CapitalDelta]\[Chi]yz"}]}], 
+       ")"}]}], 
+     RowBox[{"4", " ", "\[Pi]", " ", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         SuperscriptBox["x", "2"], "+", 
+         SuperscriptBox["y", "2"], "+", 
+         SuperscriptBox["z", "2"]}], ")"}], 
+       RowBox[{"7", "/", "2"}]]}]]}], ",", 
+   RowBox[{
+    FractionBox[
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", "2"}], " ", "z", " ", "\[CapitalDelta]\[Chi]xx"}], "+", 
+      RowBox[{"2", " ", "x", " ", "\[CapitalDelta]\[Chi]xz"}], "-", 
+      RowBox[{"2", " ", "z", " ", "\[CapitalDelta]\[Chi]yy"}], "+", 
+      RowBox[{"2", " ", "y", " ", "\[CapitalDelta]\[Chi]yz"}]}], 
+     RowBox[{"4", " ", "\[Pi]", " ", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         SuperscriptBox["x", "2"], "+", 
+         SuperscriptBox["y", "2"], "+", 
+         SuperscriptBox["z", "2"]}], ")"}], 
+       RowBox[{"5", "/", "2"}]]}]], "-", 
+    FractionBox[
+     RowBox[{"5", " ", "z", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["x", "2"], "-", 
+           SuperscriptBox["z", "2"]}], ")"}], " ", 
+         "\[CapitalDelta]\[Chi]xx"}], "+", 
+        RowBox[{"2", " ", "x", " ", "y", " ", "\[CapitalDelta]\[Chi]xy"}], 
+        "+", 
+        RowBox[{"2", " ", "x", " ", "z", " ", "\[CapitalDelta]\[Chi]xz"}], 
+        "+", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["y", "2"], "-", 
+           SuperscriptBox["z", "2"]}], ")"}], " ", 
+         "\[CapitalDelta]\[Chi]yy"}], "+", 
+        RowBox[{"2", " ", "y", " ", "z", " ", "\[CapitalDelta]\[Chi]yz"}]}], 
+       ")"}]}], 
+     RowBox[{"4", " ", "\[Pi]", " ", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         SuperscriptBox["x", "2"], "+", 
+         SuperscriptBox["y", "2"], "+", 
+         SuperscriptBox["z", "2"]}], ")"}], 
+       RowBox[{"7", "/", "2"}]]}]]}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.8284762657639513`*^9, 3.828476286040327*^9}, {
+   3.828476371059476*^9, 3.828476375670168*^9}, {3.828484157201055*^9, 
+   3.828484195719771*^9}, 
+   3.831510913256481*^9},ExpressionUUID->"d22feaa9-6dd9-4d4e-951e-\
+49bf3f7948ec"]
+}, Open  ]]
+},
+WindowSize->{1131, 911},
+WindowMargins->{{115, Automatic}, {40, Automatic}},
+FrontEndVersion->"11.1 for Linux x86 (64-bit) (April 18, 2017)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 1203, 35, 85, "Input", "ExpressionUUID" -> \
+"ca121a23-4974-4511-b4af-16e030a979ee"],
+Cell[CellGroupData[{
+Cell[1786, 59, 394, 9, 34, "Input", "ExpressionUUID" -> \
+"89639a23-65c9-4635-881e-1fa104a61b0f"],
+Cell[2183, 70, 5019, 141, 226, "Output", "ExpressionUUID" -> \
+"d22feaa9-6dd9-4d4e-951e-49bf3f7948ec"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+
