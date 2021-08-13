@@ -145,7 +145,11 @@ class CustomAtom(Atom):
 		self._csa = None
 
 	def __repr__(self):
-		return "<Atom {0:3d}-{1:}>".format(self.parent.id[1], self.name)
+		if self.parent:
+			parentID = "{:3d}".format(self.parent.id[1])
+		else:
+			parentID = ""
+		return "<Atom {0:}-{1:}>".format(parentID, self.name)
 
 	def top(self):
 		return self.parent.parent.parent.parent
