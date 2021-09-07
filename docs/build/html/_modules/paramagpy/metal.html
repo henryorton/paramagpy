@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>paramagpy.metal &#8212; paramagpy 1.0 documentation</title>
+    <title>paramagpy.metal &#8212; paramagpy 1.1 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -225,6 +225,7 @@
 	<span class="n">dx</span> <span class="o">=</span>  <span class="n">rhombic</span><span class="o">/</span><span class="mf">2.</span> <span class="o">-</span> <span class="n">axial</span><span class="o">/</span><span class="mf">3.</span>
 	<span class="n">dy</span> <span class="o">=</span> <span class="o">-</span><span class="n">rhombic</span><span class="o">/</span><span class="mf">2.</span> <span class="o">-</span> <span class="n">axial</span><span class="o">/</span><span class="mf">3.</span>
 	<span class="n">dz</span> <span class="o">=</span> <span class="p">(</span><span class="n">axial</span><span class="o">*</span><span class="mf">2.</span><span class="p">)</span><span class="o">/</span><span class="mf">3.</span>
+	<span class="c1"># return np.array(sorted([dx,dy,dz], key = lambda v: abs(v)))</span>
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">dz</span><span class="p">])</span>
 
 
@@ -300,7 +301,7 @@
 		<span class="p">(</span><span class="s1">&#39;Pm&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">4.</span><span class="o">/</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">3.</span><span class="o">/</span><span class="mf">5.</span> <span class="p">,</span> <span class="mf">0.0</span>      <span class="p">)),</span>
 		<span class="p">(</span><span class="s1">&#39;Sm&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">5.</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="o">/</span><span class="mf">7.</span> <span class="p">,</span> <span class="mf">0.074E-12</span><span class="p">)),</span>
 		<span class="p">(</span><span class="s1">&#39;Eu&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">2.</span><span class="o">/</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">3.</span><span class="o">/</span><span class="mf">2.</span> <span class="p">,</span> <span class="mf">0.015E-12</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">7.</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="o">/</span><span class="mf">1.</span> <span class="p">,</span> <span class="mf">0.0</span>      <span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">7.</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="o">/</span><span class="mf">1.</span> <span class="p">,</span> <span class="mf">1E-7</span>    <span class="p">)),</span>
 		<span class="p">(</span><span class="s1">&#39;Tb&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">6.</span><span class="o">/</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">3.</span><span class="o">/</span><span class="mf">2.</span> <span class="p">,</span> <span class="mf">0.251E-12</span><span class="p">)),</span>
 		<span class="p">(</span><span class="s1">&#39;Dy&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mf">15.</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">4.</span><span class="o">/</span><span class="mf">3.</span> <span class="p">,</span> <span class="mf">0.240E-12</span><span class="p">)),</span>
 		<span class="p">(</span><span class="s1">&#39;Ho&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">8.</span><span class="o">/</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">5.</span><span class="o">/</span><span class="mf">4.</span> <span class="p">,</span> <span class="mf">0.209E-12</span><span class="p">)),</span>
@@ -311,20 +312,20 @@
 
 	<span class="c1"># Template anisotropies [axial, rhombic] from Bertini</span>
 	<span class="n">lanth_axrh</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([</span>
-		<span class="p">(</span><span class="s1">&#39;Zero&#39;</span><span class="p">,(</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Ce&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">2.1</span><span class="p">,</span>  <span class="mf">0.7</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Pr&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">3.4</span><span class="p">,</span>  <span class="mf">2.1</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Nd&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">1.7</span><span class="p">,</span>  <span class="mf">0.4</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Pm&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">0.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Sm&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">0.2</span><span class="p">,</span>  <span class="mf">0.1</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Eu&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">2.4</span><span class="p">,</span>  <span class="mf">1.5</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">0.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Tb&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">42.1</span><span class="p">,</span> <span class="mf">11.2</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Dy&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">34.7</span><span class="p">,</span> <span class="mf">20.3</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Ho&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">18.5</span><span class="p">,</span>  <span class="mf">5.8</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Er&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">11.6</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.6</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Tm&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">21.9</span><span class="p">,</span><span class="o">-</span><span class="mf">20.1</span><span class="p">)),</span>
-		<span class="p">(</span><span class="s1">&#39;Yb&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="o">-</span><span class="mf">8.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.8</span><span class="p">))]</span>
+		<span class="p">(</span><span class="s1">&#39;Zero&#39;</span><span class="p">,(</span> <span class="mf">0.0</span><span class="p">,</span>   <span class="mf">0.0</span> <span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Ce&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">2.08</span><span class="p">,</span>  <span class="mf">0.71</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Pr&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">3.40</span><span class="p">,</span>  <span class="mf">2.11</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Nd&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">1.74</span><span class="p">,</span>  <span class="mf">0.46</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Pm&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">0.0</span><span class="p">,</span>   <span class="mf">0.0</span> <span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Sm&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">0.19</span><span class="p">,</span>  <span class="mf">0.08</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Eu&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="o">-</span><span class="mf">2.34</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.63</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Gd&#39;</span><span class="p">,</span> <span class="p">(</span>  <span class="mf">0.0</span><span class="p">,</span>   <span class="mf">0.0</span> <span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Tb&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">42.1</span><span class="p">,</span>  <span class="mf">11.2</span> <span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Dy&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">34.7</span><span class="p">,</span>  <span class="mf">20.3</span> <span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Ho&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="mf">18.5</span><span class="p">,</span>   <span class="mf">5.79</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Er&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">11.6</span><span class="p">,</span>  <span class="o">-</span><span class="mf">8.58</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Tm&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">21.9</span><span class="p">,</span>  <span class="o">-</span><span class="mf">20.1</span><span class="p">)),</span>
+		<span class="p">(</span><span class="s1">&#39;Yb&#39;</span><span class="p">,</span> <span class="p">(</span> <span class="o">-</span><span class="mf">8.26</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.84</span><span class="p">))]</span>
 	<span class="p">)</span>
 
 	<span class="n">fundamental_attributes</span> <span class="o">=</span> <span class="p">(</span>
@@ -744,7 +745,7 @@
 		<span class="n">eigenvals</span><span class="p">,</span> <span class="n">eigenvecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">newTensor</span><span class="p">)</span>
 		<span class="n">eigs</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">eigenvals</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">eigenvecs</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
 		<span class="n">iso</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">eigenvals</span><span class="p">)</span><span class="o">/</span><span class="mf">3.</span>
-		<span class="n">eigenvals</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="n">eigs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">iso</span><span class="p">)))</span>
+		<span class="n">eigenvals</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="n">eigs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">iso</span><span class="p">)))</span>
 		<span class="n">eigenvecs</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">z</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)),</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
 		<span class="n">rotationMatrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">eigenvecs</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 		<span class="n">eulers</span> <span class="o">=</span> <span class="n">unique_eulers</span><span class="p">(</span><span class="n">matrix_to_euler</span><span class="p">(</span><span class="n">rotationMatrix</span><span class="p">))</span>
@@ -1099,6 +1100,37 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">racs</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;jk,ikl-&gt;ijl&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor_alignment</span><span class="p">,</span><span class="n">csaarray</span><span class="p">)</span>
 		<span class="k">return</span> <span class="mf">1E6</span><span class="o">*</span><span class="n">racs</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">axis1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">axis2</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">3.</span></div>
+
+<div class="viewcode-block" id="Metal.pcs_gradient"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.pcs_gradient.html#paramagpy.metal.Metal.pcs_gradient">[docs]</a>	<span class="k">def</span> <span class="nf">pcs_gradient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Calculate the gradient of the psuedo-contact shift </span>
+<span class="sd">		at the given postition.</span>
+<span class="sd">		This equation uses analytic partial derivatives calculated in </span>
+<span class="sd">		Mathematica.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		position : array floats</span>
+<span class="sd">			the position (x, y, z) in metres</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		gradient : array of floats</span>
+<span class="sd">			the [x,y,z] gradient vector for the pseudo-contact shift </span>
+<span class="sd">			in parts-per-million (ppm) per metre</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">pos</span> <span class="o">=</span> <span class="n">position</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span>
+		<span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+		<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">pos</span>
+		<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">xz</span><span class="p">,</span> <span class="n">yz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper_triang</span>
+		<span class="n">dnt</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">yy</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">xy</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">z</span><span class="o">*</span><span class="n">xz</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">z</span><span class="o">*</span><span class="n">yz</span>
+		<span class="n">dxt</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">xy</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">z</span><span class="o">*</span><span class="n">xz</span>
+		<span class="n">dx</span> <span class="o">=</span> <span class="n">dxt</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span> <span class="o">-</span> <span class="mi">5</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">dnt</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">7</span><span class="p">)</span>
+		<span class="n">dyt</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">xy</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">yy</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">z</span><span class="o">*</span><span class="n">yz</span>
+		<span class="n">dy</span> <span class="o">=</span> <span class="n">dyt</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span> <span class="o">-</span> <span class="mi">5</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">dnt</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">7</span><span class="p">)</span>
+		<span class="n">dzt</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">z</span><span class="o">*</span><span class="n">xx</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">z</span><span class="o">*</span><span class="n">yy</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">xz</span> <span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">yz</span>
+		<span class="n">dz</span> <span class="o">=</span> <span class="n">dzt</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span> <span class="o">-</span> <span class="mi">5</span><span class="o">*</span><span class="n">z</span><span class="o">*</span><span class="n">dnt</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">7</span><span class="p">)</span>
+		<span class="k">return</span> <span class="mf">1E6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">dz</span><span class="p">])</span></div>
 
 	<span class="c1">################################</span>
 	<span class="c1"># Methods for PRE calculations #</span>
@@ -1825,7 +1857,7 @@
 	<span class="c1"># Methods for plotting isosurfaces #</span>
 	<span class="c1">####################################</span>
 
-<div class="viewcode-block" id="Metal.make_mesh"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.make_mesh.html#paramagpy.metal.Metal.make_mesh">[docs]</a>	<span class="k">def</span> <span class="nf">make_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">40.0</span><span class="p">):</span>
+<div class="viewcode-block" id="Metal.make_mesh"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.make_mesh.html#paramagpy.metal.Metal.make_mesh">[docs]</a>	<span class="k">def</span> <span class="nf">make_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">40.0</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Construct a 3D grid of points to map an isosurface</span>
 
@@ -1853,14 +1885,17 @@
 <span class="sd">			the number of points along each dimension</span>
 
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="n">origin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">density</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">*</span><span class="mf">1E10</span> <span class="o">-</span> <span class="n">size</span><span class="o">/</span><span class="mf">2.0</span><span class="p">),</span> 
-			<span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-		<span class="n">low</span> <span class="o">=</span> <span class="n">origin</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">density</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">origin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span>
+
+		<span class="n">grid_origin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">density</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">*</span><span class="mf">1E10</span> <span class="o">-</span> <span class="n">size</span><span class="o">/</span><span class="mf">2.0</span><span class="p">),</span> 
+				<span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">low</span> <span class="o">=</span> <span class="n">grid_origin</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">density</span><span class="p">)</span>
 		<span class="n">high</span> <span class="o">=</span> <span class="n">low</span> <span class="o">+</span> <span class="n">size</span>
 		<span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">density</span><span class="o">*</span><span class="n">size</span><span class="p">)]</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 		<span class="n">domains</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1E-10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">points</span><span class="p">)]</span>
 		<span class="n">mesh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">domains</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
-		<span class="k">return</span> <span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span></div>
+		<span class="k">return</span> <span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="n">grid_origin</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Metal.pcs_mesh"><a class="viewcode-back" href="../../reference/generated/paramagpy.metal.Metal.pcs_mesh.html#paramagpy.metal.Metal.pcs_mesh">[docs]</a>	<span class="k">def</span> <span class="nf">pcs_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
@@ -2058,8 +2093,6 @@
 		<span class="n">t</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">t</span>
 
-
-
 </pre></div>
 
           </div>
@@ -2092,7 +2125,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

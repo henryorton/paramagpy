@@ -18,6 +18,7 @@ PCS data
     pcs_fit_models.rst
     pcs_fit_constrained.rst
     pcs_fit_error.rst
+    pcs_fit_atom.rst
     pcs_fit_uncertainty.rst
     pcs_fit_advanced_corrections.rst
 

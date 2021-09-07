@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>paramagpy.protein &#8212; paramagpy 1.0 documentation</title>
+    <title>paramagpy.protein &#8212; paramagpy 1.1 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -47,7 +47,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="c1"># Datatypes for numpy structured arrays after parsing </span>
-<span class="n">structdtype</span> <span class="o">=</span> <span class="p">{</span>
+<span class="n">EXPDATA_DTYPE</span> <span class="o">=</span> <span class="p">{</span>
 	<span class="s1">&#39;PCS&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([</span>
 				<span class="p">(</span><span class="s1">&#39;mdl&#39;</span><span class="p">,</span> <span class="nb">int</span>   <span class="p">),</span>
 				<span class="p">(</span><span class="s1">&#39;atm&#39;</span><span class="p">,</span> <span class="nb">object</span><span class="p">),</span>
@@ -186,7 +186,11 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">_csa</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 	<span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="k">return</span> <span class="s2">&quot;&lt;Atom </span><span class="si">{0:3d}</span><span class="s2">-</span><span class="si">{1:}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
+			<span class="n">parentID</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:3d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">parentID</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+		<span class="k">return</span> <span class="s2">&quot;&lt;Atom </span><span class="si">{0:}</span><span class="s2">-</span><span class="si">{1:}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parentID</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
 <div class="viewcode-block" id="CustomAtom.top"><a class="viewcode-back" href="../../reference/generated/paramagpy.protein.CustomAtom.top.html#paramagpy.protein.CustomAtom.top">[docs]</a>	<span class="k">def</span> <span class="nf">top</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span></div>
@@ -382,7 +386,7 @@
 			<span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;WARNING: Some values were not parsed to </span><span class="si">{}</span><span class="s2">:&quot;</span>
 			<span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
 			<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">unused</span><span class="p">))</span>
-		<span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">structdtype</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dataValues</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+		<span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">EXPDATA_DTYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dataValues</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
 		<span class="n">arr</span><span class="p">[</span><span class="s1">&#39;idx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">clean_indices</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="s1">&#39;idx&#39;</span><span class="p">])</span>
 		<span class="k">return</span> <span class="n">arr</span></div></div>
 			
@@ -494,16 +498,66 @@
 
 
 
+<span class="k">class</span> <span class="nc">PyMolScript</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A PyMol helper class for constructing a PyMol script</span>
+<span class="sd">	that will load PDB files and density map files</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">preamble</span> <span class="o">=</span> <span class="s2">&quot;# PyMOL script generated by paramagpy</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">preamble</span> <span class="o">+=</span> <span class="s2">&quot;import os, pymol</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">preamble</span> <span class="o">+=</span> <span class="s2">&quot;curdir = os.path.dirname(pymol.__script__)</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">preamble</span> <span class="o">+=</span> <span class="s2">&quot;set normalize_ccp4_maps, off</span><span class="se">\n</span><span class="s2">&quot;</span>
 
+		<span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
 
+	<span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+		<span class="k">return</span> <span class="bp">self</span>
 
+	<span class="k">def</span> <span class="nf">add_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s1">&#39;pink&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+		<span class="bp">self</span> <span class="o">+=</span> <span class="s2">&quot;pseudoatom </span><span class="si">{name}</span><span class="s2">, pos=[</span><span class="si">{:.4f}</span><span class="s2">, </span><span class="si">{:.4f}</span><span class="s2">, </span><span class="si">{:.4f}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+			<span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">position</span><span class="p">)</span>
+		<span class="bp">self</span> <span class="o">+=</span> <span class="s2">&quot;show spheres, </span><span class="si">{name}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+		<span class="bp">self</span> <span class="o">+=</span> <span class="s2">&quot;color </span><span class="si">{colour}</span><span class="s2">, </span><span class="si">{name}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">colour</span><span class="o">=</span><span class="n">colour</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+		<span class="bp">self</span> <span class="o">+=</span> <span class="s2">&quot;set sphere_scale, </span><span class="si">{size}</span><span class="s2">, </span><span class="si">{name}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+			<span class="bp">self</span> <span class="o">+=</span> <span class="s2">&quot;label </span><span class="si">{name}</span><span class="s2">, &#39;</span><span class="si">{name}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
+	<span class="k">def</span> <span class="nf">add_pdb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">showAs</span><span class="o">=</span><span class="s2">&quot;cartoon&quot;</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">name</span> <span class="o">=</span> <span class="n">path</span>
+		<span class="bp">self</span> <span class="o">+=</span> <span class="s2">&quot;cmd.load(os.path.join(curdir, &#39;</span><span class="si">{path}</span><span class="s2">&#39;),&#39;</span><span class="si">{name}</span><span class="s2">&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+			<span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+		<span class="bp">self</span> <span class="o">+=</span> <span class="s2">&quot;show_as </span><span class="si">{show_as}</span><span class="s2">, </span><span class="si">{name}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+			<span class="n">show_as</span><span class="o">=</span><span class="n">showAs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
+	<span class="k">def</span> <span class="nf">add_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">isoVals</span><span class="p">,</span> <span class="n">colours</span><span class="p">,</span> 
+		<span class="n">surfaceType</span><span class="o">=</span><span class="s1">&#39;isosurface&#39;</span><span class="p">,</span> <span class="n">transparency</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">surfaceType</span> <span class="o">==</span> <span class="s1">&#39;isosurface&#39;</span><span class="p">:</span>
+			<span class="n">surfaceColour</span> <span class="o">=</span> <span class="s1">&#39;surface_color&#39;</span>
+		<span class="k">elif</span> <span class="n">surfaceType</span> <span class="o">==</span> <span class="s1">&#39;isomesh&#39;</span><span class="p">:</span>
+			<span class="n">surfaceColour</span> <span class="o">=</span> <span class="s1">&#39;mesh_color&#39;</span>
+		<span class="k">elif</span> <span class="n">surfaceType</span> <span class="o">==</span> <span class="s1">&#39;isodot&#39;</span><span class="p">:</span>
+			<span class="n">surfaceColour</span> <span class="o">=</span> <span class="s1">&#39;dot_color&#39;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">surfaceColour</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
+		<span class="bp">self</span> <span class="o">+=</span> <span class="s2">&quot;cmd.load(os.path.join(curdir, &#39;</span><span class="si">{mapPath}</span><span class="s2">&#39;), &#39;</span><span class="si">{mapName}</span><span class="s2">&#39;, 1, &#39;ccp4&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+			<span class="n">mapPath</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">mapName</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
+		<span class="k">for</span> <span class="n">isoVal</span><span class="p">,</span> <span class="n">colour</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">isoVals</span><span class="p">,</span> <span class="n">colours</span><span class="p">):</span>
+			<span class="bp">self</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{surfaceType}</span><span class="s2"> </span><span class="si">{mapName}{isoValue:+}</span><span class="s2">, </span><span class="si">{mapName}</span><span class="s2">, </span><span class="si">{isoValue}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+				<span class="n">surfaceType</span><span class="o">=</span><span class="n">surfaceType</span><span class="p">,</span> <span class="n">mapName</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">isoValue</span><span class="o">=</span><span class="n">isoVal</span><span class="p">)</span>
+			<span class="bp">self</span> <span class="o">+=</span> <span class="s2">&quot;set </span><span class="si">{surfaceColour}</span><span class="s2">, </span><span class="si">{colour}</span><span class="s2">, </span><span class="si">{mapName}{isoValue:+}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+				<span class="n">surfaceColour</span><span class="o">=</span><span class="n">surfaceColour</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">colour</span><span class="p">,</span> <span class="n">mapName</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">isoValue</span><span class="o">=</span><span class="n">isoVal</span><span class="p">)</span>
+			<span class="bp">self</span> <span class="o">+=</span> <span class="s2">&quot;set transparency, </span><span class="si">{transparency}</span><span class="s2">, </span><span class="si">{mapName}{isoValue:+}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+				<span class="n">transparency</span><span class="o">=</span><span class="n">transparency</span><span class="p">,</span> <span class="n">mapName</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">isoValue</span><span class="o">=</span><span class="n">isoVal</span><span class="p">)</span>
 
-
-
+	<span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fileName</span><span class="p">):</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+			<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">preamble</span><span class="p">)</span>
+			<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">))</span>
 
 
 
@@ -539,7 +593,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

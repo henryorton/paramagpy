@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>paramagpy.fit &#8212; paramagpy 1.0 documentation</title>
+    <title>paramagpy.fit &#8212; paramagpy 1.1 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -41,7 +41,6 @@
   <h1>Source code for paramagpy.fit</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">fmin_bfgs</span>
-<span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 
@@ -1171,6 +1170,8 @@
 <span class="sd">		This could be &#39;nlr_fit_metal_from_ccr&#39; for example</span>
 <span class="sd">	iterations : int</span>
 <span class="sd">		the number of iterations for the Monte-Carlo simulation</span>
+<span class="sd">	fraction : float</span>
+<span class="sd">		the proportion of data to be samples. Must be between 0 and 1.0</span>
 <span class="sd">	kwargs : dict</span>
 <span class="sd">		all key-word arguments will be bundled into this variable and</span>
 <span class="sd">		parsed to the fittingFunction.</span>
@@ -1314,10 +1315,389 @@
 
 
 
+<span class="k">class</span> <span class="nc">DensityMap</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A class to help with calculations on a grid.</span>
+<span class="sd">	The grid can be setup by specifying the origin (centre)</span>
+<span class="sd">	edge size and density.</span>
+<span class="sd">	Arguments are given in Angstrom, but stored in metres</span>
+<span class="sd">	The grid positions are available for calculations</span>
+<span class="sd">	The density can be written out as a .ccp4 electron density map</span>
+<span class="sd">	Use this class for any contour plots to view in PyMol</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">CCP4_HEADER_DTYPE</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([</span>
+	    <span class="p">(</span><span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="s1">&#39;i4&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>       <span class="c1"># Points in each axis</span>
+	    <span class="p">(</span><span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="s1">&#39;i4&#39;</span><span class="p">),</span>        <span class="c1"># 2 for 32-bit float</span>
+	    <span class="p">(</span><span class="s1">&#39;ns&#39;</span><span class="p">,</span> <span class="s1">&#39;i4&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>       <span class="c1"># Start number for each axis</span>
+	    <span class="p">(</span><span class="s1">&#39;ni&#39;</span><span class="p">,</span> <span class="s1">&#39;i4&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>       <span class="c1"># Number of intervals along each axis</span>
+	    <span class="p">(</span><span class="s1">&#39;dim&#39;</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>      <span class="c1"># Cell dimensions in Angstrom</span>
+	    <span class="p">(</span><span class="s1">&#39;ang&#39;</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>      <span class="c1"># Cell angles in degrees</span>
+	    <span class="p">(</span><span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;i4&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>      <span class="c1"># Axis mappings, 1=x,2=y,3=z</span>
+	    <span class="p">(</span><span class="s1">&#39;amin&#39;</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">),</span>        <span class="c1"># Minimum density value</span>
+	    <span class="p">(</span><span class="s1">&#39;amax&#39;</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">),</span>        <span class="c1"># Maximum density value</span>
+	    <span class="p">(</span><span class="s1">&#39;amean&#39;</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">),</span>       <span class="c1"># Mean density value</span>
+	    <span class="p">(</span><span class="s1">&#39;ispg&#39;</span><span class="p">,</span> <span class="s1">&#39;i4&#39;</span><span class="p">),</span>        <span class="c1"># space group number</span>
+	    <span class="p">(</span><span class="s1">&#39;padd&#39;</span><span class="p">,</span> <span class="s1">&#39;V932&#39;</span><span class="p">)</span>       <span class="c1"># additional headers</span>
+	<span class="p">])</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">density</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Make a density map over a cubic grid of coordinates</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		origin : np.ndarray of floats</span>
+<span class="sd">			[x,y,z] position in Angstrom defining the centre of the cubic grid</span>
+<span class="sd">		size : float</span>
+<span class="sd">			the grid edge size in Angstrom</span>
+<span class="sd">		density : float</span>
+<span class="sd">			grid density defined as points per angstrom</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">origin_vertex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+			<span class="n">density</span> <span class="o">*</span> <span class="p">(</span><span class="n">origin</span> <span class="o">-</span> <span class="n">size</span><span class="o">/</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+		<span class="n">low</span> <span class="o">=</span> <span class="n">origin_vertex</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">density</span><span class="p">)</span>
+		<span class="n">high</span> <span class="o">=</span> <span class="n">low</span> <span class="o">+</span> <span class="n">size</span>
+		<span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">density</span><span class="o">*</span><span class="n">size</span><span class="p">)]</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+		<span class="n">domains</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1E-10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">points</span><span class="p">)]</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">points</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mesh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">domains</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">points</span><span class="p">),</span><span class="mi">3</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">density</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">points</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+		<span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CCP4_HEADER_DTYPE</span><span class="p">)</span>
+		<span class="n">h</span><span class="p">[</span><span class="s1">&#39;np&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">points</span>
+		<span class="n">h</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+		<span class="n">h</span><span class="p">[</span><span class="s1">&#39;ns&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">origin_vertex</span>
+		<span class="n">h</span><span class="p">[</span><span class="s1">&#39;ni&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">points</span> <span class="o">-</span> <span class="mi">1</span>
+		<span class="n">h</span><span class="p">[</span><span class="s1">&#39;dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">high</span> <span class="o">-</span> <span class="n">low</span>
+		<span class="n">h</span><span class="p">[</span><span class="s1">&#39;ang&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">]</span>
+		<span class="n">h</span><span class="p">[</span><span class="s1">&#39;map&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+		<span class="n">h</span><span class="p">[</span><span class="s1">&#39;ispg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">h</span>
+
+	<span class="k">def</span> <span class="nf">minpos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Fetch the grid point position with minimum density value</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		position : np.ndarray</span>
+<span class="sd">			[x,y,z] position in metres of the point</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">)]</span>
+
+	<span class="k">def</span> <span class="nf">boundary_min</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Does the minimum value lie on the boundary of the grid?</span>
+
+<span class="sd">		Return</span>
+<span class="sd">		------</span>
+<span class="sd">		truth: bool</span>
+<span class="sd">			return true if the minimum density is located</span>
+<span class="sd">			on the boundary of the grid</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">minarg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+		<span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">minarg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+			<span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span> <span class="ow">or</span> <span class="n">i</span><span class="o">==</span><span class="p">(</span><span class="n">s</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+				<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">return</span> <span class="kc">False</span>
+
+	<span class="k">def</span> <span class="nf">get_positions_below_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoffValue</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Returns all positions in the grid that are below the </span>
+<span class="sd">		argument &lt;cutoffValue&gt;</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		cutoffValue : float</span>
+<span class="sd">			the threshold below which points will be taken</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		positions : numpy.ndarray</span>
+<span class="sd">			a list of positions which are below the cutoff value</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span> <span class="o">&lt;</span> <span class="n">cutoffValue</span><span class="p">)]</span>
+
+	<span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fileName</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Write density values to file in .ccp4 format</span>
+<span class="sd">		Headers are accounted for from the given geometry of the grid</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		fileName : string</span>
+<span class="sd">			the name of the .ccp4 file</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;amin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;amax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;amean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">)</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+			<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span>
+			<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span>
 
 
 
+<div class="viewcode-block" id="gridsearch_fit_atom_from_pcs"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.gridsearch_fit_atom_from_pcs.html#paramagpy.fit.gridsearch_fit_atom_from_pcs">[docs]</a><span class="k">def</span> <span class="nf">gridsearch_fit_atom_from_pcs</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">dataArrays</span><span class="p">,</span> <span class="n">mapSize</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">mapDensity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Calculate likely regions for an atom on a grid using</span>
+<span class="sd">	an experimental PCS value and multiple delta-chi-tensors.</span>
+<span class="sd">	The calculation returns a grid of PCS RMSD values for each atom</span>
+<span class="sd">	The smallest values on the grid indicated the likely positions</span>
+<span class="sd">	This function returns a dictionary with key/value pairs</span>
+<span class="sd">	associating the atoms/grids.</span>
 
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	metals : list of Metal objects</span>
+<span class="sd">		a list of metals used for calculating the theoretical</span>
+<span class="sd">		PCS values used during the RMSD calculation </span>
+<span class="sd">		a list must always be provided, but may also contain </span>
+<span class="sd">		only one element.</span>
+<span class="sd">	dataArrays : list of PCS dataArray</span>
+<span class="sd">		each PCS dataArray must correspond to an associated metal.</span>
+<span class="sd">		each PCS dataArray has structure determined by </span>
+<span class="sd">		:meth:`paramagpy.protein.CustomStructure.parse`.</span>
+<span class="sd">	mapSize : float, optional</span>
+<span class="sd">		the edge length of the grid in angstrom</span>
+<span class="sd">		defaults to 10 Angstrom</span>
+<span class="sd">	mapDensity : float, optional</span>
+<span class="sd">		the density of points in the grid</span>
+<span class="sd">		defaults to 1 point per Angstrom</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	positions : dict of :class:`paramagpy.fit.DensityMap`</span>
+<span class="sd">		a dictionary of density maps. Each key is an atom</span>
+<span class="sd">		as defined in &lt;dataArrays&gt; and corresponds to a value</span>
+<span class="sd">		which is the density map.</span>
+<span class="sd">		a density map defines the RMSD calculation on a grid</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="c1"># Sort data for separate calculations for each atom</span>
+	<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">dataArray</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">dataArrays</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">dataArray</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;atm&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+				<span class="n">data</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;atm&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="n">data</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;atm&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">metal</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;exp&#39;</span><span class="p">]))</span>
+
+	<span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="c1"># Loop over each atom</span>
+	<span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+		<span class="n">dm</span> <span class="o">=</span> <span class="n">DensityMap</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="o">*</span><span class="mf">1E10</span><span class="p">,</span> <span class="n">mapSize</span><span class="p">,</span> <span class="n">mapDensity</span><span class="p">)</span>
+		<span class="c1"># Loop over each metal and calculate sum of squares</span>
+		<span class="k">for</span> <span class="n">metal</span><span class="p">,</span> <span class="n">exp</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">atom</span><span class="p">]:</span>
+			<span class="n">dm</span><span class="o">.</span><span class="n">density</span> <span class="o">+=</span> <span class="p">(</span><span class="n">metal</span><span class="o">.</span><span class="n">fast_pcs</span><span class="p">(</span><span class="n">dm</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span> <span class="o">-</span> <span class="n">exp</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+
+		<span class="c1"># Average and square root to finish RMSD calculation</span>
+		<span class="n">dm</span><span class="o">.</span><span class="n">density</span> <span class="o">=</span> <span class="p">(</span><span class="n">dm</span><span class="o">.</span><span class="n">density</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">atom</span><span class="p">]))</span><span class="o">**</span><span class="mf">0.5</span> 
+
+		<span class="c1"># Display a warning if minimum point is on the grid boundary</span>
+		<span class="c1"># Might be necessary to change box definition for grid</span>
+		<span class="k">if</span> <span class="n">dm</span><span class="o">.</span><span class="n">boundary_min</span><span class="p">():</span>
+			<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Atom </span><span class="si">{}</span><span class="s2"> has minimum position solved on grid boundary.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom</span><span class="p">))</span>
+
+		<span class="n">out</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">=</span> <span class="n">dm</span>
+
+	<span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="gridsearch_fit_atom_restrain_distance"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.gridsearch_fit_atom_restrain_distance.html#paramagpy.fit.gridsearch_fit_atom_restrain_distance">[docs]</a><span class="k">def</span> <span class="nf">gridsearch_fit_atom_restrain_distance</span><span class="p">(</span><span class="n">densityMapA</span><span class="p">,</span> <span class="n">densityMapB</span><span class="p">,</span> <span class="n">distUpper</span><span class="p">,</span> <span class="n">distLower</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Given two RMSD density maps, this function will compare</span>
+<span class="sd">	all points pairwise and return only those within the bounds of</span>
+<span class="sd">	a given distance cutoff and within a certain number of points </span>
+<span class="sd">	that are that are sorted by RMSD value.</span>
+<span class="sd">	This might be useful if two density maps for separate atoms</span>
+<span class="sd">	in a molecule are known to be constrained w.r.t. one another</span>
+<span class="sd">	and you would like to use that restraint to further restrict </span>
+<span class="sd">	the space of PCS RMSD points.</span>
+<span class="sd">	The calculation first sorts the RMSD points and takes the bottom</span>
+<span class="sd">	&lt;number&gt; of points and then compares each point pariwise to </span>
+<span class="sd">	fulfill the distance condition. It then returns those points</span>
+<span class="sd">	from both maps. Unfortunately there is no correlation data</span>
+<span class="sd">	available between these two maps.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	densityMapA: :class:`paramagpy.fit.DensityMap`</span>
+<span class="sd">		a density map of PCS RMSD values.</span>
+<span class="sd">	densityMapB: :class:`paramagpy.fit.DensityMap`</span>
+<span class="sd">		a second density map of PCS RMSD values.</span>
+<span class="sd">	distUpper : float</span>
+<span class="sd">		The upper limit for distance.</span>
+<span class="sd">		Any pairwise distances larger than this value</span>
+<span class="sd">		will be rejected from the final space of points</span>
+<span class="sd">	distLower : float</span>
+<span class="sd">		The lower distance limit for distance</span>
+<span class="sd">		Any pairwise distance smaller than this value</span>
+<span class="sd">		will be rejectet from the final space of points</span>
+<span class="sd">	number : int</span>
+<span class="sd">		The total number of positions to be considered</span>
+<span class="sd">		for the pairwise distance comparison.</span>
+<span class="sd">		This calculation first sorts points by RMSD</span>
+<span class="sd">		and takes &lt;number&gt; of points with minimum RMSD</span>
+<span class="sd">		and uses these for the pairwise distance calculation.</span>
+<span class="sd">		Note that the total number of points returned</span>
+<span class="sd">		could be significnalty more than this value after</span>
+<span class="sd">		the pairwise comparison</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	tuple : np.ndarray of position coordinates</span>
+<span class="sd">		two lists of [x,y,z] coordinates are returned associated</span>
+<span class="sd">		with the inputs &lt;densityMapA&gt; and &lt;densityMapB&gt;.</span>
+<span class="sd">		The returned coordinates are taken from the original grids</span>
+<span class="sd">		and represent points that have another associated point in</span>
+<span class="sd">		the other grid which is within the distance bounds and </span>
+<span class="sd">		contained with an RMSD low enough to be within the lowest</span>
+<span class="sd">		&lt;number&gt; of points</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">idxSortA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">densityMapA</span><span class="o">.</span><span class="n">density</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">number</span><span class="p">]</span>
+	<span class="n">idxSortB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">densityMapB</span><span class="o">.</span><span class="n">density</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">number</span><span class="p">]</span>
+	<span class="n">posA</span> <span class="o">=</span> <span class="n">densityMapA</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="n">idxSortA</span><span class="p">]</span>
+	<span class="n">posB</span> <span class="o">=</span> <span class="n">densityMapB</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="n">idxSortB</span><span class="p">]</span>
+	<span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">posA</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">posB</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+	<span class="n">idxA</span><span class="p">,</span> <span class="n">idxB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">dist</span> <span class="o">&lt;</span> <span class="n">distUpper</span><span class="p">,</span> <span class="n">dist</span> <span class="o">&gt;</span> <span class="n">distLower</span><span class="p">))</span>
+	<span class="n">idxSort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">densityMapA</span><span class="o">.</span><span class="n">density</span><span class="p">[</span><span class="n">idxA</span><span class="p">]</span> <span class="o">+</span> <span class="n">densityMapB</span><span class="o">.</span><span class="n">density</span><span class="p">[</span><span class="n">idxB</span><span class="p">])</span>
+	<span class="k">return</span> <span class="n">posA</span><span class="p">[</span><span class="n">idxA</span><span class="p">[</span><span class="n">idxSort</span><span class="p">]],</span> <span class="n">posB</span><span class="p">[</span><span class="n">idxB</span><span class="p">[</span><span class="n">idxSort</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="gridsearch_fit_atom_restrain_distance_cutoff"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff.html#paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff">[docs]</a><span class="k">def</span> <span class="nf">gridsearch_fit_atom_restrain_distance_cutoff</span><span class="p">(</span><span class="n">densityMapA</span><span class="p">,</span> <span class="n">densityMapB</span><span class="p">,</span> <span class="n">distUpper</span><span class="p">,</span> <span class="n">distLower</span><span class="p">,</span> <span class="n">cutoffValue</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Given two RMSD density maps, this function will compare</span>
+<span class="sd">	all points pairwise and return only those within the bounds of</span>
+<span class="sd">	a given distance cutoff and within a given RMSD cutoff.</span>
+<span class="sd">	This might be useful if two density maps for separate atoms</span>
+<span class="sd">	in a molecule are known to be constrained w.r.t. one another</span>
+<span class="sd">	and you would like to use that restraint to further restrict </span>
+<span class="sd">	the space of PCS RMSD points.</span>
+<span class="sd">	The calculation first selects points with an RMSD less than</span>
+<span class="sd">	the given cutoff value and then compares each point pariwise to </span>
+<span class="sd">	fulfill the distance condition. It then returns those points</span>
+<span class="sd">	from both maps. Unfortunately there is no correlation data</span>
+<span class="sd">	available between these two maps.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	densityMapA: :class:`paramagpy.fit.DensityMap`</span>
+<span class="sd">		a density map of PCS RMSD values.</span>
+<span class="sd">	densityMapB: :class:`paramagpy.fit.DensityMap`</span>
+<span class="sd">		a second density map of PCS RMSD values.</span>
+<span class="sd">	distUpper : float</span>
+<span class="sd">		The upper limit for distance.</span>
+<span class="sd">		Any pairwise distances larger than this value</span>
+<span class="sd">		will be rejected from the final space of points</span>
+<span class="sd">	distLower : float</span>
+<span class="sd">		The lower distance limit for distance</span>
+<span class="sd">		Any pairwise distance smaller than this value</span>
+<span class="sd">		will be rejectet from the final space of points</span>
+<span class="sd">	cutoffValue : float</span>
+<span class="sd">		The RMSD threshold for which points are taken</span>
+<span class="sd">		for the pairwise distance comparison.</span>
+<span class="sd">		Note that the total number of points returned</span>
+<span class="sd">		is significnalty influenced by this parameter</span>
+<span class="sd">		and should be chosen carefully</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	tuple : np.ndarray of position coordinates</span>
+<span class="sd">		two lists of [x,y,z] coordinates are returned associated</span>
+<span class="sd">		with the inputs &lt;densityMapA&gt; and &lt;densityMapB&gt;.</span>
+<span class="sd">		The returned coordinates are taken from the original grids</span>
+<span class="sd">		and represent points that have another associated point in</span>
+<span class="sd">		the other grid which is within the distance bounds and </span>
+<span class="sd">		have an RMSD below the cutoff threshold.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">idxCutoffA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">densityMapA</span><span class="o">.</span><span class="n">density</span> <span class="o">&lt;</span> <span class="n">cutoffValue</span><span class="p">)</span>
+	<span class="n">idxCutoffB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">densityMapB</span><span class="o">.</span><span class="n">density</span> <span class="o">&lt;</span> <span class="n">cutoffValue</span><span class="p">)</span>
+	<span class="n">posA</span> <span class="o">=</span> <span class="n">densityMapA</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="n">idxCutoffA</span><span class="p">]</span>
+	<span class="n">posB</span> <span class="o">=</span> <span class="n">densityMapB</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="n">idxCutoffB</span><span class="p">]</span>
+	<span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">posA</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">posB</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+	<span class="n">idxA</span><span class="p">,</span> <span class="n">idxB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">dist</span> <span class="o">&lt;</span> <span class="n">distUpper</span><span class="p">,</span> <span class="n">dist</span> <span class="o">&gt;</span> <span class="n">distLower</span><span class="p">))</span>
+	<span class="n">idxSort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">densityMapA</span><span class="o">.</span><span class="n">density</span><span class="p">[</span><span class="n">idxA</span><span class="p">]</span> <span class="o">+</span> <span class="n">densityMapB</span><span class="o">.</span><span class="n">density</span><span class="p">[</span><span class="n">idxB</span><span class="p">])</span>
+	<span class="k">return</span> <span class="n">posA</span><span class="p">[</span><span class="n">idxA</span><span class="p">[</span><span class="n">idxSort</span><span class="p">]],</span> <span class="n">posB</span><span class="p">[</span><span class="n">idxB</span><span class="p">[</span><span class="n">idxSort</span><span class="p">]]</span></div>
+
+
+
+<div class="viewcode-block" id="pcs_gradient_orthogonality_dot"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.pcs_gradient_orthogonality_dot.html#paramagpy.fit.pcs_gradient_orthogonality_dot">[docs]</a><span class="k">def</span> <span class="nf">pcs_gradient_orthogonality_dot</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	An experimental metric for calculating the likelihood</span>
+<span class="sd">	of a particular nuclear position being well localised</span>
+<span class="sd">	from multiple tensors.</span>
+<span class="sd">	This algorithm calculates the normalised PCS graident</span>
+<span class="sd">	vector arising at a given position from each tensor</span>
+<span class="sd">	provided. It then calculates the pairwise dot product</span>
+<span class="sd">	of each vector and averages their absolute value.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	metals : list of Metal objects</span>
+<span class="sd">		a list of paramagpy metal objects which define the </span>
+<span class="sd">		tensors.</span>
+<span class="sd">	position : numpy.ndarray of floats</span>
+<span class="sd">		the [x,y,z] coordinate to calculated the</span>
+<span class="sd">		orthogonality score</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	score : float</span>
+<span class="sd">		the orthogonality score. This is necessarily</span>
+<span class="sd">		between 0 and 1 for this metric. A lower</span>
+<span class="sd">		score defies a more favourable orthogonality </span>
+<span class="sd">		between PCS gradient vectors.</span>
+<span class="sd">		Note that a value of zero is not possible when</span>
+<span class="sd">		more than 4 metals are provided.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">grads</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">metal</span><span class="o">.</span><span class="n">pcs_gradient</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="k">for</span> <span class="n">metal</span> <span class="ow">in</span> <span class="n">metals</span><span class="p">])</span>
+	<span class="n">norms</span> <span class="o">=</span> <span class="n">grads</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">grads</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>
+	<span class="n">dots</span> <span class="o">=</span> <span class="n">norms</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">norms</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+	<span class="n">mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dots</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+	<span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dots</span><span class="p">[</span><span class="n">mask</span><span class="p">]))</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">metals</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">metals</span><span class="p">))</span>
+	<span class="k">return</span> <span class="n">score</span></div>
+
+
+<div class="viewcode-block" id="pcs_gradient_orthogonality_cross"><a class="viewcode-back" href="../../reference/generated/paramagpy.fit.pcs_gradient_orthogonality_cross.html#paramagpy.fit.pcs_gradient_orthogonality_cross">[docs]</a><span class="k">def</span> <span class="nf">pcs_gradient_orthogonality_cross</span><span class="p">(</span><span class="n">metals</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	An experimental metric for calculating the likelihood</span>
+<span class="sd">	of a particular nuclear position being well localised</span>
+<span class="sd">	from multiple tensors.</span>
+<span class="sd">	The metric scores the orthogonality of the PCS</span>
+<span class="sd">	gradient vectors and accounts for their magnitude.</span>
+<span class="sd">	This algorithm calculates the PCS graident</span>
+<span class="sd">	vector arising at a given position from each tensor</span>
+<span class="sd">	provided. It then calculates the pairwise cross product</span>
+<span class="sd">	of each vector and averages their norm (length).</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	metals : list of Metal objects</span>
+<span class="sd">		a list of paramagpy metal objects which define the </span>
+<span class="sd">		tensors.</span>
+<span class="sd">	position : numpy.ndarray of floats</span>
+<span class="sd">		the [x,y,z] coordinate to calculated the</span>
+<span class="sd">		orthogonality score</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	score : float</span>
+<span class="sd">		the orthogonality score. This is necessarily</span>
+<span class="sd">		between greater than zero. A larger</span>
+<span class="sd">		score defines a more favourable orthogonality </span>
+<span class="sd">		between PCS gradient vectors and also score larger</span>
+<span class="sd">		PCS gradients more highly.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">grads</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">metal</span><span class="o">.</span><span class="n">pcs_gradient</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="k">for</span> <span class="n">metal</span> <span class="ow">in</span> <span class="n">metals</span><span class="p">])</span><span class="o">*</span><span class="mf">1E-10</span>
+	<span class="n">vals</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">g1</span> <span class="ow">in</span> <span class="n">grads</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">g2</span> <span class="ow">in</span> <span class="n">grads</span><span class="p">:</span>
+			<span class="n">cross</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">)</span>
+			<span class="n">vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">cross</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
+
+	<span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">metals</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">metals</span><span class="p">))</span>
+	<span class="k">return</span> <span class="n">score</span></div>
 
 
 
@@ -1355,7 +1735,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

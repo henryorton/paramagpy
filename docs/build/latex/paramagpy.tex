@@ -52,8 +52,8 @@
 \setcounter{tocdepth}{1}
 
 \title{paramagpy Documentation}
-\date{Oct 21, 2020}
-\release{1.0}
+\date{Sep 07, 2021}
+\release{1.1}
 \author{Henry Orton}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -69,10 +69,10 @@
 
 \begin{quote}\begin{description}
 \item[{Release}] \leavevmode
-1.0
+1.1
 
 \item[{Date}] \leavevmode
-Oct 21, 2020
+Sep 07, 2021
 
 \end{description}\end{quote}
 
@@ -976,6 +976,171 @@ And correlation plot:
 \sphinxstyleemphasis{Output:} {[}\sphinxcode{\sphinxupquote{pcs\_fit\_error.png}}{]}
 
 \noindent\sphinxincludegraphics{{pcs_fit_error}.png}
+
+
+\subsubsection{Fit Atomic Coordinates to PCS data}
+\label{\detokenize{examples/pcs_fit_atom:fit-atomic-coordinates-to-pcs-data}}\label{\detokenize{examples/pcs_fit_atom:pcs-fit-atom}}\label{\detokenize{examples/pcs_fit_atom::doc}}
+This example shows how to calculate the region in space which is likely for atomic coordinates from PCS measurements. Multiple \({\Delta\chi}\)-tensors are used from different tagging sites in the protein IMP1 to localise a tryptophan sidechain in a loop.
+
+The script fits the \({\Delta\chi}\)-tensors from backbone PCS data and then samples 20 perturbed tensors using a bootstrap fitting. The sampled tensors improve stability of the final calculation. The script then calculates the RMSD between experiment and calculated PCS values for nuclei in the sidechain of tryptophan at residue 28 on a grid of points. The grid is then viewed in PyMol.
+
+
+\paragraph{Downloads}
+\label{\detokenize{examples/pcs_fit_atom:downloads}}\begin{itemize}
+\item {} 
+Download the data files \sphinxcode{\sphinxupquote{5ev6AH.pdb}} and all IMP1 datasets from \sphinxhref{https://github.com/henryorton/paramagpy/tree/master/examples/data\_files/}{here}:
+
+\item {} 
+Download the script \sphinxcode{\sphinxupquote{pcs\_fit\_atom.py}}
+
+\end{itemize}
+
+
+\paragraph{Script + Explanation}
+\label{\detokenize{examples/pcs_fit_atom:script-explanation}}
+After importing modules from paramagpy, the tagging sites and lanthanoid ions are specified as tuple variables. The PDB file is loaded. The \sphinxcode{\sphinxupquote{atoms}} list contains the atoms of interest (in this case the NH and adjacent CH protons of tryptophan 28). Finally the number of bootstrap iterations are defined.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{from} \PYG{n+nn}{paramagpy} \PYG{k}{import} \PYG{n}{protein}\PYG{p}{,} \PYG{n}{fit}\PYG{p}{,} \PYG{n}{dataparse}\PYG{p}{,} \PYG{n}{metal}
+\PYG{k+kn}{import} \PYG{n+nn}{re}
+
+\PYG{n}{sites} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{A53C\PYGZhy{}C2}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{N172C\PYGZhy{}C2}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{S204C\PYGZhy{}C2}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{N172C\PYGZhy{}C12}\PYG{l+s+s1}{\PYGZsq{}}
+\PYG{n}{ions} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Tm}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Tb}\PYG{l+s+s1}{\PYGZsq{}}
+\PYG{n}{pdb\PYGZus{}path} \PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{../data\PYGZus{}files/5ev6AH.pdb}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{n}{prot} \PYG{o}{=} \PYG{n}{protein}\PYG{o}{.}\PYG{n}{load\PYGZus{}pdb}\PYG{p}{(}\PYG{n}{pdb\PYGZus{}path}\PYG{p}{)}
+\PYG{n}{atomns} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{H07}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{H08}\PYG{l+s+s1}{\PYGZsq{}}
+\PYG{n}{atoms} \PYG{o}{=} \PYG{p}{[}\PYG{n}{prot}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{A}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{28}\PYG{p}{]}\PYG{p}{[}\PYG{n}{atomn}\PYG{p}{]} \PYG{k}{for} \PYG{n}{atomn} \PYG{o+ow}{in} \PYG{n}{atomns}\PYG{p}{]}
+\PYG{n}{BOOTSTRAP\PYGZus{}ITER} \PYG{o}{=} \PYG{l+m+mi}{20}
+\end{sphinxVerbatim}
+
+Two dictionaries are specified to define the final colours and RMSD contour levels to be plotted in PyMol.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Isosurface colours}
+\PYG{n}{surface\PYGZus{}colours} \PYG{o}{=} \PYG{p}{\PYGZob{}}
+	\PYG{p}{(}\PYG{n}{ions}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{,} \PYG{n}{atomns}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{teal}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
+	\PYG{p}{(}\PYG{n}{ions}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{,} \PYG{n}{atomns}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{blue}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
+	\PYG{p}{(}\PYG{n}{ions}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{,} \PYG{n}{atomns}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{magenta}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
+	\PYG{p}{(}\PYG{n}{ions}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{,} \PYG{n}{atomns}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{red}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{\PYGZsh{} RMSD contour levels}
+\PYG{n}{surface\PYGZus{}contour} \PYG{o}{=} \PYG{p}{\PYGZob{}}
+	\PYG{p}{(}\PYG{n}{ions}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{,} \PYG{n}{atomns}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:} \PYG{l+m+mf}{0.04}\PYG{p}{,}
+	\PYG{p}{(}\PYG{n}{ions}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{,} \PYG{n}{atomns}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:} \PYG{l+m+mf}{0.04}\PYG{p}{,}
+	\PYG{p}{(}\PYG{n}{ions}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{,} \PYG{n}{atomns}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:} \PYG{l+m+mf}{0.016}\PYG{p}{,}
+	\PYG{p}{(}\PYG{n}{ions}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{,} \PYG{n}{atomns}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{)}\PYG{p}{:} \PYG{l+m+mf}{0.02}\PYG{p}{,}
+\PYG{p}{\PYGZcb{}}
+\end{sphinxVerbatim}
+
+A PyMol script object \sphinxcode{\sphinxupquote{paramagpy.protein.PyMolScript}} is created and the PDB is added to it. This object makes it easy to add density maps, PDBs and spheres to PyMol from Paramagpy.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{pmlscript} \PYG{o}{=} \PYG{n}{protein}\PYG{o}{.}\PYG{n}{PyMolScript}\PYG{p}{(}\PYG{p}{)}
+\PYG{n}{pmlscript}\PYG{o}{.}\PYG{n}{add\PYGZus{}pdb}\PYG{p}{(}\PYG{n}{path}\PYG{o}{=}\PYG{n}{pdb\PYGZus{}path}\PYG{p}{,} \PYG{n}{name}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{5ev6}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\end{sphinxVerbatim}
+
+Next is a rather involved loop that iterates of the tagging sites, fits the \({\Delta\chi}\)-tensor using a simultaneous fit between Tm and Tb data and finally samples the tensor fits using bootstrap. The fitted tensors are bundled into the variable \sphinxcode{\sphinxupquote{mdata}}.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{mdata} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
+\PYG{k}{for} \PYG{n}{site} \PYG{o+ow}{in} \PYG{n}{sites}\PYG{p}{:} \PYG{c+c1}{\PYGZsh{} Loop over sites}
+	\PYG{n}{bindingSite} \PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{re}\PYG{o}{.}\PYG{n}{search}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}\PYGZbs{}}\PYG{l+s+s2}{d+}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{site}\PYG{p}{)}\PYG{o}{.}\PYG{n}{group}\PYG{p}{(}\PYG{p}{)}\PYG{p}{)} \PYG{c+c1}{\PYGZsh{} Get residue number}
+	\PYG{n}{mStart} \PYG{o}{=} \PYG{n}{metal}\PYG{o}{.}\PYG{n}{Metal}\PYG{p}{(}\PYG{p}{)}
+	\PYG{n}{mStart}\PYG{o}{.}\PYG{n}{position} \PYG{o}{=} \PYG{n}{prot}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{A}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{[}\PYG{n}{bindingSite}\PYG{p}{]}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{CA}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{position} \PYG{c+c1}{\PYGZsh{} Set strating position}
+
+	\PYG{n}{hnpcss} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
+	\PYG{c+c1}{\PYGZsh{} Assemble exp. PCS data for both ions}
+	\PYG{k}{for} \PYG{n}{ion} \PYG{o+ow}{in} \PYG{n}{ions}\PYG{p}{:}
+		\PYG{n}{hnpcs\PYGZus{}raw} \PYG{o}{=} \PYG{n}{dataparse}\PYG{o}{.}\PYG{n}{read\PYGZus{}pcs}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{../data\PYGZus{}files/IMP1\PYGZus{}HN\PYGZus{}}\PYG{l+s+si}{\PYGZob{}\PYGZcb{}}\PYG{l+s+s2}{\PYGZus{}}\PYG{l+s+si}{\PYGZob{}\PYGZcb{}}\PYG{l+s+s2}{\PYGZus{}FREE.npc}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{site}\PYG{p}{,} \PYG{n}{ion}\PYG{p}{)}\PYG{p}{)}
+		\PYG{n}{hnpcs} \PYG{o}{=} \PYG{n}{prot}\PYG{o}{.}\PYG{n}{parse}\PYG{p}{(}\PYG{n}{hnpcs\PYGZus{}raw}\PYG{p}{)}
+		\PYG{n}{hnpcss}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{hnpcs}\PYG{p}{)}
+
+	\PYG{c+c1}{\PYGZsh{} Fit the tensor by SVD, then NLR}
+	\PYG{n}{mGuess}\PYG{p}{,} \PYG{n}{\PYGZus{}} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{svd\PYGZus{}gridsearch\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}\PYG{p}{[}\PYG{n}{mStart}\PYG{p}{,} \PYG{n}{mStart}\PYG{p}{]}\PYG{p}{,} \PYG{n}{hnpcss}\PYG{p}{)}
+	\PYG{n}{mFit}\PYG{p}{,} \PYG{n}{\PYGZus{}} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{(}\PYG{n}{mGuess}\PYG{p}{,} \PYG{n}{hnpcss}\PYG{p}{)}
+
+	\PYG{c+c1}{\PYGZsh{} Sample purturbed tensors by bootstrap}
+	\PYG{n}{mSamples}\PYG{p}{,} \PYG{n}{mStd} \PYG{o}{=} \PYG{n}{fit}\PYG{o}{.}\PYG{n}{fit\PYGZus{}error\PYGZus{}bootstrap}\PYG{p}{(}
+		\PYG{n}{fit}\PYG{o}{.}\PYG{n}{nlr\PYGZus{}fit\PYGZus{}metal\PYGZus{}from\PYGZus{}pcs}\PYG{p}{,} 
+		\PYG{n}{BOOTSTRAP\PYGZus{}ITER}\PYG{p}{,} 
+		\PYG{l+m+mf}{0.8}\PYG{p}{,} 
+		\PYG{n}{initMetals}\PYG{o}{=}\PYG{n}{mFit}\PYG{p}{,} 
+		\PYG{n}{dataArrays}\PYG{o}{=}\PYG{n}{hnpcss}
+	\PYG{p}{)}
+
+	\PYG{n}{mdata}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{mSamples}\PYG{p}{)}
+\end{sphinxVerbatim}
+
+The fitted \({\Delta\chi}\)-tensors are then unzipped (to allow iterating over each ion) and assembled with the tryptophan PCS data in two lists \sphinxcode{\sphinxupquote{mdata}} and \sphinxcode{\sphinxupquote{trpdata}}. For each data array contained in \sphinxcode{\sphinxupquote{trpdata}} there must be an associated tensor contained in \sphinxcode{\sphinxupquote{mdata}}, so that is why they are contsructed side by side.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{k}{for} \PYG{n}{ion}\PYG{p}{,} \PYG{n}{mSamples} \PYG{o+ow}{in} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{n}{ions}\PYG{p}{,} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{o}{*}\PYG{n}{mdata}\PYG{p}{)}\PYG{p}{)}\PYG{p}{:}
+	\PYG{n}{trpdata} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
+	\PYG{n}{mdata} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
+	\PYG{c+c1}{\PYGZsh{} Loop sites with fitted tensors}
+	\PYG{k}{for} \PYG{n}{site}\PYG{p}{,} \PYG{n}{mSample} \PYG{o+ow}{in} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{n}{sites}\PYG{p}{,} \PYG{n}{mSamples}\PYG{p}{)}\PYG{p}{:}
+		\PYG{c+c1}{\PYGZsh{} Load TRP PCS data}
+		\PYG{n}{trppcs\PYGZus{}raw} \PYG{o}{=} \PYG{n}{dataparse}\PYG{o}{.}\PYG{n}{read\PYGZus{}pcs}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{../data\PYGZus{}files/IMP1\PYGZus{}TRP\PYGZus{}}\PYG{l+s+si}{\PYGZob{}\PYGZcb{}}\PYG{l+s+s2}{\PYGZus{}}\PYG{l+s+si}{\PYGZob{}\PYGZcb{}}\PYG{l+s+s2}{\PYGZus{}FREE.npc}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{site}\PYG{p}{,} \PYG{n}{ion}\PYG{p}{)}\PYG{p}{)}
+		\PYG{n}{trppcs} \PYG{o}{=} \PYG{n}{prot}\PYG{o}{.}\PYG{n}{parse}\PYG{p}{(}\PYG{n}{trppcs\PYGZus{}raw}\PYG{p}{)}
+
+		\PYG{c+c1}{\PYGZsh{} Assemble associated lists of atoms/PCS with tensors}
+		\PYG{k}{for} \PYG{n}{atom} \PYG{o+ow}{in} \PYG{n}{atoms}\PYG{p}{:}
+			\PYG{n}{dataselect} \PYG{o}{=} \PYG{n}{trppcs}\PYG{p}{[}\PYG{n}{trppcs}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{atm}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]} \PYG{o}{==} \PYG{n}{atom}\PYG{p}{]}
+			\PYG{k}{if} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{dataselect}\PYG{p}{)}\PYG{o}{\PYGZgt{}}\PYG{l+m+mi}{0}\PYG{p}{:}
+				\PYG{k}{for} \PYG{n}{m} \PYG{o+ow}{in} \PYG{n}{mSample}\PYG{p}{:} 
+					\PYG{n}{trpdata}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{dataselect}\PYG{p}{)}
+					\PYG{n}{mdata}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{m}\PYG{p}{)}
+\end{sphinxVerbatim}
+
+The function {\hyperref[\detokenize{reference/generated/paramagpy.fit.gridsearch_fit_atom_from_pcs:paramagpy.fit.gridsearch_fit_atom_from_pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.fit.gridsearch\_fit\_atom\_from\_pcs()}}}}} is called which calculates the PCS RMSD on a grid as defined by the function arguments \sphinxcode{\sphinxupquote{mapSize}} and \sphinxcode{\sphinxupquote{mapDensity}}. This function returns a dictionary which contains keys for the atoms of the PDB files and values of \sphinxcode{\sphinxupquote{paramagpy.fit.DensityMap}} which define the grid of PCS RMSD values.
+
+What remains of the script is to add the PCS RMSD grid to the PyMol script and save it so that it plots with the specified colours and contour levels. What results is a volume which contains all points that have an RMSD less than the specified \sphinxcode{\sphinxupquote{isoVals}} value. Finally some standard PyMol commands are added to display the protein structure as desired.
+
+\fvset{hllines={, ,}}%
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+	\PYG{k}{for} \PYG{n}{atom} \PYG{o+ow}{in} \PYG{n}{atoms}\PYG{p}{:}
+		\PYG{n}{mapname} \PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+si}{\PYGZob{}\PYGZcb{}}\PYG{l+s+si}{\PYGZob{}\PYGZcb{}}\PYG{l+s+s2}{map}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{atom}\PYG{o}{.}\PYG{n}{id}\PYG{p}{,} \PYG{n}{ion}\PYG{p}{)}
+		\PYG{n}{dmapFilePath} \PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+si}{\PYGZob{}\PYGZcb{}}\PYG{l+s+s2}{.ccp4}\PYG{l+s+s2}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{mapname}\PYG{p}{)}
+		\PYG{n}{gridsVol}\PYG{p}{[}\PYG{n}{atom}\PYG{p}{]}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{n}{dmapFilePath}\PYG{p}{)}
+		\PYG{n}{pmlscript}\PYG{o}{.}\PYG{n}{add\PYGZus{}map}\PYG{p}{(}
+			\PYG{n}{path}\PYG{o}{=}\PYG{n}{dmapFilePath}\PYG{p}{,}
+			\PYG{n}{name}\PYG{o}{=}\PYG{n}{mapname}\PYG{p}{,}
+			\PYG{n}{isoVals}\PYG{o}{=}\PYG{p}{[}\PYG{n}{surface\PYGZus{}contour}\PYG{p}{[}\PYG{p}{(}\PYG{n}{ion}\PYG{p}{,} \PYG{n}{atom}\PYG{o}{.}\PYG{n}{id}\PYG{p}{)}\PYG{p}{]}\PYG{p}{]}\PYG{p}{,}
+			\PYG{n}{colours}\PYG{o}{=}\PYG{p}{[}\PYG{n}{surface\PYGZus{}colours}\PYG{p}{[}\PYG{p}{(}\PYG{n}{ion}\PYG{p}{,} \PYG{n}{atom}\PYG{o}{.}\PYG{n}{id}\PYG{p}{)}\PYG{p}{]}\PYG{p}{]}\PYG{p}{,}
+			\PYG{n}{surfaceType}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{isodot}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
+		\PYG{p}{)}
+
+\PYG{n}{pmlscript} \PYG{o}{+}\PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{set dot\PYGZus{}radius, 0.05}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{n}{pmlscript} \PYG{o}{+}\PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{show sticks, ////28 and sc.}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{n}{pmlscript} \PYG{o}{+}\PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{show sticks, ////28/CA}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{n}{pmlscript} \PYG{o}{+}\PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{set bg\PYGZus{}rgb=[1,1,1]}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{n}{pmlscript} \PYG{o}{+}\PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{set mesh\PYGZus{}width, 0.5}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{n}{pmlscript} \PYG{o}{+}\PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{zoom ////28/H07}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{n}{pmlscript} \PYG{o}{+}\PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+s2}{set\PYGZus{}view (}\PYG{l+s+se}{\PYGZbs{}}
+\PYG{l+s+s2}{     0.505656540,   \PYGZhy{}0.827194929,   \PYGZhy{}0.245069817,}\PYG{l+s+se}{\PYGZbs{}}
+\PYG{l+s+s2}{    \PYGZhy{}0.741597414,   \PYGZhy{}0.561904311,    0.366465807,}\PYG{l+s+se}{\PYGZbs{}}
+\PYG{l+s+s2}{    \PYGZhy{}0.440846384,   \PYGZhy{}0.003562994,   \PYGZhy{}0.897575319,}\PYG{l+s+se}{\PYGZbs{}}
+\PYG{l+s+s2}{     0.000152570,    0.000080852,  \PYGZhy{}36.169487000,}\PYG{l+s+se}{\PYGZbs{}}
+\PYG{l+s+s2}{    48.539413452,   83.819839478,   42.674442291,}\PYG{l+s+se}{\PYGZbs{}}
+\PYG{l+s+s2}{    26.907037735,   45.422363281,  \PYGZhy{}20.000000000 )}
+\PYG{l+s+s2}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{n}{pmlscript} \PYG{o}{+}\PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{ray 1600}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{n}{pmlscript} \PYG{o}{+}\PYG{o}{=} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{png pcs\PYGZus{}fit\PYGZus{}atom.png}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{n}{pmlscript}\PYG{o}{.}\PYG{n}{write}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{pcs\PYGZus{}fit\PYGZus{}atom.pml}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+\end{sphinxVerbatim}
+
+This generates the following PyMol script which allows viewing of the PCS RMSD region. \sphinxcode{\sphinxupquote{pcs\_fit\_atom.pml}}. After opening the script in PyMol the following image is generated.
+
+{[}\sphinxcode{\sphinxupquote{pcs\_fit\_atom.png}}{]}
+
+\noindent\sphinxincludegraphics{{pcs_fit_atom}.png}
 
 
 \subsubsection{Propagate Uncertainty to Fitted Tensor Parameters}
@@ -2591,7 +2756,7 @@ Get basic information about the Metal object
 
 \\
 \hline
-{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.make_mesh:paramagpy.metal.Metal.make_mesh}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{make\_mesh}}}}}({[}density, size{]})
+{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.make_mesh:paramagpy.metal.Metal.make_mesh}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{make\_mesh}}}}}({[}density, size, origin{]})
 &
 Construct a 3D grid of points to map an isosurface
 \\
@@ -2599,6 +2764,11 @@ Construct a 3D grid of points to map an isosurface
 {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.pcs:paramagpy.metal.Metal.pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{pcs}}}}}(position)
 &
 Calculate the psuedo-contact shift at the given postition
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.pcs_gradient:paramagpy.metal.Metal.pcs_gradient}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{pcs\_gradient}}}}}(position)
+&
+Calculate the gradient of the psuedo-contact shift at the given postition.
 \\
 \hline
 {\hyperref[\detokenize{reference/generated/paramagpy.metal.Metal.pcs_mesh:paramagpy.metal.Metal.pcs_mesh}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{pcs\_mesh}}}}}(mesh)
@@ -3584,7 +3754,7 @@ str
 \label{\detokenize{reference/generated/paramagpy.metal.Metal.make_mesh:paramagpy-metal-metal-make-mesh}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.make_mesh::doc}}\index{make\_mesh() (paramagpy.metal.Metal method)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.make_mesh:paramagpy.metal.Metal.make_mesh}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{make\_mesh}}}{\emph{density=2}, \emph{size=40.0}}{}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.make_mesh:paramagpy.metal.Metal.make_mesh}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{make\_mesh}}}{\emph{density=2}, \emph{size=40.0}, \emph{origin=None}}{}
 Construct a 3D grid of points to map an isosurface
 
 This is contained in a cube
@@ -3651,6 +3821,32 @@ float
 \PYG{g+gp}{\PYGZgt{}\PYGZgt{}\PYGZgt{} }\PYG{n}{metal}\PYG{o}{.}\PYG{n}{pcs}\PYG{p}{(}\PYG{p}{[}\PYG{l+m+mf}{0.}\PYG{p}{,}\PYG{l+m+mf}{0.}\PYG{p}{,}\PYG{l+m+mf}{10E\PYGZhy{}10}\PYG{p}{]}\PYG{p}{)}
 \PYG{g+go}{\PYGZhy{}6.153991132886608}
 \end{sphinxVerbatim}
+
+\end{fulllineitems}
+
+
+
+\subparagraph{paramagpy.metal.Metal.pcs\_gradient}
+\label{\detokenize{reference/generated/paramagpy.metal.Metal.pcs_gradient:paramagpy-metal-metal-pcs-gradient}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.pcs_gradient::doc}}\index{pcs\_gradient() (paramagpy.metal.Metal method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.pcs_gradient:paramagpy.metal.Metal.pcs_gradient}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{pcs\_gradient}}}{\emph{position}}{}
+Calculate the gradient of the psuedo-contact shift
+at the given postition.
+This equation uses analytic partial derivatives calculated in
+Mathematica.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{position}} (\sphinxstyleliteralemphasis{\sphinxupquote{array floats}}) \textendash{} the position (x, y, z) in metres
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{gradient} \textendash{} the {[}x,y,z{]} gradient vector for the pseudo-contact shift
+in parts-per-million (ppm) per metre
+
+\item[{Return type}] \leavevmode
+array of floats
+
+\end{description}\end{quote}
 
 \end{fulllineitems}
 
@@ -4558,7 +4754,7 @@ The magnidue of the isotropic component of the tensor
 \label{\detokenize{reference/generated/paramagpy.metal.Metal.lanth_axrh:paramagpy-metal-metal-lanth-axrh}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.lanth_axrh::doc}}\index{lanth\_axrh (paramagpy.metal.Metal attribute)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.lanth_axrh:paramagpy.metal.Metal.lanth_axrh}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{lanth\_axrh}}\sphinxbfcode{\sphinxupquote{ = \{'Ce': (2.1, 0.7), 'Dy': (34.7, 20.3), 'Er': (-11.6, -8.6), 'Eu': (2.4, 1.5), 'Gd': (0.0, 0.0), 'Ho': (18.5, 5.8), 'Nd': (1.7, 0.4), 'Pm': (0.0, 0.0), 'Pr': (3.4, 2.1), 'Sm': (0.2, 0.1), 'Tb': (42.1, 11.2), 'Tm': (-21.9, -20.1), 'Yb': (-8.3, -5.8), 'Zero': (0.0, 0.0)\}}}}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.lanth_axrh:paramagpy.metal.Metal.lanth_axrh}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{lanth\_axrh}}\sphinxbfcode{\sphinxupquote{ = \{'Ce': (2.08, 0.71), 'Dy': (34.7, 20.3), 'Er': (-11.6, -8.58), 'Eu': (-2.34, -1.63), 'Gd': (0.0, 0.0), 'Ho': (18.5, 5.79), 'Nd': (1.74, 0.46), 'Pm': (0.0, 0.0), 'Pr': (3.4, 2.11), 'Sm': (0.19, 0.08), 'Tb': (42.1, 11.2), 'Tm': (-21.9, -20.1), 'Yb': (-8.26, -5.84), 'Zero': (0.0, 0.0)\}}}}
 \end{fulllineitems}
 
 
@@ -4567,7 +4763,7 @@ The magnidue of the isotropic component of the tensor
 \label{\detokenize{reference/generated/paramagpy.metal.Metal.lanth_lib:paramagpy-metal-metal-lanth-lib}}\label{\detokenize{reference/generated/paramagpy.metal.Metal.lanth_lib::doc}}\index{lanth\_lib (paramagpy.metal.Metal attribute)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.lanth_lib:paramagpy.metal.Metal.lanth_lib}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{lanth\_lib}}\sphinxbfcode{\sphinxupquote{ = \{'Ce': (2.5, 0.8571428571428571, 1.33e-13), 'Dy': (7.5, 1.3333333333333333, 2.4e-13), 'Er': (7.5, 1.2, 1.89e-13), 'Eu': (2.0, 1.5, 1.5e-14), 'Gd': (3.5, 2.0, 0.0), 'Ho': (8.0, 1.25, 2.09e-13), 'Nd': (4.5, 0.7272727272727273, 2.1e-13), 'Pm': (4.0, 0.6, 0.0), 'Pr': (4.0, 0.8, 5.4e-14), 'Sm': (2.5, 0.2857142857142857, 7.4e-14), 'Tb': (6.0, 1.5, 2.51e-13), 'Tm': (6.0, 1.1666666666666667, 2.68e-13), 'Yb': (3.5, 1.1428571428571428, 1.57e-13), 'Zero': (0.0, 0.0, 0.0)\}}}}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.metal.Metal.lanth_lib:paramagpy.metal.Metal.lanth_lib}}\pysigline{\sphinxcode{\sphinxupquote{Metal.}}\sphinxbfcode{\sphinxupquote{lanth\_lib}}\sphinxbfcode{\sphinxupquote{ = \{'Ce': (2.5, 0.8571428571428571, 1.33e-13), 'Dy': (7.5, 1.3333333333333333, 2.4e-13), 'Er': (7.5, 1.2, 1.89e-13), 'Eu': (2.0, 1.5, 1.5e-14), 'Gd': (3.5, 2.0, 1e-07), 'Ho': (8.0, 1.25, 2.09e-13), 'Nd': (4.5, 0.7272727272727273, 2.1e-13), 'Pm': (4.0, 0.6, 0.0), 'Pr': (4.0, 0.8, 5.4e-14), 'Sm': (2.5, 0.2857142857142857, 7.4e-14), 'Tb': (6.0, 1.5, 2.51e-13), 'Tm': (6.0, 1.1666666666666667, 2.68e-13), 'Yb': (3.5, 1.1428571428571428, 1.57e-13), 'Zero': (0.0, 0.0, 0.0)\}}}}
 \end{fulllineitems}
 
 
@@ -6891,6 +7087,21 @@ Perform uncertainty analysis sourcing noise from cooridinates as defined by mode
 Perform uncertainty analysis sourcing noise from experimental uncertainties This function takes a fitting routine \textless{}fittingFunction\textgreater{} and repeats it for the specified iterations in a Monte-Carlo approach.
 \\
 \hline
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.gridsearch_fit_atom_from_pcs:paramagpy.fit.gridsearch_fit_atom_from_pcs}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{gridsearch\_fit\_atom\_from\_pcs}}}}}(metals, dataArrays)
+&
+Calculate likely regions for an atom on a grid using an experimental PCS value and multiple delta-chi-tensors.
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.gridsearch_fit_atom_restrain_distance:paramagpy.fit.gridsearch_fit_atom_restrain_distance}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{gridsearch\_fit\_atom\_restrain\_distance}}}}}(…)
+&
+Given two RMSD density maps, this function will compare all points pairwise and return only those within the bounds of a given distance cutoff and within a certain number of points that are that are sorted by RMSD value.
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff:paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{gridsearch\_fit\_atom\_restrain\_distance\_cutoff}}}}}(…)
+&
+Given two RMSD density maps, this function will compare all points pairwise and return only those within the bounds of a given distance cutoff and within a given RMSD cutoff.
+\\
+\hline
 {\hyperref[\detokenize{reference/generated/paramagpy.fit.metal_standard_deviation:paramagpy.fit.metal_standard_deviation}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{metal\_standard\_deviation}}}}}(metals, params)
 &
 Calculate the standard deviation in parameters \textless{}params\textgreater{} for a list of metal objects \textless{}metals\textgreater{}.
@@ -6909,6 +7120,16 @@ Fit deltaChi tensor to PCS values using non-linear regression.
 {\hyperref[\detokenize{reference/generated/paramagpy.fit.nlr_fit_metal_from_pre:paramagpy.fit.nlr_fit_metal_from_pre}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{nlr\_fit\_metal\_from\_pre}}}}}(initMetals, …{[}, …{]})
 &
 Fit Chi tensor to PRE values using non-linear regression.
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.pcs_gradient_orthogonality_cross:paramagpy.fit.pcs_gradient_orthogonality_cross}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{pcs\_gradient\_orthogonality\_cross}}}}}(metals, …)
+&
+An experimental metric for calculating the likelihood of a particular nuclear position being well localised from multiple tensors.
+\\
+\hline
+{\hyperref[\detokenize{reference/generated/paramagpy.fit.pcs_gradient_orthogonality_dot:paramagpy.fit.pcs_gradient_orthogonality_dot}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{pcs\_gradient\_orthogonality\_dot}}}}}(metals, position)
+&
+An experimental metric for calculating the likelihood of a particular nuclear position being well localised from multiple tensors.
 \\
 \hline
 {\hyperref[\detokenize{reference/generated/paramagpy.fit.qfactor:paramagpy.fit.qfactor}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{qfactor}}}}}(dataArray{[}, ensembleAverage, …{]})
@@ -7099,6 +7320,9 @@ This could be ‘nlr\_fit\_metal\_from\_ccr’ for example
 \sphinxstyleliteralstrong{\sphinxupquote{iterations}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} the number of iterations for the Monte-Carlo simulation
 
 \item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{fraction}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} the proportion of data to be samples. Must be between 0 and 1.0
+
+\item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{kwargs}} (\sphinxstyleliteralemphasis{\sphinxupquote{dict}}) \textendash{} all key-word arguments will be bundled into this variable and
 parsed to the fittingFunction.
 
@@ -7207,6 +7431,182 @@ are zero.
 
 \end{itemize}
 
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
+
+\paragraph{paramagpy.fit.gridsearch\_fit\_atom\_from\_pcs}
+\label{\detokenize{reference/generated/paramagpy.fit.gridsearch_fit_atom_from_pcs:paramagpy-fit-gridsearch-fit-atom-from-pcs}}\label{\detokenize{reference/generated/paramagpy.fit.gridsearch_fit_atom_from_pcs::doc}}\index{gridsearch\_fit\_atom\_from\_pcs() (in module paramagpy.fit)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.gridsearch_fit_atom_from_pcs:paramagpy.fit.gridsearch_fit_atom_from_pcs}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{gridsearch\_fit\_atom\_from\_pcs}}}{\emph{metals}, \emph{dataArrays}, \emph{mapSize=10.0}, \emph{mapDensity=1.0}}{}
+Calculate likely regions for an atom on a grid using
+an experimental PCS value and multiple delta-chi-tensors.
+The calculation returns a grid of PCS RMSD values for each atom
+The smallest values on the grid indicated the likely positions
+This function returns a dictionary with key/value pairs
+associating the atoms/grids.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{metals}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of Metal objects}}) \textendash{} a list of metals used for calculating the theoretical
+PCS values used during the RMSD calculation
+a list must always be provided, but may also contain
+only one element.
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{dataArrays}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of PCS dataArray}}) \textendash{} each PCS dataArray must correspond to an associated metal.
+each PCS dataArray has structure determined by
+{\hyperref[\detokenize{reference/generated/paramagpy.protein.CustomStructure.parse:paramagpy.protein.CustomStructure.parse}]{\sphinxcrossref{\sphinxcode{\sphinxupquote{paramagpy.protein.CustomStructure.parse()}}}}}.
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{mapSize}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} the edge length of the grid in angstrom
+defaults to 10 Angstrom
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{mapDensity}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} the density of points in the grid
+defaults to 1 point per Angstrom
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{positions} \textendash{} a dictionary of density maps. Each key is an atom
+as defined in \textless{}dataArrays\textgreater{} and corresponds to a value
+which is the density map.
+a density map defines the RMSD calculation on a grid
+
+\item[{Return type}] \leavevmode
+dict of \sphinxcode{\sphinxupquote{paramagpy.fit.DensityMap}}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
+
+\paragraph{paramagpy.fit.gridsearch\_fit\_atom\_restrain\_distance}
+\label{\detokenize{reference/generated/paramagpy.fit.gridsearch_fit_atom_restrain_distance:paramagpy-fit-gridsearch-fit-atom-restrain-distance}}\label{\detokenize{reference/generated/paramagpy.fit.gridsearch_fit_atom_restrain_distance::doc}}\index{gridsearch\_fit\_atom\_restrain\_distance() (in module paramagpy.fit)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.gridsearch_fit_atom_restrain_distance:paramagpy.fit.gridsearch_fit_atom_restrain_distance}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{gridsearch\_fit\_atom\_restrain\_distance}}}{\emph{densityMapA}, \emph{densityMapB}, \emph{distUpper}, \emph{distLower}, \emph{number}}{}
+Given two RMSD density maps, this function will compare
+all points pairwise and return only those within the bounds of
+a given distance cutoff and within a certain number of points
+that are that are sorted by RMSD value.
+This might be useful if two density maps for separate atoms
+in a molecule are known to be constrained w.r.t. one another
+and you would like to use that restraint to further restrict
+the space of PCS RMSD points.
+The calculation first sorts the RMSD points and takes the bottom
+\textless{}number\textgreater{} of points and then compares each point pariwise to
+fulfill the distance condition. It then returns those points
+from both maps. Unfortunately there is no correlation data
+available between these two maps.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{densityMapA}} (\sphinxcode{\sphinxupquote{paramagpy.fit.DensityMap}}) \textendash{} a density map of PCS RMSD values.
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{densityMapB}} (\sphinxcode{\sphinxupquote{paramagpy.fit.DensityMap}}) \textendash{} a second density map of PCS RMSD values.
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{distUpper}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} The upper limit for distance.
+Any pairwise distances larger than this value
+will be rejected from the final space of points
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{distLower}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} The lower distance limit for distance
+Any pairwise distance smaller than this value
+will be rejectet from the final space of points
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{number}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} The total number of positions to be considered
+for the pairwise distance comparison.
+This calculation first sorts points by RMSD
+and takes \textless{}number\textgreater{} of points with minimum RMSD
+and uses these for the pairwise distance calculation.
+Note that the total number of points returned
+could be significnalty more than this value after
+the pairwise comparison
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{tuple} \textendash{} two lists of {[}x,y,z{]} coordinates are returned associated
+with the inputs \textless{}densityMapA\textgreater{} and \textless{}densityMapB\textgreater{}.
+The returned coordinates are taken from the original grids
+and represent points that have another associated point in
+the other grid which is within the distance bounds and
+contained with an RMSD low enough to be within the lowest
+\textless{}number\textgreater{} of points
+
+\item[{Return type}] \leavevmode
+np.ndarray of position coordinates
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
+
+\paragraph{paramagpy.fit.gridsearch\_fit\_atom\_restrain\_distance\_cutoff}
+\label{\detokenize{reference/generated/paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff:paramagpy-fit-gridsearch-fit-atom-restrain-distance-cutoff}}\label{\detokenize{reference/generated/paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff::doc}}\index{gridsearch\_fit\_atom\_restrain\_distance\_cutoff() (in module paramagpy.fit)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff:paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{gridsearch\_fit\_atom\_restrain\_distance\_cutoff}}}{\emph{densityMapA}, \emph{densityMapB}, \emph{distUpper}, \emph{distLower}, \emph{cutoffValue}}{}
+Given two RMSD density maps, this function will compare
+all points pairwise and return only those within the bounds of
+a given distance cutoff and within a given RMSD cutoff.
+This might be useful if two density maps for separate atoms
+in a molecule are known to be constrained w.r.t. one another
+and you would like to use that restraint to further restrict
+the space of PCS RMSD points.
+The calculation first selects points with an RMSD less than
+the given cutoff value and then compares each point pariwise to
+fulfill the distance condition. It then returns those points
+from both maps. Unfortunately there is no correlation data
+available between these two maps.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{densityMapA}} (\sphinxcode{\sphinxupquote{paramagpy.fit.DensityMap}}) \textendash{} a density map of PCS RMSD values.
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{densityMapB}} (\sphinxcode{\sphinxupquote{paramagpy.fit.DensityMap}}) \textendash{} a second density map of PCS RMSD values.
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{distUpper}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} The upper limit for distance.
+Any pairwise distances larger than this value
+will be rejected from the final space of points
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{distLower}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} The lower distance limit for distance
+Any pairwise distance smaller than this value
+will be rejectet from the final space of points
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{cutoffValue}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} The RMSD threshold for which points are taken
+for the pairwise distance comparison.
+Note that the total number of points returned
+is significnalty influenced by this parameter
+and should be chosen carefully
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{tuple} \textendash{} two lists of {[}x,y,z{]} coordinates are returned associated
+with the inputs \textless{}densityMapA\textgreater{} and \textless{}densityMapB\textgreater{}.
+The returned coordinates are taken from the original grids
+and represent points that have another associated point in
+the other grid which is within the distance bounds and
+have an RMSD below the cutoff threshold.
+
+\item[{Return type}] \leavevmode
+np.ndarray of position coordinates
 
 \end{description}\end{quote}
 
@@ -7451,6 +7851,89 @@ fitted tensor.
 
 \end{itemize}
 
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
+
+\paragraph{paramagpy.fit.pcs\_gradient\_orthogonality\_cross}
+\label{\detokenize{reference/generated/paramagpy.fit.pcs_gradient_orthogonality_cross:paramagpy-fit-pcs-gradient-orthogonality-cross}}\label{\detokenize{reference/generated/paramagpy.fit.pcs_gradient_orthogonality_cross::doc}}\index{pcs\_gradient\_orthogonality\_cross() (in module paramagpy.fit)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.pcs_gradient_orthogonality_cross:paramagpy.fit.pcs_gradient_orthogonality_cross}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{pcs\_gradient\_orthogonality\_cross}}}{\emph{metals}, \emph{position}}{}
+An experimental metric for calculating the likelihood
+of a particular nuclear position being well localised
+from multiple tensors.
+The metric scores the orthogonality of the PCS
+gradient vectors and accounts for their magnitude.
+This algorithm calculates the PCS graident
+vector arising at a given position from each tensor
+provided. It then calculates the pairwise cross product
+of each vector and averages their norm (length).
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{metals}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of Metal objects}}) \textendash{} a list of paramagpy metal objects which define the
+tensors.
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{position}} (\sphinxstyleliteralemphasis{\sphinxupquote{numpy.ndarray of floats}}) \textendash{} the {[}x,y,z{]} coordinate to calculated the
+orthogonality score
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{score} \textendash{} the orthogonality score. This is necessarily
+between greater than zero. A larger
+score defines a more favourable orthogonality
+between PCS gradient vectors and also score larger
+PCS gradients more highly.
+
+\item[{Return type}] \leavevmode
+float
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
+
+\paragraph{paramagpy.fit.pcs\_gradient\_orthogonality\_dot}
+\label{\detokenize{reference/generated/paramagpy.fit.pcs_gradient_orthogonality_dot:paramagpy-fit-pcs-gradient-orthogonality-dot}}\label{\detokenize{reference/generated/paramagpy.fit.pcs_gradient_orthogonality_dot::doc}}\index{pcs\_gradient\_orthogonality\_dot() (in module paramagpy.fit)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{reference/generated/paramagpy.fit.pcs_gradient_orthogonality_dot:paramagpy.fit.pcs_gradient_orthogonality_dot}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{paramagpy.fit.}}\sphinxbfcode{\sphinxupquote{pcs\_gradient\_orthogonality\_dot}}}{\emph{metals}, \emph{position}}{}
+An experimental metric for calculating the likelihood
+of a particular nuclear position being well localised
+from multiple tensors.
+This algorithm calculates the normalised PCS graident
+vector arising at a given position from each tensor
+provided. It then calculates the pairwise dot product
+of each vector and averages their absolute value.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{metals}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of Metal objects}}) \textendash{} a list of paramagpy metal objects which define the
+tensors.
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{position}} (\sphinxstyleliteralemphasis{\sphinxupquote{numpy.ndarray of floats}}) \textendash{} the {[}x,y,z{]} coordinate to calculated the
+orthogonality score
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{score} \textendash{} the orthogonality score. This is necessarily
+between 0 and 1 for this metric. A lower
+score defies a more favourable orthogonality
+between PCS gradient vectors.
+Note that a value of zero is not possible when
+more than 4 metals are provided.
+
+\item[{Return type}] \leavevmode
+float
 
 \end{description}\end{quote}
 

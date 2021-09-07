@@ -46,6 +46,7 @@ paramagpy.metal.Metal
                   ~Metal.isomap
                   ~Metal.make_mesh
                   ~Metal.pcs
+                  ~Metal.pcs_gradient
                   ~Metal.pcs_mesh
                   ~Metal.pre
                   ~Metal.pre_mesh

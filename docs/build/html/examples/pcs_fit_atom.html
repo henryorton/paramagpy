@@ -1,0 +1,255 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Fit Atomic Coordinates to PCS data &#8212; paramagpy 1.1 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Propagate Uncertainty to Fitted Tensor Parameters" href="pcs_fit_uncertainty.html" />
+    <link rel="prev" title="Fit a tensor to PCS data with uncertainties" href="pcs_fit_error.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pcs_fit_uncertainty.html" title="Propagate Uncertainty to Fitted Tensor Parameters"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pcs_fit_error.html" title="Fit a tensor to PCS data with uncertainties"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Examples</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="fit-atomic-coordinates-to-pcs-data">
+<span id="pcs-fit-atom"></span><h1>Fit Atomic Coordinates to PCS data<a class="headerlink" href="#fit-atomic-coordinates-to-pcs-data" title="Permalink to this headline">¶</a></h1>
+<p>This example shows how to calculate the region in space which is likely for atomic coordinates from PCS measurements. Multiple <span class="math notranslate nohighlight">\({\Delta\chi}\)</span>-tensors are used from different tagging sites in the protein IMP1 to localise a tryptophan sidechain in a loop.</p>
+<p>The script fits the <span class="math notranslate nohighlight">\({\Delta\chi}\)</span>-tensors from backbone PCS data and then samples 20 perturbed tensors using a bootstrap fitting. The sampled tensors improve stability of the final calculation. The script then calculates the RMSD between experiment and calculated PCS values for nuclei in the sidechain of tryptophan at residue 28 on a grid of points. The grid is then viewed in PyMol.</p>
+<div class="section" id="downloads">
+<h2>Downloads<a class="headerlink" href="#downloads" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Download the data files <code class="docutils literal notranslate"><span class="pre">5ev6AH.pdb</span></code> and all IMP1 datasets from <a class="reference external" href="https://github.com/henryorton/paramagpy/tree/master/examples/data_files/">here</a>:</li>
+<li>Download the script <a class="reference download internal" download="" href="../_downloads/4889aee95b6d38acab07714f7a6390a0/pcs_fit_atom.py"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit_atom.py</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="script-explanation">
+<h2>Script + Explanation<a class="headerlink" href="#script-explanation" title="Permalink to this headline">¶</a></h2>
+<p>After importing modules from paramagpy, the tagging sites and lanthanoid ions are specified as tuple variables. The PDB file is loaded. The <code class="docutils literal notranslate"><span class="pre">atoms</span></code> list contains the atoms of interest (in this case the NH and adjacent CH protons of tryptophan 28). Finally the number of bootstrap iterations are defined.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">paramagpy</span> <span class="k">import</span> <span class="n">protein</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">dataparse</span><span class="p">,</span> <span class="n">metal</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">sites</span> <span class="o">=</span> <span class="s1">&#39;A53C-C2&#39;</span><span class="p">,</span> <span class="s1">&#39;N172C-C2&#39;</span><span class="p">,</span> <span class="s1">&#39;S204C-C2&#39;</span><span class="p">,</span> <span class="s1">&#39;N172C-C12&#39;</span>
+<span class="n">ions</span> <span class="o">=</span> <span class="s1">&#39;Tm&#39;</span><span class="p">,</span> <span class="s1">&#39;Tb&#39;</span>
+<span class="n">pdb_path</span> <span class="o">=</span> <span class="s2">&quot;../data_files/5ev6AH.pdb&quot;</span>
+<span class="n">prot</span> <span class="o">=</span> <span class="n">protein</span><span class="o">.</span><span class="n">load_pdb</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">)</span>
+<span class="n">atomns</span> <span class="o">=</span> <span class="s1">&#39;H07&#39;</span><span class="p">,</span> <span class="s1">&#39;H08&#39;</span>
+<span class="n">atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">prot</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;A&#39;</span><span class="p">][</span><span class="mi">28</span><span class="p">][</span><span class="n">atomn</span><span class="p">]</span> <span class="k">for</span> <span class="n">atomn</span> <span class="ow">in</span> <span class="n">atomns</span><span class="p">]</span>
+<span class="n">BOOTSTRAP_ITER</span> <span class="o">=</span> <span class="mi">20</span>
+</pre></div>
+</div>
+<p>Two dictionaries are specified to define the final colours and RMSD contour levels to be plotted in PyMol.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Isosurface colours</span>
+<span class="n">surface_colours</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="p">(</span><span class="n">ions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">atomns</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> <span class="s1">&#39;teal&#39;</span><span class="p">,</span>
+	<span class="p">(</span><span class="n">ions</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">atomns</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+	<span class="p">(</span><span class="n">ions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">atomns</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span> <span class="s1">&#39;magenta&#39;</span><span class="p">,</span>
+	<span class="p">(</span><span class="n">ions</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">atomns</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># RMSD contour levels</span>
+<span class="n">surface_contour</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="p">(</span><span class="n">ions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">atomns</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> <span class="mf">0.04</span><span class="p">,</span>
+	<span class="p">(</span><span class="n">ions</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">atomns</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> <span class="mf">0.04</span><span class="p">,</span>
+	<span class="p">(</span><span class="n">ions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">atomns</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span> <span class="mf">0.016</span><span class="p">,</span>
+	<span class="p">(</span><span class="n">ions</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">atomns</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span> <span class="mf">0.02</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A PyMol script object <code class="xref py py-class docutils literal notranslate"><span class="pre">paramagpy.protein.PyMolScript</span></code> is created and the PDB is added to it. This object makes it easy to add density maps, PDBs and spheres to PyMol from Paramagpy.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pmlscript</span> <span class="o">=</span> <span class="n">protein</span><span class="o">.</span><span class="n">PyMolScript</span><span class="p">()</span>
+<span class="n">pmlscript</span><span class="o">.</span><span class="n">add_pdb</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">pdb_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;5ev6&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next is a rather involved loop that iterates of the tagging sites, fits the <span class="math notranslate nohighlight">\({\Delta\chi}\)</span>-tensor using a simultaneous fit between Tm and Tb data and finally samples the tensor fits using bootstrap. The fitted tensors are bundled into the variable <code class="docutils literal notranslate"><span class="pre">mdata</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mdata</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">sites</span><span class="p">:</span> <span class="c1"># Loop over sites</span>
+	<span class="n">bindingSite</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">d+&quot;</span><span class="p">,</span> <span class="n">site</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">())</span> <span class="c1"># Get residue number</span>
+	<span class="n">mStart</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">Metal</span><span class="p">()</span>
+	<span class="n">mStart</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">prot</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;A&#39;</span><span class="p">][</span><span class="n">bindingSite</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">position</span> <span class="c1"># Set strating position</span>
+
+	<span class="n">hnpcss</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="c1"># Assemble exp. PCS data for both ions</span>
+	<span class="k">for</span> <span class="n">ion</span> <span class="ow">in</span> <span class="n">ions</span><span class="p">:</span>
+		<span class="n">hnpcs_raw</span> <span class="o">=</span> <span class="n">dataparse</span><span class="o">.</span><span class="n">read_pcs</span><span class="p">(</span><span class="s2">&quot;../data_files/IMP1_HN_</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">_FREE.npc&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">ion</span><span class="p">))</span>
+		<span class="n">hnpcs</span> <span class="o">=</span> <span class="n">prot</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">hnpcs_raw</span><span class="p">)</span>
+		<span class="n">hnpcss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hnpcs</span><span class="p">)</span>
+
+	<span class="c1"># Fit the tensor by SVD, then NLR</span>
+	<span class="n">mGuess</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">svd_gridsearch_fit_metal_from_pcs</span><span class="p">([</span><span class="n">mStart</span><span class="p">,</span> <span class="n">mStart</span><span class="p">],</span> <span class="n">hnpcss</span><span class="p">)</span>
+	<span class="n">mFit</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">nlr_fit_metal_from_pcs</span><span class="p">(</span><span class="n">mGuess</span><span class="p">,</span> <span class="n">hnpcss</span><span class="p">)</span>
+
+	<span class="c1"># Sample purturbed tensors by bootstrap</span>
+	<span class="n">mSamples</span><span class="p">,</span> <span class="n">mStd</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">fit_error_bootstrap</span><span class="p">(</span>
+		<span class="n">fit</span><span class="o">.</span><span class="n">nlr_fit_metal_from_pcs</span><span class="p">,</span> 
+		<span class="n">BOOTSTRAP_ITER</span><span class="p">,</span> 
+		<span class="mf">0.8</span><span class="p">,</span> 
+		<span class="n">initMetals</span><span class="o">=</span><span class="n">mFit</span><span class="p">,</span> 
+		<span class="n">dataArrays</span><span class="o">=</span><span class="n">hnpcss</span>
+	<span class="p">)</span>
+
+	<span class="n">mdata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mSamples</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The fitted <span class="math notranslate nohighlight">\({\Delta\chi}\)</span>-tensors are then unzipped (to allow iterating over each ion) and assembled with the tryptophan PCS data in two lists <code class="docutils literal notranslate"><span class="pre">mdata</span></code> and <code class="docutils literal notranslate"><span class="pre">trpdata</span></code>. For each data array contained in <code class="docutils literal notranslate"><span class="pre">trpdata</span></code> there must be an associated tensor contained in <code class="docutils literal notranslate"><span class="pre">mdata</span></code>, so that is why they are contsructed side by side.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ion</span><span class="p">,</span> <span class="n">mSamples</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ions</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">mdata</span><span class="p">)):</span>
+	<span class="n">trpdata</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">mdata</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="c1"># Loop sites with fitted tensors</span>
+	<span class="k">for</span> <span class="n">site</span><span class="p">,</span> <span class="n">mSample</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="n">mSamples</span><span class="p">):</span>
+		<span class="c1"># Load TRP PCS data</span>
+		<span class="n">trppcs_raw</span> <span class="o">=</span> <span class="n">dataparse</span><span class="o">.</span><span class="n">read_pcs</span><span class="p">(</span><span class="s2">&quot;../data_files/IMP1_TRP_</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">_FREE.npc&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">ion</span><span class="p">))</span>
+		<span class="n">trppcs</span> <span class="o">=</span> <span class="n">prot</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">trppcs_raw</span><span class="p">)</span>
+
+		<span class="c1"># Assemble associated lists of atoms/PCS with tensors</span>
+		<span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">:</span>
+			<span class="n">dataselect</span> <span class="o">=</span> <span class="n">trppcs</span><span class="p">[</span><span class="n">trppcs</span><span class="p">[</span><span class="s1">&#39;atm&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">atom</span><span class="p">]</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataselect</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mSample</span><span class="p">:</span> 
+					<span class="n">trpdata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataselect</span><span class="p">)</span>
+					<span class="n">mdata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The function <a class="reference internal" href="../reference/generated/paramagpy.fit.gridsearch_fit_atom_from_pcs.html#paramagpy.fit.gridsearch_fit_atom_from_pcs" title="paramagpy.fit.gridsearch_fit_atom_from_pcs"><code class="xref py py-func docutils literal notranslate"><span class="pre">paramagpy.fit.gridsearch_fit_atom_from_pcs()</span></code></a> is called which calculates the PCS RMSD on a grid as defined by the function arguments <code class="docutils literal notranslate"><span class="pre">mapSize</span></code> and <code class="docutils literal notranslate"><span class="pre">mapDensity</span></code>. This function returns a dictionary which contains keys for the atoms of the PDB files and values of <code class="xref py py-class docutils literal notranslate"><span class="pre">paramagpy.fit.DensityMap</span></code> which define the grid of PCS RMSD values.</p>
+<p>What remains of the script is to add the PCS RMSD grid to the PyMol script and save it so that it plots with the specified colours and contour levels. What results is a volume which contains all points that have an RMSD less than the specified <code class="docutils literal notranslate"><span class="pre">isoVals</span></code> value. Finally some standard PyMol commands are added to display the protein structure as desired.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>	<span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">:</span>
+		<span class="n">mapname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">map&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">ion</span><span class="p">)</span>
+		<span class="n">dmapFilePath</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.ccp4&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mapname</span><span class="p">)</span>
+		<span class="n">gridsVol</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dmapFilePath</span><span class="p">)</span>
+		<span class="n">pmlscript</span><span class="o">.</span><span class="n">add_map</span><span class="p">(</span>
+			<span class="n">path</span><span class="o">=</span><span class="n">dmapFilePath</span><span class="p">,</span>
+			<span class="n">name</span><span class="o">=</span><span class="n">mapname</span><span class="p">,</span>
+			<span class="n">isoVals</span><span class="o">=</span><span class="p">[</span><span class="n">surface_contour</span><span class="p">[(</span><span class="n">ion</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">id</span><span class="p">)]],</span>
+			<span class="n">colours</span><span class="o">=</span><span class="p">[</span><span class="n">surface_colours</span><span class="p">[(</span><span class="n">ion</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">id</span><span class="p">)]],</span>
+			<span class="n">surfaceType</span><span class="o">=</span><span class="s1">&#39;isodot&#39;</span><span class="p">,</span>
+		<span class="p">)</span>
+
+<span class="n">pmlscript</span> <span class="o">+=</span> <span class="s2">&quot;set dot_radius, 0.05&quot;</span>
+<span class="n">pmlscript</span> <span class="o">+=</span> <span class="s2">&quot;show sticks, ////28 and sc.&quot;</span>
+<span class="n">pmlscript</span> <span class="o">+=</span> <span class="s2">&quot;show sticks, ////28/CA&quot;</span>
+<span class="n">pmlscript</span> <span class="o">+=</span> <span class="s2">&quot;set bg_rgb=[1,1,1]&quot;</span>
+<span class="n">pmlscript</span> <span class="o">+=</span> <span class="s2">&quot;set mesh_width, 0.5&quot;</span>
+<span class="n">pmlscript</span> <span class="o">+=</span> <span class="s2">&quot;zoom ////28/H07</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="n">pmlscript</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">set_view (</span><span class="se">\</span>
+<span class="s2">     0.505656540,   -0.827194929,   -0.245069817,</span><span class="se">\</span>
+<span class="s2">    -0.741597414,   -0.561904311,    0.366465807,</span><span class="se">\</span>
+<span class="s2">    -0.440846384,   -0.003562994,   -0.897575319,</span><span class="se">\</span>
+<span class="s2">     0.000152570,    0.000080852,  -36.169487000,</span><span class="se">\</span>
+<span class="s2">    48.539413452,   83.819839478,   42.674442291,</span><span class="se">\</span>
+<span class="s2">    26.907037735,   45.422363281,  -20.000000000 )</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="n">pmlscript</span> <span class="o">+=</span> <span class="s2">&quot;ray 1600&quot;</span>
+<span class="n">pmlscript</span> <span class="o">+=</span> <span class="s2">&quot;png pcs_fit_atom.png&quot;</span>
+<span class="n">pmlscript</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;pcs_fit_atom.pml&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This generates the following PyMol script which allows viewing of the PCS RMSD region. <a class="reference download internal" download="" href="../_downloads/124c88e7f2990cd73873460f3257581f/pcs_fit_atom.pml"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit_atom.pml</span></code></a>. After opening the script in PyMol the following image is generated.</p>
+<p>[<a class="reference download internal" download="" href="../_downloads/c80c7d9a426d016d8cdc34fc7d9e4121/pcs_fit_atom.png"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit_atom.png</span></code></a>]</p>
+<img alt="../_images/pcs_fit_atom.png" src="../_images/pcs_fit_atom.png" />
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Fit Atomic Coordinates to PCS data</a><ul>
+<li><a class="reference internal" href="#downloads">Downloads</a></li>
+<li><a class="reference internal" href="#script-explanation">Script + Explanation</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pcs_fit_error.html"
+                        title="previous chapter">Fit a tensor to PCS data with uncertainties</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pcs_fit_uncertainty.html"
+                        title="next chapter">Propagate Uncertainty to Fitted Tensor Parameters</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/pcs_fit_atom.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pcs_fit_uncertainty.html" title="Propagate Uncertainty to Fitted Tensor Parameters"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pcs_fit_error.html" title="Fit a tensor to PCS data with uncertainties"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Examples</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Henry Orton.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

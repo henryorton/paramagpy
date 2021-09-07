@@ -943,7 +943,7 @@ class DataLoad(tk.LabelFrame):
 			return (mag*self.GAMMAH)/(2*np.pi * 1E6)
 		self.fields['mag'] = NumericEntry(self, parse, 
 			disp, onlyPositive=True, formatter="{:.1f}")
-		self.fields['mag'].label = tk.Label(self, text='B0/Tesla')
+		self.fields['mag'].label = tk.Label(self, text='B0/MHz')
 		self.fields['mag'].label.grid(row=1,column=0)
 		self.fields['mag'].grid(row=1,column=1)
 

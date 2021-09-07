@@ -1,0 +1,165 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff &#8212; paramagpy 1.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="paramagpy.fit.metal_standard_deviation" href="paramagpy.fit.metal_standard_deviation.html" />
+    <link rel="prev" title="paramagpy.fit.gridsearch_fit_atom_restrain_distance" href="paramagpy.fit.gridsearch_fit_atom_restrain_distance.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="paramagpy.fit.metal_standard_deviation.html" title="paramagpy.fit.metal_standard_deviation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="paramagpy.fit.gridsearch_fit_atom_restrain_distance.html" title="paramagpy.fit.gridsearch_fit_atom_restrain_distance"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="paramagpy.fit.html" accesskey="U">paramagpy.fit</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="paramagpy-fit-gridsearch-fit-atom-restrain-distance-cutoff">
+<h1>paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff<a class="headerlink" href="#paramagpy-fit-gridsearch-fit-atom-restrain-distance-cutoff" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff">
+<code class="descclassname">paramagpy.fit.</code><code class="descname">gridsearch_fit_atom_restrain_distance_cutoff</code><span class="sig-paren">(</span><em>densityMapA</em>, <em>densityMapB</em>, <em>distUpper</em>, <em>distLower</em>, <em>cutoffValue</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#gridsearch_fit_atom_restrain_distance_cutoff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given two RMSD density maps, this function will compare
+all points pairwise and return only those within the bounds of
+a given distance cutoff and within a given RMSD cutoff.
+This might be useful if two density maps for separate atoms
+in a molecule are known to be constrained w.r.t. one another
+and you would like to use that restraint to further restrict
+the space of PCS RMSD points.
+The calculation first selects points with an RMSD less than
+the given cutoff value and then compares each point pariwise to
+fulfill the distance condition. It then returns those points
+from both maps. Unfortunately there is no correlation data
+available between these two maps.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>densityMapA</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">paramagpy.fit.DensityMap</span></code>) – a density map of PCS RMSD values.</li>
+<li><strong>densityMapB</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">paramagpy.fit.DensityMap</span></code>) – a second density map of PCS RMSD values.</li>
+<li><strong>distUpper</strong> (<em>float</em>) – The upper limit for distance.
+Any pairwise distances larger than this value
+will be rejected from the final space of points</li>
+<li><strong>distLower</strong> (<em>float</em>) – The lower distance limit for distance
+Any pairwise distance smaller than this value
+will be rejectet from the final space of points</li>
+<li><strong>cutoffValue</strong> (<em>float</em>) – The RMSD threshold for which points are taken
+for the pairwise distance comparison.
+Note that the total number of points returned
+is significnalty influenced by this parameter
+and should be chosen carefully</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>tuple</strong> – two lists of [x,y,z] coordinates are returned associated
+with the inputs &lt;densityMapA&gt; and &lt;densityMapB&gt;.
+The returned coordinates are taken from the original grids
+and represent points that have another associated point in
+the other grid which is within the distance bounds and
+have an RMSD below the cutoff threshold.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray of position coordinates</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="paramagpy.fit.gridsearch_fit_atom_restrain_distance.html"
+                        title="previous chapter">paramagpy.fit.gridsearch_fit_atom_restrain_distance</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="paramagpy.fit.metal_standard_deviation.html"
+                        title="next chapter">paramagpy.fit.metal_standard_deviation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/reference/generated/paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="paramagpy.fit.metal_standard_deviation.html" title="paramagpy.fit.metal_standard_deviation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="paramagpy.fit.gridsearch_fit_atom_restrain_distance.html" title="paramagpy.fit.gridsearch_fit_atom_restrain_distance"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="paramagpy.fit.html" >paramagpy.fit</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Henry Orton.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
