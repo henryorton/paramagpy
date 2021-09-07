@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.optimize import fmin_bfgs
-from pprint import pprint
 import warnings
 from collections import OrderedDict
 
@@ -1130,6 +1129,8 @@ def fit_error_bootstrap(fittingFunction, iterations, fraction, **kwargs):
 		This could be 'nlr_fit_metal_from_ccr' for example
 	iterations : int
 		the number of iterations for the Monte-Carlo simulation
+	fraction : float
+		the proportion of data to be samples. Must be between 0 and 1.0
 	kwargs : dict
 		all key-word arguments will be bundled into this variable and
 		parsed to the fittingFunction.
@@ -1273,10 +1274,389 @@ def ensemble_average(dataArray):
 
 
 
+class DensityMap(object):
+	"""
+	A class to help with calculations on a grid.
+	The grid can be setup by specifying the origin (centre)
+	edge size and density.
+	Arguments are given in Angstrom, but stored in metres
+	The grid positions are available for calculations
+	The density can be written out as a .ccp4 electron density map
+	Use this class for any contour plots to view in PyMol
+	"""
+	CCP4_HEADER_DTYPE = np.dtype([
+	    ('np', 'i4', 3),       # Points in each axis
+	    ('mode', 'i4'),        # 2 for 32-bit float
+	    ('ns', 'i4', 3),       # Start number for each axis
+	    ('ni', 'i4', 3),       # Number of intervals along each axis
+	    ('dim', 'f4', 3),      # Cell dimensions in Angstrom
+	    ('ang', 'f4', 3),      # Cell angles in degrees
+	    ('map', 'i4', 3),      # Axis mappings, 1=x,2=y,3=z
+	    ('amin', 'f4'),        # Minimum density value
+	    ('amax', 'f4'),        # Maximum density value
+	    ('amean', 'f4'),       # Mean density value
+	    ('ispg', 'i4'),        # space group number
+	    ('padd', 'V932')       # additional headers
+	])
+	def __init__(self, origin, size, density):
+		"""
+		Make a density map over a cubic grid of coordinates
+
+		Parameters
+		----------
+		origin : np.ndarray of floats
+			[x,y,z] position in Angstrom defining the centre of the cubic grid
+		size : float
+			the grid edge size in Angstrom
+		density : float
+			grid density defined as points per angstrom
+		"""
+		origin_vertex = np.asarray(
+			density * (origin - size/2.0), dtype=int)
+		low = origin_vertex / float(density)
+		high = low + size
+		points = np.array([int(density*size)]*3) + 1
+		domains = [1E-10*np.linspace(*i) for i in zip(low, high, points)]
+		
+		self.shape = points
+		self.mesh = np.array(np.meshgrid(*domains, indexing='ij')).T
+		self.positions = self.mesh.reshape(np.prod(points),3)
+		self.density = np.zeros(np.prod(points), dtype=np.float64)
+
+		h = np.zeros(1, dtype=self.CCP4_HEADER_DTYPE)
+		h['np'] = points
+		h['mode'] = 2
+		h['ns'] = origin_vertex
+		h['ni'] = points - 1
+		h['dim'] = high - low
+		h['ang'] = [90.0, 90.0, 90.0]
+		h['map'] = [1, 2, 3]
+		h['ispg'] = 1
+
+		self.header = h
+
+	def minpos(self):
+		"""
+		Fetch the grid point position with minimum density value
+
+		Returns
+		-------
+		position : np.ndarray
+			[x,y,z] position in metres of the point
+		"""
+		return self.positions[np.argmin(self.density)]
+
+	def boundary_min(self):
+		"""
+		Does the minimum value lie on the boundary of the grid?
+
+		Return
+		------
+		truth: bool
+			return true if the minimum density is located
+			on the boundary of the grid
+		"""
+		minarg = np.argmin(self.density.reshape(*self.shape))
+		idx = np.array(np.unravel_index(minarg, self.shape))
+		for i, s in zip(idx, self.shape):
+			if i==0 or i==(s-1):
+				return True
+		return False
+
+	def get_positions_below_density(self, cutoffValue):
+		"""
+		Returns all positions in the grid that are below the 
+		argument <cutoffValue>
+
+		Parameters
+		----------
+		cutoffValue : float
+			the threshold below which points will be taken
+
+		Returns
+		-------
+		positions : numpy.ndarray
+			a list of positions which are below the cutoff value
+		"""
+		return self.positions[np.where(self.density < cutoffValue)]
+
+	def write(self, fileName):
+		"""
+		Write density values to file in .ccp4 format
+		Headers are accounted for from the given geometry of the grid
+
+		Parameters
+		----------
+		fileName : string
+			the name of the .ccp4 file
+		"""
+		self.header['amin'] = np.min(self.density)
+		self.header['amax'] = np.max(self.density)
+		self.header['amean'] = np.mean(self.density)
+		with open(fileName, 'wb') as f:
+			f.write(self.header.tobytes())
+			f.write(np.asarray(self.density, dtype=np.float32).tobytes())
 
 
 
+def gridsearch_fit_atom_from_pcs(metals, dataArrays, mapSize=10.0, mapDensity=1.0):
+	"""
+	Calculate likely regions for an atom on a grid using
+	an experimental PCS value and multiple delta-chi-tensors.
+	The calculation returns a grid of PCS RMSD values for each atom
+	The smallest values on the grid indicated the likely positions
+	This function returns a dictionary with key/value pairs
+	associating the atoms/grids.
 
+	Parameters
+	----------
+	metals : list of Metal objects
+		a list of metals used for calculating the theoretical
+		PCS values used during the RMSD calculation 
+		a list must always be provided, but may also contain 
+		only one element.
+	dataArrays : list of PCS dataArray
+		each PCS dataArray must correspond to an associated metal.
+		each PCS dataArray has structure determined by 
+		:meth:`paramagpy.protein.CustomStructure.parse`.
+	mapSize : float, optional
+		the edge length of the grid in angstrom
+		defaults to 10 Angstrom
+	mapDensity : float, optional
+		the density of points in the grid
+		defaults to 1 point per Angstrom
+
+	Returns
+	-------
+	positions : dict of :class:`paramagpy.fit.DensityMap`
+		a dictionary of density maps. Each key is an atom
+		as defined in <dataArrays> and corresponds to a value
+		which is the density map.
+		a density map defines the RMSD calculation on a grid
+	"""
+	data = {}
+	# Sort data for separate calculations for each atom
+	for metal, dataArray in zip(metals, dataArrays):
+		for row in dataArray:
+			if row['atm'] not in data:
+				data[row['atm']] = []
+			data[row['atm']].append((metal, row['exp']))
+
+	out = {}
+	# Loop over each atom
+	for atom in data:
+		dm = DensityMap(atom.position*1E10, mapSize, mapDensity)
+		# Loop over each metal and calculate sum of squares
+		for metal, exp in data[atom]:
+			dm.density += (metal.fast_pcs(dm.positions) - exp)**2
+
+		# Average and square root to finish RMSD calculation
+		dm.density = (dm.density / len(data[atom]))**0.5 
+
+		# Display a warning if minimum point is on the grid boundary
+		# Might be necessary to change box definition for grid
+		if dm.boundary_min():
+			warnings.warn("Atom {} has minimum position solved on grid boundary.".format(atom))
+
+		out[atom] = dm
+
+	return out
+
+
+def gridsearch_fit_atom_restrain_distance(densityMapA, densityMapB, distUpper, distLower, number):
+	"""
+	Given two RMSD density maps, this function will compare
+	all points pairwise and return only those within the bounds of
+	a given distance cutoff and within a certain number of points 
+	that are that are sorted by RMSD value.
+	This might be useful if two density maps for separate atoms
+	in a molecule are known to be constrained w.r.t. one another
+	and you would like to use that restraint to further restrict 
+	the space of PCS RMSD points.
+	The calculation first sorts the RMSD points and takes the bottom
+	<number> of points and then compares each point pariwise to 
+	fulfill the distance condition. It then returns those points
+	from both maps. Unfortunately there is no correlation data
+	available between these two maps.
+
+	Parameters
+	----------
+	densityMapA: :class:`paramagpy.fit.DensityMap`
+		a density map of PCS RMSD values.
+	densityMapB: :class:`paramagpy.fit.DensityMap`
+		a second density map of PCS RMSD values.
+	distUpper : float
+		The upper limit for distance.
+		Any pairwise distances larger than this value
+		will be rejected from the final space of points
+	distLower : float
+		The lower distance limit for distance
+		Any pairwise distance smaller than this value
+		will be rejectet from the final space of points
+	number : int
+		The total number of positions to be considered
+		for the pairwise distance comparison.
+		This calculation first sorts points by RMSD
+		and takes <number> of points with minimum RMSD
+		and uses these for the pairwise distance calculation.
+		Note that the total number of points returned
+		could be significnalty more than this value after
+		the pairwise comparison
+
+	Returns
+	-------
+	tuple : np.ndarray of position coordinates
+		two lists of [x,y,z] coordinates are returned associated
+		with the inputs <densityMapA> and <densityMapB>.
+		The returned coordinates are taken from the original grids
+		and represent points that have another associated point in
+		the other grid which is within the distance bounds and 
+		contained with an RMSD low enough to be within the lowest
+		<number> of points
+	"""
+	idxSortA = np.argsort(densityMapA.density)[0:number]
+	idxSortB = np.argsort(densityMapB.density)[0:number]
+	posA = densityMapA.positions[idxSortA]
+	posB = densityMapB.positions[idxSortB]
+	dist = np.linalg.norm(posA[:,None] - posB, axis=2)
+	idxA, idxB = np.where(np.logical_and(dist < distUpper, dist > distLower))
+	idxSort = np.argsort(densityMapA.density[idxA] + densityMapB.density[idxB])
+	return posA[idxA[idxSort]], posB[idxB[idxSort]]
+
+
+def gridsearch_fit_atom_restrain_distance_cutoff(densityMapA, densityMapB, distUpper, distLower, cutoffValue):
+	"""
+	Given two RMSD density maps, this function will compare
+	all points pairwise and return only those within the bounds of
+	a given distance cutoff and within a given RMSD cutoff.
+	This might be useful if two density maps for separate atoms
+	in a molecule are known to be constrained w.r.t. one another
+	and you would like to use that restraint to further restrict 
+	the space of PCS RMSD points.
+	The calculation first selects points with an RMSD less than
+	the given cutoff value and then compares each point pariwise to 
+	fulfill the distance condition. It then returns those points
+	from both maps. Unfortunately there is no correlation data
+	available between these two maps.
+
+	Parameters
+	----------
+	densityMapA: :class:`paramagpy.fit.DensityMap`
+		a density map of PCS RMSD values.
+	densityMapB: :class:`paramagpy.fit.DensityMap`
+		a second density map of PCS RMSD values.
+	distUpper : float
+		The upper limit for distance.
+		Any pairwise distances larger than this value
+		will be rejected from the final space of points
+	distLower : float
+		The lower distance limit for distance
+		Any pairwise distance smaller than this value
+		will be rejectet from the final space of points
+	cutoffValue : float
+		The RMSD threshold for which points are taken
+		for the pairwise distance comparison.
+		Note that the total number of points returned
+		is significnalty influenced by this parameter
+		and should be chosen carefully
+
+	Returns
+	-------
+	tuple : np.ndarray of position coordinates
+		two lists of [x,y,z] coordinates are returned associated
+		with the inputs <densityMapA> and <densityMapB>.
+		The returned coordinates are taken from the original grids
+		and represent points that have another associated point in
+		the other grid which is within the distance bounds and 
+		have an RMSD below the cutoff threshold.
+	"""
+	idxCutoffA = np.where(densityMapA.density < cutoffValue)
+	idxCutoffB = np.where(densityMapB.density < cutoffValue)
+	posA = densityMapA.positions[idxCutoffA]
+	posB = densityMapB.positions[idxCutoffB]
+	dist = np.linalg.norm(posA[:,None] - posB, axis=2)
+	idxA, idxB = np.where(np.logical_and(dist < distUpper, dist > distLower))
+	idxSort = np.argsort(densityMapA.density[idxA] + densityMapB.density[idxB])
+	return posA[idxA[idxSort]], posB[idxB[idxSort]]
+
+
+
+def pcs_gradient_orthogonality_dot(metals, position):
+	"""
+	An experimental metric for calculating the likelihood
+	of a particular nuclear position being well localised
+	from multiple tensors.
+	This algorithm calculates the normalised PCS graident
+	vector arising at a given position from each tensor
+	provided. It then calculates the pairwise dot product
+	of each vector and averages their absolute value.
+
+	Parameters
+	----------
+	metals : list of Metal objects
+		a list of paramagpy metal objects which define the 
+		tensors.
+	position : numpy.ndarray of floats
+		the [x,y,z] coordinate to calculated the
+		orthogonality score
+
+	Returns
+	-------
+	score : float
+		the orthogonality score. This is necessarily
+		between 0 and 1 for this metric. A lower
+		score defies a more favourable orthogonality 
+		between PCS gradient vectors.
+		Note that a value of zero is not possible when
+		more than 4 metals are provided.
+	"""
+	grads = np.array([metal.pcs_gradient(position) for metal in metals])
+	norms = grads / np.linalg.norm(grads, axis=1)[:,None]
+	dots = norms.dot(norms.T)
+	mask = ~np.eye(dots.shape[0], dtype=bool)
+	score = np.sum(np.abs(dots[mask])) / (len(metals)**2 - len(metals))
+	return score
+
+
+def pcs_gradient_orthogonality_cross(metals, position):
+	"""
+	An experimental metric for calculating the likelihood
+	of a particular nuclear position being well localised
+	from multiple tensors.
+	The metric scores the orthogonality of the PCS
+	gradient vectors and accounts for their magnitude.
+	This algorithm calculates the PCS graident
+	vector arising at a given position from each tensor
+	provided. It then calculates the pairwise cross product
+	of each vector and averages their norm (length).
+
+	Parameters
+	----------
+	metals : list of Metal objects
+		a list of paramagpy metal objects which define the 
+		tensors.
+	position : numpy.ndarray of floats
+		the [x,y,z] coordinate to calculated the
+		orthogonality score
+
+	Returns
+	-------
+	score : float
+		the orthogonality score. This is necessarily
+		between greater than zero. A larger
+		score defines a more favourable orthogonality 
+		between PCS gradient vectors and also score larger
+		PCS gradients more highly.
+	"""
+	grads = np.array([metal.pcs_gradient(position) for metal in metals])*1E-10
+	vals = []
+	for g1 in grads:
+		for g2 in grads:
+			cross = np.cross(g1, g2)
+			vals.append(np.linalg.norm(cross)**0.5)
+
+	score = np.sum(vals) / (len(metals)**2 - len(metals))
+	return score
 
 
 

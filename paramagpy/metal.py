@@ -184,6 +184,7 @@ def anisotropy_to_eigenvalues(axial_rhombic):
 	dx =  rhombic/2. - axial/3.
 	dy = -rhombic/2. - axial/3.
 	dz = (axial*2.)/3.
+	# return np.array(sorted([dx,dy,dz], key = lambda v: abs(v)))
 	return np.array([dx,dy,dz])
 
 
@@ -259,7 +260,7 @@ class Metal(object):
 		('Pm', ( 4./1., 3./5. , 0.0      )),
 		('Sm', ( 5./2., 2./7. , 0.074E-12)),
 		('Eu', ( 2./1., 3./2. , 0.015E-12)),
-		('Gd', ( 7./2., 2./1. , 0.0      )),
+		('Gd', ( 7./2., 2./1. , 1E-7    )),
 		('Tb', ( 6./1., 3./2. , 0.251E-12)),
 		('Dy', (15./2., 4./3. , 0.240E-12)),
 		('Ho', ( 8./1., 5./4. , 0.209E-12)),
@@ -270,20 +271,20 @@ class Metal(object):
 
 	# Template anisotropies [axial, rhombic] from Bertini
 	lanth_axrh = OrderedDict([
-		('Zero',( 0.0,  0.0)),
-		('Ce', (  2.1,  0.7)),
-		('Pr', (  3.4,  2.1)),
-		('Nd', (  1.7,  0.4)),
-		('Pm', (  0.0,  0.0)),
-		('Sm', (  0.2,  0.1)),
-		('Eu', (  2.4,  1.5)),
-		('Gd', (  0.0,  0.0)),
-		('Tb', ( 42.1, 11.2)),
-		('Dy', ( 34.7, 20.3)),
-		('Ho', ( 18.5,  5.8)),
-		('Er', (-11.6, -8.6)),
-		('Tm', (-21.9,-20.1)),
-		('Yb', ( -8.3, -5.8))]
+		('Zero',( 0.0,   0.0 )),
+		('Ce', (  2.08,  0.71)),
+		('Pr', (  3.40,  2.11)),
+		('Nd', (  1.74,  0.46)),
+		('Pm', (  0.0,   0.0 )),
+		('Sm', (  0.19,  0.08)),
+		('Eu', ( -2.34, -1.63)),
+		('Gd', (  0.0,   0.0 )),
+		('Tb', ( 42.1,  11.2 )),
+		('Dy', ( 34.7,  20.3 )),
+		('Ho', ( 18.5,   5.79)),
+		('Er', (-11.6,  -8.58)),
+		('Tm', (-21.9,  -20.1)),
+		('Yb', ( -8.26, -5.84))]
 	)
 
 	fundamental_attributes = (
@@ -703,7 +704,7 @@ class Metal(object):
 		eigenvals, eigenvecs = np.linalg.eigh(newTensor)
 		eigs = zip(eigenvals, np.array(eigenvecs).T)
 		iso = np.sum(eigenvals)/3.
-		eigenvals, (x, y, z) = zip(*sorted(eigs, key=lambda x: abs(x[0]-iso)))
+		eigenvals, (x, y, z) = zip(*sorted(eigs, key=lambda v: abs(v[0]-iso)))
 		eigenvecs = x * z.dot(np.cross(x,y)), y, z
 		rotationMatrix = np.vstack(eigenvecs).T
 		eulers = unique_eulers(matrix_to_euler(rotationMatrix))
@@ -1058,6 +1059,37 @@ class Metal(object):
 		"""
 		racs = 2*np.einsum('jk,ikl->ijl',self.tensor_alignment,csaarray)
 		return 1E6*racs.trace(axis1=1,axis2=2)/3.
+
+	def pcs_gradient(self, position):
+		"""
+		Calculate the gradient of the psuedo-contact shift 
+		at the given postition.
+		This equation uses analytic partial derivatives calculated in 
+		Mathematica.
+
+		Parameters
+		----------
+		position : array floats
+			the position (x, y, z) in metres
+
+		Returns
+		-------
+		gradient : array of floats
+			the [x,y,z] gradient vector for the pseudo-contact shift 
+			in parts-per-million (ppm) per metre
+		"""
+		pos = position - self.position
+		r = np.linalg.norm(pos)
+		x, y, z = pos
+		xx, yy, xy, xz, yz = self.upper_triang
+		dnt = (x**2-z**2)*xx + (y**2-z**2)*yy + 2*x*y*xy + 2*x*z*xz + 2*y*z*yz
+		dxt = 2*x*xx + 2*y*xy + 2*z*xz
+		dx = dxt / (4*np.pi*r**5) - 5*x*dnt / (4*np.pi*r**7)
+		dyt = 2*x*xy + 2*y*yy + 2*z*yz
+		dy = dyt / (4*np.pi*r**5) - 5*y*dnt / (4*np.pi*r**7)
+		dzt = -2*z*xx - 2*z*yy + 2*x*xz +2*y*yz
+		dz = dzt / (4*np.pi*r**5) - 5*z*dnt / (4*np.pi*r**7)
+		return 1E6 * np.array([dx,dy,dz])
 
 	################################
 	# Methods for PRE calculations #
@@ -1784,7 +1816,7 @@ class Metal(object):
 	# Methods for plotting isosurfaces #
 	####################################
 
-	def make_mesh(self, density=2, size=40.0):
+	def make_mesh(self, density=2, size=40.0, origin=None):
 		"""
 		Construct a 3D grid of points to map an isosurface
 
@@ -1812,14 +1844,17 @@ class Metal(object):
 			the number of points along each dimension
 
 		"""
-		origin = np.asarray(density * (self.position*1E10 - size/2.0), 
-			dtype=int)
-		low = origin / float(density)
+		if origin is None:
+			origin = self.position
+
+		grid_origin = np.asarray(density * (self.position*1E10 - size/2.0), 
+				dtype=int)
+		low = grid_origin / float(density)
 		high = low + size
 		points = np.array([int(density*size)]*3) + 1
 		domains = [1E-10*np.linspace(*i) for i in zip(low, high, points)]
 		mesh = np.array(np.meshgrid(*domains, indexing='ij')).T
-		return mesh, (origin, low, high, points)
+		return mesh, (grid_origin, low, high, points)
 
 	def pcs_mesh(self, mesh):
 		"""
@@ -2016,6 +2051,4 @@ def load_tensor(fileName):
 		t = Metal()
 		t.set_params(params)
 	return t
-
-
 
