@@ -1380,21 +1380,28 @@ class TensorFrame(tk.LabelFrame):
 			field.label = label
 			self.fields[name] = field
 
-		ttk.Button(self, text='Copy', command=self.copy).grid(row=4+ofs, 
-			column=0, columnspan=2, sticky='EW')
-		ttk.Button(self, text='Paste', command=self.paste).grid(row=4+ofs, 
-			column=2, columnspan=2, sticky='EW')
-		ttk.Button(self, text='Set UTR', command=self.set_utr).grid(row=4+ofs, 
-			column=4, columnspan=2, sticky='EW')
+		buttonFrame = tk.Frame(self)
+		buttonFrame.grid(row=4+ofs, column=0, columnspan=6)
+
+		ttk.Button(buttonFrame, text='Copy', command=self.copy).grid(row=0, 
+			column=0)
+		ttk.Button(buttonFrame, text='Paste', command=self.paste).grid(row=0, 
+			column=1)
+		ttk.Button(buttonFrame, text='Open', command=self.open_tensor).grid(row=0, 
+			column=2)
+		ttk.Button(buttonFrame, text='Set UTR', command=self.set_utr).grid(row=0, 
+			column=3)
 
 		if 'Fitted' in text:
-			ttk.Button(self, text='More', command=self.more).grid(row=5+ofs, 
-				column=0, columnspan=2, sticky='EW')
-			ttk.Button(self, text='Error Sim.', command=self.error_sim).grid(row=5+ofs, 
-				column=2, columnspan=2, sticky='EW')
+			ttk.Button(buttonFrame, text='Save', command=self.save_tensor).grid(row=2, 
+				column=0)
+			ttk.Button(buttonFrame, text='More', command=self.more).grid(row=2, 
+				column=1)
+			ttk.Button(buttonFrame, text='Err. Sim.', command=self.error_sim).grid(row=2, 
+				column=2)
 			if self.dtype in ['PCS', 'PRE']:
-				ttk.Button(self, text='Plot', command=self.plot).grid(row=5+ofs, 
-					column=4, columnspan=2, sticky='EW')
+				ttk.Button(buttonFrame, text='Plot', command=self.plot).grid(row=2, 
+					column=3)
 
 
 		self.update()
@@ -1528,6 +1535,24 @@ class TensorFrame(tk.LabelFrame):
 		if copied_tensor:
 			self.tensor = copied_tensor.copy()
 		self.update()
+
+	def open_tensor(self):
+		fileName = filedialog.askopenfilename(
+			title="Choose tensor file")
+		if not fileName:
+			return
+		self.tensor = metal.load_tensor(fileName)
+		self.update()
+
+	def save_tensor(self):
+		kwargs = {'defaultextension':'.txt', 
+			'initialdir':self.parent.loadData.currentDir(), 
+			'initialfile':'tensor'}
+		fileName = filedialog.asksaveasfilename(**kwargs)
+		if not fileName:
+			return
+		with open(fileName, 'w') as f:
+			self.tensor.save(fileName)
 
 	def plot(self):
 		PlotTensorPopup(self)
@@ -1787,7 +1812,10 @@ class MultipleFitFrame(tk.LabelFrame):
 				useMulti.set(1)
 			chk = ttk.Checkbutton(self, text=tab.name, 
 				variable=useMulti, state='disabled')
-			chk.grid(row=0,column=i)
+			if state=='fitting':
+				chk.grid(row=i//3,column=i%3)
+			else:
+				chk.grid(row=0,column=i)
 			chk.traceID = tab.hasData.trace("w", self.has_data_change)
 			if state=='plotting':
 				tab.colour = ColourSampler(self)
@@ -2382,7 +2410,7 @@ class DataNotebook(ttk.Notebook):
 	Notebook for datasets
 	"""
 	def __init__(self, parent, num_tabs=6):
-		super().__init__(parent)
+		super().__init__(parent, padding=0)
 		self.parent = parent # MethodsTab
 		self.dtype = parent.dtype
 		self.tabs = []
@@ -2411,7 +2439,7 @@ class MethodsTab(tk.Frame):
 	frm_data : data notebook containing data display and tensors
 	"""
 	def __init__(self, parent, dtype):
-		super().__init__(parent)
+		super().__init__(parent, borderwidth=0)
 		self.parent = parent # MethodsNotebook
 		self.dtype = dtype
 
@@ -2479,7 +2507,7 @@ class MethodsNotebook(ttk.Notebook):
 					('idx',  int   )])}
 
 	def __init__(self, parent):
-		super().__init__(parent)
+		super().__init__(parent, padding=0)
 		self.parent = parent # MainGui
 		self.dtypes = ['PCS','RDC','PRE','CCR']
 		self.tabs = []
@@ -2617,29 +2645,32 @@ class PDBFrame(tk.LabelFrame):
 		self.lbl_pdb_file = tk.Label(self,text=" "*self.num_chars)
 		self.lbl_pdb_file.grid(row=0,column=1)
 
+		ttk.Separator(self, orient='vertical').grid(
+			row=0,column=2,rowspan=2,sticky='NS',padx=3)
+
 		# tk.Label(self, text="Models for pdb:").grid(row=1, column=0)
 		b = ttk.Button(self, text='Set Models', 
 			command=self.parse_models)
 		Tooltip(b, tt['parse_models'])
-		b.grid(row=1,column=0,sticky='EW')
+		b.grid(row=0,column=4,sticky='EW')
 
 		self.txt_models = CustomTextDefaultEntry(self,
 			"Choose models. Default: all", returnKey=self.parse_models)
 		Tooltip(self.txt_models, tt['select_models'])
-		self.txt_models.grid(row=1, column=1)
+		self.txt_models.grid(row=0, column=5)
 
 		ttk.Separator(self, orient='vertical').grid(
-			row=0,column=3,rowspan=3,sticky='NS',padx=3)
+			row=0,column=6,rowspan=2,sticky='NS',padx=3)
 
 		self.selction = None
-		b = ttk.Button(self, text='Atom Selection',command=self.change_selection)
+		b = ttk.Button(self, text='Select Atoms',command=self.change_selection)
 		Tooltip(b, tt['selection'])
-		b.grid(row=0,column=4,sticky='EW')
+		b.grid(row=0,column=7,sticky='EW')
 
 		self.frm_csa = CSAFrame(self)
 		b = ttk.Button(self, text='Set CSA',command=self.set_csa)
 		# Tooltip(b, tt['selection'])
-		b.grid(row=1,column=4,sticky='EW')
+		b.grid(row=0,column=8,sticky='EW')
 
 	def has_models(self):
 		if len(self.models)>1:
@@ -2757,9 +2788,9 @@ class MainGui(tk.Frame):
 	def __init__(self, root):
 		super().__init__(root)
 		self.frm_coords = CoordinatesFrame(self)
-		self.frm_coords.grid(row=0,column=0)
+		self.frm_coords.pack()
 		self.ntb_methods = MethodsNotebook(self)
-		self.ntb_methods.grid(row=1,column=0,sticky='EW')
+		self.ntb_methods.pack()
 
 
 	def update(self, strength=0):

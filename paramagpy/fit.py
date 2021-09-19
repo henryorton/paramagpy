@@ -1380,6 +1380,17 @@ class DensityMap(object):
 		"""
 		return self.positions[np.where(self.density < cutoffValue)]
 
+	def boundary_positions_below_density(self, cutoffValue):
+		"""
+		Do any positions below <cutoffValue> lie on the grid boundary?
+		"""
+		idxs = np.unravel_index(np.where(self.density < cutoffValue), self.shape)
+		for idx, s in zip(idxs, self.shape):
+			if 0 in idx or (s-1) in idx:
+				return True
+		return False
+
+
 	def write(self, fileName):
 		"""
 		Write density values to file in .ccp4 format

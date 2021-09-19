@@ -1,0 +1,299 @@
+\babel@toc {english}{}
+\contentsline {chapter}{\numberline {1}Introduction}{2}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Features}{3}{chapter.2}%
+\contentsline {chapter}{\numberline {3}Documentation}{4}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Citing paramagpy}{5}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Contents}{6}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Installation Guide}{6}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Requirements}{6}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Unix/OSX Installation}{6}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}Windows Installation}{6}{subsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.1.4}Running the GUI}{6}{subsection.5.1.4}%
+\contentsline {section}{\numberline {5.2}Examples}{6}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}PCS data}{6}{subsection.5.2.1}%
+\contentsline {subsubsection}{Fit Tensor to PCS Data}{6}{subsubsection*.3}%
+\contentsline {paragraph}{Downloads}{7}{paragraph*.4}%
+\contentsline {paragraph}{Script + Explanation}{7}{paragraph*.5}%
+\contentsline {subsubsection}{Plot PCS isosurface (PyMol view)}{9}{subsubsection*.6}%
+\contentsline {paragraph}{Downloads}{9}{paragraph*.7}%
+\contentsline {paragraph}{Explanation}{9}{paragraph*.8}%
+\contentsline {paragraph}{Script}{9}{paragraph*.9}%
+\contentsline {paragraph}{Output}{10}{paragraph*.10}%
+\contentsline {subsubsection}{Fit multiple PCS datasets to common position}{10}{subsubsection*.11}%
+\contentsline {paragraph}{Downloads}{10}{paragraph*.12}%
+\contentsline {paragraph}{Explanation}{11}{paragraph*.13}%
+\contentsline {paragraph}{Script}{11}{paragraph*.14}%
+\contentsline {paragraph}{Outputs}{12}{paragraph*.15}%
+\contentsline {subsubsection}{Fit Tensor to PDB with Models}{13}{subsubsection*.16}%
+\contentsline {paragraph}{Downloads}{14}{paragraph*.17}%
+\contentsline {paragraph}{Script + Explanation}{14}{paragraph*.18}%
+\contentsline {subsubsection}{Constrained Fitting}{16}{subsubsection*.19}%
+\contentsline {paragraph}{Downloads}{16}{paragraph*.20}%
+\contentsline {paragraph}{Script + Explanation}{16}{paragraph*.21}%
+\contentsline {subsubsection}{Fit a tensor to PCS data with uncertainties}{18}{subsubsection*.22}%
+\contentsline {paragraph}{Downloads}{19}{paragraph*.23}%
+\contentsline {paragraph}{Script + Explanation}{19}{paragraph*.24}%
+\contentsline {subsubsection}{Fit Atomic Coordinates to PCS data}{20}{subsubsection*.25}%
+\contentsline {paragraph}{Downloads}{21}{paragraph*.26}%
+\contentsline {paragraph}{Script + Explanation}{21}{paragraph*.27}%
+\contentsline {subsubsection}{Propagate Uncertainty to Fitted Tensor Parameters}{24}{subsubsection*.28}%
+\contentsline {paragraph}{Downloads}{24}{paragraph*.29}%
+\contentsline {paragraph}{Script + Explanation}{24}{paragraph*.30}%
+\contentsline {subparagraph}{Uncertainty from structure models}{24}{subparagraph*.31}%
+\contentsline {subparagraph}{Uncertainty from experimental uncertainties}{25}{subparagraph*.32}%
+\contentsline {subparagraph}{Uncertainty from sample fraction}{26}{subparagraph*.33}%
+\contentsline {subsubsection}{Fit to PCS data with offset, RACS and RADS corrections}{27}{subsubsection*.34}%
+\contentsline {subsection}{\numberline {5.2.2}RDC data}{27}{subsection.5.2.2}%
+\contentsline {subsubsection}{Fit Tensor to RDC Data}{27}{subsubsection*.35}%
+\contentsline {paragraph}{Downloads}{28}{paragraph*.36}%
+\contentsline {paragraph}{Script + Explanation}{28}{paragraph*.37}%
+\contentsline {subsubsection}{Calculate RDC from a known Tensor}{31}{subsubsection*.38}%
+\contentsline {paragraph}{Downloads}{31}{paragraph*.39}%
+\contentsline {paragraph}{Script + Explanation}{31}{paragraph*.40}%
+\contentsline {subsection}{\numberline {5.2.3}PRE data}{33}{subsection.5.2.3}%
+\contentsline {subsubsection}{Fit Tensor to PRE Data}{33}{subsubsection*.41}%
+\contentsline {paragraph}{Downloads}{33}{paragraph*.42}%
+\contentsline {paragraph}{Script + Explanation}{33}{paragraph*.43}%
+\contentsline {subsubsection}{Calculate 15N PREs with cross-correlation effects}{35}{subsubsection*.44}%
+\contentsline {paragraph}{Downloads}{35}{paragraph*.45}%
+\contentsline {paragraph}{Script + Explanation}{35}{paragraph*.46}%
+\contentsline {subsubsection}{Fit spectral power density tensor}{37}{subsubsection*.47}%
+\contentsline {paragraph}{Downloads}{37}{paragraph*.48}%
+\contentsline {paragraph}{Script + Explanation}{37}{paragraph*.49}%
+\contentsline {subsection}{\numberline {5.2.4}CCR data}{39}{subsection.5.2.4}%
+\contentsline {subsubsection}{Calculate Cross-correlated Relaxation}{39}{subsubsection*.50}%
+\contentsline {paragraph}{Downloads}{39}{paragraph*.51}%
+\contentsline {paragraph}{Script + Explanation}{39}{paragraph*.52}%
+\contentsline {section}{\numberline {5.3}Graphic User Interface (GUI)}{41}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}YouTube Tutorial}{41}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Running the GUI}{41}{subsection.5.3.2}%
+\contentsline {section}{\numberline {5.4}NMR Software Macros}{42}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}CCPNMR Analysis 2.4}{42}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Sparky}{43}{subsection.5.4.2}%
+\contentsline {section}{\numberline {5.5}Mathematical Proofs}{44}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Proof of equivalence between the matrix representation of Curie-spin dipole\textendash {}dipole cross-correlated relaxation (Paramagpy implementation) and the original description by Ghose and Prestegard}{44}{subsection.5.5.1}%
+\contentsline {section}{\numberline {5.6}Reference Guide}{46}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}Paramagnetic module}{46}{subsection.5.6.1}%
+\contentsline {subsubsection}{paramagpy.metal}{46}{subsubsection*.53}%
+\contentsline {paragraph}{Functions}{46}{paragraph*.54}%
+\contentsline {subparagraph}{paramagpy.metal.euler\_to\_matrix}{47}{subparagraph*.55}%
+\contentsline {subparagraph}{paramagpy.metal.matrix\_to\_euler}{47}{subparagraph*.57}%
+\contentsline {subparagraph}{paramagpy.metal.unique\_eulers}{47}{subparagraph*.59}%
+\contentsline {subparagraph}{paramagpy.metal.make\_tensor}{48}{subparagraph*.61}%
+\contentsline {paragraph}{Classes}{48}{paragraph*.63}%
+\contentsline {subparagraph}{paramagpy.metal.Metal}{48}{subparagraph*.64}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.atom\_ccr}{50}{subparagraph*.67}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.atom\_pcs}{50}{subparagraph*.69}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.atom\_pre}{51}{subparagraph*.71}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.atom\_rdc}{51}{subparagraph*.73}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.atom\_set\_position}{51}{subparagraph*.75}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.average}{51}{subparagraph*.77}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.ccr}{51}{subparagraph*.79}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.copy}{52}{subparagraph*.81}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.dipole\_shift\_tensor}{52}{subparagraph*.83}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.dsa\_r1}{52}{subparagraph*.85}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.dsa\_r2}{52}{subparagraph*.87}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_ccr}{53}{subparagraph*.89}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_dipole\_shift\_tensor}{53}{subparagraph*.91}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_dsa\_r1}{53}{subparagraph*.93}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_dsa\_r2}{53}{subparagraph*.95}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_first\_invariant\_squared}{54}{subparagraph*.97}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_g\_sbm\_r1}{54}{subparagraph*.99}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_pcs}{54}{subparagraph*.101}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_pre}{54}{subparagraph*.103}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_racs}{55}{subparagraph*.105}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_rads}{55}{subparagraph*.107}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_rdc}{55}{subparagraph*.109}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_sbm\_r1}{55}{subparagraph*.111}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_sbm\_r2}{55}{subparagraph*.113}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fast\_second\_invariant\_squared}{56}{subparagraph*.115}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.first\_invariant\_squared}{56}{subparagraph*.117}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.g\_sbm\_r1}{56}{subparagraph*.119}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.get\_params}{56}{subparagraph*.121}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.info}{56}{subparagraph*.123}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.isomap}{57}{subparagraph*.125}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.make\_mesh}{57}{subparagraph*.127}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.pcs}{57}{subparagraph*.129}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.pcs\_gradient}{58}{subparagraph*.131}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.pcs\_mesh}{58}{subparagraph*.133}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.pre}{58}{subparagraph*.135}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.pre\_mesh}{58}{subparagraph*.137}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.racs}{59}{subparagraph*.139}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.rads}{59}{subparagraph*.141}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.rdc}{59}{subparagraph*.143}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.save}{59}{subparagraph*.145}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.sbm\_r1}{59}{subparagraph*.147}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.sbm\_r2}{59}{subparagraph*.149}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.second\_invariant\_squared}{60}{subparagraph*.151}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.set\_Jg}{60}{subparagraph*.153}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.set\_lanthanide}{60}{subparagraph*.155}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.set\_params}{60}{subparagraph*.157}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.set\_utr}{60}{subparagraph*.159}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.spec\_dens}{61}{subparagraph*.161}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.write\_isomap}{61}{subparagraph*.163}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.write\_pymol\_script}{61}{subparagraph*.165}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.B0\_MHz}{62}{subparagraph*.167}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.GAMMA}{62}{subparagraph*.169}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.HBAR}{62}{subparagraph*.171}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.K}{62}{subparagraph*.173}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.MU0}{63}{subparagraph*.175}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.MUB}{63}{subparagraph*.177}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.a}{63}{subparagraph*.179}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.alignment\_factor}{63}{subparagraph*.181}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.ax}{63}{subparagraph*.183}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.b}{63}{subparagraph*.185}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.eigenvalues}{63}{subparagraph*.187}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fit\_scaling}{63}{subparagraph*.189}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.fundamental\_attributes}{63}{subparagraph*.191}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.g}{63}{subparagraph*.193}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.g\_eigenvalues}{63}{subparagraph*.195}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.g\_isotropy}{63}{subparagraph*.197}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.g\_tensor}{64}{subparagraph*.199}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.gax}{64}{subparagraph*.201}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.grh}{64}{subparagraph*.203}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.iso}{64}{subparagraph*.205}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.isotropy}{64}{subparagraph*.207}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.lanth\_axrh}{64}{subparagraph*.209}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.lanth\_lib}{64}{subparagraph*.211}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.lower\_coords}{64}{subparagraph*.213}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.rh}{64}{subparagraph*.215}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.rotationMatrix}{64}{subparagraph*.217}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.saupe\_factor}{64}{subparagraph*.219}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.tauc}{64}{subparagraph*.221}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.tensor}{65}{subparagraph*.223}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.tensor\_alignment}{65}{subparagraph*.225}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.tensor\_saupe}{65}{subparagraph*.227}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.tensor\_traceless}{65}{subparagraph*.229}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.upper\_coords}{65}{subparagraph*.231}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.upper\_triang}{65}{subparagraph*.233}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.upper\_triang\_alignment}{65}{subparagraph*.235}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.upper\_triang\_saupe}{65}{subparagraph*.237}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.x}{65}{subparagraph*.239}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.y}{65}{subparagraph*.241}%
+\contentsline {subparagraph}{paramagpy.metal.Metal.z}{65}{subparagraph*.243}%
+\contentsline {subsection}{\numberline {5.6.2}Protein module}{66}{subsection.5.6.2}%
+\contentsline {subsubsection}{paramagpy.protein}{66}{subsubsection*.245}%
+\contentsline {paragraph}{Functions}{66}{paragraph*.246}%
+\contentsline {subparagraph}{paramagpy.protein.load\_pdb}{66}{subparagraph*.247}%
+\contentsline {subparagraph}{paramagpy.protein.rotation\_matrix}{66}{subparagraph*.249}%
+\contentsline {paragraph}{Classes}{66}{paragraph*.251}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom}{66}{subparagraph*.252}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.copy}{67}{subparagraph*.255}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.detach\_parent}{68}{subparagraph*.257}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.dipole\_shift\_tensor}{68}{subparagraph*.259}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.flag\_disorder}{68}{subparagraph*.261}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_altloc}{68}{subparagraph*.263}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_anisou}{68}{subparagraph*.265}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_bfactor}{68}{subparagraph*.267}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_coord}{68}{subparagraph*.269}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_full\_id}{68}{subparagraph*.271}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_fullname}{68}{subparagraph*.273}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_id}{69}{subparagraph*.275}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_level}{69}{subparagraph*.277}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_name}{69}{subparagraph*.279}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_occupancy}{69}{subparagraph*.281}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_parent}{69}{subparagraph*.283}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_serial\_number}{69}{subparagraph*.285}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_sigatm}{69}{subparagraph*.287}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_siguij}{69}{subparagraph*.289}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.get\_vector}{69}{subparagraph*.291}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.is\_disordered}{69}{subparagraph*.293}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.set\_altloc}{69}{subparagraph*.295}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.set\_anisou}{69}{subparagraph*.297}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.set\_bfactor}{70}{subparagraph*.299}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.set\_coord}{70}{subparagraph*.301}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.set\_occupancy}{70}{subparagraph*.303}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.set\_parent}{70}{subparagraph*.305}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.set\_serial\_number}{70}{subparagraph*.307}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.set\_sigatm}{70}{subparagraph*.309}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.set\_siguij}{70}{subparagraph*.311}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.top}{70}{subparagraph*.313}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.transform}{70}{subparagraph*.315}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.HBAR}{71}{subparagraph*.317}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.MU0}{71}{subparagraph*.319}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.csa}{71}{subparagraph*.321}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.csa\_lib}{71}{subparagraph*.323}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.gyro\_lib}{71}{subparagraph*.325}%
+\contentsline {subparagraph}{paramagpy.protein.CustomAtom.position}{71}{subparagraph*.327}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure}{71}{subparagraph*.329}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.add}{72}{subparagraph*.332}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.copy}{72}{subparagraph*.334}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.detach\_child}{72}{subparagraph*.336}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.detach\_parent}{72}{subparagraph*.338}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.get\_atoms}{72}{subparagraph*.340}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.get\_chains}{72}{subparagraph*.342}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.get\_full\_id}{72}{subparagraph*.344}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.get\_id}{73}{subparagraph*.346}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.get\_iterator}{73}{subparagraph*.348}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.get\_level}{73}{subparagraph*.350}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.get\_list}{73}{subparagraph*.352}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.get\_models}{73}{subparagraph*.354}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.get\_parent}{73}{subparagraph*.356}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.get\_residues}{73}{subparagraph*.358}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.has\_id}{73}{subparagraph*.360}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.insert}{73}{subparagraph*.362}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.parse}{73}{subparagraph*.364}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.set\_parent}{74}{subparagraph*.366}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.transform}{74}{subparagraph*.368}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructure.id}{74}{subparagraph*.370}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder}{74}{subparagraph*.372}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder.get\_structure}{75}{subparagraph*.375}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder.init\_atom}{75}{subparagraph*.377}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder.init\_chain}{75}{subparagraph*.379}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder.init\_model}{75}{subparagraph*.381}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder.init\_residue}{75}{subparagraph*.383}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder.init\_seg}{75}{subparagraph*.385}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder.init\_structure}{75}{subparagraph*.387}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder.set\_anisou}{75}{subparagraph*.389}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder.set\_header}{76}{subparagraph*.391}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder.set\_line\_counter}{76}{subparagraph*.393}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder.set\_sigatm}{76}{subparagraph*.395}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder.set\_siguij}{76}{subparagraph*.397}%
+\contentsline {subparagraph}{paramagpy.protein.CustomStructureBuilder.set\_symmetry}{76}{subparagraph*.399}%
+\contentsline {subsection}{\numberline {5.6.3}Data I/O module}{76}{subsection.5.6.3}%
+\contentsline {subsubsection}{paramagpy.dataparse}{76}{subsubsection*.401}%
+\contentsline {paragraph}{Functions}{76}{paragraph*.402}%
+\contentsline {subparagraph}{paramagpy.dataparse.read\_pcs}{76}{subparagraph*.403}%
+\contentsline {subparagraph}{paramagpy.dataparse.read\_rdc}{77}{subparagraph*.405}%
+\contentsline {subparagraph}{paramagpy.dataparse.read\_pre}{77}{subparagraph*.407}%
+\contentsline {subparagraph}{paramagpy.dataparse.read\_ccr}{77}{subparagraph*.409}%
+\contentsline {paragraph}{Classes}{78}{paragraph*.411}%
+\contentsline {subparagraph}{paramagpy.dataparse.DataContainer}{78}{subparagraph*.412}%
+\contentsline {subparagraph}{paramagpy.dataparse.DataContainer.clear}{78}{subparagraph*.415}%
+\contentsline {subparagraph}{paramagpy.dataparse.DataContainer.copy}{78}{subparagraph*.417}%
+\contentsline {subparagraph}{paramagpy.dataparse.DataContainer.fromkeys}{78}{subparagraph*.419}%
+\contentsline {subparagraph}{paramagpy.dataparse.DataContainer.get}{78}{subparagraph*.421}%
+\contentsline {subparagraph}{paramagpy.dataparse.DataContainer.items}{79}{subparagraph*.423}%
+\contentsline {subparagraph}{paramagpy.dataparse.DataContainer.keys}{79}{subparagraph*.425}%
+\contentsline {subparagraph}{paramagpy.dataparse.DataContainer.move\_to\_end}{79}{subparagraph*.427}%
+\contentsline {subparagraph}{paramagpy.dataparse.DataContainer.pop}{79}{subparagraph*.429}%
+\contentsline {subparagraph}{paramagpy.dataparse.DataContainer.popitem}{79}{subparagraph*.431}%
+\contentsline {subparagraph}{paramagpy.dataparse.DataContainer.setdefault}{79}{subparagraph*.433}%
+\contentsline {subparagraph}{paramagpy.dataparse.DataContainer.update}{79}{subparagraph*.435}%
+\contentsline {subparagraph}{paramagpy.dataparse.DataContainer.values}{79}{subparagraph*.437}%
+\contentsline {subsection}{\numberline {5.6.4}Fitting module}{79}{subsection.5.6.4}%
+\contentsline {subsubsection}{paramagpy.fit}{79}{subsubsection*.439}%
+\contentsline {paragraph}{paramagpy.fit.ensemble\_average}{80}{paragraph*.440}%
+\contentsline {paragraph}{paramagpy.fit.extract\_atom\_data}{81}{paragraph*.442}%
+\contentsline {paragraph}{paramagpy.fit.extract\_ccr\_data}{81}{paragraph*.444}%
+\contentsline {paragraph}{paramagpy.fit.extract\_rdc\_data}{81}{paragraph*.446}%
+\contentsline {paragraph}{paramagpy.fit.fit\_error\_bootstrap}{81}{paragraph*.448}%
+\contentsline {paragraph}{paramagpy.fit.fit\_error\_models}{82}{paragraph*.450}%
+\contentsline {paragraph}{paramagpy.fit.fit\_error\_monte\_carlo}{82}{paragraph*.452}%
+\contentsline {paragraph}{paramagpy.fit.gridsearch\_fit\_atom\_from\_pcs}{83}{paragraph*.454}%
+\contentsline {paragraph}{paramagpy.fit.gridsearch\_fit\_atom\_restrain\_distance}{83}{paragraph*.456}%
+\contentsline {paragraph}{paramagpy.fit.gridsearch\_fit\_atom\_restrain\_distance\_cutoff}{84}{paragraph*.458}%
+\contentsline {paragraph}{paramagpy.fit.metal\_standard\_deviation}{84}{paragraph*.460}%
+\contentsline {paragraph}{paramagpy.fit.nlr\_fit\_metal\_from\_ccr}{85}{paragraph*.462}%
+\contentsline {paragraph}{paramagpy.fit.nlr\_fit\_metal\_from\_pcs}{85}{paragraph*.464}%
+\contentsline {paragraph}{paramagpy.fit.nlr\_fit\_metal\_from\_pre}{86}{paragraph*.466}%
+\contentsline {paragraph}{paramagpy.fit.pcs\_gradient\_orthogonality\_cross}{87}{paragraph*.468}%
+\contentsline {paragraph}{paramagpy.fit.pcs\_gradient\_orthogonality\_dot}{87}{paragraph*.470}%
+\contentsline {paragraph}{paramagpy.fit.qfactor}{87}{paragraph*.472}%
+\contentsline {paragraph}{paramagpy.fit.sphere\_grid}{88}{paragraph*.474}%
+\contentsline {paragraph}{paramagpy.fit.svd\_calc\_metal\_from\_pcs}{88}{paragraph*.476}%
+\contentsline {paragraph}{paramagpy.fit.svd\_calc\_metal\_from\_pcs\_offset}{89}{paragraph*.478}%
+\contentsline {paragraph}{paramagpy.fit.svd\_calc\_metal\_from\_rdc}{89}{paragraph*.480}%
+\contentsline {paragraph}{paramagpy.fit.svd\_fit\_metal\_from\_rdc}{89}{paragraph*.482}%
+\contentsline {paragraph}{paramagpy.fit.svd\_gridsearch\_fit\_metal\_from\_pcs}{90}{paragraph*.484}%
+\contentsline {chapter}{Python Module Index}{92}{section*.486}%
