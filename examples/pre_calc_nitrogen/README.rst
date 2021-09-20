@@ -3,7 +3,7 @@
 Calculate 15N PREs with cross-correlation effects
 =================================================
 
-This example shows how to conduct a weighted fit of a :math:`{\Delta\chi}`-tensor to experimental PCS data with experimental errors.
+This example shows how to PREs for 15N in the presence of CSA-Curie spin cross-correlation effects. :math:`{\Delta\chi}`-tensors are used from a previous PCS fitting.
 
 
 Downloads
