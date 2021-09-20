@@ -1,4 +1,4 @@
-paramagpy.protein.CustomAtom
+﻿paramagpy.protein.CustomAtom
 ============================
 
 .. currentmodule:: paramagpy.protein
@@ -21,6 +21,7 @@ paramagpy.protein.CustomAtom
                   ~CustomAtom.get_altloc
                   ~CustomAtom.get_anisou
                   ~CustomAtom.get_bfactor
+                  ~CustomAtom.get_charge
                   ~CustomAtom.get_coord
                   ~CustomAtom.get_full_id
                   ~CustomAtom.get_fullname
@@ -29,6 +30,7 @@ paramagpy.protein.CustomAtom
                   ~CustomAtom.get_name
                   ~CustomAtom.get_occupancy
                   ~CustomAtom.get_parent
+                  ~CustomAtom.get_radius
                   ~CustomAtom.get_serial_number
                   ~CustomAtom.get_sigatm
                   ~CustomAtom.get_siguij
@@ -37,9 +39,11 @@ paramagpy.protein.CustomAtom
                   ~CustomAtom.set_altloc
                   ~CustomAtom.set_anisou
                   ~CustomAtom.set_bfactor
+                  ~CustomAtom.set_charge
                   ~CustomAtom.set_coord
                   ~CustomAtom.set_occupancy
                   ~CustomAtom.set_parent
+                  ~CustomAtom.set_radius
                   ~CustomAtom.set_serial_number
                   ~CustomAtom.set_sigatm
                   ~CustomAtom.set_siguij

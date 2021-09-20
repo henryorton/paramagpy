@@ -1,6 +1,6 @@
-paramagpy.metal.Metal.isotropy
+﻿paramagpy.metal.Metal.isotropy
 ==============================
 
 .. currentmodule:: paramagpy.metal
 
-.. autoattribute:: Metal.isotropy
+.. autoproperty:: Metal.isotropy

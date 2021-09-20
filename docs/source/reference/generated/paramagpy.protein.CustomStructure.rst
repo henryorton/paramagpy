@@ -1,4 +1,4 @@
-paramagpy.protein.CustomStructure
+﻿paramagpy.protein.CustomStructure
 =================================
 
 .. currentmodule:: paramagpy.protein
@@ -15,6 +15,8 @@ paramagpy.protein.CustomStructure
             :toctree:
             
                   ~CustomStructure.add
+                  ~CustomStructure.atom_to_internal_coordinates
+                  ~CustomStructure.center_of_mass
                   ~CustomStructure.copy
                   ~CustomStructure.detach_child
                   ~CustomStructure.detach_parent
@@ -30,6 +32,7 @@ paramagpy.protein.CustomStructure
                   ~CustomStructure.get_residues
                   ~CustomStructure.has_id
                   ~CustomStructure.insert
+                  ~CustomStructure.internal_to_atom_coordinates
                   ~CustomStructure.parse
                   ~CustomStructure.set_parent
                   ~CustomStructure.transform

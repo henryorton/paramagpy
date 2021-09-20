@@ -1,20 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Fit a tensor to PCS data with uncertainties &#8212; paramagpy 1.1 documentation</title>
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Fit a tensor to PCS data with uncertainties &#8212; paramagpy 1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,8 +36,9 @@
         <li class="right" >
           <a href="pcs_fit_constrained.html" title="Constrained Fitting"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Examples</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Fit a tensor to PCS data with uncertainties</a></li> 
       </ul>
     </div>  
 
@@ -46,20 +47,20 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="fit-a-tensor-to-pcs-data-with-uncertainties">
+  <section id="fit-a-tensor-to-pcs-data-with-uncertainties">
 <span id="pcs-fit-error"></span><h1>Fit a tensor to PCS data with uncertainties<a class="headerlink" href="#fit-a-tensor-to-pcs-data-with-uncertainties" title="Permalink to this headline">¶</a></h1>
 <p>This example shows how to conduct a weighted fit of a <span class="math notranslate nohighlight">\({\Delta\chi}\)</span>-tensor to experimental PCS data with experimental errors.</p>
-<div class="section" id="downloads">
+<section id="downloads">
 <h2>Downloads<a class="headerlink" href="#downloads" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Download the data files <code class="docutils literal notranslate"><span class="pre">4icbH_mut.pdb</span></code> and <code class="docutils literal notranslate"><span class="pre">calbindin_Er_HN_PCS_errors.npc</span></code> from <a class="reference external" href="https://github.com/henryorton/paramagpy/tree/master/examples/data_files/">here</a>:</li>
-<li>Download the script <a class="reference download internal" download="" href="../_downloads/9ba3f0e74376368802bfa27db061f418/pcs_fit_error.py"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit_error.py</span></code></a></li>
+<li><p>Download the data files <code class="docutils literal notranslate"><span class="pre">4icbH_mut.pdb</span></code> and <code class="docutils literal notranslate"><span class="pre">calbindin_Er_HN_PCS_errors.npc</span></code> from <a class="reference external" href="https://github.com/henryorton/paramagpy/tree/master/examples/data_files/">here</a>:</p></li>
+<li><p>Download the script <a class="reference download internal" download="" href="../_downloads/fd21b723b53585a10b3e99954cacca84/pcs_fit_error.py"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit_error.py</span></code></a></p></li>
 </ul>
-</div>
-<div class="section" id="script-explanation">
+</section>
+<section id="script-explanation">
 <h2>Script + Explanation<a class="headerlink" href="#script-explanation" title="Permalink to this headline">¶</a></h2>
 <p>This script follows very closely the script <a class="reference internal" href="pcs_fit.html#pcs-fit"><span class="std std-ref">Fit Tensor to PCS Data</span></a>. The only difference being that errors are included in the fourth column of the .npc file and errorbars are included in the plotting routine.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">paramagpy</span> <span class="k">import</span> <span class="n">protein</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">dataparse</span><span class="p">,</span> <span class="n">metal</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">paramagpy</span> <span class="kn">import</span> <span class="n">protein</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">dataparse</span><span class="p">,</span> <span class="n">metal</span>
 
 <span class="c1"># Load the PDB file</span>
 <span class="n">prot</span> <span class="o">=</span> <span class="n">protein</span><span class="o">.</span><span class="n">load_pdb</span><span class="p">(</span><span class="s1">&#39;../data_files/4icbH_mut.pdb&#39;</span><span class="p">)</span>
@@ -89,7 +90,7 @@
 <span class="n">mFit</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;calbindin_Er_HN_PCS_tensor_errors.txt&#39;</span><span class="p">)</span>
 
 <span class="c1">#### Plot the correlation ####</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
 
 <span class="c1"># Plot the data</span>
@@ -110,7 +111,7 @@
 </pre></div>
 </div>
 <p>The fitted tensor:</p>
-<p><em>Output:</em> [<a class="reference download internal" download="" href="../_downloads/35b292eff3d09f2f680902f1acadc8b5/calbindin_Er_HN_PCS_tensor_errors.txt"><code class="xref download docutils literal notranslate"><span class="pre">calbindin_Er_HN_PCS_tensor_errors.txt</span></code></a>]</p>
+<p><em>Output:</em> [<a class="reference download internal" download="" href="../_downloads/ea3f8646b12b8ef63b63663b30618067/calbindin_Er_HN_PCS_tensor_errors.txt"><code class="xref download docutils literal notranslate"><span class="pre">calbindin_Er_HN_PCS_tensor_errors.txt</span></code></a>]</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span>    <span class="o">|</span> <span class="mf">1E-32</span> <span class="n">m</span><span class="o">^</span><span class="mi">3</span> <span class="p">:</span>    <span class="o">-</span><span class="mf">8.012</span>
 <span class="n">rh</span>    <span class="o">|</span> <span class="mf">1E-32</span> <span class="n">m</span><span class="o">^</span><span class="mi">3</span> <span class="p">:</span>    <span class="o">-</span><span class="mf">4.125</span>
 <span class="n">x</span>     <span class="o">|</span>   <span class="mf">1E-10</span> <span class="n">m</span> <span class="p">:</span>    <span class="mf">24.892</span>
@@ -128,12 +129,13 @@
 </pre></div>
 </div>
 <p>And correlation plot:</p>
-<p><em>Output:</em> [<a class="reference download internal" download="" href="../_downloads/b3c96e2e45597731630176cca5a1e45d/pcs_fit_error.png"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit_error.png</span></code></a>]</p>
+<p><em>Output:</em> [<a class="reference download internal" download="" href="../_downloads/75f9b5f34475d3f4f0d53ae62c473e90/pcs_fit_error.png"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit_error.png</span></code></a>]</p>
 <img alt="../_images/pcs_fit_error.png" src="../_images/pcs_fit_error.png" />
-</div>
-</div>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -162,17 +164,15 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -192,13 +192,14 @@
         <li class="right" >
           <a href="pcs_fit_constrained.html" title="Constrained Fitting"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >Examples</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Fit a tensor to PCS data with uncertainties</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.1.2.
     </div>
   </body>
 </html>

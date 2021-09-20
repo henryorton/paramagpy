@@ -1,20 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>paramagpy.metal.Metal.set_Jg &#8212; paramagpy 1.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>paramagpy.metal.Metal.set_Jg &#8212; paramagpy 1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,10 +36,11 @@
         <li class="right" >
           <a href="paramagpy.metal.Metal.second_invariant_squared.html" title="paramagpy.metal.Metal.second_invariant_squared"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../metal.html" >paramagpy.metal</a> &#187;</li>
-          <li class="nav-item nav-item-3"><a href="paramagpy.metal.Metal.html" accesskey="U">paramagpy.metal.Metal</a> &#187;</li> 
+          <li class="nav-item nav-item-3"><a href="paramagpy.metal.Metal.html" accesskey="U">paramagpy.metal.Metal</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">paramagpy.metal.Metal.set_Jg</a></li> 
       </ul>
     </div>  
 
@@ -48,32 +49,29 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="paramagpy-metal-metal-set-jg">
+  <section id="paramagpy-metal-metal-set-jg">
 <h1>paramagpy.metal.Metal.set_Jg<a class="headerlink" href="#paramagpy-metal-metal-set-jg" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
-<dt id="paramagpy.metal.Metal.set_Jg">
-<code class="descclassname">Metal.</code><code class="descname">set_Jg</code><span class="sig-paren">(</span><em>J</em>, <em>g</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.set_Jg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.metal.Metal.set_Jg" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="paramagpy.metal.Metal.set_Jg">
+<span class="sig-prename descclassname"><span class="pre">Metal.</span></span><span class="sig-name descname"><span class="pre">set_Jg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/metal.html#Metal.set_Jg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paramagpy.metal.Metal.set_Jg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the magnetic susceptibility absolute magnitude from J/g.</p>
 <p>This is achieved using the following formula:</p>
 <div class="math notranslate nohighlight">
 \[\mu_{eff}=g\mu_B\sqrt{J(J+1)}\]</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>J</strong> (<em>str</em>) – the total spin angular momentum quantum number</li>
-<li><strong>g</strong> (<em>bool</em><em>, </em><em>optional</em>) – the Lande g-factor</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>J</strong> (<em>str</em>) – the total spin angular momentum quantum number</p></li>
+<li><p><strong>g</strong> (<em>bool</em><em>, </em><em>optional</em>) – the Lande g-factor</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-</div>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -93,17 +91,15 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -123,15 +119,16 @@
         <li class="right" >
           <a href="paramagpy.metal.Metal.second_invariant_squared.html" title="paramagpy.metal.Metal.second_invariant_squared"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../metal.html" >paramagpy.metal</a> &#187;</li>
-          <li class="nav-item nav-item-3"><a href="paramagpy.metal.Metal.html" >paramagpy.metal.Metal</a> &#187;</li> 
+          <li class="nav-item nav-item-3"><a href="paramagpy.metal.Metal.html" >paramagpy.metal.Metal</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">paramagpy.metal.Metal.set_Jg</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.1.2.
     </div>
   </body>
 </html>

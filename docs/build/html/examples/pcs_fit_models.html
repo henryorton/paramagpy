@@ -1,20 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Fit Tensor to PDB with Models &#8212; paramagpy 1.1 documentation</title>
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Fit Tensor to PDB with Models &#8212; paramagpy 1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,8 +36,9 @@
         <li class="right" >
           <a href="pcs_fit_multiple.html" title="Fit multiple PCS datasets to common position"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Examples</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Fit Tensor to PDB with Models</a></li> 
       </ul>
     </div>  
 
@@ -46,26 +47,26 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="fit-tensor-to-pdb-with-models">
+  <section id="fit-tensor-to-pdb-with-models">
 <span id="pcs-fit-models"></span><h1>Fit Tensor to PDB with Models<a class="headerlink" href="#fit-tensor-to-pdb-with-models" title="Permalink to this headline">¶</a></h1>
 <p>This example shows how to fit a <span class="math notranslate nohighlight">\({\Delta\chi}\)</span>-tensor to experimental PCS data using an NMR structure that contains multiple models. Data for calbindin D9k are used as in the previous example <a class="reference internal" href="pcs_fit.html#pcs-fit"><span class="std std-ref">Fit Tensor to PCS Data</span></a>.</p>
 <p>There are 3 fitting options available in paramagpy for fitting:</p>
 <ol class="arabic simple">
-<li>Averaged fit: A tensor is fit to each model independently, and then all fitted tensors are averaged together. This is a good choice if models in your PDB represent structural uncertainty.</li>
-<li>Ensemble averaged fit: A single tensor is fit simultaneously to all models by averaging calculated PCS values during fitting. This is a good choice if models in your PDB represent dynamics as comes from a molecular dynamics simulation.</li>
-<li>Separate model fit: A tensor is fit to each model independently and the best fitting model is taken. This is a good choice if you are only looking for the best fit model in a PDB containing many models.</li>
+<li><p>Averaged fit: A tensor is fit to each model independently, and then all fitted tensors are averaged together. This is a good choice if models in your PDB represent structural uncertainty.</p></li>
+<li><p>Ensemble averaged fit: A single tensor is fit simultaneously to all models by averaging calculated PCS values during fitting. This is a good choice if models in your PDB represent dynamics as comes from a molecular dynamics simulation.</p></li>
+<li><p>Separate model fit: A tensor is fit to each model independently and the best fitting model is taken. This is a good choice if you are only looking for the best fit model in a PDB containing many models.</p></li>
 </ol>
-<div class="section" id="downloads">
+<section id="downloads">
 <h2>Downloads<a class="headerlink" href="#downloads" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Download the data files <code class="docutils literal notranslate"><span class="pre">2bcb.pdb</span></code> and <code class="docutils literal notranslate"><span class="pre">calbindin_Er_HN_PCS.npc</span></code> from <a class="reference external" href="https://github.com/henryorton/paramagpy/tree/master/examples/data_files/">here</a>:</li>
-<li>Download the script <a class="reference download internal" download="" href="../_downloads/50af7154e0846776bc31489419509cde/pcs_fit_models.py"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit_models.py</span></code></a></li>
+<li><p>Download the data files <code class="docutils literal notranslate"><span class="pre">2bcb.pdb</span></code> and <code class="docutils literal notranslate"><span class="pre">calbindin_Er_HN_PCS.npc</span></code> from <a class="reference external" href="https://github.com/henryorton/paramagpy/tree/master/examples/data_files/">here</a>:</p></li>
+<li><p>Download the script <a class="reference download internal" download="" href="../_downloads/799089bbef7a4b48ea0e5b828730a8da/pcs_fit_models.py"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit_models.py</span></code></a></p></li>
 </ul>
-</div>
-<div class="section" id="script-explanation">
+</section>
+<section id="script-explanation">
 <h2>Script + Explanation<a class="headerlink" href="#script-explanation" title="Permalink to this headline">¶</a></h2>
 <p>Firstly, the standard preamble and loading of data.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">paramagpy</span> <span class="k">import</span> <span class="n">protein</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">dataparse</span><span class="p">,</span> <span class="n">metal</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">paramagpy</span> <span class="kn">import</span> <span class="n">protein</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">dataparse</span><span class="p">,</span> <span class="n">metal</span>
 
 <span class="c1"># Load data</span>
 <span class="n">prot</span> <span class="o">=</span> <span class="n">protein</span><span class="o">.</span><span class="n">load_pdb</span><span class="p">(</span><span class="s1">&#39;../data_files/2bcb.pdb&#39;</span><span class="p">)</span>
@@ -103,14 +104,14 @@
 <p>Finally we plot three sets of data:</p>
 <blockquote>
 <div><ul class="simple">
-<li>The averaged fit calculated over all models (green)</li>
-<li>The ensemble average of the calculated values of the ensemble fit (red)</li>
-<li>The best fitting single model (blue)</li>
+<li><p>The averaged fit calculated over all models (green)</p></li>
+<li><p>The ensemble average of the calculated values of the ensemble fit (red)</p></li>
+<li><p>The best fitting single model (blue)</p></li>
 </ul>
 </div></blockquote>
 <p>Note that to calculate the ensemble average of the calculated values we use the function <a class="reference internal" href="../reference/generated/paramagpy.fit.ensemble_average.html#paramagpy.fit.ensemble_average" title="paramagpy.fit.ensemble_average"><code class="xref py py-func docutils literal notranslate"><span class="pre">paramagpy.fit.ensemble_average()</span></code></a>. This can take any number of arguments, and will average values based on common serial numbers of the list of atoms in the first argument.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#### Plot the correlation ####</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
 
 <span class="c1"># Plot averaged fit correlation</span>
@@ -148,12 +149,13 @@
 
 </pre></div>
 </div>
-<p><em>Output:</em> [<a class="reference download internal" download="" href="../_downloads/47a4139e59286473a7f416ae63c04593/pcs_fit_models.png"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit_models.png</span></code></a>]</p>
+<p><em>Output:</em> [<a class="reference download internal" download="" href="../_downloads/a70005cbf6c37b15334216b5621e2e41/pcs_fit_models.png"><code class="xref download docutils literal notranslate"><span class="pre">pcs_fit_models.png</span></code></a>]</p>
 <img alt="../_images/pcs_fit_models.png" src="../_images/pcs_fit_models.png" />
-</div>
-</div>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -182,17 +184,15 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -212,13 +212,14 @@
         <li class="right" >
           <a href="pcs_fit_multiple.html" title="Fit multiple PCS datasets to common position"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >Examples</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Fit Tensor to PDB with Models</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.1.2.
     </div>
   </body>
 </html>

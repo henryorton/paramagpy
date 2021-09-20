@@ -1,4 +1,4 @@
-paramagpy.fit
+﻿paramagpy.fit
 =============
 
 .. currentmodule:: paramagpy
@@ -35,5 +35,16 @@ paramagpy.fit
                svd_calc_metal_from_rdc
                svd_fit_metal_from_rdc
                svd_gridsearch_fit_metal_from_pcs
+      
+   
+
+   
+      
+         .. rubric:: Classes
+
+         .. autosummary::
+            :toctree:
+            
+               DensityMap
       
    

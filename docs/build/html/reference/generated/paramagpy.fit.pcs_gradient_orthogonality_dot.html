@@ -1,20 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>paramagpy.fit.pcs_gradient_orthogonality_dot &#8212; paramagpy 1.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>paramagpy.fit.pcs_gradient_orthogonality_dot &#8212; paramagpy 1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +35,10 @@
         <li class="right" >
           <a href="paramagpy.fit.pcs_gradient_orthogonality_cross.html" title="paramagpy.fit.pcs_gradient_orthogonality_cross"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="paramagpy.fit.html" accesskey="U">paramagpy.fit</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="paramagpy.fit.html" accesskey="U">paramagpy.fit</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">paramagpy.fit.pcs_gradient_orthogonality_dot</a></li> 
       </ul>
     </div>  
 
@@ -47,11 +47,11 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="paramagpy-fit-pcs-gradient-orthogonality-dot">
+  <section id="paramagpy-fit-pcs-gradient-orthogonality-dot">
 <h1>paramagpy.fit.pcs_gradient_orthogonality_dot<a class="headerlink" href="#paramagpy-fit-pcs-gradient-orthogonality-dot" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="paramagpy.fit.pcs_gradient_orthogonality_dot">
-<code class="descclassname">paramagpy.fit.</code><code class="descname">pcs_gradient_orthogonality_dot</code><span class="sig-paren">(</span><em>metals</em>, <em>position</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#pcs_gradient_orthogonality_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.pcs_gradient_orthogonality_dot" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="paramagpy.fit.pcs_gradient_orthogonality_dot">
+<span class="sig-prename descclassname"><span class="pre">paramagpy.fit.</span></span><span class="sig-name descname"><span class="pre">pcs_gradient_orthogonality_dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#pcs_gradient_orthogonality_dot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paramagpy.fit.pcs_gradient_orthogonality_dot" title="Permalink to this definition">¶</a></dt>
 <dd><p>An experimental metric for calculating the likelihood
 of a particular nuclear position being well localised
 from multiple tensors.
@@ -59,36 +59,33 @@ This algorithm calculates the normalised PCS graident
 vector arising at a given position from each tensor
 provided. It then calculates the pairwise dot product
 of each vector and averages their absolute value.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>metals</strong> (<em>list of Metal objects</em>) – a list of paramagpy metal objects which define the
-tensors.</li>
-<li><strong>position</strong> (<em>numpy.ndarray of floats</em>) – the [x,y,z] coordinate to calculated the
-orthogonality score</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metals</strong> (<em>list of Metal objects</em>) – a list of paramagpy metal objects which define the
+tensors.</p></li>
+<li><p><strong>position</strong> (<em>numpy.ndarray of floats</em>) – the [x,y,z] coordinate to calculated the
+orthogonality score</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>score</strong> – the orthogonality score. This is necessarily
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>score</strong> – the orthogonality score. This is necessarily
 between 0 and 1 for this metric. A lower
 score defies a more favourable orthogonality
 between PCS gradient vectors.
 Note that a value of zero is not possible when
 more than 4 metals are provided.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
-</div>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -108,17 +105,15 @@ more than 4 metals are provided.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -138,14 +133,15 @@ more than 4 metals are provided.</p>
         <li class="right" >
           <a href="paramagpy.fit.pcs_gradient_orthogonality_cross.html" title="paramagpy.fit.pcs_gradient_orthogonality_cross"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="paramagpy.fit.html" >paramagpy.fit</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="paramagpy.fit.html" >paramagpy.fit</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">paramagpy.fit.pcs_gradient_orthogonality_dot</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.1.2.
     </div>
   </body>
 </html>

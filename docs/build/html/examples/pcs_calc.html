@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Calculate PCSs from known tensor &#8212; paramagpy 1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plot PCS isosurface (PyMol view)" href="pcs_plot_isosurface.html" />
+    <link rel="prev" title="Fit Tensor to PCS Data" href="pcs_fit.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pcs_plot_isosurface.html" title="Plot PCS isosurface (PyMol view)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pcs_fit.html" title="Fit Tensor to PCS Data"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Calculate PCSs from known tensor</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="calculate-pcss-from-known-tensor">
+<span id="pcs-calc"></span><h1>Calculate PCSs from known tensor<a class="headerlink" href="#calculate-pcss-from-known-tensor" title="Permalink to this headline">¶</a></h1>
+<p>This example shows how calculate PCSs from a known <span class="math notranslate nohighlight">\({\Delta\chi}\)</span>-tensor that is stored in a file.</p>
+<section id="downloads">
+<h2>Downloads<a class="headerlink" href="#downloads" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Download the data files <code class="docutils literal notranslate"><span class="pre">4icbH_mut.pdb</span></code> and <code class="docutils literal notranslate"><span class="pre">calbindin_Tb_HN_PCS_tensor.txt</span></code> from <a class="reference external" href="https://github.com/henryorton/paramagpy/tree/master/examples/data_files/">here</a>:</p></li>
+<li><p>Download the script <a class="reference download internal" download="" href="../_downloads/5ee8453cd225ccf182b29d2e42e9a2e2/pcs_calc.py"><code class="xref download docutils literal notranslate"><span class="pre">pcs_calc.py</span></code></a></p></li>
+</ul>
+</section>
+<section id="script-explanation">
+<h2>Script + Explanation<a class="headerlink" href="#script-explanation" title="Permalink to this headline">¶</a></h2>
+<p>This simple script reads the <span class="math notranslate nohighlight">\({\Delta\chi}\)</span>-tensor from a file and calcualtes the PCS for all atoms in a PDB file. The calculated PCS is then written to an <code class="docutils literal notranslate"><span class="pre">.npc</span></code> file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">paramagpy</span> <span class="kn">import</span> <span class="n">protein</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">dataparse</span><span class="p">,</span> <span class="n">metal</span>
+
+<span class="c1"># Load the PDB file</span>
+<span class="n">prot</span> <span class="o">=</span> <span class="n">protein</span><span class="o">.</span><span class="n">load_pdb</span><span class="p">(</span><span class="s1">&#39;../data_files/4icbH_mut.pdb&#39;</span><span class="p">)</span>
+
+<span class="c1"># Read tensor</span>
+<span class="n">met</span> <span class="o">=</span> <span class="n">metal</span><span class="o">.</span><span class="n">load_tensor</span><span class="p">(</span><span class="s1">&#39;../data_files/calbindin_Tb_HN_PCS_tensor.txt&#39;</span><span class="p">)</span>
+
+<span class="c1"># Open a file to write </span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;pcs_calc.npc&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+	<span class="c1"># Loop over atoms in PDB and calculate PCS</span>
+	<span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">prot</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">():</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+			<span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="n">atom</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+			<span class="s1">&#39;seq&#39;</span><span class="p">:</span><span class="n">atom</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+			<span class="s1">&#39;pcs&#39;</span><span class="p">:</span><span class="n">met</span><span class="o">.</span><span class="n">atom_pcs</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{seq:4d}</span><span class="s2"> </span><span class="si">{name:5s}</span><span class="s2"> </span><span class="si">{pcs:8.5f}</span><span class="s2"> 0.0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+		<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Calculate PCSs from known tensor</a><ul>
+<li><a class="reference internal" href="#downloads">Downloads</a></li>
+<li><a class="reference internal" href="#script-explanation">Script + Explanation</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pcs_fit.html"
+                        title="previous chapter">Fit Tensor to PCS Data</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pcs_plot_isosurface.html"
+                        title="next chapter">Plot PCS isosurface (PyMol view)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/pcs_calc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pcs_plot_isosurface.html" title="Plot PCS isosurface (PyMol view)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pcs_fit.html" title="Fit Tensor to PCS Data"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">paramagpy 1.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Calculate PCSs from known tensor</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Henry Orton.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.1.2.
+    </div>
+  </body>
+</html>

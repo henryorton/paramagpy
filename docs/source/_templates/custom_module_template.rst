@@ -15,3 +15,15 @@
             {%- endfor %}
       {% endif %}
    {% endblock %}
+
+   {% block classes %}
+      {% if classes %}
+         .. rubric:: Classes
+
+         .. autosummary::
+            :toctree:
+            {% for item in classes %}
+               {{ item }}
+            {%- endfor %}
+      {% endif %}
+   {% endblock %}

@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>paramagpy.fit.DensityMap &#8212; paramagpy 1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs" href="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs.html" title="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="paramagpy.fit.html" accesskey="U">paramagpy.fit</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">paramagpy.fit.DensityMap</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="paramagpy-fit-densitymap">
+<h1>paramagpy.fit.DensityMap<a class="headerlink" href="#paramagpy-fit-densitymap" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="paramagpy.fit.DensityMap">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">paramagpy.fit.</span></span><span class="sig-name descname"><span class="pre">DensityMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#DensityMap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paramagpy.fit.DensityMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to help with calculations on a grid.
+The grid can be setup by specifying the origin (centre)
+edge size and density.
+Arguments are given in Angstrom, but stored in metres
+The grid positions are available for calculations
+The density can be written out as a .ccp4 electron density map
+Use this class for any contour plots to view in PyMol</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="paramagpy.fit.DensityMap.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#DensityMap.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paramagpy.fit.DensityMap.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a density map over a cubic grid of coordinates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>origin</strong> (<em>np.ndarray of floats</em>) – [x,y,z] position in Angstrom defining the centre of the cubic grid</p></li>
+<li><p><strong>size</strong> (<em>float</em>) – the grid edge size in Angstrom</p></li>
+<li><p><strong>density</strong> (<em>float</em>) – grid density defined as points per angstrom</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paramagpy.fit.DensityMap.__init__" title="paramagpy.fit.DensityMap.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(origin, size, density)</p></td>
+<td><p>Make a density map over a cubic grid of coordinates</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">boundary_min</span></code>()</p></td>
+<td><p>Does the minimum value lie on the boundary of the grid?</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">boundary_positions_below_density</span></code>(cutoffValue)</p></td>
+<td><p>Do any positions below &lt;cutoffValue&gt; lie on the grid boundary?</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_positions_below_density</span></code>(cutoffValue)</p></td>
+<td><p>Returns all positions in the grid that are below the argument &lt;cutoffValue&gt;</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">minpos</span></code>()</p></td>
+<td><p>Fetch the grid point position with minimum density value</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code>(fileName)</p></td>
+<td><p>Write density values to file in .ccp4 format Headers are accounted for from the given geometry of the grid</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">CCP4_HEADER_DTYPE</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs.html"
+                        title="previous chapter">paramagpy.fit.svd_gridsearch_fit_metal_from_pcs</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/reference/generated/paramagpy.fit.DensityMap.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs.html" title="paramagpy.fit.svd_gridsearch_fit_metal_from_pcs"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="paramagpy.fit.html" >paramagpy.fit</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">paramagpy.fit.DensityMap</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Henry Orton.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.1.2.
+    </div>
+  </body>
+</html>

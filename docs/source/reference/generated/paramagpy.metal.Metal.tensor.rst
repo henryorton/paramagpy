@@ -1,6 +1,6 @@
-paramagpy.metal.Metal.tensor
+﻿paramagpy.metal.Metal.tensor
 ============================
 
 .. currentmodule:: paramagpy.metal
 
-.. autoattribute:: Metal.tensor
+.. autoproperty:: Metal.tensor

@@ -1,6 +1,6 @@
-paramagpy.metal.Metal.upper\_triang\_alignment
+﻿paramagpy.metal.Metal.upper\_triang\_alignment
 ==============================================
 
 .. currentmodule:: paramagpy.metal
 
-.. autoattribute:: Metal.upper_triang_alignment
+.. autoproperty:: Metal.upper_triang_alignment

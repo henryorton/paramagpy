@@ -1,6 +1,6 @@
-paramagpy.metal.Metal.eigenvalues
+﻿paramagpy.metal.Metal.eigenvalues
 =================================
 
 .. currentmodule:: paramagpy.metal
 
-.. autoattribute:: Metal.eigenvalues
+.. autoproperty:: Metal.eigenvalues

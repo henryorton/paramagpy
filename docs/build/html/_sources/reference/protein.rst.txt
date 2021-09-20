@@ -27,3 +27,4 @@ Classes
     CustomAtom
     CustomStructure
     CustomStructureBuilder
+    PyMolScript

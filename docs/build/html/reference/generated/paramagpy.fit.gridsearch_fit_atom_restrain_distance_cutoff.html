@@ -1,20 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff &#8212; paramagpy 1.1 documentation</title>
-    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff &#8212; paramagpy 1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +35,10 @@
         <li class="right" >
           <a href="paramagpy.fit.gridsearch_fit_atom_restrain_distance.html" title="paramagpy.fit.gridsearch_fit_atom_restrain_distance"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="paramagpy.fit.html" accesskey="U">paramagpy.fit</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="paramagpy.fit.html" accesskey="U">paramagpy.fit</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff</a></li> 
       </ul>
     </div>  
 
@@ -47,11 +47,11 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="paramagpy-fit-gridsearch-fit-atom-restrain-distance-cutoff">
+  <section id="paramagpy-fit-gridsearch-fit-atom-restrain-distance-cutoff">
 <h1>paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff<a class="headerlink" href="#paramagpy-fit-gridsearch-fit-atom-restrain-distance-cutoff" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff">
-<code class="descclassname">paramagpy.fit.</code><code class="descname">gridsearch_fit_atom_restrain_distance_cutoff</code><span class="sig-paren">(</span><em>densityMapA</em>, <em>densityMapB</em>, <em>distUpper</em>, <em>distLower</em>, <em>cutoffValue</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#gridsearch_fit_atom_restrain_distance_cutoff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff">
+<span class="sig-prename descclassname"><span class="pre">paramagpy.fit.</span></span><span class="sig-name descname"><span class="pre">gridsearch_fit_atom_restrain_distance_cutoff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">densityMapA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">densityMapB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distUpper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distLower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffValue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/paramagpy/fit.html#gridsearch_fit_atom_restrain_distance_cutoff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given two RMSD density maps, this function will compare
 all points pairwise and return only those within the bounds of
 a given distance cutoff and within a given RMSD cutoff.
@@ -64,45 +64,42 @@ the given cutoff value and then compares each point pariwise to
 fulfill the distance condition. It then returns those points
 from both maps. Unfortunately there is no correlation data
 available between these two maps.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>densityMapA</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">paramagpy.fit.DensityMap</span></code>) – a density map of PCS RMSD values.</li>
-<li><strong>densityMapB</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">paramagpy.fit.DensityMap</span></code>) – a second density map of PCS RMSD values.</li>
-<li><strong>distUpper</strong> (<em>float</em>) – The upper limit for distance.
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>densityMapA</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">paramagpy.fit.DensityMap</span></code>) – a density map of PCS RMSD values.</p></li>
+<li><p><strong>densityMapB</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">paramagpy.fit.DensityMap</span></code>) – a second density map of PCS RMSD values.</p></li>
+<li><p><strong>distUpper</strong> (<em>float</em>) – The upper limit for distance.
 Any pairwise distances larger than this value
-will be rejected from the final space of points</li>
-<li><strong>distLower</strong> (<em>float</em>) – The lower distance limit for distance
+will be rejected from the final space of points</p></li>
+<li><p><strong>distLower</strong> (<em>float</em>) – The lower distance limit for distance
 Any pairwise distance smaller than this value
-will be rejectet from the final space of points</li>
-<li><strong>cutoffValue</strong> (<em>float</em>) – The RMSD threshold for which points are taken
+will be rejectet from the final space of points</p></li>
+<li><p><strong>cutoffValue</strong> (<em>float</em>) – The RMSD threshold for which points are taken
 for the pairwise distance comparison.
 Note that the total number of points returned
 is significnalty influenced by this parameter
-and should be chosen carefully</li>
+and should be chosen carefully</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>tuple</strong> – two lists of [x,y,z] coordinates are returned associated
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>tuple</strong> – two lists of [x,y,z] coordinates are returned associated
 with the inputs &lt;densityMapA&gt; and &lt;densityMapB&gt;.
 The returned coordinates are taken from the original grids
 and represent points that have another associated point in
 the other grid which is within the distance bounds and
 have an RMSD below the cutoff threshold.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray of position coordinates</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray of position coordinates</p>
+</dd>
+</dl>
 </dd></dl>
 
-</div>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -122,17 +119,15 @@ have an RMSD below the cutoff threshold.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -152,14 +147,15 @@ have an RMSD below the cutoff threshold.</p>
         <li class="right" >
           <a href="paramagpy.fit.gridsearch_fit_atom_restrain_distance.html" title="paramagpy.fit.gridsearch_fit_atom_restrain_distance"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">paramagpy 1.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Reference Guide</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="paramagpy.fit.html" >paramagpy.fit</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="paramagpy.fit.html" >paramagpy.fit</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">paramagpy.fit.gridsearch_fit_atom_restrain_distance_cutoff</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Henry Orton.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.1.2.
     </div>
   </body>
 </html>

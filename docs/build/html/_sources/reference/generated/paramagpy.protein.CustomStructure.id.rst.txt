@@ -3,4 +3,4 @@ paramagpy.protein.CustomStructure.id
 
 .. currentmodule:: paramagpy.protein
 
-.. autoattribute:: CustomStructure.id
+.. autoproperty:: CustomStructure.id

@@ -1,6 +1,6 @@
-paramagpy.metal.Metal.tauc
+﻿paramagpy.metal.Metal.tauc
 ==========================
 
 .. currentmodule:: paramagpy.metal
 
-.. autoattribute:: Metal.tauc
+.. autoproperty:: Metal.tauc

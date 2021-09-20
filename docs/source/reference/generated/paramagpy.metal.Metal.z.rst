@@ -1,6 +1,6 @@
-paramagpy.metal.Metal.z
+﻿paramagpy.metal.Metal.z
 =======================
 
 .. currentmodule:: paramagpy.metal
 
-.. autoattribute:: Metal.z
+.. autoproperty:: Metal.z

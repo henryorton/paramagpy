@@ -1,6 +1,6 @@
-paramagpy.metal.Metal.ax
+﻿paramagpy.metal.Metal.ax
 ========================
 
 .. currentmodule:: paramagpy.metal
 
-.. autoattribute:: Metal.ax
+.. autoproperty:: Metal.ax

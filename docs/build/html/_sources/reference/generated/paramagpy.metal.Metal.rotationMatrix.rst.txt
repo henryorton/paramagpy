@@ -1,6 +1,6 @@
-paramagpy.metal.Metal.rotationMatrix
+﻿paramagpy.metal.Metal.rotationMatrix
 ====================================
 
 .. currentmodule:: paramagpy.metal
 
-.. autoattribute:: Metal.rotationMatrix
+.. autoproperty:: Metal.rotationMatrix

@@ -1,6 +1,6 @@
-paramagpy.metal.Metal.tensor\_traceless
+﻿paramagpy.metal.Metal.tensor\_traceless
 =======================================
 
 .. currentmodule:: paramagpy.metal
 
-.. autoattribute:: Metal.tensor_traceless
+.. autoproperty:: Metal.tensor_traceless

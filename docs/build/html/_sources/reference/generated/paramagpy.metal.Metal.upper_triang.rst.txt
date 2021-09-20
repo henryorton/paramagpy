@@ -1,6 +1,6 @@
-paramagpy.metal.Metal.upper\_triang
+﻿paramagpy.metal.Metal.upper\_triang
 ===================================
 
 .. currentmodule:: paramagpy.metal
 
-.. autoattribute:: Metal.upper_triang
+.. autoproperty:: Metal.upper_triang
