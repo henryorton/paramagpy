@@ -436,7 +436,7 @@ class Metal(object):
 		"""
 		self.mueff = g * self.MUB * (J*(J+1))**0.5
 
-	def info(self, comment=True):
+	def info(self, comment=True, fullPrecision=False):
 		"""
 		Get basic information about the Metal object
 
@@ -473,7 +473,11 @@ class Metal(object):
 		# t1e   |        ps :     0.189
 		# taur  |        ns :     0.000
 		"""
-		l = "{0:<6}| {1:>9} : {2:9.3f}\n"
+		if fullPrecision:
+			l = "{0:<6}| {1:>9} : {2:}\n"
+		else:
+			l = "{0:<6}| {1:>9} : {2:9.3f}\n"
+
 		if comment:
 			l = '# ' + l 
 		i  = l.format('ax','1E-32 m^3',self.axrh[0]*1E32)

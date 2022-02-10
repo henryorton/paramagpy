@@ -903,6 +903,8 @@ class MorePopup(Popup):
 		self.entry("Isotropy:", tensor.isotropy)
 		self.entry("Rotation matrix:", tensor.rotationMatrix)
 		self.entry("Saupe tensor:", tensor.tensor_saupe)
+		if hasattr(parent, "tensorFitted"):
+			self.entry("Fitted (full precision):", parent.tensorFitted.info(comment=False, fullPrecision=True))
 
 		self.text.pack(expand=True, fill='x')
 		self.update()
@@ -2085,6 +2087,7 @@ class FittingOptionsFrame(tk.LabelFrame):
 
 		for tab, metal in zip(dataTabs, metals):
 			tab.tensorFit.tensor = metal.copy()
+			tab.tensorFit.tensorFitted = metal.copy()
 			tab.update(0)
 			tab.back_calc()
 
